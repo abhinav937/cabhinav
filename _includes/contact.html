@@ -43,6 +43,11 @@ document.querySelector(".phone a").addEventListener("click", function() {
       
     {% endif %}
 
+    {% if sidebar.twitter %}
+    <li class="twitter"><img src="../cabhinav/assets/finalx.png" width="25px" height="auto" style="border: 1px; border-radius: 7px;">
+      <a href="https://x.com/{{ sidebar.twitter }}" target="_blank">{{ sidebar.twitter }}</a>
+    </li>
+    {% endif %}
 
     {% if sidebar.linkedin %}
     <li class="linkedin"><img src="../cabhinav/assets/ln.png" width="25px" height="auto" style="border: 1px; border-radius: 7px;">
@@ -53,14 +58,6 @@ document.querySelector(".phone a").addEventListener("click", function() {
     {% if sidebar.github %}
     <li class="github"><img src="../cabhinav/assets/hit.png" width="25px" height="auto" style="border: 1px; border-radius: 50px;">
       <a href="http://github.com/{{ sidebar.github }}" target="_blank">{{ sidebar.github }}</a>
-    </li>
-    {% endif %}
-
-
-
-    {% if sidebar.twitter %}
-    <li class="twitter"><img src="../cabhinav/assets/finalx.png" width="25px" height="auto" style="border: 1px; border-radius: 7px;">
-      <a href="https://x.com/{{ sidebar.twitter }}" target="_blank">{{ sidebar.twitter }}</a>
     </li>
     {% endif %}
 
