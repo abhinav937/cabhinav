@@ -102,9 +102,7 @@ experiences:
 projects:
     title: Projects
     intro: >
-      You can list your side projects in this
-      section. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Vestibulum et ligula in nunc bibendum fringilla a eu lectus.
+
     assignments:
       - title: GaN based Half-Bridge Evaluation board
         tagline: "A half-bridge inverter was designed using Infineon's IGLD60R190D1 CoolGaN and 2EDF7275K EiceDriver. The configuration can handle voltages up to 400V and currents up to 6A, occupying a footprint of 4278 sq. mm."
