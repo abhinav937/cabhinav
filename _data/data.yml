@@ -67,7 +67,7 @@ education:
         university: Indian Institute of Technology Dharwad
         time: 2020 - 2024
         details: |
-        
+
       # - degree: BSc in Applied Mathematics
       #   university: Bristol University
       #   time: 2007 - 2011
@@ -91,7 +91,6 @@ experiences:
             - Learnt the process of Lead acid batteries manufacturing
             - Analysed and mapped the Power infrastructure of the company
             - Loss analysis of HV Transformers 
-
 
 projects:
     title: Projects
@@ -135,6 +134,10 @@ projects:
 
 skills:
     title: Skills &amp; Proficiency
+
+collections:
+    xeets:
+      output: true
 
 
 footer: >
