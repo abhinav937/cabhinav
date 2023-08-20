@@ -451,14 +451,14 @@ main {
 \*-----------------------------------*/
 
 .navbar {
-  position: static;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   background: hsla(240, 1%, 17%, 0.75);
   backdrop-filter: blur(10px);
   border: 1px solid var(--jet);
-  border-radius: 12px 12px 12px 12px;
+  border-radius: 12px 12px 0px 0px;
   box-shadow: var(--shadow-2);
   z-index: 5;
 }
