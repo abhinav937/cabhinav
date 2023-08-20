@@ -1879,11 +1879,17 @@ textarea.form-input::-webkit-resizer { display: none; }
   .timeline-text { max-width: 700px; }
 }
 
-.one:hover::after {
-  content:"Text when hovered";
-  position:absolute;
-  left:0;
-  }
+
+/** Responsive image */
+.image-container {
+  max-width: 100%;
+  height: auto;
+}
+.responsive-image {
+  width: 100%;
+  height: auto;
+  display: block; /* To remove any extra space below the image */
+}
   
 
 
