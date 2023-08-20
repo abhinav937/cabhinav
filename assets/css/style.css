@@ -455,7 +455,7 @@ main {
 \*-----------------------------------*/
 
 .navbar {
-  position: fixed;
+  position: static;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -470,14 +470,14 @@ main {
 .navbar-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   padding: 0 10px;
 }
 
 .navbar-link {
   color: var(--light-gray);
-  font-size: var(--fs-8);
+  font-size: var(--fs-12);
   padding: 20px 7px;
   transition: color var(--transition-1);
 }
