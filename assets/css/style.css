@@ -3,10 +3,6 @@
 \*-----------------------------------*/
 
 
-/**
- * copyright 2022 @codewithsadee
- */
-
 
 
 
@@ -35,7 +31,7 @@
   ), hsl(240, 2%, 13%);
   --bg-gradient-yellow-1: linear-gradient(
     to bottom right, 
-    hsl(45, 100%, 71%) 0%, 
+    hwb(59 26% 56%), 
     hsla(36, 100%, 69%, 0) 50%
   );
   --bg-gradient-yellow-2: linear-gradient(
@@ -50,8 +46,8 @@
   );
   --text-gradient-yellow: linear-gradient(
     to right, 
-    hsl(45, 100%, 72%), 
-    hsl(35, 100%, 68%)
+    hsl(203, 100%, 72%), 
+    hsl(187, 100%, 68%)
   );
 
   /* solid */
@@ -63,8 +59,8 @@
   --smoky-black: hsl(0, 0%, 7%);
   --white-1: hsl(0, 0%, 100%);
   --white-2: hsl(0, 0%, 98%);
-  --orange-yellow-crayola: hsl(45, 100%, 72%);
-  --vegas-gold: hsl(45, 54%, 58%);
+  --orange-yellow-crayola: hwb(166 34% 5%);
+  --vegas-gold: hwb(188 14% 47%);
   --light-gray: hsl(0, 0%, 84%);
   --light-gray-70: hsla(0, 0%, 84%, 0.7);
   --bittersweet-shimmer: hsl(0, 43%, 51%);
@@ -360,8 +356,8 @@ main {
   right: -15px;
   border-radius: 0 15px;
   font-size: 13px;
-  color: var(--orange-yellow-crayola);
-  background: var(--border-gradient-onyx);
+  color: var(--white-1);
+  background: var(--vegas-gold);
   padding: 10px;
   box-shadow: var(--shadow-2);
   transition: var(--transition-1);
@@ -382,7 +378,7 @@ main {
 .info_more-btn:focus { background: var(--bg-gradient-yellow-1); }
 
 .info_more-btn:hover::before,
-.info_more-btn:focus::before { background: var(--bg-gradient-yellow-2); }
+.info_more-btn:focus::before { background: var(--vegas-gold); }
 
 .info_more-btn span { display: none; }
 
@@ -462,7 +458,7 @@ main {
   background: hsla(240, 1%, 17%, 0.75);
   backdrop-filter: blur(10px);
   border: 1px solid var(--jet);
-  border-radius: 12px 12px 0 0;
+  border-radius: 12px 12px 12px 12px;
   box-shadow: var(--shadow-2);
   z-index: 5;
 }
@@ -1891,6 +1887,8 @@ textarea.form-input::-webkit-resizer { display: none; }
   display: block; /* To remove any extra space below the image */
 }
   
-
-
+.social-container {
+  display: flex;
+  align-items: center; /* Vertically align the items */
+}
   
