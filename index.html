@@ -1,39 +1,730 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <title>𝕏 Posts</title>
-  <style>
-    /* Add CSS styling for the div with the X Posts text */
-    .post-count {
-      font-size: 24px; /* Adjust the font size as needed */
-      font-weight: bold; /* Optional: Make the text bold */
-      margin-left: 371px; /* Optional: Add some space below the text */
-      margin-bottom: 100px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abhinav C</title>
+
+  <!--
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
+
+  <!--
+    - custom css link
+  -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!--
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-  <div class="post-count">
-    <a href="/cabhinav/pages/xeets.html" class="button">View 𝕏 Posts</a>
-  </div>
- 
-{% include career-profile.html %}
+  <!--
+    - #MAIN
+  -->
 
-{% unless site.data.data.sidebar.education %}
-  {% include education.html %}
-{% endunless %}
+  <main>
 
-{% include experiences.html %}
+    <!--
+      - #SIDEBAR
+    -->
 
-{% include certifications.html %}
+    <aside class="sidebar" data-sidebar>
 
-{% include projects.html %}
+      <div class="sidebar-info">
 
-{% include oss-contributions.html %}
+        <figure class="avatar-box">
+          <img src="./assets/images/profile.png" alt="Abhinav C" width="80" style="border-radius: 30px;">
+        </figure>
 
-{% include publications.html %}
+        <div class="info-content">
+          <h1 class="name" title="Abhinav C">Abhinav C</h1>
 
-{% include skills.html %}
+          <p class="title">EE Undergrad</p>
+        </div>
 
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
+
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+
+      </div>
+
+      <div class="sidebar-info_more">
+
+        <div class="separator"></div>
+
+        <ul class="contacts-list">
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+
+              <a href="mailto:abhinavchinnusamy@gmail.com" class="contact-link">abhinavchinnusamy@gmail.com</a>
+            </div>
+
+          </li>
+<!-- 
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Phone</p>
+
+              <a href="tel:+91 8903683937" class="contact-link">+91 8903683937</a>
+            </div>
+
+          </li> -->
+
+          <!-- <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Birthday</p>
+
+              <time datetime="1982-06-23">June 23, 1982</time>
+            </div> -->
+
+            <li class="contact-item">
+
+              <div class="icon-box">
+                <a href="https://x.com/intent/follow?screen_name=abhinav_937"><img src="/assets/images/finalx.png" width="30px" height="auto" style="border: 1px; border-radius: 7px;"></a>
+              </div>
+  
+              <div class="contact-info">
+                <p class="contact-title" style="font-size: 15px;">𝕏 App</p>
+  
+                <a href="https://x.com/intent/follow?screen_name=abhinav_937" class="contact-link">abhinav_937</a>
+              </div>
+  
+            </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+
+              <address>India</address>
+            </div>
+
+          </li>
+
+
+
+        </ul>
+
+        <div class="separator"></div>
+
+        <ul class="social-list">
+
+          <li class="social-item">
+            <a href="https://github.com/abhinav937" class="social-link">
+              <ion-icon name="logo-github"></ion-icon>
+            </a>
+          </li>
+
+
+          <li class="social-item">
+            <a href="https://instagram.com/abhinav_937" class="social-link">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </aside>
+
+
+
+
+
+    <!--
+      - #main-content
+    -->
+
+    <div class="main-content">
+
+      <!--
+        - #NAVBAR
+      -->
+
+      <nav class="navbar">
+
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <button class="navbar-link  active" data-nav-link>About</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resume</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Portfolio</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Blog</button>
+          </li>
+
+          <!-- <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Contact</button>
+          </li> -->
+
+        </ul>
+
+      </nav>
+
+
+
+
+
+      <!--
+        - #ABOUT
+      -->
+
+      <article class="about  active" data-page="about">
+
+        <header>
+          <h2 class="h2 article-title">About me</h2>
+        </header>
+
+        <section class="about-text">
+          <p>
+            I'm a fourth-year undergrad who loves electronics and enjoys tinkering around. I've had few internships, designed circuit
+            boards, and even ripping apart old electronics. My big plan is to work in Power Electronics.
+          </p>
+        </section>
+
+
+        <!--
+          - service
+        -->
+
+        <section class="service">
+
+          <h3 class="h3 service-title">Interests</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/pcb.png
+                " alt="PCB design" width="50">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">PCB design</h4>
+
+                <p class="service-item-text">
+                  Designing Schematics and Layout for Embedded and Power applications
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/mosfet.png" alt="Web development icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Power Electronics</h4>
+
+                <p class="service-item-text">
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/camera.png" alt="camera icon" width="45">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title" >Photography</h4>
+                <div class="service-icon-box">
+                  <a href="https://instagram.com/pixel.12.2">
+                    <ion-icon name="logo-instagram" style="color: rgb(188, 188, 188);"></ion-icon>
+                </div>
+                <a href="https://instagram.com/pixel.12.2" target="_blank" style="color: rgb(218, 218, 218);">pixel.12.2</a>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+        <!--
+          - testimonials modal
+        -->
+
+        <div class="modal-container" data-modal-container>
+
+          <div class="overlay" data-overlay></div>
+
+          <section class="testimonials-modal">
+
+            <button class="modal-close-btn" data-modal-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+
+          </section>
+
+        </div>
+
+        </section>
+
+      </article>
+
+
+      <!--
+        - #RESUME
+      -->
+
+      <article class="resume" data-page="resume">
+
+        <header>
+          <h2 class="h2 article-title">Resume</h2>
+        </header>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Education</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Indian Institute of Technology Dharwad</h4>
+
+              <span>2020 — 2024</span>
+
+              <p class="timeline-text">
+                Electrical Engineering
+              </p>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Rasi International school</h4>
+
+              <span>2020</span>
+
+              <p class="timeline-text">
+                
+              </p>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Experience</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Intern, Exide Industries Limited, TN</h4>
+
+              <span>2022 Summer</span>
+
+              <p class="timeline-text"> Learnt the process of Lead acid batteries manufacturing</p>
+              <p class="timeline-text"> Analysed and mapped the Power infrastructure of the company</p>
+              <p class="timeline-text"> Loss analysis of HV Transformers</p>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">My skills</h3>
+
+          <ul class="skills-list content-card">
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">KiCad</h5>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Altium</h5>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">MATLAB Simulink, Simscape</h5>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">eSim (NgSpice), LTSpice</h5>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Arduino, Micropython for RP2040</h5>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Reflow Soldering</h5>
+              </div>
+
+            </li>
+
+            
+
+          </ul>
+
+        </section>
+
+      </article>
+
+
+
+
+
+
+      <!--
+        - #PORTFOLIO
+      -->
+
+      <article class="portfolio" data-page="portfolio">
+
+        <header>
+          <h2 class="h2 article-title">Portfolio</h2>
+        </header>
+
+        <section class="projects">
+
+          <ul class="filter-list">
+
+            <li class="filter-item">
+              <button class="active" data-filter-btn>All</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Power</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Embedded</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Analog</button>
+            </li>
+
+          </ul>
+
+          <div class="filter-select-box">
+
+            <button class="filter-select" data-select>
+
+              <div class="select-value" data-selecct-value>Select category</div>
+
+              <div class="select-icon">
+                <ion-icon name="chevron-down"></ion-icon>
+              </div>
+
+            </button>
+
+            <ul class="select-list">
+
+              <li class="select-item">
+                <button data-select-item>All</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Power</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Embedded</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Analog</button>
+              </li>
+
+            </ul>
+
+          </div>
+
+          <ul class="project-list">
+
+            <li class="project-item  active" data-filter-item data-category="power">
+              <a href="#">
+
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+
+                  <img src="./assets/images/gan.jpg" alt="GaN Half Bridge" loading="lazy">
+                </figure>
+
+                <h3 class="project-title">GaN based Half Bridge</h3>
+
+                <p class="project-category">Power</p>
+
+              </a>
+            </li>
+
+            <li class="project-item  active" data-filter-item data-category="power">
+              <a href="#">
+
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+
+                  <img src="./assets/images/e_fuse.png" alt="E-Fuse" loading="lazy">
+                </figure>
+
+                <h3 class="project-title">E-Fuse</h3>
+
+                <p class="project-category">Power</p>
+
+              </a>
+            </li>
+
+            <li class="project-item  active" data-filter-item data-category="embedded">
+              <a href="https://github.com/abhinav937/RP2040-Dev-Board">
+
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+
+                  <img src="./assets/images/rp2040.jpg" alt="RP2040-dev" loading="lazy">
+                </figure>
+
+                <h3 class="project-title">RP2040-dev board</h3>
+
+                <p class="project-category">Embedded</p>
+
+              </a>
+            </li>
+
+            <li class="project-item  active" data-filter-item data-category="analog">
+              <a href="#">
+
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+
+                  <img src="./assets/images/current_sensor.jpg" alt="Current sensor board" loading="lazy">
+                </figure>
+
+                <h3 class="project-title">High bandwidth current sensor</h3>
+
+                <p class="project-category">Analog</p>
+
+              </a>
+            </li>
+
+  
+
+          </ul>
+
+        </section>
+
+      </article>
+
+
+
+
+
+
+      <!--
+        - #BLOG
+      -->
+
+      <article class="blog" data-page="blog">
+
+        <header>
+          <h2 class="h2 article-title">Blog</h2>
+        </header>
+
+        <div> <img src="/assets/images/nothing.jpg" alt="nothing to see here" style="width: 356px;"></div>
+
+        <!-- <section class="blog-posts">
+
+          <ul class="blog-posts-list">
+
+            <li class="blog-post-item">
+              <a href="#">
+
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/rp2040.jpg" alt="RP2040-Dev-Board" loading="lazy">
+                </figure>
+
+                <div class="blog-content">
+
+                  <div class="blog-meta">
+                    <p class="blog-category">Design</p>
+
+                    <span class="dot"></span>
+
+                    <time datetime="2022-02-23">Oct 12, 2022</time>
+                  </div>
+
+                  <h3 class="h3 blog-item-title">RP2040 development board</h3>
+
+                  <p class="blog-text">
+                    The journey of my 1st PCB design and embedded hardware
+                  </p>
+
+                </div>
+
+              </a>
+            </li>
+
+          </ul> -->
+
+        </section>
+
+      </article>
+
+
+
+
+
+      <!--
+        - #CONTACT
+      -->
+
+      <!-- <article class="contact" data-page="contact"> -->
+
+        <!-- <header>
+          <h2 class="h2 article-title">Contact</h2>
+        </header> -->
+
+        <!-- <section class="mapbox" data-mapbox>
+          <figure>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d199666.5651251294!2d-121.58334177520186!3d38.56165006739519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ac672b28397f9%3A0x921f6aaa74197fdb!2sSacramento%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1647608789441!5m2!1sen!2sbd"
+              width="400" height="300" loading="lazy"></iframe>
+          </figure>
+        </section> -->
+
+        <!-- <section class="contact-form">
+
+          <h3 class="h3 form-title">Contact Form</h3>
+
+          <form action="#" class="form" data-form>
+
+            <div class="input-wrapper">
+              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
+
+              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            </div>
+
+            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+
+            <button class="form-btn" type="submit" disabled data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Message</span>
+            </button>
+
+          </form>
+
+        </section>
+
+      </article> -->
+
+    </div>
+
+  </main>
+
+
+
+
+
+
+  <!--
+    - custom js link
+  -->
+  <script src="./assets/js/script.js"></script>
+
+  <!--
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
