@@ -2071,3 +2071,36 @@ img.bg {
 /*# sourceMappingURL=allStyles.css.map */
 
 
+.f/* Style for the main content container */
+.content {
+  /* Set width to 100% and adjust other styles as needed */
+  width: 100%;
+  /* Other styling properties */
+  position: relative; /* Add this line */
+}
+
+/* Style for the footer */
+.footer {
+  text-align: center;
+  padding: 5px;
+  background-color: hsla(203, 100%, 76.24%, 0.56);
+  color: #000;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  width: 100%; /* Make sure the footer spans the entire width */
+  position: absolute;
+  bottom: 0;
+}
+
+/* Media query for smaller devices */
+@media (max-width: 768px) {
+  .footer {
+    position: fixed;
+    left: 0;
+  }
+}
+
+
+
+
+
