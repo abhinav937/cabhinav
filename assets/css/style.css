@@ -2079,24 +2079,12 @@ img.bg {
   position: relative; /* Add this line */
 }
 
-/* Style for the footer */
 .footer {
-  text-align: center;
-  padding: 5px;
-  background-color: hsla(203, 100%, 76.24%, 0.56);
-  color: #000;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  width: 100%; /* Make sure the footer spans the entire width */
-  position: absolute;
-  bottom: 0;
-}
-
-/* Media query for smaller devices */
-@media (max-width: 768px) {
-  .footer {
-    position: fixed;
-    left: 0;
+  padding-top: 30px;
+  .copyright {
+    line-height: 1.6;
+    color: rgb(105, 180, 218);
+    font-size: 13px;
   }
 }
 
