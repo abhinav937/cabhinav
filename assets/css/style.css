@@ -760,7 +760,8 @@ main {
   #RESUME
 \*-----------------------------------*/
 
-.article-title { margin-bottom: 30px; }
+.article-title { margin-bottom: 30px;
+  display: inline-block; }
 
 
 /**
@@ -1897,4 +1898,7 @@ textarea.form-input::-webkit-resizer { display: none; }
   align-items: center;
 }
 
-
+.download-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
