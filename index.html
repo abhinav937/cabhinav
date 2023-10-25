@@ -910,7 +910,7 @@
         // Check if the "vibrate" API is available in the browser
         if ('vibrate' in navigator) {
             // Create a custom vibration pattern (sharp pulse)
-            const vibrationPattern = [50, 30, 50];
+            const vibrationPattern = [10];
             // Use the custom pattern for haptic feedback
             navigator.vibrate(vibrationPattern);
         } else {
