@@ -912,7 +912,11 @@
             // Create a custom vibration pattern (sharp pulse)
             const vibrationPattern = [6];
             // Use the custom pattern for haptic feedback
-            navigator.vibrate(vibrationPattern);
+          navigator.vibrate([0, 10, 0], {
+            frequency: 200,
+            amplitude: 1
+          });
+
         } else {
             // Haptic feedback is not supported
             console.log('Haptic feedback is not supported in this browser.');
