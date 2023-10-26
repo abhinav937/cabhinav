@@ -2413,7 +2413,11 @@ img.bg {
 /* Style the carousel images */
 .project-item .carousel-inner {
   position: relative;
-  transition: opacity 0.5s ease-in-out; /* Add a fade animation */
+  transition: transform 0.5s ease-in-out; /* Add a fade animation */
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
 }
 
 .project-item .carousel-item {
@@ -2468,3 +2472,8 @@ img.bg {
 .carousel-control-next {
   right: 10px;
 }
+
+.carousel.pointer-event {
+  touch-action: pan-y;
+}
+
