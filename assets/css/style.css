@@ -41,7 +41,7 @@
   --jet: hsl(0, 0%, 10%);
   --onyx: hsl(240, 1%, 12%);
   --eerie-black-1: #201f1f;
-  --eerie-black-2: hsl(240, 2%, 9%);
+  --eerie-black-2: hsl(0, 0%, 5%);
   --smoky-black: #201f1f;
   --white-1: hsl(0, 0%, 100%);
   --white-2: hsl(0, 0%, 98%);
@@ -343,7 +343,7 @@ main {
 
 .sidebar {
   margin-bottom: 15px;
-  max-height: 112px;
+  max-height: 120px;
   overflow: hidden;
   transition: var(--transition-2);
 }
