@@ -2502,19 +2502,19 @@ img.bg {
   outline: 0;
   border: none;
   cursor: pointer;
-  height: 39px;
-  padding: 6px 11px;
-  border-radius: 50px;
-  background-color: rgba(15, 20, 25, 0.75);
+  height: 40px;
+  padding: 6px 14px;
+  border-radius: 16px;
+  background-color: hsl(0, 0%, 5%);
   color: #ffffff;
   font-size: 16px;
   font-weight: 500;
   position: absolute;
   top: 13%; /* Adjust as needed */
   left: 85%; /* Adjust as needed */
-  transform: translate(-50%, -50%);
+  transform: translate(-49%, -35%);
   z-index: 2; /* Place the button above the image */
-  backdrop-filter: blur(3px)
+  backdrop-filter: blur(2px)
 }
 
 .overlay-button:hover {
