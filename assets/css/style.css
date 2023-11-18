@@ -2394,6 +2394,7 @@ img.bg {
 .project-item .carousel {
   position: relative;
   overflow: hidden;
+  border-radius: 15px;
   /* Hide overflow to clip sliding images */
 }
 
@@ -2421,7 +2422,7 @@ img.bg {
 /* Style the carousel images */
 .project-item .carousel-inner {
   position: relative;
-  transition: transform 0.5s ease-in-out;
+  transition: transform 1s ease-in-out;
   /* Add a fade animation */
 }
 
@@ -2443,7 +2444,13 @@ img.bg {
   width: 100%;
   height: auto;
   border-radius: 15px;
+  object-fit: cover;
+  transition: transform 1s ease-in-out;
   /* Optional: Add rounded corners to images */
+}
+
+.project-item .carousel-item img:hover {
+  transform: scale(1.05); /* Increase the scale on hover */
 }
 
 /* Style the carousel controls */
