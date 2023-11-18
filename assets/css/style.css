@@ -2449,9 +2449,11 @@ img.bg {
   /* Optional: Add rounded corners to images */
 }
 
-.project-item .carousel-item img:hover {
-  transform: scale(1.05); /* Increase the scale on hover */
-}
+/* Uncomment for zoom when hovering */
+
+/* .project-item .carousel-item img:hover {
+  transform: scale(1.05); 
+} */
 
 /* Style the carousel controls */
 .carousel-control-prev,
@@ -2493,4 +2495,28 @@ img.bg {
 
 .carousel.pointer-event {
   touch-action: pan-y;
+}
+
+.overlay-button {
+  display: inline-block;
+  outline: 0;
+  border: none;
+  cursor: pointer;
+  height: 39px;
+  padding: 6px 11px;
+  border-radius: 50px;
+  background-color: rgba(15, 20, 25, 0.75);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  position: absolute;
+  top: 13%; /* Adjust as needed */
+  left: 85%; /* Adjust as needed */
+  transform: translate(-50%, -50%);
+  z-index: 2; /* Place the button above the image */
+  backdrop-filter: blur(3px)
+}
+
+.overlay-button:hover {
+  background-color: rgba(39, 44, 48, 0.75);
 }
