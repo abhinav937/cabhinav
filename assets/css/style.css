@@ -1443,7 +1443,7 @@ textarea.form-input::-webkit-resizer {
    * #REUSED STYLE
    */
 
-   
+
   .sidebar,
   article {
     width: 520px;
@@ -2498,25 +2498,31 @@ img.bg {
 }
 
 .overlay-button {
-  display: inline-block;
+  display: block;
   outline: 0;
   border: none;
   cursor: pointer;
-  height: 40px;
-  padding: 6px 14px;
-  border-radius: 16px;
-  background-color: hsl(0, 0%, 5%);
+  height: 20px;
+  padding-top: 3px;
+  padding-left: 5px;
+  padding-right: 4px;
+  border-radius: 4.5px;
+  background-color: rgba(39, 44, 48, 0.75);
   color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 200;
   position: absolute;
-  top: 13%; /* Adjust as needed */
-  left: 85%; /* Adjust as needed */
-  transform: translate(-49%, -35%);
-  z-index: 2; /* Place the button above the image */
-  backdrop-filter: blur(2px)
+  bottom: 1px;
+  /* Adjust as needed */
+  left: 37px;
+  /* Adjust as needed */
+  transform: translate(-35%, -60%);
+  z-index: 2;
+  /* Place the button above the image */
+  backdrop-filter: blur(2%);
 }
 
+
 .overlay-button:hover {
-  background-color: rgba(39, 44, 48, 0.75);
+  background-color: rgba(48, 49, 49, 0.686);
 }
