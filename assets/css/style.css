@@ -2398,27 +2398,6 @@ img.bg {
   /* Hide overflow to clip sliding images */
 }
 
-/* Style the carousel indicators */
-.project-item .carousel-indicators {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  margin: 0;
-}
-
-.project-item .carousel-indicators button {
-  background-color: transparent;
-  border: none;
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
 /* Style the carousel images */
 .project-item .carousel-inner {
   position: relative;
@@ -2462,7 +2441,6 @@ img.bg {
   top: 50%;
   transform: translateY(-50%);
   background-color: transparent;
-  /* Set the background color to transparent */
   border: none;
   width: 30px;
   height: 30px;
@@ -2522,6 +2500,12 @@ img.bg {
   backdrop-filter: blur(2%);
 }
 
+@media (max-width: 767px) {
+  /* For mobile displays with a maximum width of 767px */
+  .overlay-button {
+    font-weight: 300;
+  }
+}
 
 .overlay-button:hover {
   background-color: rgba(48, 49, 49, 0.686);
