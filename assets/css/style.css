@@ -35,6 +35,9 @@
   --text-gradient-yellow: linear-gradient(to right,
       hsl(203, 100%, 72%),
       hsl(187, 100%, 68%));
+  --bg-gradient-blue: linear-gradient(10deg,
+      hsla(202, 100%, 71%, 0.251) 0%,
+      hsla(180, 3%, 31%, 0) 59.86%), hsl(240, 2%, 13%);
 
   /* solid */
 
@@ -1970,8 +1973,7 @@ textarea.form-input::-webkit-resizer {
   /* service */
 
   .service-list {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 25px;
+    display: inline-flex;
   }
 
   /* testimonials */
@@ -2501,6 +2503,7 @@ img.bg {
 }
 
 @media (max-width: 767px) {
+
   /* For mobile displays with a maximum width of 767px */
   .overlay-button {
     font-weight: 300;
@@ -2509,4 +2512,94 @@ img.bg {
 
 .overlay-button:hover {
   background-color: rgba(48, 49, 49, 0.686);
+}
+
+/* Default styles for desktops */
+.tweet-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Media query for tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .tweet-container {
+    max-width: 768px;
+    /* Set the max-width for tablets */
+  }
+}
+
+/* Media query for mobile phones */
+@media (max-width: 767px) {
+  .tweet-container {
+    max-width: 300px
+      /* Set the max-width for mobile phones */
+  }
+}
+
+/* Cards */
+
+/* this card is inspired form this - https://georgefrancis.dev/ */
+.card {
+  --border-radius: 0.75rem;
+  --primary-color: hwb(188deg 22.64% 17.64%);
+  --secondary-color: #17161b;
+  width: 250px;
+  font-family: "Arial";
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  background: #161617;
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
+  position: relative;
+  margin: 0 auto;
+}
+
+
+.card>*+* {
+  margin-top: 1.1em;
+}
+
+.card .card__content {
+  padding-top: 10px;
+  color: #fff;
+  font-size: 15px;
+}
+
+.card .card__title {
+  padding-bottom: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: rgb(252, 252, 252);
+}
+
+.card .card__arrow {
+  position: absolute;
+  background: var(--bg-gradient-blue);
+  padding: 0.4rem;
+  border-top-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  bottom: 0;
+  right: 0;
+  transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card svg {
+  transition: 0.2s;
+}
+
+/* hover */
+.card:hover .card__title {
+  color: hwb(188deg 22.64% 17.64%);
+}
+
+.card:hover .card__arrow {
+  background: var(--text-gradient-yellow)
+}
+
+.card:hover .card__arrow svg {
+  transform: translateX(3px);
 }
