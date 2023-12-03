@@ -59,7 +59,7 @@
    */
 
   /* font-family */
-  font-family: 'Google Sans';
+  font-family: Arial, sans-serif;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -161,11 +161,12 @@ textarea {
 }
 
 html {
-  font-family: 'Google Sans';
+  font-family: Arial, sans-serif;
 }
 
 body {
   background: var(--smoky-black);
+  font-family: Arial, sans-serif;
 }
 
 
@@ -2545,7 +2546,6 @@ img.bg {
   --primary-color: hwb(188deg 22.64% 17.64%);
   --secondary-color: #17161b;
   width: 250px;
-  font-family: "Arial";
   padding: 1rem;
   cursor: pointer;
   border-radius: var(--border-radius);
