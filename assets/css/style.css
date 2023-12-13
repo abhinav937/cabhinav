@@ -846,14 +846,14 @@ main {
 /* Media query for screens with a minimum width of 601px and a maximum width of 1200px */
 @media only screen and (min-width: 601px) and (max-width: 1200px) {
   .clients-item img {
-    width: 150px; /* Adjust the width as needed for medium-sized screens */
+    width: 130px; /* Adjust the width as needed for medium-sized screens */
   }
 }
 
 /* Media query for screens with a minimum width of 1201px */
 @media only screen and (min-width: 1201px) {
   .clients-item img {
-    width: 180px; /* Default width for larger screens */
+    width: 150px; /* Default width for larger screens */
   }}
 
 .clients-item img:hover {
