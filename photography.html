@@ -41,8 +41,9 @@
 
 </head>
 
-
+<body>
 <main>
+  <div id="loading_indicator"> </div>
   <div class="main-content">
     <article class="about  active" data-page="about">
       <header>
@@ -96,5 +97,19 @@
   </div>
 
 </main>
+<script>
+  document.onreadystatechange = function () {
+    if (document.readyState !== "complete") {
+      document.querySelector("body").style.visibility = "hidden";
+      document.getElementById("loading_indicator").style.visibility = "visible";
+    } else {
+      setTimeout(() => {
+        document.getElementById("loading_indicator").style.display = "none";
+        document.querySelector("body").style.visibility = "visible";
+      }, 3000)
+    }
+  };
+</script>
+</body>
 
 </html>
