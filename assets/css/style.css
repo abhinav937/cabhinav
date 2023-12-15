@@ -375,7 +375,7 @@ main {
   font-weight: var(--fw-500);
   letter-spacing: -0.25px;
   margin-bottom: 10px;
-  margin-left: 13px;
+  margin-left: -5px;
 }
 
 .info-content .title {
@@ -2627,7 +2627,7 @@ img.bg {
 
 .card :hover img {
   /* filter: grayscale(0); */
-  transform: scale(1.25); /* Adjust the scale factor as needed */
+  transform: scale(1.15); /* Adjust the scale factor as needed */
   transition: transform 0.2s ease-in-out; /* Adjust the duration and timing function as needed */
 }
 
