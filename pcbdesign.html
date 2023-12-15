@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PCB Design /Abhinav C</title>
 
-    <!-- Cards meta data -->
-    <meta name="keywords"
+  <!-- Cards meta data -->
+  <meta name="keywords"
     content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, IIT, Electrical Engineering, EE, Resume, CV, Portfolio" />
   <meta name="description" content="PCB Design" />
 
@@ -56,6 +56,7 @@
 
 <body>
   <main>
+    <div id="loading_indicator"></div>
 
 
     <!--
@@ -72,8 +73,7 @@
         <p>Experienced PCB designer with expertise in KiCad and ongoing proficiency in Altium. Specialized in intricate
           component connections, precise soldering techniques, and comprehensive inspections. Proficient in handling
           0402s and 2mm x 2mm QFN packages. Skilled in utilizing soldering irons, reflow ovens, and hot air stations to
-          ensure flawless connections. Meticulous attention to detail during inspections using a state-of-the-art SMD
-          microscope.</p>
+          ensure flawless connections. Meticulous attention to detail during inspections using SMD microscopes.</p>
       </section>
 
 
@@ -132,7 +132,19 @@
 
 
   </main>
-
+  <script>
+    document.onreadystatechange = function () {
+      if (document.readyState !== "complete") {
+        document.querySelector("body").style.visibility = "hidden";
+        document.getElementById("loading_indicator").style.visibility = "visible";
+      } else {
+        setTimeout(() => {
+          document.getElementById("loading_indicator").style.display = "none";
+          document.querySelector("body").style.visibility = "visible";
+        }, 1000)
+      }
+    };
+  </script>
 
 </body>
 
