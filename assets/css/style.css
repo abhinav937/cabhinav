@@ -831,11 +831,6 @@ main {
   scroll-snap-align: start;
 }
 
-.clients-item img {
-  /* filter: grayscale(1); */
-  transition: var(--transition-1);
-}
-
 /* Media query for screens with a maximum width of 600px */
 @media only screen and (max-width: 600px) {
   .clients-item img {
@@ -860,6 +855,11 @@ main {
   /* filter: grayscale(0); */
   transform: scale(0.95); /* Adjust the scale factor as needed */
   transition: transform 0.3s ease; /* Adjust the duration and timing function as needed */
+}
+
+.clients-item img {
+  /* filter: grayscale(1); */
+  transition: var(--transition-1);
 }
 
 
@@ -2625,6 +2625,13 @@ img.bg {
   transform: translateX(3px);
 }
 
+.card :hover img {
+  /* filter: grayscale(0); */
+  transform: scale(1.25); /* Adjust the scale factor as needed */
+  transition: transform 0.2s ease-in-out; /* Adjust the duration and timing function as needed */
+}
+
+
 @media only screen and (max-width: 600px){
 .bs-carousel-container {
   max-width: 320px; /* Default width for phones */
@@ -2667,3 +2674,8 @@ img.bg {
   }
 }
 
+.zoom-animation :hover img {
+  /* filter: grayscale(0); */
+  transform: scale(1.1); /* Adjust the scale factor as needed */
+  transition: transform 0.2s ease-in-out; /* Adjust the duration and timing function as needed */
+}
