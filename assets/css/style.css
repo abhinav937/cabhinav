@@ -374,7 +374,7 @@ main {
   font-weight: var(--fw-500);
   letter-spacing: -0.25px;
   margin-bottom: 10px;
-  margin-left: -5px;
+  margin-left: 4px;
 }
 
 .info-content .title {
@@ -457,8 +457,8 @@ main {
 .contact-title {
   color: var(--light-gray-70);
   font-size: var(--fs-8);
-  text-transform: uppercase;
   margin-bottom: 2px;
+  font-size: 15px;
 }
 
 .contact-info :is(.contact-link, time, address) {
@@ -833,27 +833,33 @@ main {
 /* Media query for screens with a maximum width of 600px */
 @media only screen and (max-width: 600px) {
   .clients-item img {
-    width: 100px; /* Adjust the width as needed for smaller screens */
+    width: 100px;
+    /* Adjust the width as needed for smaller screens */
   }
 }
 
 /* Media query for screens with a minimum width of 601px and a maximum width of 1200px */
 @media only screen and (min-width: 601px) and (max-width: 1200px) {
   .clients-item img {
-    width: 130px; /* Adjust the width as needed for medium-sized screens */
+    width: 130px;
+    /* Adjust the width as needed for medium-sized screens */
   }
 }
 
 /* Media query for screens with a minimum width of 1201px */
 @media only screen and (min-width: 1201px) {
   .clients-item img {
-    width: 150px; /* Default width for larger screens */
-  }}
+    width: 150px;
+    /* Default width for larger screens */
+  }
+}
 
 .clients-item img:hover {
   /* filter: grayscale(0); */
-  transform: scale(0.95); /* Adjust the scale factor as needed */
-  transition: transform 0.3s ease; /* Adjust the duration and timing function as needed */
+  transform: scale(0.95);
+  /* Adjust the scale factor as needed */
+  transition: transform 0.3s ease;
+  /* Adjust the duration and timing function as needed */
 }
 
 .clients-item img {
@@ -2566,6 +2572,7 @@ img.bg {
   --primary-color: hwb(188deg 22.64% 17.64%);
   --secondary-color: #17161b;
   width: 250px;
+  height: 155px;
   padding: 1rem;
   cursor: pointer;
   border-radius: var(--border-radius);
@@ -2626,28 +2633,34 @@ img.bg {
 
 .card :hover img {
   /* filter: grayscale(0); */
-  transform: scale(1.15); /* Adjust the scale factor as needed */
-  transition: transform 0.2s ease-in-out; /* Adjust the duration and timing function as needed */
+  transform: scale(1.15);
+  /* Adjust the scale factor as needed */
+  transition: transform 0.2s ease-in-out;
+  /* Adjust the duration and timing function as needed */
 }
 
 
-@media only screen and (max-width: 600px){
-.bs-carousel-container {
-  max-width: 320px; /* Default width for phones */
-  margin: auto;
-}}
+@media only screen and (max-width: 600px) {
+  .bs-carousel-container {
+    max-width: 320px;
+    /* Default width for phones */
+    margin: auto;
+  }
+}
 
 @media only screen and (min-width: 601px) and (max-width: 1200px) {
   .bs-carousel-container {
-    max-width: 400px; /* Adjust width for tablets */
+    max-width: 400px;
+    /* Adjust width for tablets */
     margin: auto;
   }
 }
 
 @media only screen and (min-width: 1201px) {
   .bs-carousel-container {
-    max-width: 400px; /* Adjust width for bif screens */
-   margin: auto; 
+    max-width: 400px;
+    /* Adjust width for bif screens */
+    margin: auto;
   }
 }
 
@@ -2667,14 +2680,22 @@ img.bg {
   height: 100px;
   animation: spinIndicator 1s linear infinite;
 }
+
 @keyframes spinIndicator {
   100% {
-     transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
 .zoom-animation :hover img {
   /* filter: grayscale(0); */
-  transform: scale(1.1); /* Adjust the scale factor as needed */
-  transition: transform 0.2s ease-in-out; /* Adjust the duration and timing function as needed */
+  transform: scale(1.1);
+  /* Adjust the scale factor as needed */
+  transition: transform 0.2s ease-in-out;
+  /* Adjust the duration and timing function as needed */
+}
+
+
+body {
+  scroll-behavior: smooth;
 }
