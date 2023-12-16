@@ -882,6 +882,9 @@
       backToTopButton.onclick = function () {
         let scrollTop = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         smoothScrollTo(scrollTop, 0, 300);
+
+        // Trigger sharp haptic feedback when the button is clicked
+        triggerSharpHapticFeedback();
       };
 
       if (!pageSimulator) {
