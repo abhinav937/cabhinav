@@ -63,6 +63,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Material Web Design 3 scripts -->
+  <script type="module" src="./index.html"></script>
+  <script src="./bundle.js"></script>
+
 </head>
 
 <body>
@@ -312,59 +316,13 @@
 
         <section class="projects">
 
-          <ul class="filter-list">
-
-            <li class="filter-item">
-              <button class="active" data-filter-btn>All</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Power</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Embedded</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Analog</button>
-            </li>
-
-          </ul>
-
-          <div class="filter-select-box">
-
-            <button class="filter-select" data-select>
-
-              <div class="select-value" data-selecct-value>Select category</div>
-
-              <div class="select-icon">
-                <ion-icon name="chevron-down"></ion-icon>
-              </div>
-
-            </button>
-
-            <ul class="select-list">
-
-              <li class="select-item">
-                <button data-select-item>All</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Power</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Embedded</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Analog</button>
-              </li>
-
-            </ul>
-
-          </div>
+          <md-chip-set style="padding-bottom: 20px;">
+            <!-- Filter Chips -->
+            <md-filter-chip id="all" label="All" selected class="mdc-chip" elevated></md-filter-chip>
+            <md-filter-chip id="power" label="Power" class="mdc-chip" elevated></md-filter-chip>
+            <md-filter-chip id="embedded" label="Embedded" class="mdc-chip" elevated></md-filter-chip>
+            <md-filter-chip id="analog" label="Analog" class="mdc-chip" elevated></md-filter-chip>
+          </md-chip-set>
 
           <ul class="project-list">
             <!-- Half Bridge Carousel -->
@@ -602,10 +560,8 @@
 
         </section>
 
+
       </article>
-
-
-      </section>
 
       <!--
           - testimonials modal

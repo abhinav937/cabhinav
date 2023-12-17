@@ -9,6 +9,16 @@
   #CUSTOM PROPERTY
 \*-----------------------------------*/
 
+
+/* Material 3 colors */
+
+:root {
+  --md-sys-color-outline: #6f7979;
+  --md-sys-color-on-surface: #353e3e;
+  --md-sys-color-secondary-container: hsl(187, 100%, 68%);
+}
+
+
 :root {
 
   /**
@@ -2704,3 +2714,4 @@ img.bg {
 body {
   scroll-behavior: smooth;
 }
+
