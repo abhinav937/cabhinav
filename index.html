@@ -735,28 +735,10 @@
   -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-  <script>
-    // Function to trigger sharp haptic feedback
-    function triggerSharpHapticFeedback() {
-      // Check if the "vibrate" API is available in the browser
-      if ('vibrate' in navigator) {
-        navigator.vibrate([8]); // Trigger the sharp haptic feedback
-      } else {
-        // Haptic feedback is not supported
-        console.log('Haptic feedback is not supported in this browser.');
-      }
-    }
 
-    // Function to trigger button press haptic feedback
-    function triggerButtonHapticFeedback() {
-      // Check if the "vibrate" API is available in the browser
-      if ('vibrate' in navigator) {
-        navigator.vibrate([5, 450, 5]); // Trigger the button press haptic feedback
-      } else {
-        // Haptic feedback is not supported
-        console.log('Haptic feedback is not supported in this browser.');
-      }
-    }
+
+  <!------------------------------------------- Haptics --------------------------------------->
+  <script>
 
     // Get references to all the buttons in the navigation menu
     const buttons = document.querySelectorAll('.navbar-link');
@@ -772,30 +754,31 @@
     // Add a click event listener to the "Show Contacts" button
     showContactsButton.addEventListener('click', triggerButtonHapticFeedback);
 
+    // Add click event listeners to each filter chip
+    document.getElementById('all').addEventListener('click', triggerlightHapticFeedback);
+    document.getElementById('power').addEventListener('click', triggerlightHapticFeedback);
+    document.getElementById('embedded').addEventListener('click', triggerlightHapticFeedback);
+    document.getElementById('analog').addEventListener('click', triggerlightHapticFeedback);
 
   </script>
+
+  <!------------------------------------------- Scroll to Top feature --------------------------------------->
   <script>
     configObj = {
-      // Your other configuration properties...
-
-      // Example SVG path data
-      "buttonD": "M8 18.568L10.8 21.333 16 16.198 21.2 21.333 24 18.568 16 10.667z",
-      "buttonT": "translate(-1148 -172) translate(832 140) translate(32 32) translate(284)",
-      "shadowSize": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-      "roundnessSize": "12px",
       "buttonDToBottom": "40px",
       "buttonDToRight": "40px",
-      "selectedBackgroundColor": "#54f2cd",
-      "selectedIconColor": "#626a7e",
-      "buttonWidth": "40px",
-      "buttonHeight": "40px",
-      "svgPath": "./assets/icons/up.svg", // Path to your local SVG file
-      "svgWidth": "32px",
-      "svgHeight": "32px"
+      "svgPath": "./assets/icons/m3scroll.svg"
     };
 
     // Set the scroll threshold value (adjust as needed)
     const scrollThreshold = 600;
+
+    // Set the delay before hiding the button after scrolling stops (in milliseconds)
+    const hideDelay = 2000; // 2 seconds
+
+    let isScrolling = false;
+    let hideTimeout;
+    let lastScrollTop = 0;
 
     function createButton(obj, pageSimulator) {
       const body = document.querySelector("body");
@@ -817,7 +800,6 @@
       backToTopButton.style.right = "0px";
       backToTopButton.style.cursor = "pointer";
       backToTopButton.style.textAlign = "center";
-      backToTopButton.style.border = "solid 2px currentColor";
       backToTopButton.innerHTML =
         '<img class="back-to-top-button-img" src="' + obj.svgPath + '" alt="Back to Top" />';
       backToTopButtonImg = document.querySelector(".back-to-top-button-img");
@@ -828,31 +810,58 @@
       backToTopButtonImg.style.height = obj.svgHeight;
       backToTopButton.appendChild(backToTopButtonImg);
 
-      // Additional code to show the button only on mobile screens
-      if (window.innerWidth <= 768 && isScrollPastThreshold()) {
-        backToTopButton.style.display = "block";
-      } else {
-        backToTopButton.style.display = "none";
-      }
+      window.addEventListener("DOMContentLoaded", function () {
+        backToTopButton.style.display = "none"; // Initially hide the button
+      });
 
-      backToTopButton.onclick = function () {
-        let scrollTop = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
-        smoothScrollTo(scrollTop, 0, 300);
+      function handleScroll() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Trigger sharp haptic feedback when the button is clicked
-        triggerSharpHapticFeedback();
-      };
-
-      if (!pageSimulator) {
-        window.onscroll = function () {
-          if (window.innerWidth <= 768 && isScrollPastThreshold()) {
+        if (currentScrollTop > lastScrollTop) {
+          // Scrolling down, hide the button
+          backToTopButton.style.display = "none";
+        } else {
+          // Scrolling up, show the button
+          if (window.innerWidth <= 768) {
             backToTopButton.style.display = "block";
           } else {
             backToTopButton.style.display = "none";
           }
+
+
+          clearTimeout(hideTimeout);
+          hideTimeout = setTimeout(() => {
+            isScrolling = false;
+            hideButtonIfNecessary();
+          }, hideDelay);
+        }
+
+        lastScrollTop = currentScrollTop;
+      }
+
+      function hideButtonIfNecessary() {
+        if (!isScrolling) {
+          backToTopButton.style.display = "none";
+        }
+      }
+
+      backToTopButton.onclick = function () {
+        let scrollTop = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+        smoothScrollTo(scrollTop, 0, 300, () => {
+          // Callback function to hide the button after smooth scroll
+          backToTopButton.style.display = "none";
+        });
+
+        // Trigger sharp haptic feedback when the button is clicked
+        triggerlightHapticFeedback();
+      };
+
+      if (!pageSimulator) {
+        window.onscroll = function () {
+          handleScroll();
         };
       }
-    };
+    }
 
     function isScrollPastThreshold() {
       return (
@@ -861,7 +870,7 @@
       );
     }
 
-    function smoothScrollTo(start, end, duration) {
+    function smoothScrollTo(start, end, duration, callback) {
       let time = 0;
       let current = start;
 
@@ -874,6 +883,10 @@
 
         if (time >= duration || current === end) {
           clearInterval(interval);
+          // Call the callback function after smooth scroll completes
+          if (callback && typeof callback === "function") {
+            callback();
+          }
         }
         current = newScrollTop;
       }, 16);
@@ -889,6 +902,7 @@
   </script>
 
 
+  <!-------------------------------END--------- Scroll to Top feature --------------------------------------->
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
