@@ -13,9 +13,11 @@
 /* Material 3 colors */
 
 :root {
+  --md-suggestion-chip-label-text-color: #FFFFFF;
   --md-sys-color-outline: #6f7979;
-  --md-sys-color-on-surface: #353e3e;
-  --md-sys-color-secondary-container: hsl(187, 100%, 68%);
+  --md-sys-color-on-surface: #191c1c;
+  --md-sys-color-secondary-container: #cce8e7;
+  --md-suggestion-chip-icon-size: 20px;
 }
 
 

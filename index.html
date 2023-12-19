@@ -66,6 +66,8 @@
   <!-- Material Web Design 3 scripts -->
   <script type="module" src="./index.html"></script>
   <script src="./bundle.js"></script>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 </head>
 
@@ -104,73 +106,20 @@
       </div>
 
       <div class="sidebar-info_more">
-
         <div class="separator"></div>
-
-        <ul class="contacts-list">
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <a href="mailto:abhinavchinnusamy@gmail.com"><ion-icon name="mail-outline"
-                  style="color: white;"></ion-icon></a>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
-
-              <a href="mailto:abhinavchinnusamy@gmail.com" class="contact-link">abhinavchinnusamy@gmail.com</a>
-            </div>
-
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <a href="https://x.com/intent/follow?screen_name=abhinav_937"><img src="./assets/icons/x-social.png"
-                  width="32px" height="auto" style="border: 1px; border-radius: 7px;"></a>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">𝕏 (Twitter)</p>
-
-              <a href="https://x.com/intent/follow?screen_name=abhinav_937" class="contact-link">abhinav_937</a>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <a href="https://in.linkedin.com/in/abhinavchinnusamy"><img src="./assets/icons/ln.png" width="30px"
-                  height="auto" style="border: 1px; border-radius: 7px;"></a>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">LinkendIn</p>
-
-              <a href="https://in.linkedin.com/in/abhinavchinnusamy" class="contact-link">Abhinav C</a>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-            <div class="icon-box">
-              <a href="https://github.com/abhinav937"><ion-icon name="logo-github" style="color: white;"></ion-icon></a>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">github</p>
-
-              <div class="social-container">
-                <a href="https://github.com/abhinav937" class="contact-link">abhinav937</a>
-              </div>
-            </div>
-          </li>
-
-
-        </ul>
+        <md-chip-set>
+          <md-suggestion-chip label="Email" href="mailto:abhinavchinnusamy@gmail.com" target="_blank"><ion-icon
+              name="mail" slot="icon" style="color: white; margin-right: 6px;"></ion-icon></md-suggestion-chip>
+          <md-suggestion-chip label="Twitter" href="https://x.com/intent/follow?screen_name=abhinav_937"
+            target="_blank">
+            <img slot="icon" src="./assets/icons/x-white.svg" style="margin-right: 6px; width: 20px;">
+          </md-suggestion-chip>
+          <md-suggestion-chip label="LinkedIn" href="https://in.linkedin.com/in/abhinavchinnusamy"
+            target="_blank"><ion-icon name="logo-linkedin" slot="icon"
+              style="color: white; margin-right: 6px;"></ion-icon></md-suggestion-chip>
+          <md-suggestion-chip label="github" href="https://github.com/abhinav937" target="_blank"><ion-icon
+              name="logo-github" slot="icon" style="color: white; margin-right: 6px;"></ion-icon></md-suggestion-chip>
+        </md-chip-set>
 
       </div>
 
