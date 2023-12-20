@@ -97,17 +97,17 @@
           <p class="title">EE Undergrad</p>
         </div>
 
-        <button class="info_more-btn" data-sidebar-btn>
-          <span>Connect Here</span>
-
-          <ion-icon name="caret-down-circle-outline"></ion-icon>
-        </button>
+        <div class="info_more-btn" data-sidebar-btn>
+          <md-icon-button toggle selected>
+            <md-icon>expand_less</md-icon>
+            <md-icon slot="selected">expand_more</md-icon>
+          </md-icon-button>
+        </div>
 
       </div>
-
-      <div class="sidebar-info_more">
-        <div class="separator"></div>
-        <md-chip-set>
+      <div class="separator"></div>
+      <div class="sidebar-info_more md-phone-slidebar">
+        <md-chip-set class="md-phone-lists">
           <md-suggestion-chip label="Email" href="mailto:abhinavchinnusamy@gmail.com" target="_blank"><ion-icon
               name="mail" slot="icon" style="color: white; margin-right: 6px;"></ion-icon></md-suggestion-chip>
           <md-suggestion-chip label="Twitter" href="https://x.com/intent/follow?screen_name=abhinav_937"

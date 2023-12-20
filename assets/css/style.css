@@ -13,6 +13,10 @@
 /* Material 3 colors */
 
 :root {
+  --md-sys-color-primary:#cce8e7;
+  --md-sys-color-secondary:#cce8e7;
+  --md-icon-button-icon-color:#cce8e7;
+  --md-filled-icon-button-selected-container-color:#cce8e7;
   --md-suggestion-chip-label-text-color: #d6d0d0;
   --md-sys-color-outline: #6f7979;
   --md-sys-color-on-surface: #191c1c;
@@ -407,7 +411,7 @@ main {
   font-size: 13px;
   color: var(--white-1);
   background: var(--vegas-gold);
-  padding: 10px;
+  padding: 0px;
   box-shadow: var(--shadow-2);
   transition: var(--transition-1);
   z-index: 1;
@@ -421,11 +425,6 @@ main {
   background: var(--bg-gradient-jet);
   transition: var(--transition-1);
   z-index: -1;
-}
-
-.info_more-btn:hover,
-.info_more-btn:focus {
-  background: var(--bg-gradient-yellow-1);
 }
 
 .info_more-btn:hover::before,
@@ -1559,7 +1558,7 @@ textarea.form-input::-webkit-resizer {
   .info_more-btn {
     top: -30px;
     right: -30px;
-    padding: 10px 15px;
+    padding: 5px 5px;
   }
 
   .info_more-btn span {
@@ -2649,7 +2648,7 @@ img.bg {
 }
 
 .card:hover .card__arrow svg {
-  transform: translateX(3px);
+  transform: translateX(2px);
 }
 
 .card:hover img {
@@ -2718,3 +2717,34 @@ body {
   scroll-behavior: smooth;
 }
 
+@media (max-width: 1250px) {
+  .md-phone-slidebar {
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 11 */
+  }
+
+  .md-phone-slidebar::-webkit-scrollbar {
+    display: none; /* Hide the scrollbar for WebKit browsers */
+  }
+
+  .md-phone-lists {
+    flex: 0 0 auto;
+    margin-right: 10px;
+    margin-top: 5px; /* Add margin-top to bring down the chips */
+  }
+}
+@media (min-width: 1250px) {
+
+  .md-phone-lists {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    justify-content: center;
+    margin-top: 0;
+    grid-gap: 10px; 
+  }
+
+}
