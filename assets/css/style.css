@@ -2748,3 +2748,126 @@ body {
   }
 
 }
+
+/* Navigation bar-dark */
+
+/* Auto layout */
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px 8px;
+  gap: 8px;
+  position: fixed; /* Make the navigation bar sticky for screens less than 580px */
+  bottom: 0;
+  left: 0;
+  width: 100%;    /* Occupy full width */
+  /* M3/sys/dark/surface-container */
+  background: #0d0d0d;
+  z-index: 5;
+  transition: transform 0.3s ease-out;
+}
+
+@media (max-width: 580px){
+.nav-bar-hidden {
+  transform: translateY(100%); /* Move the navigation bar off-screen */
+}}
+
+
+/* Media query for screens larger than 580px */
+@media (min-width: 581px) {
+  .nav-bar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-top: 5%;
+    width: 8%;
+    /* Adjust as needed */
+  }
+
+  .segment {
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align icons to the top */
+  }
+}
+/* Segment 1 - Off State */
+
+/* Auto layout */
+.segment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0px 16px;
+  gap: 4px;
+  width: 100%;
+  height: 80px;
+}
+
+/* icon-container */
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+
+  max-width:64px;
+  max-height: 32px;
+
+  /* M3/sys/dark/secondary-container */
+  background: #0d0d0d;
+  border-radius: 16px;
+}
+
+/* Change background color on hover */
+.icon-container:hover {
+  background: #201f1f;
+}
+
+/* .segment.active-state .icon-container {
+  background: #4A4458;
+} */
+
+/* state-layer */
+.state-layer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 20px;
+
+  width: 64px;
+  height: 32px;
+}
+
+/* label-text */
+.label-text {
+  width: 119.33px;
+  height: 16px;
+
+  /* M3/label/medium - prominent */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+  text-align: center;
+  letter-spacing: 0.5px;
+
+  /* M3/sys/dark/on-surface */
+  color: #e6e0e983;
+  /* #E6E0E9 */
+}
+
+.filled {
+  font-variation-settings:
+  'FILL' 1
+}
+
+.notfilled {
+  font-variation-settings:
+  'FILL' 0
+}

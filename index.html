@@ -39,7 +39,7 @@
   </meta>
 
 
-
+  <!-- X user id: 977864508453437446 -->
 
   <!--
     - favicon
@@ -68,6 +68,8 @@
   <script src="./bundle.js"></script>
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 </head>
 
@@ -120,13 +122,20 @@
           <md-suggestion-chip label="github" href="https://github.com/abhinav937" target="_blank"><ion-icon
               name="logo-github" slot="icon" style="color: white; margin-right: 6px;"></ion-icon></md-suggestion-chip>
         </md-chip-set>
-
       </div>
 
+      <div style="padding-top: 15px;">
+        <md-filled-tonal-button style="padding-left: 12px; padding-right: 12px;
+            --md-sys-color-secondary-container: #cce8e7;
+            --md-sys-color-on-secondary-container: #051F1F;"
+          href="https://twitter.com/messages/compose?recipient_id=977864508453437446" target="_blank">
+          DM Me
+          <svg slot="icon" viewBox="0 0 48 48">
+            <path d="M6 40V8l38 16Zm3-4.65L36.2 24 9 12.5v8.4L21.1 24 9 27Zm0 0V12.5 27Z" />
+          </svg>
+        </md-filled-tonal-button>
+      </div>
     </aside>
-
-
-
 
 
     <!--
@@ -135,35 +144,47 @@
 
     <div class="main-content">
 
-      <!--
-        - #NAVBAR
-      -->
+      <!--- #NAVBAR --->
+      <nav class="nav-bar">
+        <button class="segment" id="about1" data-nav-link onclick="toggleContent('about', this)">
+          <div class="icon-container">
+            <div class="state-layer">
+              <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
+                home
+              </span>
+            </div>
+          </div>
+          <div class="label-text">About</div>
+        </button>
 
-      <nav class="navbar">
+        <button class="segment" data-nav-link onclick="toggleContent('resume', this)">
+          <div class="icon-container">
+            <div class="state-layer">
+              <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
+                work
+              </span>
+            </div>
+          </div>
+          <div class="label-text">Resume</div>
+        </button>
 
-        <ul class="navbar-list">
-
-          <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link>About</button>
-          </li>
-
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Resume</button>
-          </li>
-
-        </ul>
-
+        <button class="segment" data-nav-link onclick="toggleContent('contact', this)">
+          <div class="icon-container">
+            <div class="state-layer">
+              <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
+                group
+              </span>
+            </div>
+          </div>
+          <div class="label-text">Contact</div>
+        </button>
       </nav>
-
-
-
-
 
       <!--
         - #ABOUT
       -->
 
-      <article class="about  active" data-page="about">
+      <article class="about active" id="about" data-page="about">
 
         <header>
           <h2 class="h2 article-title">About me</h2>
@@ -539,16 +560,17 @@
         - #RESUME
       -->
 
-      <article class="resume" data-page="resume">
+      <article class="resume" data-page="resume" id="resume">
 
         <header>
           <h2 class="h2 article-title" style="padding-right: 10px;">Resume</h2>
-          <a href="https://drive.google.com/uc?export=download&id=1AlpMCooUBHNveIaMxk0JxPdqBm8EFwnd" download="Abhinav_CV.pdf"
-            class="download-icon">
+          <a href="https://drive.google.com/uc?export=download&id=1AlpMCooUBHNveIaMxk0JxPdqBm8EFwnd"
+            download="Abhinav_CV.pdf" class="download-icon">
             <div style="margin-left: 0 auto">
-            <md-filled-tonal-icon-button>
-              <md-icon>download</md-icon>
-            </md-filled-tonal-icon-button></div>
+              <md-filled-tonal-icon-button>
+                <md-icon>download</md-icon>
+              </md-filled-tonal-icon-button>
+            </div>
           </a>
         </header>
         <section class="timeline">
@@ -689,7 +711,7 @@
   <script>
 
     // Get references to all the buttons in the navigation menu
-    const buttons = document.querySelectorAll('.navbar-link');
+    const buttons = document.querySelectorAll('.segment');
 
     // Add a click event listener to each button in the navigation menu
     buttons.forEach(button => {
@@ -711,7 +733,7 @@
   </script>
 
   <!------------------------------------------- Scroll to Top feature --------------------------------------->
-  <script>
+  <!-- <script>
     configObj = {
       "buttonDToBottom": "40px",
       "buttonDToRight": "40px",
@@ -847,10 +869,44 @@
     document.addEventListener("DOMContentLoaded", function () {
       createButton(configObj, null);
     });
-  </script>
+  </script> -->
+ <!-------------------------------END--------- Scroll to Top feature --------------------------------------->
 
 
-  <!-------------------------------END--------- Scroll to Top feature --------------------------------------->
+
+<!-- -------------------------------Scroll to hide the nav bar --------------------------------------->
+<script>
+
+    // Get the navigation bar element
+    const navBar = document.querySelector('.nav-bar');
+
+    // Variable to store the previous scroll position
+    let prevScrollPos = window.scrollY || document.documentElement.scrollTop;
+
+    // Function to handle the scroll event
+    function handleScroll() {
+      // Get the current scroll position
+      const currentScrollPos = window.scrollY || document.documentElement.scrollTop;
+
+      // Check the scroll direction
+      if (prevScrollPos > currentScrollPos) {
+        // Scrolling up, show the navigation bar
+        navBar.classList.remove('nav-bar-hidden');
+      } else {
+        // Scrolling down, hide the navigation bar
+        navBar.classList.add('nav-bar-hidden');
+      }
+
+      // Update the previous scroll position
+      prevScrollPos = currentScrollPos;
+    }
+
+    // Attach the handleScroll function to the scroll event
+    window.addEventListener('scroll', handleScroll);
+</script>
+
+
+ 
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
