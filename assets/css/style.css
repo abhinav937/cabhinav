@@ -2777,7 +2777,9 @@ body {
   width: 100%;
   /* Occupy full width */
   /* M3/sys/dark/surface-container */
-  background: #0d0d0d;
+  /* background: #0d0d0d; */
+  background: hsla(240, 1%, 17%, 0.7);
+  backdrop-filter: blur(10px);
   z-index: 5;
   transition: transform 0.3s ease-out;
 }
@@ -2845,13 +2847,13 @@ body {
   max-height: 32px;
 
   /* M3/sys/dark/secondary-container */
-  background: #0d0d0d;
+  background: hsl(240, 1%, 17%, 0.7);
   border-radius: 16px;
 }
 
 /* Change background color on hover */
 .icon-container:hover {
-  background: #201f1f;
+  background: #6f7979;
 }
 
 /* .segment.active-state .icon-container {
