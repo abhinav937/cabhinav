@@ -22,6 +22,9 @@
   --md-sys-color-on-surface: #191c1c;
   --md-sys-color-secondary-container: #cce8e7;
   --md-suggestion-chip-icon-size: 20px;
+  --md-list-container-color: #0d0d0d;
+  --md-list-item-label-text-color: #ffffff;
+  --md-list-item-supporting-text-color: #cce8e7;
 }
 
 
