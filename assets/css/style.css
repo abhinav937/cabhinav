@@ -13,10 +13,10 @@
 /* Material 3 colors */
 
 :root {
-  --md-sys-color-primary:#cce8e7;
-  --md-sys-color-secondary:#cce8e7;
-  --md-icon-button-icon-color:#cce8e7;
-  --md-filled-icon-button-selected-container-color:#cce8e7;
+  --md-sys-color-primary: #cce8e7;
+  --md-sys-color-secondary: #cce8e7;
+  --md-icon-button-icon-color: #cce8e7;
+  --md-filled-icon-button-selected-container-color: #cce8e7;
   --md-suggestion-chip-label-text-color: #d6d0d0;
   --md-sys-color-outline: #6f7979;
   --md-sys-color-on-surface: #191c1c;
@@ -2095,6 +2095,7 @@ textarea.form-input::-webkit-resizer {
   .sidebar,
   article {
     width: auto;
+    margin-top: 40px;
   }
 
   article {
@@ -2593,13 +2594,16 @@ img.bg {
 }
 
 .card img {
-  width: 100%; /* Set the image width to 100% of the card */
-  height: 30%; /* Set the image height to 40% of the card */
-  object-fit: cover; /* Maintain aspect ratio and cover the entire space */
+  width: 100%;
+  /* Set the image width to 100% of the card */
+  height: 30%;
+  /* Set the image height to 40% of the card */
+  object-fit: cover;
+  /* Maintain aspect ratio and cover the entire space */
   border-radius: var(--border-radius);
 }
 
-.card > * + * {
+.card>*+* {
   margin-top: 1.1em;
 }
 
@@ -2723,28 +2727,33 @@ body {
     overflow-x: auto;
     white-space: nowrap;
     display: flex;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 11 */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 11 */
   }
 
   .md-phone-slidebar::-webkit-scrollbar {
-    display: none; /* Hide the scrollbar for WebKit browsers */
+    display: none;
+    /* Hide the scrollbar for WebKit browsers */
   }
 
   .md-phone-lists {
     flex: 0 0 auto;
     margin-right: 10px;
-    margin-top: 5px; /* Add margin-top to bring down the chips */
+    margin-top: 5px;
+    /* Add margin-top to bring down the chips */
   }
 }
+
 @media (min-width: 1250px) {
 
   .md-phone-lists {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr);
     justify-content: center;
     margin-top: 0;
-    grid-gap: 10px; 
+    grid-gap: 10px;
   }
 
 }
@@ -2758,39 +2767,39 @@ body {
   align-items: flex-start;
   padding: 0px 8px;
   gap: 8px;
-  position: fixed; /* Make the navigation bar sticky for screens less than 580px */
+  position: fixed;
+  /* Make the navigation bar sticky for screens less than 580px */
   bottom: 0;
   left: 0;
-  width: 100%;    /* Occupy full width */
+  width: 100%;
+  /* Occupy full width */
   /* M3/sys/dark/surface-container */
   background: #0d0d0d;
   z-index: 5;
   transition: transform 0.3s ease-out;
 }
 
-@media (max-width: 580px){
-.nav-bar-hidden {
-  transform: translateY(100%); /* Move the navigation bar off-screen */
-}}
+@media (max-width: 1250px) {
+  .nav-bar-hidden {
+    transform: translateY(100%);
+    /* Move the navigation bar off-screen */
+  }
+}
 
 
 /* Media query for screens larger than 580px */
-@media (min-width: 581px) {
+@media (min-width: 1250px) {
   .nav-bar {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding-top: 5%;
-    width: 8%;
-    /* Adjust as needed */
-  }
-
-  .segment {
-    flex-direction: column;
-    align-items: flex-start;
-    /* Align icons to the top */
+    flex-direction: row;
+    width: 100%;
+    max-height: 50px;
+    padding-bottom: 75px;
+    top: 0;
+    padding-left: calc(39vw)
   }
 }
+
 /* Segment 1 - Off State */
 
 /* Auto layout */
@@ -2805,6 +2814,22 @@ body {
   height: 80px;
 }
 
+/* Media query for screens larger than 1250px */
+@media (min-width: 1250px) {
+  .segment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 5%;
+    height: 80px;
+    padding-right: 60px;
+    padding-left: 60px;
+  }
+}
+
+
 /* icon-container */
 .icon-container {
   display: flex;
@@ -2813,7 +2838,7 @@ body {
   align-items: center;
   padding: 0px;
 
-  max-width:64px;
+  max-width: 64px;
   max-height: 32px;
 
   /* M3/sys/dark/secondary-container */
@@ -2837,7 +2862,6 @@ body {
   justify-content: center;
   align-items: center;
   padding: 4px 20px;
-
   width: 64px;
   height: 32px;
 }
@@ -2864,10 +2888,10 @@ body {
 
 .filled {
   font-variation-settings:
-  'FILL' 1
+    'FILL' 1
 }
 
 .notfilled {
   font-variation-settings:
-  'FILL' 0
+    'FILL' 0
 }
