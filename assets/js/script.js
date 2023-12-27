@@ -251,5 +251,3 @@ function toggleContent(id, button) {
     activeContentId = id;
   }
 }
-
-

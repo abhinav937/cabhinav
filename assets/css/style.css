@@ -17,14 +17,14 @@
   --md-sys-color-secondary: #cce8e7;
   --md-icon-button-icon-color: #cce8e7;
   --md-filled-icon-button-selected-container-color: #cce8e7;
-  --md-suggestion-chip-label-text-color: #d6d0d0;
-  --md-sys-color-outline: #6f7979;
+  --md-sys-color-outline: #cce8e7;
   --md-sys-color-on-surface: #191c1c;
   --md-sys-color-secondary-container: #cce8e7;
-  --md-suggestion-chip-icon-size: 20px;
-  --md-list-container-color: #0d0d0d;
+  --md-suggestion-chip-icon-size: 24px;
+  --md-list-container-color: #201f1f;
   --md-list-item-label-text-color: #ffffff;
   --md-list-item-supporting-text-color: #cce8e7;
+  --md-suggestion-chip-label-text-color: #959090;
 }
 
 
@@ -63,8 +63,8 @@
   --jet: hsl(0, 0%, 10%);
   --onyx: hsl(240, 1%, 12%);
   --eerie-black-1: #201f1f;
-  --eerie-black-2: hsl(0, 0%, 5%);
-  --smoky-black: #201f1f;
+  --eerie-black-2: #201f1f;
+  --smoky-black: hsl(0, 0%, 5%);
   --white-1: hsl(0, 0%, 100%);
   --white-2: hsl(0, 0%, 98%);
   --orange-yellow-crayola: hwb(166 34% 5%);
@@ -2778,7 +2778,7 @@ body {
   /* Occupy full width */
   /* M3/sys/dark/surface-container */
   /* background: #0d0d0d; */
-  background: hsla(240, 1%, 17%, 0.7);
+  background: #0d0d0d;
   backdrop-filter: blur(10px);
   z-index: 5;
   transition: transform 0.3s ease-out;
