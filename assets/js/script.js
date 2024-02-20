@@ -159,3 +159,107 @@ for (let i = 0; i < navigationLinks.length; i++) {
 }
 
 
+<<<<<<< Updated upstream
+=======
+  function deselectAll() {
+      elements.forEach(element => element.selected = false);
+  }
+
+  elements.forEach(element => {
+      element.addEventListener('click', () => {
+          deselectAll();
+          element.selected = true;
+          const clickedId = element.id;
+          const items = document.querySelectorAll('.project-item');
+          items.forEach(item => {
+              if (clickedId === 'all' || item.dataset.category === clickedId) {
+                  item.style.display = 'block';
+              } else {
+                  item.style.display = 'none';
+              }
+          });
+      });
+  });
+}
+
+// Call setupFilterLogic when the DOM is ready
+setupFilterLogic();setupFilterLogic();
+
+
+
+// Material 3 navbar
+
+var activeContentId = 'about'; // Set the default active section
+
+// Initialize the active state for the default section
+(function initializeActiveState() {
+  var initialActiveButton = document.getElementById('about1'); // Target using data-nav-link attribute
+  if (initialActiveButton) {
+    initialActiveButton.querySelector('.icon-container').style.background = '#475959c6';
+    initialActiveButton.querySelector('.label-text').style.fontWeight  = '600';
+    initialActiveButton.querySelector('.label-text').style.color  = '#E6E0E9';
+    initialActiveButton.querySelector('.material-symbols-rounded').style.color  = '#FFFFFF';
+    initialActiveButton.querySelector('.material-symbols-rounded').classList.add('filled');
+    // Assuming you have a function to display the initial content
+    displayInitialContent('about');
+  }
+})();
+
+function toggleContent(id, button) {
+  console.log(id, activeContentId);
+  console.log(button, id)
+  // Check if the clicked button is already active
+  var isActiveButton = activeContentId === id;
+  console.log(isActiveButton);
+
+  // Hide the currently active content if the button is not already active
+  if ((!isActiveButton && activeContentId !== null)) {
+    var activeContent = document.getElementById(activeContentId);
+    if (activeContent) {
+      activeContent.style.display = 'none';
+    }
+  }
+
+
+  // Display the selected content section
+  var content = document.getElementById(id);
+  if (content) {
+    isActiveButton = true
+    content.style.display = 'block';
+  }
+
+  // Deactivate all buttons and reset icon container backgrounds
+  document.querySelectorAll('.segment').forEach(function (btn) {
+    btn.classList.remove('active');
+    btn.querySelector('.icon-container').style.background = ''; // Reset background
+    btn.querySelector('.label-text').style.fontWeight  = ''; // Reset background
+    btn.querySelector('.label-text').style.color  = ''; // Reset background
+    btn.querySelector('.material-symbols-rounded').style.color  = 'rgba(255, 255, 255, 0.472)'; // Reset background
+    btn.querySelector('.material-symbols-rounded').classList.remove('filled'); // Remove 'filled' class
+  });
+
+  // Activate the clicked button and apply the active icon container background
+  if (isActiveButton) {
+    console.log(isActiveButton);
+    button.classList.add('active');
+    button.querySelector('.icon-container').style.background = '#475959c6';
+    button.querySelector('.label-text').style.fontWeight  = '600';
+    button.querySelector('.label-text').style.color  = '#E6E0E9';
+    button.querySelector('.material-symbols-rounded').style.color  = '#FFFFFF';
+    button.querySelector('.material-symbols-rounded').classList.add('filled');
+    activeContentId = id;
+  }
+}
+
+
+// Get a reference to the progress element
+const progressElement = document.getElementById('progress');
+
+// Show the progress element
+progressElement.style.display = 'block'; // Or remove any existing 'display: none'
+
+// Hide the progress element after 3 seconds
+setTimeout(() => {
+  progressElement.style.display = 'none'; // Or set any desired hiding method
+}, 3000); // Delay in milliseconds
+>>>>>>> Stashed changes

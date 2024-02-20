@@ -11,6 +11,47 @@
   #CUSTOM PROPERTY
 \*-----------------------------------*/
 
+<<<<<<< Updated upstream
+=======
+
+/* Material 3 colors */
+
+:root {
+  --md-sys-color-primary: #cce8e7;
+  --md-sys-color-secondary: #cce8e7;
+  --md-icon-button-icon-color: #cce8e7;
+  --md-filled-icon-button-selected-container-color: #cce8e7;
+  --md-sys-color-outline: #cce8e7;
+  --md-sys-color-on-surface: #191c1c;
+  --md-sys-color-secondary-container: #cce8e7;
+  --md-suggestion-chip-icon-size: 24px;
+  --md-list-container-color: #201f1f;
+  --md-list-item-label-text-color: #ffffff;
+  --md-list-item-supporting-text-color: #cce8e7;
+  --md-suggestion-chip-label-text-color: #dadada;
+  --md-circular-progress-size: 40px;
+  --md-circular-progress-active-indicator-width: 15;
+}
+
+.suggestion-chip-style{
+  --md-suggestion-chip-hover-label-text-color:#cce8e7;
+  --md-suggestion-chip-hover-leading-icon-color:#cce8e7;
+  --md-suggestion-chip-hover-state-layer-color:#cce8e7;
+  --md-suggestion-chip-selected-pressed-state-layer:white;
+  --md-suggestion-chip-pressed-label-text-color:white;
+  --md-suggestion-chip-selected-label-text-color:white;
+}
+
+.filter-chip-style{
+  --md-filter-chip-hover-label-text-color:#cce8e7;
+  --md-filter-chip-hover-leading-icon-color:#cce8e7;
+  --md-filter-chip-hover-state-layer-color:#cce8e7;
+  --md-filter-chip-selected-pressed-state-layer:white;
+  --md-filter-chip-pressed-label-text-color:white;
+  --md-filter-chip-selected-label-text-color:rgb(0, 0, 0);
+  --md-filter-chip-label-text-color:white;
+}
+>>>>>>> Stashed changes
 :root {
 
   /**
