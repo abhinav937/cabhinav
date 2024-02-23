@@ -51,9 +51,9 @@
   -->
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
-  <link rel="stylesheet" href="./assets/css/carousel.css">
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
   <!--
@@ -62,6 +62,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+    rel="stylesheet">
 
   <!-- Material Web Design 3 scripts -->
   <script type="module" src="./index.html"></script>
@@ -110,23 +114,25 @@
       <div class="separator"></div>
       <div class="sidebar-info_more md-phone-slidebar">
         <md-chip-set class="md-phone-lists">
-          <md-suggestion-chip class="suggestion-chip-style" label="Email" href="mailto:abhinavchinnusamy@gmail.com" target="_blank"><ion-icon
-              name="mail" slot="icon" style=" margin-right: 6px;"></ion-icon></md-suggestion-chip>
-          <md-suggestion-chip class="suggestion-chip-style" label="Twitter" href="https://x.com/intent/follow?screen_name=abhinav_937"
-            target="_blank">
+          <md-suggestion-chip class="suggestion-chip-style" label="Email" href="mailto:abhinavchinnusamy@gmail.com"
+            target="_blank"><ion-icon name="mail" slot="icon"
+              style=" margin-right: 6px;"></ion-icon></md-suggestion-chip>
+          <md-suggestion-chip class="suggestion-chip-style" label="Twitter"
+            href="https://x.com/intent/follow?screen_name=abhinav_937" target="_blank">
             <img slot="icon" src="./assets/icons/xlogo.svg" style="margin-right: 6px;">
           </md-suggestion-chip>
-          <md-suggestion-chip class="suggestion-chip-style" label="LinkedIn" href="https://in.linkedin.com/in/abhinavchinnusamy"
-            target="_blank"><ion-icon name="logo-linkedin" slot="icon"
-              style=" margin-right: 6px;"></ion-icon></md-suggestion-chip>
-          <md-suggestion-chip class="suggestion-chip-style" label="github" href="https://github.com/abhinav937" target="_blank"><ion-icon
-              name="logo-github" slot="icon" style="margin-right: 6px;"></ion-icon></md-suggestion-chip>
+          <md-suggestion-chip class="suggestion-chip-style" label="LinkedIn"
+            href="https://in.linkedin.com/in/abhinavchinnusamy" target="_blank"><ion-icon name="logo-linkedin"
+              slot="icon" style=" margin-right: 6px;"></ion-icon></md-suggestion-chip>
+          <md-suggestion-chip class="suggestion-chip-style" label="github" href="https://github.com/abhinav937"
+            target="_blank"><ion-icon name="logo-github" slot="icon"
+              style="margin-right: 6px;"></ion-icon></md-suggestion-chip>
         </md-chip-set>
       </div>
       <div class="separator"></div>
       <div style="padding-top: 0px;">
-        <md-suggestion-chip class="suggestion-chip-style" label="DM Me" href="https://twitter.com/messages/compose?recipient_id=977864508453437446"
-          target="_blank">
+        <md-suggestion-chip class="suggestion-chip-style" label="DM Me"
+          href="https://twitter.com/messages/compose?recipient_id=977864508453437446" target="_blank">
           <span slot="icon" class="material-symbols-rounded filled" style="margin: 5px;">
             send
           </span>
@@ -177,7 +183,7 @@
       </nav>
       <article class="about" id="contact" data-page="contact">
         <header>
-          <h2 class="h2 article-title">Contact</h2>
+          <custom-h2 class="custom-h2 article-title">Contact</custom-h2>
         </header>
 
         <md-list style="max-width: 1200px;">
@@ -223,7 +229,7 @@
       <article class="about active" id="about" data-page="about">
 
         <header>
-          <h2 class="h2 article-title">About me</h2>
+          <custom-h2 class="custom-h2 article-title">About me</custom-h2>
         </header>
 
         <section class="about-text">
@@ -248,21 +254,21 @@
 
         <section class="service">
           <header>
-            <h2 class="h2 article-title">Interests</h2>
+            <custom-h2 class="custom-h2 article-title">Interests</custom-h2>
           </header>
 
           <ul class="service-list">
 
-            <!-- Use 2:1 card pics -->
+            <!-- Use 2:1 custom-card pics -->
 
             <li>
-              <div class="card">
+              <div class="custom-card">
                 <a href="./pcbdesign.html">
-                  <h3 class="card__title">PCB Design
-                  </h3>
+                  <custom-h3 class="custom-card__title">PCB Design
+                  </custom-h3>
                   <img src="./assets/icons/pcbdesign.png">
-                  <p class="card__content">Designing Power and Embedded boards</p>
-                  <div class="card__arrow">
+                  <p class="custom-card__content">Designing Power and Embedded boards</p>
+                  <div class="custom-card__arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
                       <path fill="#fff"
                         d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z">
@@ -274,12 +280,12 @@
             </li>
 
             <li>
-              <div class="card">
+              <div class="custom-card">
                 <a href="./PowerElectronics.html">
-                  <h3 class="card__title">Power Electronics</h3>
+                  <custom-h3 class="custom-card__title">Power Electronics</custom-h3>
                   <img src="./assets/icons/power-elec.png">
-                  <p class="card__content">Designing converters for EVs and DC homes</p>
-                  <div class="card__arrow">
+                  <p class="custom-card__content">Designing converters for EVs and DC homes</p>
+                  <div class="custom-card__arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
                       <path fill="#fff"
                         d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z">
@@ -291,13 +297,13 @@
             </li>
 
             <li>
-              <div class="card">
+              <div class="custom-card">
                 <a href="./photography.html">
-                  <h3 class="card__title">Photography
-                  </h3>
+                  <custom-h3 class="custom-card__title">Photography
+                  </custom-h3>
                   <img src="./assets/icons/photgraphy.jpg">
-                  <p class="card__content">My photography page</p>
-                  <div class="card__arrow">
+                  <p class="custom-card__content">My photography page</p>
+                  <div class="custom-card__arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
                       <path fill="#fff"
                         d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z">
@@ -312,7 +318,7 @@
         </section>
 
         <header>
-          <h2 class="h2 article-title">Portfolio</h2>
+          <custom-h2 class="custom-h2 article-title">Portfolio</custom-h2>
         </header>
 
         <section class="projects">
@@ -328,233 +334,205 @@
           <ul class="project-list">
             <!-- Half Bridge Carousel -->
             <li class="project-item active" data-filter-item data-category="power">
-              <div id="carouselExampleCaptions1" class="carousel slide rounded" data-bs-ride="false"
-                data-bs-touch="true">
-                <div class="carousel-indicators" style="margin: 0;">
-                  <button type="button" data-bs-target="#carouselExampleCaptions1" data-bs-slide-to="0" class="active"
+              <div id="carouselExampleInterval1" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions1" data-bs-slide-to="1"
+                  <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions1" data-bs-slide-to="2"
+                  <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <div class="image-container">
-                      <img src="./assets/Projects/gan.webp" class="d-block w-100" alt="GaN Half Bridge">
-                    </div>
+                    <img src="./assets/Projects/gan.webp" class="d-block w-100" alt="GaN Half Bridge">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/hb_2.webp" class="d-block w-100" alt="microscopic view">
-                    </div>
+                    <img src="./assets/Projects/hb_2.webp" class="d-block w-100" alt="microscopic view">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/hb_3.webp" class="d-block w-100" alt="microscopic view">
-                    </div>
+                    <img src="./assets/Projects/hb_3.webp" class="d-block w-100" alt="microscopic view">
                   </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions1"
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval1"
                   data-bs-slide="prev">
                   <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions1"
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval1"
                   data-bs-slide="next">
                   <i class="fa-solid fa-circle-chevron-right"></i>
                 </button>
               </div>
-              <h3 class="project-title" style="margin-top: 15px;">GaN based Half Bridge</h3>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">GaN based Half-Bridge</div>
+              </custom-h3>
               <p class="project-category">Power</p>
             </li>
 
             <!-- E-Fuse Carousel -->
 
             <li class="project-item active" data-filter-item data-category="power">
-              <div id="carouselExampleCaptions2" class="carousel slide rounded" data-bs-ride="false"
-                data-bs-touch="true">
-                <div class="carousel-indicators" style="margin: 0;">
-                  <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="0" class="active"
+              <div id="carouselExampleInterval2" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval2" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="1"
+                  <button type="button" data-bs-target="#carouselExampleInterval2" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="2"
+                  <button type="button" data-bs-target="#carouselExampleInterval2" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <div class="image-container">
-                      <img src="./assets/Projects/efuse-top.webp" class="d-block w-100" alt="E-Fuse">
-                    </div>
+                    <img src="./assets/Projects/efuse-top.webp" class="d-block w-100" alt="E-Fuse">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/efuse-side.webp" class="d-block w-100" alt="E_Fuse">
-                    </div>
+                    <img src="./assets/Projects/efuse-side.webp" class="d-block w-100" alt="E_Fuse">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/E_fuse_latest.webp" class="d-block w-100" alt="E-Fuse">
-                    </div>
+                    <img src="./assets/Projects/E_fuse_latest.webp" class="d-block w-100" alt="E-Fuse">
                   </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions2"
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval2"
                   data-bs-slide="prev">
                   <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions2"
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval2"
                   data-bs-slide="next">
                   <i class="fa-solid fa-circle-chevron-right"></i>
                 </button>
               </div>
-              <h3 class="project-title" style="margin-top: 15px;">E-Fuse</h3>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">SiC based SSCB</div>
+              </custom-h3>
               <p class="project-category">Power</p>
             </li>
 
             <!-- RP2040 Carousel -->
 
             <li class="project-item active" data-filter-item data-category="embedded">
-              <div id="carouselExampleCaptions3" class="carousel slide rounded" data-bs-ride="false"
-                data-bs-touch="true">
-                <div class="carousel-indicators" style="margin: 0;">
-                  <button type="button" data-bs-target="#carouselExampleCaptions3" data-bs-slide-to="0" class="active"
+              <div id="carouselExampleInterval3" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval3" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions3" data-bs-slide-to="1"
+                  <button type="button" data-bs-target="#carouselExampleInterval3" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions3" data-bs-slide-to="2"
+                  <button type="button" data-bs-target="#carouselExampleInterval3" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <div class="image-container">
-                      <img src="./assets/Projects/rp2.webp" class="d-block w-100" alt="RP2040-Dev-Board">
-                    </div>
+                    <img src="./assets/Projects/rp2.webp" class="d-block w-100" alt="RP2040-Dev-Board">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/rp2040.webp" class="d-block w-100" alt="...">
-                    </div>
+                    <img src="./assets/Projects/rp2040.webp" class="d-block w-100" alt="...">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/rp1.webp" class="d-block w-100" alt="...">
-                    </div>
+                    <img src="./assets/Projects/rp1.webp" class="d-block w-100" alt="...">
                   </div>
                 </div>
                 <!-- Overlay button with the provided styles -->
-                <a href="https://github.com/abhinav937/RP2040-Dev-Board" target="_blank" class="overlay-button">
-                  <div>github.com</div>
-                </a>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions3"
+                <div class="md-chip-overlay">
+                  <a href="https://github.com/abhinav937/RP2040-Dev-Board" target="_blank">
+                    <md-assist-chip elevated label="learn more"></md-assist-chip>
+                  </a>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval3"
                   data-bs-slide="prev">
-                  <i class="fa-solid fa-circle-chevron-left"></i>
+                  <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions3"
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval3"
                   data-bs-slide="next">
                   <i class="fa-solid fa-circle-chevron-right"></i>
                 </button>
               </div>
-              <h3 style="margin-top: 15px;">
-                <a href="https://github.com/abhinav937/RP2040-Dev-Board" class="project-title">RP2040-dev board</a>
-              </h3>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">RP2040-dev board</div>
+              </custom-h3>
               <p class="project-category">Embedded</p>
 
             </li>
 
             <!-- Current Sensor Carousel -->
             <li class="project-item active" data-filter-item data-category="analog">
-              <div id="carouselExampleCaptions4" class="carousel slide rounded" data-bs-ride="false"
-                data-bs-touch="true">
-                <div class="carousel-indicators" style="margin: 0;">
-                  <button type="button" data-bs-target="#carouselExampleCaptions4" data-bs-slide-to="0" class="active"
+              <div id="carouselExampleInterval4" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions4" data-bs-slide-to="1"
+                  <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions4" data-bs-slide-to="2"
+                  <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
                 </div>
-
-
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <div class="image-container">
-                      <img src="./assets/Projects/opav2.webp" class="d-block w-100" alt="v2 opa855">
-                    </div>
+                    <img src="./assets/Projects/opav2.webp" class="d-block w-100" alt="v2 opa855">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/opa1.webp" class="d-block w-100" alt="v1 opa855">
-                    </div>
+                    <img src="./assets/Projects/opa1.webp" class="d-block w-100" alt="v1 opa855">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
-                        alt="microscopic view of OpAmp">
-                    </div>
+                    <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
+                      alt="microscopic view of OpAmp">
                   </div>
-
-                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions4"
-                    data-bs-slide="prev">
-                    <i class="fa-solid fa-circle-chevron-left"></i>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions4"
-                    data-bs-slide="next">
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </button>
                 </div>
-                <h3 class="project-title" style="margin-top: 15px;">80MHz Current sensor</h3>
-                <p class="project-category">Analog</p>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval4"
+                  data-bs-slide="prev">
+                  <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval4"
+                  data-bs-slide="next">
+                  <i class="fa-solid fa-circle-chevron-right"></i>
+                </button>
+              </div>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">High BW Current sensor</div>
+              </custom-h3>
+              <p class="project-category">Power</p>
             </li>
 
             <!-- RP2040 SoS Watch -->
             <li class="project-item active" data-filter-item data-category="embedded">
-              <div id="carouselExampleCaptions5" class="carousel slide rounded" data-bs-ride="false"
-                data-bs-touch="true">
-                <div class="carousel-indicators" style="margin: 0;">
-                  <button type="button" data-bs-target="#carouselExampleCaptions5" data-bs-slide-to="0" class="active"
+              <div id="carouselExampleInterval5" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval5" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions5" data-bs-slide-to="1"
+                  <button type="button" data-bs-target="#carouselExampleInterval5" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleCaptions5" data-bs-slide-to="2"
+                  <button type="button" data-bs-target="#carouselExampleInterval5" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
                 </div>
-
-
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <div class="image-container">
-                      <img src="./assets/Projects/sos_1.webp" class="d-block w-100" alt="RP2040-SoS-Band">
-                    </div>
+                    <img src="./assets/Projects/sos_1.webp" class="d-block w-100" alt="RP2040-SoS-Band">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/sos_2.webp" class="d-block w-100" alt="...">
-                    </div>
+                    <img src="./assets/Projects/sos_2.webp" class="d-block w-100" alt="...">
                   </div>
                   <div class="carousel-item">
-                    <div class="image-container">
-                      <img src="./assets/Projects/sos_3.webp" class="d-block w-100" alt="...">
-                    </div>
+                    <img src="./assets/Projects/sos_3.webp" class="d-block w-100" alt="...">
                   </div>
-                  <!-- Overlay button with the provided styles -->
-                  <a href="https://github.com/abhinav937/RP2040_SOS_band" target="_blank" class="overlay-button">
-                    <div>github.com</div>
-                  </a>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions5"
-                    data-bs-slide="prev">
-                    <i class="fa-solid fa-circle-chevron-left"></i>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions5"
-                    data-bs-slide="next">
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </button>
                 </div>
-                <h3 style="margin-top: 15px;">
-                  <a href="https://github.com/abhinav937/RP2040_SOS_band" class="project-title">RP2040 SoS Band</a>
-                </h3>
-                <p class="project-category">Embedded</p>
+                <!-- Overlay button with the provided styles -->
+                <div class="md-chip-overlay">
+                  <a href="https://github.com/abhinav937/RP2040_SOS_band" target="_blank">
+                    <md-assist-chip elevated label="learn more"></md-assist-chip>
+                  </a>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval5"
+                  data-bs-slide="prev">
+                  <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval5"
+                  data-bs-slide="next">
+                  <i class="fa-solid fa-circle-chevron-right"></i>
+                </button>
               </div>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">RP2040 SoS Band</div>
+              </custom-h3>
+              <p class="project-category">Embedded</p>
             </li>
+
 
 
           </ul>
@@ -570,7 +548,7 @@
 
       <div class="modal-container" data-modal-container>
 
-        <div class="overlay" data-overlay></div>
+        <div data-overlay></div>
 
         <section class="testimonials-modal">
 
@@ -594,7 +572,7 @@
       <article class="resume" data-page="resume" id="resume">
 
         <header>
-          <h2 class="h2 article-title" style="padding-right: 10px;">Resume</h2>
+          <custom-h2 class="custom-h2 article-title" style="padding-right: 10px;">Resume</custom-h2>
           <a href="https://drive.google.com/uc?export=download&id=1AlpMCooUBHNveIaMxk0JxPdqBm8EFwnd"
             download="Abhinav_CV.pdf" class="download-icon">
             <div style="margin-left: 0 auto">
@@ -611,20 +589,20 @@
               <ion-icon name="book-outline"></ion-icon>
             </div>
 
-            <h3 class="h3">Education</h3>
+            <custom-h3 class="custom-h3">Education</custom-h3>
           </div>
 
           <ol class="timeline-list">
 
             <li class="timeline-item">
 
-              <h4 class="h4 timeline-item-title">Indian Institute of Technology Dharwad</h4>
+              <custom-h4 class="custom-h4 timeline-item-title">Indian Institute of Technology Dharwad</h4>
 
-              <span>2020 — 2024</span>
+                <span>2020 — 2024</span>
 
-              <p class="timeline-text">
-                Electrical Engineering
-              </p>
+                <p class="timeline-text">
+                  Electrical Engineering
+                </p>
 
             </li>
 
@@ -639,21 +617,22 @@
               <ion-icon name="book-outline"></ion-icon>
             </div>
 
-            <h3 class="h3">Experience</h3>
+            <custom-h3 class="custom-h3">Experience</custom-h3>
           </div>
 
           <ol class="timeline-list">
 
             <li class="timeline-item">
 
-              <h4 class="h4 timeline-item-title">Undergraduate Researcher, Power and Energy Group, IIT Dharwad</h4>
+              <custom-h4 class="custom-h4 timeline-item-title">Undergraduate Researcher, Power and Energy Group, IIT
+                Dharwad</h4>
 
-              <span>December 2022 - Present</span>
+                <span>December 2022 - Present</span>
 
-              <p class="timeline-text"> Designing a solid-state circuit breaker for Electric Vehicles and DC homes</p>
-              <p class="timeline-text"> Worked on Half-Bridge Inverter using Infineon GaN devices</p>
-              <p class="timeline-text"> Performed Double Pulse Test and evaluated its performance and switching
-                characteristics</p>
+                <p class="timeline-text"> Designing a solid-state circuit breaker for Electric Vehicles and DC homes</p>
+                <p class="timeline-text"> Worked on Half-Bridge Inverter using Infineon GaN devices</p>
+                <p class="timeline-text"> Performed Double Pulse Test and evaluated its performance and switching
+                  characteristics</p>
 
             </li>
 
@@ -661,51 +640,57 @@
 
         </section>
 
+
         <section class="skill">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="cog"></ion-icon>
+            </div>
 
-          <h3 class="h3 skills-title">My skills</h3>
+            <custom-h3 style="padding-left: 11px;" class="custom-h3">My Skills</custom-h3>
+          </div>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Tools</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;"> KiCad, Altium, Matlab, Simulink, PLECS, LTSpice,
-                SIMetrix</p>
+              <custom-h4 class="custom-h4 timeline-item-title">Tools</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;"> KiCad, Altium, Matlab, Simulink, PLECS, LTSpice,
+                  SIMetrix</p>
             </li>
           </ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Equipments</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;"> Scopes, AFGs, Current Probes, LCR Meters, Power
-                Analyzers, SMD Microscopes</p>
+              <custom-h4 class="custom-h4 timeline-item-title">Equipments</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;"> Scopes, AFGs, Current Probes, LCR Meters, Power
+                  Analyzers, SMD Microscopes</p>
             </li>
           </ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Boards</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;">Arduino, Raspberry Pi's, ESP</p>
+              <custom-h4 class="custom-h4 timeline-item-title">Boards</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;">Arduino, Raspberry Pi's, ESP</p>
             </li>
           </ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Soldering</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;"> Hot Air, Reflow Oven</p>
+              <custom-h4 class="custom-h4 timeline-item-title">Soldering</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;"> Hot Air, Reflow Oven</p>
             </li>
           </ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">3D Design</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;"> SolidWorks, Fusion360</p>
+              <custom-h4 class="custom-h4 timeline-item-title">3D Design</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;"> SolidWorks, Fusion360</p>
             </li>
           </ol>
 
           <ol class="timeline-list">
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Languages</h4>
-              <p class="timeline-text" style="padding-bottom: 7px;"> English, Tamil, Hindi(basic)</p>
+              <custom-h4 class="custom-h4 timeline-item-title">Languages</h4>
+                <p class="timeline-text" style="padding-bottom: 7px;"> English, Tamil, Hindi(basic)</p>
             </li>
           </ol>
           </ul>

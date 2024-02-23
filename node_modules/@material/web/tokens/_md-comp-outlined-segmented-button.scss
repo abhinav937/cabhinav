@@ -6,12 +6,12 @@
 @use 'sass:map';
 // go/keep-sorted end
 // go/keep-sorted start
+@use './internal/validate';
 @use './md-sys-color';
 @use './md-sys-shape';
 @use './md-sys-state';
 @use './md-sys-typescale';
 @use './v0_192/md-comp-outlined-segmented-button';
-@use './values';
 // go/keep-sorted end
 
 $supported-tokens: (
@@ -75,7 +75,7 @@ $_default: (
 );
 
 @function values($deps: $_default, $exclude-hardcoded-values: false) {
-  $tokens: values.validate(
+  $tokens: validate.values(
     md-comp-outlined-segmented-button.values($deps, $exclude-hardcoded-values),
     $supported-tokens: $supported-tokens,
     $unsupported-tokens: $unsupported-tokens,

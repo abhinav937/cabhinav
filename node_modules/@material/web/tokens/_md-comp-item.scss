@@ -7,10 +7,10 @@
 @use 'sass:map';
 // go/keep-sorted end
 // go/keep-sorted start
+@use './internal/validate';
 @use './md-sys-color';
 @use './md-sys-typescale';
 @use './v0_192/md-comp-list';
-@use './values';
 // go/keep-sorted end
 
 $supported-tokens: (
@@ -83,5 +83,5 @@ $_default: (
     // go/keep-sorted end
   );
 
-  @return values.validate($tokens, $supported-tokens: $supported-tokens);
+  @return validate.values($tokens, $supported-tokens: $supported-tokens);
 }
