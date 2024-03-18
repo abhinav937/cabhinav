@@ -27,6 +27,11 @@
   --md-suggestion-chip-label-text-color: #dadada;
   --md-circular-progress-size: 40px;
   --md-circular-progress-active-indicator-width: 15;
+  --md-filter-chip-label-text-font: system-ui;
+  --md-suggestion-chip-label-text-font:system-ui;
+  --md-list-item-label-text-font:system-ui;
+  --md-list-item-supporting-text-font:system-ui;
+
 }
 
 .suggestion-chip-style{
@@ -2823,4 +2828,3 @@ body {
   font-variation-settings:
     'FILL' 0
 }
-
