@@ -31,7 +31,15 @@
   --md-suggestion-chip-label-text-font:system-ui;
   --md-list-item-label-text-font:system-ui;
   --md-list-item-supporting-text-font:system-ui;
-
+  --md-outlined-segmented-button-unselected-icon-color: #dadada;
+  --md-outlined-segmented-button-unselected-label-text-color: #dadada;
+  --md-outlined-segmented-button-unselected-hover-label-text-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-hover-icon-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-hover-state-layer-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-pressed-icon-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-pressed-label-text-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-focus-label-text-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-focus-icon-color: #aea7a7;
 }
 
 .suggestion-chip-style{
