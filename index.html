@@ -266,8 +266,7 @@
 
         <section class="about-text">
           <p>
-            I'm a master's research student at the University of Wisconsin-Madison, working on High Voltage Power
-            Electronics with the WEMPEC group.</p>
+            I'm a master's research student at the University of Wisconsin-Madison, working on pulsed power applications with the WEMPEC group.</p>
 
           <p>
             Outside of research, I love doing astrophotography and enjoy watching the night skies, especially the
@@ -359,6 +358,50 @@
           </md-chip-set>
 
           <ul class="project-list">
+
+            <!-- Current Sensor Carousel -->
+            <li class="project-item active" data-filter-item data-category="power">
+              <div id="carouselExampleInterval4" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                  <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                  <!-- <button type="button" data-bs-target="#carouselExampleInterval4" data-bs-slide-to="2"
+                                aria-label="Slide 3"></button> -->
+                </div>
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="./assets/Projects/yeswegan1.JPEG" class="d-block w-100" alt="v2 opa855">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="./assets/Projects/yeswegan2.JPEG" class="d-block w-100" alt="v1 opa855">
+                  </div>
+                  <!-- <div class="carousel-item">
+                                <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
+                                  alt="microscopic view of OpAmp">
+                              </div> -->
+                </div>
+                <!-- Overlay button with the provided styles -->
+                <div class="md-chip-overlay">
+                  <a href="./PowerElectronics.html" target="_blank">
+                    <md-assist-chip elevated label="learn more"></md-assist-chip>
+                  </a>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval4"
+                  data-bs-slide="prev">
+                  <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval4"
+                  data-bs-slide="next">
+                  <i class="fa-solid fa-circle-chevron-right"></i>
+                </button>
+              </div>
+              <custom-h3 style="margin-top: 15px;">
+                <div class="project-title">YesWeGaN</div>
+              </custom-h3>
+              <p class="project-category">Power</p>
+            </li>
             <!-- Half Bridge Carousel -->
             <li class="project-item active" data-filter-item data-category="power">
               <div id="carouselExampleInterval1" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9000">
@@ -514,7 +557,7 @@
               <custom-h3 style="margin-top: 15px;">
                 <div class="project-title">High BW Current sensor</div>
               </custom-h3>
-              <p class="project-category">Power</p>
+              <p class="project-category">Analog</p>
             </li>
 
             <!-- RP2040 SoS Watch -->
@@ -631,7 +674,7 @@
           <md-list-item>
             <div slot="headline">Graduate Researcher</div>
             <img slot="start" style="width: 60px" src="./assets/icons/WEMPEC_logo.jpg">
-            <div slot="supporting-text">Working on High-Voltage Power Electronics</div>
+            <div slot="supporting-text">Working on pulsed power applications</div>
             <div slot="trailing-supporting-text"></div>
             <div style="color:azure" slot="overline">September 2024 - present</div>
           </md-list-item>
