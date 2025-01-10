@@ -2836,3 +2836,59 @@ body {
   font-variation-settings:
     'FILL' 0
 }
+
+
+/* Publications styling */
+
+.publication {
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  border: 1px solid #495057;
+  border-radius: 5px;
+  background-color: rgb(23, 23, 23);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  /* Add elevation effect */
+}
+
+.publication h3 {
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: #f8f9fa;
+}
+
+.publication p {
+  margin: 0 0 10px;
+  color: #e9ecef;
+  line-height: 1.6;
+}
+
+.publication .authors {
+  font-size: 14px;
+  color: #ced4da;
+}
+
+.publication .authors b {
+  font-weight: bold;
+  color: #f8f9fa;
+}
+
+.publication .year {
+  font-size: 14px;
+  color: #adb5bd;
+  margin-top: 5px;
+}
+
+.publication .links {
+  margin-top: 10px;
+}
+
+.publication .links a {
+  text-decoration: none;
+  color: #61dafb;
+  margin-right: 15px;
+  font-size: 14px;
+}
+
+.publication .links a:hover {
+  text-decoration: underline;
+}
