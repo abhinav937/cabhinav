@@ -2838,55 +2838,59 @@ body {
 }
 
 
-/* Publications styling */
+/* Publications */
 
 .publication {
-  margin-bottom: 20px;
-  padding: 10px 15px;
-  border: 1px solid #495057;
-  border-radius: 5px;
-  background-color: rgb(23, 23, 23);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-  /* Add elevation effect */
+  margin-bottom: 10px;
+  padding: 5px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .publication h3 {
-  font-size: 18px;
-  margin: 0 0 8px;
-  color: #f8f9fa;
+  font-size: 20px;
+  margin: 0 0 5px;
+  color: #e0e0e0; /* Lightened for dark background */
+  font-weight: normal;
+}
+
+.publication h3 a {
+  color: #4da6ff; /* Match the link color from the .links class */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.publication h3 a:hover {
+  color: #74b9ff; /* Match the hover color from the .links class */
+  text-decoration: underline;
 }
 
 .publication p {
-  margin: 0 0 10px;
-  color: #e9ecef;
-  line-height: 1.6;
+  color: #b3b3b3; /* Lightened for dark background */
+  line-height: 1.8;
 }
 
 .publication .authors {
-  font-size: 14px;
-  color: #ced4da;
+  font-style: italic;
+  font-size: 16px;
+  color: #cccccc; /* Lightened for dark background */
 }
 
 .publication .authors b {
-  font-weight: bold;
-  color: #f8f9fa;
+  color: #e0e0e0; /* Lightened for dark background */
 }
 
 .publication .year {
   font-size: 14px;
-  color: #adb5bd;
-  margin-top: 5px;
-}
-
-.publication .links {
-  margin-top: 10px;
+  color: #999999; /* Lightened for dark background */
 }
 
 .publication .links a {
   text-decoration: none;
-  color: #61dafb;
-  margin-right: 15px;
+  color: #4da6ff; /* Lightened link color for better visibility on dark */
   font-size: 14px;
+  transition: color 0.3s ease;
 }
 
 .publication .links a:hover {
