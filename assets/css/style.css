@@ -28,9 +28,9 @@
   --md-circular-progress-size: 40px;
   --md-circular-progress-active-indicator-width: 15;
   --md-filter-chip-label-text-font: system-ui;
-  --md-suggestion-chip-label-text-font:system-ui;
-  --md-list-item-label-text-font:system-ui;
-  --md-list-item-supporting-text-font:system-ui;
+  --md-suggestion-chip-label-text-font: system-ui;
+  --md-list-item-label-text-font: system-ui;
+  --md-list-item-supporting-text-font: system-ui;
   --md-outlined-segmented-button-unselected-icon-color: #dadada;
   --md-outlined-segmented-button-unselected-label-text-color: #dadada;
   --md-outlined-segmented-button-unselected-hover-label-text-color: #aea7a7;
@@ -42,24 +42,25 @@
   --md-outlined-segmented-button-unselected-focus-icon-color: #aea7a7;
 }
 
-.suggestion-chip-style{
-  --md-suggestion-chip-hover-label-text-color:#cce8e7;
-  --md-suggestion-chip-hover-leading-icon-color:#cce8e7;
-  --md-suggestion-chip-hover-state-layer-color:#cce8e7;
-  --md-suggestion-chip-selected-pressed-state-layer:white;
-  --md-suggestion-chip-pressed-label-text-color:white;
-  --md-suggestion-chip-selected-label-text-color:white;
+.suggestion-chip-style {
+  --md-suggestion-chip-hover-label-text-color: #cce8e7;
+  --md-suggestion-chip-hover-leading-icon-color: #cce8e7;
+  --md-suggestion-chip-hover-state-layer-color: #cce8e7;
+  --md-suggestion-chip-selected-pressed-state-layer: white;
+  --md-suggestion-chip-pressed-label-text-color: white;
+  --md-suggestion-chip-selected-label-text-color: white;
 }
 
-.filter-chip-style{
-  --md-filter-chip-hover-label-text-color:#cce8e7;
-  --md-filter-chip-hover-leading-icon-color:#cce8e7;
-  --md-filter-chip-hover-state-layer-color:#cce8e7;
-  --md-filter-chip-selected-pressed-state-layer:white;
-  --md-filter-chip-pressed-label-text-color:white;
-  --md-filter-chip-selected-label-text-color:rgb(0, 0, 0);
-  --md-filter-chip-label-text-color:white;
+.filter-chip-style {
+  --md-filter-chip-hover-label-text-color: #cce8e7;
+  --md-filter-chip-hover-leading-icon-color: #cce8e7;
+  --md-filter-chip-hover-state-layer-color: #cce8e7;
+  --md-filter-chip-selected-pressed-state-layer: white;
+  --md-filter-chip-pressed-label-text-color: white;
+  --md-filter-chip-selected-label-text-color: rgb(0, 0, 0);
+  --md-filter-chip-label-text-color: white;
 }
+
 :root {
 
   /**
@@ -877,6 +878,18 @@ main {
     width: 130px;
     /* Adjust the width as needed for medium-sized screens */
   }
+
+  .headline-text {
+    font-size: 18px;
+  }
+
+  .trailing-text {
+    font-size: 14px;
+  }
+
+  .overline-text {
+    font-size: 14px;
+  }
 }
 
 /* Media query for screens with a minimum width of 1201px */
@@ -884,6 +897,18 @@ main {
   .clients-item img {
     width: 150px;
     /* Default width for larger screens */
+  }
+
+  .headline-text {
+    font-size: 18px;
+  }
+
+  .trailing-text {
+    font-size: 14px;
+  }
+
+  .overline-text {
+    font-size: 14px;
   }
 }
 
@@ -2462,12 +2487,12 @@ img.bg {
   /* Adjust as needed */
   transform: translate(200%, -600%);
   --md-assist-chip-container-shape: 8px;
-  --md-assist-chip-container-height:24px;
-  --md-assist-chip-label-text-weight:400;
-  --md-assist-chip-elevated-container-color:rgba(39, 44, 48, 0.75);
-  --md-assist-chip-label-text-color:white;
-  --md-assist-chip-hover-label-text-color:white;
-  --md-assist-chip-hover-state-layer-color:var(--white-1);
+  --md-assist-chip-container-height: 24px;
+  --md-assist-chip-label-text-weight: 400;
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.75);
+  --md-assist-chip-label-text-color: white;
+  --md-assist-chip-hover-label-text-color: white;
+  --md-assist-chip-hover-state-layer-color: var(--white-1);
   --md-assist-chip-label-text-font: system-ui;
   --md-sys-color-outline: #6F7979;
   --md-sys-color-on-surface: #191C1C;
@@ -2617,13 +2642,13 @@ img.bg {
   }
 }
 
-.carousel-inner{
+.carousel-inner {
   border-radius: 15px;
 }
 
 .carousel-indicators [data-bs-target] {
   width: 26px;
-  height: 2.75px; 
+  height: 2.75px;
 }
 
 #loading_indicator {
@@ -2851,44 +2876,52 @@ body {
 .publication h3 {
   font-size: 20px;
   margin: 0 0 5px;
-  color: #e0e0e0; /* Lightened for dark background */
+  color: #e0e0e0;
+  /* Lightened for dark background */
   font-weight: normal;
 }
 
 .publication h3 a {
-  color: #4da6ff; /* Match the link color from the .links class */
+  color: #4da6ff;
+  /* Match the link color from the .links class */
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .publication h3 a:hover {
-  color: #74b9ff; /* Match the hover color from the .links class */
+  color: #74b9ff;
+  /* Match the hover color from the .links class */
   text-decoration: underline;
 }
 
 .publication p {
-  color: #b3b3b3; /* Lightened for dark background */
+  color: #b3b3b3;
+  /* Lightened for dark background */
   line-height: 1.8;
 }
 
 .publication .authors {
   font-style: italic;
   font-size: 16px;
-  color: #cccccc; /* Lightened for dark background */
+  color: #cccccc;
+  /* Lightened for dark background */
 }
 
 .publication .authors b {
-  color: #e0e0e0; /* Lightened for dark background */
+  color: #e0e0e0;
+  /* Lightened for dark background */
 }
 
 .publication .year {
   font-size: 14px;
-  color: #999999; /* Lightened for dark background */
+  color: #999999;
+  /* Lightened for dark background */
 }
 
 .publication .links a {
   text-decoration: none;
-  color: #4da6ff; /* Lightened link color for better visibility on dark */
+  color: #4da6ff;
+  /* Lightened link color for better visibility on dark */
   font-size: 14px;
   transition: color 0.3s ease;
 }
