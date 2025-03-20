@@ -14,9 +14,9 @@
 
 :root {
   --md-sys-color-primary: #cce8e7;
+  --md-sys-color-on-primary: #cce8e7;
   --md-sys-color-secondary: #cce8e7;
   --md-icon-button-icon-color: #cce8e7;
-  --md-filled-icon-button-selected-container-color: #cce8e7;
   --md-sys-color-outline: #cce8e7;
   --md-sys-color-on-surface: #191c1c;
   --md-sys-color-secondary-container: #cce8e7;
@@ -864,11 +864,27 @@ main {
   scroll-snap-align: start;
 }
 
+/* Default: Hide the button on all screens */
+.mobile-only-button {
+  display: none;
+}
+
+.button-container {
+  text-align: center; /* Centers inline or inline-block children */
+}
+
 /* Media query for screens with a maximum width of 600px */
 @media only screen and (max-width: 600px) {
   .clients-item img {
     width: 100px;
     /* Adjust the width as needed for smaller screens */
+  }
+
+  .mobile-only-button {
+    display: inline-block;
+    width: 40%; /* Adjust width as desired */
+    margin-left: auto; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
   }
 }
 

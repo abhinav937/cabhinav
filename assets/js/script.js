@@ -1,253 +1,198 @@
 'use strict';
 
-
-
-// element toggle function
+// Element toggle function
 const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
 
-
-
-// sidebar variables
+// Sidebar variables and toggle (placeholders)
 const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
+if (sidebarBtn) sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
 
-// sidebar toggle functionality for mobile
-sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
-
-
-
-// testimonials variables
+// Testimonials variables and modal logic (placeholders)
 const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
 const modalContainer = document.querySelector("[data-modal-container]");
 const modalCloseBtn = document.querySelector("[data-modal-close-btn]");
 const overlay = document.querySelector("[data-overlay]");
-
-// modal variable
 const modalImg = document.querySelector("[data-modal-img]");
 const modalTitle = document.querySelector("[data-modal-title]");
 const modalText = document.querySelector("[data-modal-text]");
-
-// modal toggle function
 const testimonialsModalFunc = function () {
-  modalContainer.classList.toggle("active");
-  overlay.classList.toggle("active");
+  if (modalContainer) modalContainer.classList.toggle("active");
+  if (overlay) overlay.classList.toggle("active");
 }
-
-// add click event to all modal items
 for (let i = 0; i < testimonialsItem.length; i++) {
-
   testimonialsItem[i].addEventListener("click", function () {
-
-    modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
-    modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
-    modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
-    modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
-
+    if (modalImg) modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
+    if (modalImg) modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
+    if (modalTitle) modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
+    if (modalText) modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
     testimonialsModalFunc();
-
   });
-
 }
+if (modalCloseBtn) modalCloseBtn.addEventListener("click", testimonialsModalFunc);
+if (overlay) overlay.addEventListener("click", testimonialsModalFunc);
 
-// add click event to modal close button
-modalCloseBtn.addEventListener("click", testimonialsModalFunc);
-overlay.addEventListener("click", testimonialsModalFunc);
-
-
-
-// // custom select variables
-// const select = document.querySelector("[data-select]");
-// const selectItems = document.querySelectorAll("[data-select-item]");
-// const selectValue = document.querySelector("[data-selecct-value]");
-// const filterBtn = document.querySelectorAll("[data-filter-btn]");
-
-// select.addEventListener("click", function () { elementToggleFunc(this); });
-
-// // add event in all select items
-// for (let i = 0; i < selectItems.length; i++) {
-//   selectItems[i].addEventListener("click", function () {
-
-//     let selectedValue = this.innerText.toLowerCase();
-//     selectValue.innerText = this.innerText;
-//     elementToggleFunc(select);
-//     filterFunc(selectedValue);
-
-//   });
-// }
-
-// // filter variables
-// const filterItems = document.querySelectorAll("[data-filter-item]");
-
-// const filterFunc = function (selectedValue) {
-
-//   for (let i = 0; i < filterItems.length; i++) {
-
-//     if (selectedValue === "all") {
-//       filterItems[i].classList.add("active");
-//     } else if (selectedValue === filterItems[i].dataset.category) {
-//       filterItems[i].classList.add("active");
-//     } else {
-//       filterItems[i].classList.remove("active");
-//     }
-
-//   }
-
-// }
-
-// // add event in all filter button items for large screen
-// let lastClickedBtn = filterBtn[0];
-
-// for (let i = 0; i < filterBtn.length; i++) {
-
-//   filterBtn[i].addEventListener("click", function () {
-
-//     let selectedValue = this.innerText.toLowerCase();
-//     selectValue.innerText = this.innerText;
-//     filterFunc(selectedValue);
-
-//     lastClickedBtn.classList.remove("active");
-//     this.classList.add("active");
-//     lastClickedBtn = this;
-
-//   });
-
-// }
-
-
-
-// contact form variables
+// Contact form logic (placeholders)
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
-
-// add event to all form input field
 for (let i = 0; i < formInputs.length; i++) {
   formInputs[i].addEventListener("input", function () {
-
-    // check form validation
-    if (form.checkValidity()) {
-      formBtn.removeAttribute("disabled");
-    } else {
-      formBtn.setAttribute("disabled", "");
-    }
-
+    if (form && form.checkValidity()) formBtn.removeAttribute("disabled");
+    else if (formBtn) formBtn.setAttribute("disabled", "");
   });
 }
 
-
-
-// page navigation variables
+// Page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
-// add event to all nav link
+// Add event to all nav links with new scroll logic
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
+    const clickedLinkText = this.innerHTML.toLowerCase().trim(); // e.g., "Checkout my resume" or "Resume"
+    for (let j = 0; j < pages.length; j++) { // Use 'j' to avoid scoping conflict
+      const pageName = pages[j].dataset.page.toLowerCase(); // e.g., "resume"
+      if (clickedLinkText.includes(pageName) || pageName === clickedLinkText) { // Match "resume" in "Checkout my resume"
+        pages[j].classList.add("active");
+        this.classList.add("active"); // Keep the clicked link active
       } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
+        pages[j].classList.remove("active");
+        navigationLinks[j].classList.remove("active"); // Reset other links
       }
     }
-
+    window.scrollTo(0, 0); // Scroll to top
   });
 }
 
-// material 3 Select chips
+// Material 3 Select chips (placeholders)
 function setupFilterLogic() {
   const elements = document.querySelectorAll('md-filter-chip');
-
-  function deselectAll() {
-      elements.forEach(element => element.selected = false);
-  }
-
+  function deselectAll() { elements.forEach(element => element.selected = false); }
   elements.forEach(element => {
-      element.addEventListener('click', () => {
-          deselectAll();
-          element.selected = true;
-          const clickedId = element.id;
-          const items = document.querySelectorAll('.project-item');
-          items.forEach(item => {
-              if (clickedId === 'all' || item.dataset.category === clickedId) {
-                  item.style.display = 'block';
-              } else {
-                  item.style.display = 'none';
-              }
-          });
+    element.addEventListener('click', () => {
+      deselectAll();
+      element.selected = true;
+      const clickedId = element.id;
+      const items = document.querySelectorAll('.project-item');
+      items.forEach(item => {
+        if (clickedId === 'all' || item.dataset.category === clickedId) item.style.display = 'block';
+        else item.style.display = 'none';
       });
+    });
   });
 }
+setupFilterLogic();
 
-// Call setupFilterLogic when the DOM is ready
-setupFilterLogic();setupFilterLogic();
+// Material 3 Navbar
+var activeContentId = 'about';
 
-
-
-// Material 3 navbar
-
-var activeContentId = 'about'; // Set the default active section
-
-// Initialize the active state for the default section
+// Initialize the active state
 (function initializeActiveState() {
-  var initialActiveButton = document.getElementById('about1'); // Target using data-nav-link attribute
+  var initialActiveButton = document.getElementById('about1');
   if (initialActiveButton) {
-    initialActiveButton.querySelector('.icon-container').style.background = '#475959c6';
-    initialActiveButton.querySelector('.label-text').style.fontWeight  = '600';
-    initialActiveButton.querySelector('.label-text').style.color  = '#E6E0E9';
-    initialActiveButton.querySelector('.material-symbols-rounded').style.color  = '#FFFFFF';
-    initialActiveButton.querySelector('.material-symbols-rounded').classList.add('filled');
-    // Assuming you have a function to display the initial content
-    displayInitialContent('about');
+    initialActiveButton.classList.add('active');
+    const iconContainer = initialActiveButton.querySelector('.icon-container');
+    const labelText = initialActiveButton.querySelector('.label-text');
+    const icon = initialActiveButton.querySelector('.material-symbols-rounded');
+    if (iconContainer) iconContainer.style.background = '#475959c6';
+    if (labelText) {
+      labelText.style.fontWeight = '600';
+      labelText.style.color = '#E6E0E9';
+    }
+    if (icon) {
+      icon.style.color = '#FFFFFF';
+      icon.classList.add('filled');
+      console.log('Initialized About icon color:', icon.style.color);
+    }
+    var initialContent = document.getElementById('about');
+    if (initialContent) initialContent.style.display = 'block';
   }
 })();
 
+// Revised toggleContent function
 function toggleContent(id, button) {
-  console.log(id, activeContentId);
-  console.log(button, id)
-  // Check if the clicked button is already active
-  var isActiveButton = activeContentId === id;
-  console.log(isActiveButton);
+  console.log('toggleContent called with id:', id, 'button:', button);
 
-  // Hide the currently active content if the button is not already active
-  if ((!isActiveButton && activeContentId !== null)) {
+  if (activeContentId === id) {
+    console.log('Already active, no changes needed');
+    return;
+  }
+
+  // Hide the currently active content
+  if (activeContentId !== null) {
     var activeContent = document.getElementById(activeContentId);
     if (activeContent) {
       activeContent.style.display = 'none';
+      console.log('Hid content:', activeContentId);
     }
   }
 
-
-  // Display the selected content section
+  // Show the new content
   var content = document.getElementById(id);
   if (content) {
-    isActiveButton = true
     content.style.display = 'block';
+    content.scrollIntoView({ behavior: "smooth" });
+    console.log('Showing content:', id);
+  } else {
+    console.log('No content found for id:', id);
+    return;
   }
 
-  // Deactivate all buttons and reset icon container backgrounds
-  document.querySelectorAll('.segment').forEach(function (btn) {
-    btn.classList.remove('active');
-    btn.querySelector('.icon-container').style.background = ''; // Reset background
-    btn.querySelector('.label-text').style.fontWeight  = ''; // Reset background
-    btn.querySelector('.label-text').style.color  = ''; // Reset background
-    btn.querySelector('.material-symbols-rounded').style.color  = 'rgba(255, 255, 255, 0.472)'; // Reset background
-    btn.querySelector('.material-symbols-rounded').classList.remove('filled'); // Remove 'filled' class
+  // Find the corresponding navbar button
+  let targetNavButton = null;
+  document.querySelectorAll('.nav-bar .segment[data-nav-link]').forEach(navBtn => {
+    if (navBtn.getAttribute('onclick').includes(`'${id}'`)) {
+      targetNavButton = navBtn;
+    }
   });
 
-  // Activate the clicked button and apply the active icon container background
-  if (isActiveButton) {
-    console.log(isActiveButton);
-    button.classList.add('active');
-    button.querySelector('.icon-container').style.background = '#475959c6';
-    button.querySelector('.label-text').style.fontWeight  = '600';
-    button.querySelector('.label-text').style.color  = '#E6E0E9';
-    button.querySelector('.material-symbols-rounded').style.color  = '#FFFFFF';
-    button.querySelector('.material-symbols-rounded').classList.add('filled');
-    activeContentId = id;
+  // Reset all navigation buttons
+  document.querySelectorAll('[data-nav-link]').forEach(function (btn) {
+    if (btn !== targetNavButton) { // Skip the target navbar button
+      btn.classList.remove('active');
+      if (btn.tagName.toLowerCase() === 'md-text-button') {
+        btn.style.color = 'rgba(255, 255, 255, 0.472)';
+        btn.style.fontWeight = '';
+        console.log('Reset md-text-button:', btn);
+      } else {
+        const iconContainer = btn.querySelector('.icon-container');
+        const labelText = btn.querySelector('.label-text');
+        const icon = btn.querySelector('.material-symbols-rounded');
+        if (iconContainer) iconContainer.style.background = '';
+        if (labelText) {
+          labelText.style.fontWeight = '';
+          labelText.style.color = '';
+        }
+        if (icon) {
+          icon.style.color = 'rgba(255, 255, 255, 0.472)';
+          icon.classList.remove('filled');
+          console.log('Reset icon color for:', btn, 'to:', icon.style.color);
+        }
+      }
+    }
+  });
+
+  // Apply active styling to the corresponding navbar button (not the clicked button)
+  if (targetNavButton) {
+    targetNavButton.classList.add('active');
+    const iconContainer = targetNavButton.querySelector('.icon-container');
+    const labelText = targetNavButton.querySelector('.label-text');
+    const icon = targetNavButton.querySelector('.material-symbols-rounded');
+    if (iconContainer) iconContainer.style.background = '#475959c6';
+    if (labelText) {
+      labelText.style.fontWeight = '600';
+      labelText.style.color = '#E6E0E9';
+    }
+    if (icon) {
+      icon.style.color = '#FFFFFF';
+      icon.classList.add('filled');
+      console.log('Set active icon color for navbar button:', targetNavButton, 'to:', icon.style.color);
+    }
+  } else {
+    console.log('No corresponding navbar button found for id:', id);
   }
+
+  activeContentId = id;
+  console.log('Updated activeContentId to:', activeContentId);
 }
