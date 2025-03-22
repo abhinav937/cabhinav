@@ -29,9 +29,12 @@
   --md-circular-progress-active-indicator-width: 15;
   --md-filter-chip-label-text-font: system-ui;
   --md-text-button-label-text-font: system-ui;
+  --md-list-item-overline-font: system-ui;
   --md-suggestion-chip-label-text-font: system-ui;
   --md-list-item-label-text-font: system-ui;
   --md-list-item-supporting-text-font: system-ui;
+  --md-list-item-supporting-text-font: system-ui;
+  --md-list-item-trailing-supporting-text-font: system-ui;
   --md-outlined-segmented-button-unselected-icon-color: #dadada;
   --md-outlined-segmented-button-unselected-label-text-color: #dadada;
   --md-outlined-segmented-button-unselected-hover-label-text-color: #aea7a7;
