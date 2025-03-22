@@ -1084,35 +1084,49 @@
 
   <!-- -------------------------------Scroll to hide the nav bar --------------------------------------->
   <script>
-
     // Get the navigation bar element
     const navBar = document.querySelector('.nav-bar');
-
+  
     // Variable to store the previous scroll position
     let prevScrollPos = window.scrollY || document.documentElement.scrollTop;
-
+  
+    // Variable to track cumulative scroll distance
+    let cumulativeScroll = 0;
+  
+    // Set the total scroll distance threshold (in pixels)
+    const scrollThreshold = 300; // The bar hides/shows only after 50 pixels of scrolling
+  
     // Function to handle the scroll event
     function handleScroll() {
       // Get the current scroll position
       const currentScrollPos = window.scrollY || document.documentElement.scrollTop;
-
-      // Check the scroll direction
-      if (prevScrollPos > currentScrollPos) {
-        // Scrolling up, show the navigation bar
-        navBar.classList.remove('nav-bar-hidden');
-      } else {
-        // Scrolling down, hide the navigation bar
-        navBar.classList.add('nav-bar-hidden');
+  
+      // Calculate the scroll distance since the last event
+      const scrollDistance = Math.abs(currentScrollPos - prevScrollPos);
+  
+      // Add the scroll distance to the cumulative total
+      cumulativeScroll += scrollDistance;
+  
+      // Check if the cumulative scroll distance exceeds the threshold
+      if (cumulativeScroll >= scrollThreshold) {
+        if (prevScrollPos > currentScrollPos) {
+          // Scrolling up, show the navigation bar
+          navBar.classList.remove('nav-bar-hidden');
+        } else {
+          // Scrolling down, hide the navigation bar
+          navBar.classList.add('nav-bar-hidden');
+        }
+        // Reset the cumulative scroll distance after triggering the action
+        cumulativeScroll = 0;
       }
-
+  
       // Update the previous scroll position
       prevScrollPos = currentScrollPos;
     }
-
+  
     // Attach the handleScroll function to the scroll event
     window.addEventListener('scroll', handleScroll);
   </script>
-
 
 
 
