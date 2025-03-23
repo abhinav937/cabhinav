@@ -2949,3 +2949,143 @@ body {
 .publication .links a:hover {
   text-decoration: underline;
 }
+
+
+/* Job description */
+.work-history {
+  max-width: 600px;
+  margin: 0 0 0 20px;
+  text-align: left;
+}
+
+.job-entry {
+  display: flex;
+  align-items: center; /* Changed from flex-start to center for better vertical alignment */
+  padding: 15px 0;
+  border-bottom: 1px solid #333;
+  width: 100%;
+}
+
+.job-entry img {
+  width: 60px;
+  height: 60px;
+  margin-right: 20px;
+  background-color: #444;
+  border-radius: 5px;
+  object-fit: contain; /* Ensure logos scale properly without distortion */
+  flex-shrink: 0; /* Prevent the image from shrinking */
+}
+
+.job-details {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Add consistent spacing between text elements */
+}
+
+/* Base font sizes */
+.job-title {
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0;
+  font-size: 18px;
+}
+
+.company-location {
+  font-size: 16px;
+  color: #d3d3d3;
+  margin: 0; /* Remove default margin */
+}
+
+.date-duration {
+  font-size: 14px;
+  color: #888;
+  margin: 0; /* Remove default margin */
+  white-space: nowrap;
+}
+
+.description {
+  font-size: 16px;
+  color: #d3d3d3;
+  margin: 5px 0 0 0;
+}
+
+.bullet-points {
+  margin: 5px 0 0 20px;
+  padding: 0;
+  list-style-type: disc;
+  color: #d3d3d3;
+}
+
+.bullet-points li {
+  margin: 2px 0;
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media screen and (min-width: 768px) {
+  .work-history {
+    max-width: 800px;
+    margin-left: 30px;
+  }
+
+  .job-entry img {
+    width: 70px;
+    height: 70px;
+    margin-right: 25px;
+  }
+
+  .job-title {
+    font-size: 20px;
+  }
+
+  .company-location {
+    font-size: 18px;
+  }
+
+  .date-duration {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .bullet-points li {
+    font-size: 18px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .work-history {
+    max-width: 1000px; /* Increased from 900px to better utilize space */
+    margin-left: 50px; /* Increased from 40px for more left padding */
+  }
+
+  .job-entry img {
+    width: 70px; /* Increased from 70px */
+    height: 70px; /* Increased from 70px */
+    margin-right: 30px; /* Increased from 25px for more breathing room */
+  }
+
+  .job-title {
+    font-size: 22px; /* Increased from 18px for better hierarchy */
+  }
+
+  .company-location {
+    font-size: 18px; /* Increased from 16px */
+  }
+
+  .date-duration {
+    font-size: 16px; /* Increased from 14px */
+  }
+
+  .description {
+    font-size: 18px; /* Increased from 16px */
+  }
+
+  .bullet-points li {
+    font-size: 18px; /* Increased from 16px */
+  }
+}

@@ -196,3 +196,61 @@ function toggleContent(id, button) {
   activeContentId = id;
   console.log('Updated activeContentId to:', activeContentId);
 }
+
+
+
+// Function to calculate the number of months between two dates
+function calculateMonths(startDateStr, endDateStr) {
+  const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  // Parse the start date
+  const [startMonthStr, startYearStr] = startDateStr.split(" ");
+  const startMonth = months.indexOf(startMonthStr);
+  const startYear = parseInt(startYearStr);
+
+  // Parse the end date (or use current date if "Present")
+  let endMonth, endYear;
+  if (endDateStr === "Present") {
+      const now = new Date();
+      endMonth = now.getMonth(); // 0-11
+      endYear = now.getFullYear();
+  } else {
+      const [endMonthStr, endYearStr] = endDateStr.split(" ");
+      endMonth = months.indexOf(endMonthStr);
+      endYear = parseInt(endYearStr);
+  }
+
+  // Calculate the difference in months
+  const yearsDiff = endYear - startYear;
+  const monthsDiff = endMonth - startMonth;
+  const totalMonths = yearsDiff * 12 + monthsDiff + 1; // +1 to include the start month
+
+  return totalMonths;
+}
+
+// Function to format duration
+function formatDuration(totalMonths) {
+  if (totalMonths <= 11) {
+    return `${totalMonths} mo${totalMonths !== 1 ? 's' : ''}`;
+  } else {
+    const years = Math.floor(totalMonths / 12);
+    const remainingMonths = totalMonths % 12;
+    let result = `${years} yr${years !== 1 ? 's' : ''}`;
+    if (remainingMonths > 0) {
+      result += ` ${remainingMonths} mo${remainingMonths !== 1 ? 's' : ''}`;
+    }
+    return result;
+  }
+}
+
+// Update the duration for each job entry
+document.querySelectorAll(".date-duration").forEach(element => {
+  const startDate = element.getAttribute("data-start");
+  const endDate = element.getAttribute("data-end");
+  const months = calculateMonths(startDate, endDate);
+  const durationElement = element.querySelector(".duration");
+  durationElement.textContent = formatDuration(months);
+});
