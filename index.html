@@ -11,7 +11,6 @@
 
     gtag('config', 'G-FDSLDZ5EWW');
   </script>
-  <script src="./assets/js/script.js"></script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -250,8 +249,8 @@
           <!-- auroras in Madison.</p> -->
           <p>Outside my research, I enjoy making a rare shitpost and browsing X. I don't post much, but I love jumping into chats and debates there when I do.</p>
           <div class="button-container">
-            <md-text-button class="mobile-only-button" onclick="toggleContent('resume', this)">View My
-              Resume</md-text-button>
+            <md-outlined-button class="mobile-only-button" onclick="toggleContent('resume', this)">View My
+              Resume</md-outlined-button>
           </div>
         </section>
 
@@ -699,47 +698,31 @@
           <header style="display: flex; align-items: center; gap: 10px;">
             <custom-h2 class="custom-h2 article-title" style="padding-right: 10px; margin: 0;">Resume</custom-h2>
             
-            <!-- View Icon (toggles visibility) -->
-            <a href="#" onclick="togglePDFViewer(); return false;" class="view-icon" id="viewLink" aria-label="Show resume">
+            <!-- View Icon (toggles visibility on desktop, opens in new tab on mobile) -->
+            <a href="./assets/abhinav_chinnusamy_cv.pdf" onclick="handleViewClick(event)" class="view-icon" id="viewLink" aria-label="Show resume" target="_blank">
               <md-filled-tonal-icon-button>
                 <md-icon id="viewIcon">visibility</md-icon>
               </md-filled-tonal-icon-button>
             </a>
-            
+        
             <!-- Download Icon (commented out) -->
-            <!--
-            <a href="/assets/abhinav_chinnusamy_cv.pdf" download="abhinav_chinnusamy_cv.pdf" class="download-icon">
+            
+            <a href="./assets/abhinav_chinnusamy_cv.pdf" download="abhinav_chinnusamy_cv.pdf" class="download-icon">
               <md-filled-tonal-icon-button>
                 <md-icon>download</md-icon>
               </md-filled-tonal-icon-button>
             </a>
-            -->
+           
           </header>
         
           <!-- PDF Viewer (hidden by default, outside the header) -->
-          <div id="pdfViewerContainer" style="display: none; margin-top: 20px; width: 100%; clear: both;">
-            <iframe src="/assets/abhinav_chinnusamy_cv.pdf" width="100%" height="500px" style="border: none;"></iframe>
+          <div id="pdfViewerContainer" style="display: none; margin-top: 20px; width: 100%; clear: both; overflow-y: hidden;">
+            <iframe src="/assets/abhinav_chinnusamy_cv.pdf#view=FitH&scrollbar=0&toolbar=0" style="width: 100%; height: 80vh; border: none;"></iframe>
           </div>
         </div>
         
-        <script>
-          function togglePDFViewer() {
-            const viewer = document.getElementById('pdfViewerContainer');
-            const viewIcon = document.getElementById('viewIcon');
-            const viewLink = document.getElementById('viewLink');
-            
-            // Toggle the display of the PDF viewer
-            const isHidden = viewer.style.display === 'none' || viewer.style.display === '';
-            viewer.style.display = isHidden ? 'block' : 'none';
-            
-            // Toggle the icon between 'visibility' (eye) and 'visibility_off' (eye with slash)
-            viewIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
-            
-            // Update aria-label for accessibility
-            viewLink.setAttribute('aria-label', isHidden ? 'Hide resume' : 'Show resume');
-          }
-        </script>
-
+        <!-- Link to the external JavaScript file -->
+        <script src="./assets/js/resumeViewer.js"></script>
 
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
         <div class="work-history">
@@ -749,15 +732,15 @@
               <p class="job-title">Intern</p>
               <p class="company-location">Amazon • Austin, TX</p>
               <p class="date-duration" data-start="Jun 2025" data-end="Aug 2025">
-                This summer • <span class="duration" style="display: inline;"></span>
+                This summer (upcoming) • <span class="duration" style="display: inline;"></span>
               </p>
             </div>
           </div>
           <div class="job-entry">
             <img src="./assets/icons/WEMPEC_logo.jpg" alt="Profile Icon">
             <div class="job-details">
-              <p class="job-title">Grad researcher</p>
-              <p class="company-location">WEMPEC • Madison, WI</p>
+              <p class="job-title">Graduate Researcher</p>
+              <p class="company-location">WEMPEC • Wisconsin, USA </p>
               <p class="date-duration" data-start="Aug 2024" data-end="Present">
                 Aug 2024 – Present • <span class="duration" style="display: inline;"></span>
               </p>
@@ -766,7 +749,7 @@
           <div class="job-entry">
             <img src="./assets/icons/peg_logo.jpg" alt="Profile Icon">
             <div class="job-details">
-              <p class="job-title">UG researcher</p>
+              <p class="job-title">Undergraduate Researcher</p>
               <p class="company-location">PEG • Dharwad, IN</p>
               <p class="date-duration" data-start="Dec 2022" data-end="Apr 2024">
                 Dec 2022 – Apr 2024 • <span class="duration" style="display: inline;"></span>
@@ -782,8 +765,8 @@
           <div class="job-entry">
             <img src="./assets/icons/uw-madison_logo.png" alt="Profile Icon">
             <div class="job-details">
-              <p class="job-title">UW-Madison</p>
-              <p class="company-location">Madison, WI</p>
+              <p class="job-title">UW - Madison</p>
+              <p class="company-location">Wisconsin, USA</p>
               <p class="date-duration" data-start="Aug 2024" data-end="Present">
                 2024 – Present
               </p>
@@ -795,7 +778,7 @@
           <div class="job-entry">
             <img src="./assets/icons/iit_logo.png" alt="Profile Icon">
             <div class="job-details">
-              <p class="job-title">IIT-Dharwad</p>
+              <p class="job-title">IIT - Dharwad</p>
               <p class="company-location">Dharwad, IN</p>
               <p class="date-duration" data-start="Aug 2020" data-end="May 2024">
                 2020 – 2024

@@ -29,7 +29,8 @@
   --md-circular-progress-active-indicator-width: 15;
   --md-filter-chip-label-text-font: system-ui;
   --md-text-button-label-text-font: system-ui;
-  --md-list-item-overline-font: system-ui;
+  --md-outlined-button-label-text-font: system-ui;
+  --md-list-item-overline-font: system-ui;  
   --md-suggestion-chip-label-text-font: system-ui;
   --md-list-item-label-text-font: system-ui;
   --md-list-item-supporting-text-font: system-ui;
