@@ -34,7 +34,7 @@
   <meta property="og:description"
     content="Abhinav Chinnusamy's Portfolio website that showcases his work, skills, and achievements" />
 
-
+  <meta name="google-site-verification" content="2QpZ3PoyZSAzXzPcu_apaa9SvPi2Ph3UOe_xRPsy6lU" />
 
 
   <!-- X user id: 977864508453437446 -->
@@ -117,8 +117,7 @@
               style=" margin-right: 6px;"></ion-icon></md-suggestion-chip> -->
           <md-suggestion-chip class="suggestion-chip-style" label="IEEE"
             href="https://ieeexplore.ieee.org/author/826239257415794" target="_blank">
-            <img slot="icon" src="./assets/icons/ieee_logo.svg"
-            style="width: 24px; height: 24px; margin-right: 6px;">
+            <img slot="icon" src="./assets/icons/ieee_logo.svg" style="width: 24px; height: 24px; margin-right: 6px;">
           </md-suggestion-chip>
           <md-suggestion-chip class="suggestion-chip-style" label="X (Twitter)" href="https://x.com/abhinav_937"
             target="_blank">
@@ -247,7 +246,8 @@
           </p>
           <!-- Outside of research, I love doing astrophotography and enjoy watching the night skies, especially the -->
           <!-- auroras in Madison.</p> -->
-          <p>Outside my research, I enjoy making a rare shitpost and browsing X. I don't post much, but I love jumping into chats and debates there when I do.</p>
+          <p>Outside my research, I enjoy making a rare shitpost and browsing X. I don't post much, but I love jumping
+            into chats and debates there when I do.</p>
           <div class="button-container">
             <md-outlined-button class="mobile-only-button" onclick="toggleContent('resume', this)">View My
               Resume</md-outlined-button>
@@ -697,30 +697,33 @@
         <div>
           <header style="display: flex; align-items: center; gap: 10px;">
             <custom-h2 class="custom-h2 article-title" style="padding-right: 10px; margin: 0;">Resume</custom-h2>
-            
+
             <!-- View Icon (toggles visibility on desktop, opens in new tab on mobile) -->
-            <a href="./assets/abhinav_chinnusamy_cv.pdf" onclick="handleViewClick(event)" class="view-icon" id="viewLink" aria-label="Show resume" target="_blank">
+            <a href="./assets/abhinav_chinnusamy_cv.pdf" onclick="handleViewClick(event)" class="view-icon"
+              id="viewLink" aria-label="Show resume" target="_blank">
               <md-filled-tonal-icon-button>
                 <md-icon id="viewIcon">visibility</md-icon>
               </md-filled-tonal-icon-button>
             </a>
-        
+
             <!-- Download Icon (commented out) -->
-            
+
             <a href="./assets/abhinav_chinnusamy_cv.pdf" download="abhinav_chinnusamy_cv.pdf" class="download-icon">
               <md-filled-tonal-icon-button>
                 <md-icon>download</md-icon>
               </md-filled-tonal-icon-button>
             </a>
-           
+
           </header>
-        
+
           <!-- PDF Viewer (hidden by default, outside the header) -->
-          <div id="pdfViewerContainer" style="display: none; margin-top: 20px; width: 100%; clear: both; overflow-y: hidden;">
-            <iframe src="/assets/abhinav_chinnusamy_cv.pdf#view=FitH&scrollbar=0&toolbar=0" style="width: 100%; height: 80vh; border: none;"></iframe>
+          <div id="pdfViewerContainer"
+            style="display: none; margin-top: 20px; width: 100%; clear: both; overflow-y: hidden;">
+            <iframe src="/assets/abhinav_chinnusamy_cv.pdf#view=FitH&scrollbar=0&toolbar=0"
+              style="width: 100%; height: 80vh; border: none;"></iframe>
           </div>
         </div>
-        
+
         <!-- Link to the external JavaScript file -->
         <script src="./assets/js/resumeViewer.js"></script>
 
