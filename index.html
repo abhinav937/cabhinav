@@ -11,7 +11,7 @@
 
     gtag('config', 'G-FDSLDZ5EWW');
   </script>
-
+  <script src="./assets/js/script.js"></script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -707,20 +707,40 @@
             </a>
             
             <!-- Download Icon (commented out) -->
-            
-            <!-- <a href="./assets/abhinav_chinnusamy_cv.pdf" download="abhinav_chinnusamy_cv.pdf" class="download-icon">
+            <!--
+            <a href="/assets/abhinav_chinnusamy_cv.pdf" download="abhinav_chinnusamy_cv.pdf" class="download-icon">
               <md-filled-tonal-icon-button>
                 <md-icon>download</md-icon>
               </md-filled-tonal-icon-button>
-            </a> -->
-           
+            </a>
+            -->
           </header>
         
           <!-- PDF Viewer (hidden by default, outside the header) -->
-          <div id="pdfViewerContainer" style="display: none; margin-top: 20px; width: 100%;">
-            <iframe src="./assets/abhinav_chinnusamy_cv.pdf" width="100%" height="500px" style="border: none;"></iframe>
+          <div id="pdfViewerContainer" style="display: none; margin-top: 20px; width: 100%; clear: both;">
+            <iframe src="/assets/abhinav_chinnusamy_cv.pdf" width="100%" height="500px" style="border: none;"></iframe>
           </div>
         </div>
+        
+        <script>
+          function togglePDFViewer() {
+            const viewer = document.getElementById('pdfViewerContainer');
+            const viewIcon = document.getElementById('viewIcon');
+            const viewLink = document.getElementById('viewLink');
+            
+            // Toggle the display of the PDF viewer
+            const isHidden = viewer.style.display === 'none' || viewer.style.display === '';
+            viewer.style.display = isHidden ? 'block' : 'none';
+            
+            // Toggle the icon between 'visibility' (eye) and 'visibility_off' (eye with slash)
+            viewIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+            
+            // Update aria-label for accessibility
+            viewLink.setAttribute('aria-label', isHidden ? 'Hide resume' : 'Show resume');
+          }
+        </script>
+
+
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
         <div class="work-history">
           <div class="job-entry">
