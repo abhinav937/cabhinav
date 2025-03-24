@@ -254,3 +254,20 @@ document.querySelectorAll(".date-duration").forEach(element => {
   const durationElement = element.querySelector(".duration");
   durationElement.textContent = formatDuration(months);
 });
+
+
+function togglePDFViewer() {
+  const viewer = document.getElementById('pdfViewerContainer');
+  const viewIcon = document.getElementById('viewIcon');
+  const viewLink = document.getElementById('viewLink');
+  
+  // Toggle the display of the PDF viewer
+  const isHidden = viewer.style.display === 'none' || viewer.style.display === '';
+  viewer.style.display = isHidden ? 'block' : 'none';
+  
+  // Toggle the icon between 'visibility' (eye) and 'visibility_off' (eye with slash)
+  viewIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+  
+  // Update aria-label for accessibility
+  viewLink.setAttribute('aria-label', isHidden ? 'Hide resume' : 'Show resume');
+}
