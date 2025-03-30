@@ -43,6 +43,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/xblog.css">
+
   <!-- <link rel="stylesheet" href="./assets/css/carousel.css"> -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
@@ -53,6 +55,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+      <!-- Material Web Design 3 scripts -->
+      <script type="module" src="./index.html"></script>
+      <script src="../../bundle.js"></script>
+      <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+      <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
 </head>
 
 <body>
@@ -60,213 +70,61 @@
 
   <main>
     <div class="main-content">
+      <article class="about active">
+        <div class="xblog-container">
+          <h1 class="xblog-post-title">My projects</h1>
+          <div class="xblog-grid">
 
-      <article class="about  active">
+            <!-- Blog Preview 1 -->
 
-        <header>
-          <custom-h2 class="custom-h2 article-title">Power Electronics(My Projects)</custom-h2>
-        </header>
-
-        <section class="about-text">
-          <p>Here are the projects I have completed and tested for my research and courseworks</p>
-        </section>
-
-        <!----------------------------- 1st project ---------------------------------->
-        <custom-h3 class="custom-h3 skills-title">1. GaN Half-Bridge:</custom-h3>
-
-
-        <!-- image carousel -->
-        <div class="bs-carousel-container" style="width:80%; margin:auto; padding-top:10px; padding-bottom:10px;">
-          <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleInterval" data-bs-slide-to="0" class="active"
-                aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleInterval" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselExampleInterval" data-bs-slide-to="2"
-                aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../assets/Projects/gan.webp" class="d-block w-100" alt="GaN HalfBRidge Inverter">
-              </div>
-              <div class="carousel-item">
-                <img src="../assets/Projects/hb_1.webp" class="d-block w-100" alt="GaN HalfBRidge Inverter">
-              </div>
-              <div class="carousel-item">
-                <img src="../assets/Projects/hb_2.webp" class="d-block w-100" alt="GaN HalfBRidge Inverter">
+            <div class="xblog-preview">
+              <img src="../assets/Projects/yeswegan1.JPEG" alt="Blog Preview 1" class="xblog-preview-img">
+              <div class="xblog-preview-content"> <!-- Added wrapper for text content -->
+                <h2 class="xblog-title">YesWeGaN</h2>
+                <p class="xblog-excerpt">solid state circuit breaker for EV and DC home applciations, designed for 800V and...</p>
+                <a href="/projects/yes-we-gan/" class="xblog-link">Read More</a>
               </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval"
-              data-bs-slide="prev">
-              <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval"
-              data-bs-slide="next">
-              <i class="fa-solid fa-circle-chevron-right"></i>
-            </button>
+
+            <!-- Blog Preview 2 -->
+            <div class="xblog-preview">
+              <img src="../assets/Projects/E_fuse_latest.webp" alt="Blog Preview 1" class="xblog-preview-img">
+              <div class="xblog-preview-content"> <!-- Added wrapper for text content -->
+                <h2 class="xblog-title">E-Fuse</h2>
+                <p class="xblog-excerpt">solid state circuit breaker for EV and DC home applciations, designed for 800V and...</p>
+                <a href="/projects/e-fuse/" class="xblog-link">Read More</a>
+              </div>
+            </div>
+
+            <!-- Blog Preview 3 -->
+            <!-- <div class="xblog-preview">
+              <img src="../assets/Projects/gan.webp" alt="Blog Preview 1" class="xblog-preview-img">
+              <div class="xblog-preview-content">
+                <h2 class="xblog-title">GaN Half Bridge</h2>
+                <p class="xblog-excerpt">GaN Half Bridge developed for MMC applications which has really good...</p>
+                <a href="/projects/gan-half-bridge/" class="xblog-link">Read More</a>
+              </div>
+            </div> -->
+
+
+            <!-- Blog Preview 4 -->
+            <!-- <div class="xblog-preview">
+              <img src="../assets/Projects/rp2040.webp" alt="Blog Preview 1" class="xblog-preview-img">
+              <div class="xblog-preview-content">
+                <h2 class="xblog-title">E-Fuse</h2>
+                <p class="xblog-excerpt">solid state circuit breaker for EV and DC home applciations, designed for 800V and...</p>
+                <a href="/projects/rp2040/" class="xblog-link">Read More</a>
+              </div>
+            </div> -->
+
+
+
+
           </div>
         </div>
-
-        <custom-h2 class="project-title" style="margin-top: 10px;">Key features:</custom-h2>
-        <section class="skill">
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">2.7kW in a area of 7.5 sq in.(650V and 6A).</custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">RC Circuit to create the negative voltage during
-                turn-off.</custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">Isolated power supplies for Gate Driver.</custom-h4>
-            </li>
-          </ol>
-        </section>
-
-        <!----------------------------- 1st project end ---------------------------------->
-
-        <!----------------------------- 2nt project ---------------------------------->
-        <custom-h3 class="custom-h3 skills-title" style="padding-top: 20px;">2. Solid State Circuit breaker:</custom-h3>
-
-
-        <!-- image carousel -->
-        <div class="bs-carousel-container" style="width:80%; margin:auto; padding-top:10px;  padding-bottom:10px;">
-          <div id="carouselExampleInterval1" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="0" class="active"
-                aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselExampleInterval1" data-bs-slide-to="2"
-                aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../assets/Projects/modular-sscb.webp" class="d-block w-100" alt="E-Fuse Solid State Circuit Breaker SSCB">
-              </div>
-              <div class="carousel-item">
-                <img src="../assets/Projects/efuse-top.webp" class="d-block w-100" alt="E-Fuse Solid State Circuit Breaker SSCB">
-              </div>
-              <div class="carousel-item">
-                <img src="../assets/Projects/efuse-side.webp" class="d-block w-100" alt="E-Fuse Solid State Circuit Breaker SSCB">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval1"
-              data-bs-slide="prev">
-              <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval1"
-              data-bs-slide="next">
-              <i class="fa-solid fa-circle-chevron-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <custom-h2 class="project-title" style="margin-top: 10px;">Key features:</custom-h2>
-        <section class="skill">
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">Continuous rating of 800V and 70A.</custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">I2t algorithm for overcurrent protection.
-              </custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">Modular operation tested with equal current
-                sharing.</custom-h4>
-            </li>
-          </ol>
-        </section>
-
-        <!----------------------------- 1st project end ---------------------------------->
-
-        <!----------------------------- 1st project ---------------------------------->
-        <custom-h3 class="custom-h3 skills-title">3. YesWeGaN</custom-h3>
-
-
-        <!-- image carousel -->
-        <div class="bs-carousel-container" style="width:80%; margin:auto; padding-top:10px; padding-bottom:10px;">
-          <div id="carouselExampleInterval3" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleInterval3" data-bs-slide-to="0" class="active"
-                aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleInterval3" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-              <!-- <button type="button" data-bs-target="#carouselExampleInterval" data-bs-slide-to="2"
-                      aria-label="Slide 3"></button> -->
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../assets/Projects/yeswegan1.JPEG" class="d-block w-100" alt="YesWeGaN 3-Phase GaN Inverter">
-              </div>
-              <div class="carousel-item">
-                <img src="../assets/Projects/yeswegan2.JPEG" class="d-block w-100" alt="YesWeGaN 3-Phase GaN Inverter">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval3"
-              data-bs-slide="prev">
-              <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval3"
-              data-bs-slide="next">
-              <i class="fa-solid fa-circle-chevron-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <custom-h2 class="project-title" style="margin-top: 10px;">Key features:</custom-h2>
-        <section class="skill">
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">150W High Power Density 3-Phase Inverter.</custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">
-                Achieved an overall efficiency of 95%.</custom-h4>
-            </li>
-          </ol>
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">
-                Worked along with Luke Andersen, who developed an efficient Space Vector Modulation (SVM) code that was also tested on this system.</custom-h4>
-            </li>
-          </ol>
-
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <custom-h4 class="custom-h4 timeline-item-title">
-                <a href="https://ieeexplore.ieee.org/document/7236442" target="_blank"
-                  style="color:#a8e7e5;" rel="noopener noreferrer">PEGO Compatible</a>
-              </custom-h4>
-            </li>
-          </ol>
-        </section>
-
-        <!----------------------------- 1st project end ---------------------------------->
-
-
-
-
-
-
       </article>
+    </div>
+</main>
 
 
     </div>
