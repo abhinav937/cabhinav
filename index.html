@@ -51,6 +51,7 @@
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="./assets/js/fallingLogos.js"></script>
 
   <!--
     - google font link
@@ -105,6 +106,12 @@
   -->
 
   <main>
+
+    <!-- <script>
+      window.onload = function() {
+          startFallingLogos();
+      };
+  </script> -->
 
     <!--
       - #SIDEBAR
@@ -357,6 +364,9 @@
             <md-filter-chip class="filter-chip-style" id="power" label="Power" class="mdc-chip"></md-filter-chip>
             <md-filter-chip class="filter-chip-style" id="embedded" label="Embedded" class="mdc-chip"></md-filter-chip>
             <md-filter-chip class="filter-chip-style" id="analog" label="Analog" class="mdc-chip"></md-filter-chip>
+            <a href="/projects/">
+              <md-filter-chip class="filter-chip-style" id="x" label="See More" class="mdc-chip"></md-filter-chip>
+            </a>
           </md-chip-set>
 
           <ul class="project-list">
@@ -388,7 +398,7 @@
                 </div>
                 <!-- Overlay button with the provided styles -->
                 <div class="md-chip-overlay">
-                  <a href="/projects/e-fuse/" target="_blank">  <!-- use absolute path always to avid .html extension in the link  -->
+                  <a href="/projects/e-fuse/">  <!-- use absolute path always to avid .html extension in the link  -->
                     <md-assist-chip elevated label="learn more"></md-assist-chip>
                   </a>
                 </div>
