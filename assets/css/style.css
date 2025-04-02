@@ -66,6 +66,26 @@
   --md-filter-chip-label-text-color: white;
 }
 
+.filter-chip-style-rounded {
+  --md-filter-chip-hover-label-text-color: #4da6ff;
+  --md-filter-chip-hover-leading-icon-color: #cce8e7;
+  --md-filter-chip-hover-state-layer-color: #cce8e7;
+  --md-filter-chip-selected-pressed-state-layer: white;
+  --md-filter-chip-pressed-label-text-color: white;
+  --md-filter-chip-label-text-color: #4da6ff;
+  --md-filter-chip-container-shape: 20px;
+}
+
+.elevated-chip-style-rounded {
+  --md-assist-chip-hover-label-text-color: #4da6ff;
+  --md-assist-chip-hover-leading-icon-color: #cce8e7;
+  --md-assist-chip-hover-state-layer-color: #cce8e7;
+  --md-assist-chip-selected-pressed-state-layer: white;
+  --md-assist-chip-pressed-label-text-color: white;
+  --md-assist-chip-label-text-color: #4da6ff;
+  --md-assist-chip-container-shape: 2px;
+}
+
 :root {
 
   /**
