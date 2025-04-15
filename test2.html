@@ -1,9 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Falling X Logos</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-FDSLDZ5EWW');
+    </script>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Falling X Logos at Fixed Angles</title>
+
+    <meta property="og:title" content="test2" />
+    <meta property="og:url" content="https://cabhinav.com" />
+    <meta name="robots" content="max-image-preview:large">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://cabhinav.com/assets/icons/test-share-preview.png" />
+    <meta property="og:image:alt" content="Profile picture of Abhinav Chinnusamy" />
+    <meta name="twitter:image" content="https://cabhinav.com/assets/icons/test-share-preview.png" />
+    <meta name="twitter:creator" content="@abhinav_937" />
+    <meta name="twitter:site" content="@abhinav_937" />
+    <meta name="twitter:url" content="https://cabhinav.com/test2" />
+    <meta name="twitter:title" content="Falling X Logos" />
+    <meta name="twitter:description" content="Stress reliever" />
+
+
     <style>
         body {
             margin: 0;
@@ -26,34 +53,42 @@
             border: none;
             color: white;
             border-radius: 5px;
-            z-index: 10; /* Ensures button stays above falling logos */
+            z-index: 10;
+            /* Ensures button stays above falling logos */
         }
 
         .falling-logo {
             position: absolute;
-            width: 50px; /* Adjust size of the PNG */
+            width: 50px;
+            /* Adjust size of the PNG */
             height: auto;
             opacity: 0.8;
             pointer-events: none;
-            top: -50px; /* Start just above the top edge */
-            transform: rotate(var(--rotation)); /* Apply fixed rotation */
+            top: -50px;
+            /* Start just above the top edge */
+            transform: rotate(var(--rotation));
+            /* Apply fixed rotation */
             animation: fall linear forwards;
         }
 
         @keyframes fall {
             0% {
-                transform: translateY(0) rotate(var(--rotation)); /* Preserve rotation */
+                transform: translateY(0) rotate(var(--rotation));
+                /* Preserve rotation */
                 opacity: 1;
             }
+
             100% {
-                transform: translateY(calc(100vh + 50px)) rotate(var(--rotation)); /* Preserve rotation */
+                transform: translateY(calc(100vh + 50px)) rotate(var(--rotation));
+                /* Preserve rotation */
                 opacity: 0.5;
             }
         }
     </style>
 </head>
+
 <body>
-    <button id="subscribe-btn">Subscribe to Premium</button>
+    <button id="subscribe-btn">Click Here</button>
 
     <script>
         const subscribeBtn = document.getElementById('subscribe-btn');
@@ -85,4 +120,5 @@
         }
     </script>
 </body>
+
 </html>
