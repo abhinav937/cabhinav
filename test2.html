@@ -1,123 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Falling X Logos</title>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-FDSLDZ5EWW');
-    </script>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://cabhinav.com/assets/icons/test-share-preview.png" />
-    <meta name="twitter:creator" content="@abhinav_937" />
-    <meta name="twitter:site" content="@abhinav_937" />
-    <meta name="twitter:url" content="https://cabhinav.com/test2" />
-    <meta name="twitter:title" content="Falling X Logos" />
-    <meta name="twitter:description" content="Stress reliever" />
-    <meta property="og:title" content="test2" />
-    <meta property="og:url" content="https://cabhinav.com" />
-    <meta name="robots" content="max-image-preview:large">
-    <meta property="og:image" content="https://cabhinav.com/assets/icons/test-share-preview.png" />
-
-
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #000;
+            background: #000;
             height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            color: white;
-            font-family: Arial, sans-serif;
+            align-items: center;
         }
 
         #subscribe-btn {
             padding: 10px 20px;
             font-size: 18px;
-            cursor: pointer;
-            background-color: #1DA1F2;
+            background: #1DA1F2;
             border: none;
             color: white;
-            border-radius: 5px;
-            z-index: 10;
-            /* Ensures button stays above falling logos */
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #subscribe-btn:hover {
+            transform: scale(1.1);
         }
 
         .falling-logo {
             position: absolute;
-            width: 50px;
-            /* Adjust size of the PNG */
-            height: auto;
+            width: 40px;
             opacity: 0.8;
             pointer-events: none;
             top: -50px;
-            /* Start just above the top edge */
-            transform: rotate(var(--rotation));
-            /* Apply fixed rotation */
-            animation: fall linear forwards;
+            animation: fall 6s linear forwards;
         }
 
         @keyframes fall {
             0% {
-                transform: translateY(0) rotate(var(--rotation));
-                /* Preserve rotation */
-                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
             }
-
             100% {
-                transform: translateY(calc(100vh + 50px)) rotate(var(--rotation));
-                /* Preserve rotation */
-                opacity: 0.5;
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
             }
         }
     </style>
 </head>
-
 <body>
     <button id="subscribe-btn">Click Here</button>
 
     <script>
         const subscribeBtn = document.getElementById('subscribe-btn');
         const body = document.body;
+        const logoURL = 'https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png';
+        let isRaining = false;
 
         subscribeBtn.addEventListener('click', () => {
-            for (let i = 0; i < 20; i++) {
-                createFallingLogo();
+            if (!isRaining) {
+                isRaining = true;
+                startRaining();
             }
         });
 
-        function createFallingLogo() {
+        function createLogo() {
             const logo = document.createElement('img');
-            logo.src = 'https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png'; // Internet-hosted X logo
+            logo.src = logoURL;
             logo.className = 'falling-logo';
-            logo.style.left = `${Math.random() * (window.innerWidth - 50)}px`; // Random X position
-            logo.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random fall speed (2-5s)
-
-            // Set a fixed random rotation between -45° and 45°
-            const fixedRotation = Math.random() * 90 - 45; // -45 to 45 degrees
-            logo.style.setProperty('--rotation', `${fixedRotation}deg`); // Set custom property for rotation
-
+            logo.style.left = Math.random() * (window.innerWidth - 40) + 'px';
             body.appendChild(logo);
+            logo.addEventListener('animationend', () => logo.remove());
+        }
 
-            // Remove logo after animation
-            logo.addEventListener('animationend', () => {
-                logo.remove();
-            });
+        function startRaining() {
+            setInterval(() => {
+                if (isRaining) {
+                    createLogo();
+                }
+            }, 200); // Spawn every 200ms
         }
     </script>
 </body>
-
 </html>
