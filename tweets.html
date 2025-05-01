@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My X Posts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .post {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .post-text {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .post-date {
+      color: #555;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .post-media img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    h1 {
+      text-align: center;
+    }
+    #posts-container {
+      margin-bottom: 20px;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid red;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Latest X Posts</h1>
+  <div id="posts-container"></div>
+
+  <!-- Optional: X Timeline Embed -->
+  <h1>My X Timeline</h1>
+  <a class="twitter-timeline" data-height="600" href="https://twitter.com/abhinav_937?ref_src=twsrc%5Etfw">Tweets by abhinav_937</a>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <script>
+    // X API Bearer Token
+    const BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAAIBIzwEAAAAAuNpwCNfa2Bg3sig4gnDLOw%2Fk0F4%3Dj1akTnXuRUSaXo1hTsDPptrLrOZeSrYuIaJ1HUVr9VC7ejZyrm';
+
+    // Your X username
+    const USERNAME = 'abhinav_937';
+
+    // Utility to wait for a delay (used for retries)
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Function to fetch user ID from username
+    async function getUserId(username, retry = false) {
+      try {
+        const url = `https://api.twitter.com/2/users/by/username/${username}?user.fields=id`;
+        console.log(`Fetching user ID for ${username} from ${url}`);
+        console.log(`Using Bearer Token: ${BEARER_TOKEN.substring(0, 10)}... (first 10 chars)`);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${BEARER_TOKEN}`
+          }
+        });
+        if (!response.ok) {
+          let errorDetail = 'No additional details';
+          try {
+            const errorData = await response.json();
+            errorDetail = errorData.detail || errorData.errors?.[0]?.message || JSON.stringify(errorData);
+          } catch (e) {
+            errorDetail = await response.text() || 'Failed to parse error response';
+          }
+          const errorMsg = `Failed to fetch user ID: ${response.status} ${response.statusText}. ${errorDetail}`;
+          if (response.status === 429 && !retry) {
+            console.warn('Rate limit hit, retrying after 1s');
+            await wait(1000);
+            return getUserId(username, true);
+          }
+          throw new Error(errorMsg);
+        }
+        const data = await response.json();
+        console.log('User ID response:', data);
+        if (!data?.data?.id) {
+          throw new Error('Invalid response: User ID not found');
+        }
+        console.log(`User ID: ${data.data.id}`);
+        return data.data.id;
+      } catch (error) {
+        if (error.message.includes('Failed to fetch')) {
+          throw new Error(`getUserId error: Network error - Failed to fetch. Likely cause: CORS issue. Deploy the site to GitHub Pages (https://) to resolve. If already deployed, check the Network tab in DevTools for the HTTP response, verify the Bearer Token in X Developer Portal, ensure internet connectivity, and disable browser extensions (e.g., ad-blockers).`);
+        }
+        throw new Error(`getUserId error: ${error.message}`);
+      }
+    }
+
+    // Function to fetch latest 6 posts
+    async function fetchPosts(userId, retry = false) {
+      try {
+        const url = `https://api.twitter.com/2/users/${userId}/tweets?max_results=6&tweet.fields=id,text,created_at,entities,attachments`;
+        console.log(`Fetching posts for user ID ${userId} from ${url}`);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${BEARER_TOKEN}`
+          }
+        });
+        if (!response.ok) {
+          let errorDetail = 'No additional details';
+          try {
+            const errorData = await response.json();
+            errorDetail = errorData.detail || errorData.errors?.[0]?.message || JSON.stringify(errorData);
+          } catch (e) {
+            errorDetail = await response.text() || 'Failed to parse error response';
+          }
+          const errorMsg = `Failed to fetch posts: ${response.status} ${response.statusText}. ${errorDetail}`;
+          if (response.status === 429 && !retry) {
+            console.warn('Rate limit hit, retrying after 1s');
+            await wait(1000);
+            return fetchPosts(userId, true);
+          }
+          throw new Error(errorMsg);
+        }
+        const data = await response.json();
+        console.log('Posts response:', data);
+        if (!data?.data) {
+          throw new Error('Invalid response: No posts found');
+        }
+        console.log(`Fetched ${data.data.length} posts`);
+        return data.data;
+      } catch (error) {
+        if (error.message.includes('Failed to fetch')) {
+          throw new Error(`fetchPosts error: Network error - Failed to fetch. Likely cause: CORS issue. Deploy the site to GitHub Pages (https://) to resolve.`);
+        }
+        throw new Error(`fetchPosts error: ${error.message}`);
+      }
+    }
+
+    // Function to render posts
+    function renderPosts(posts) {
+      const container = document.getElementById('posts-container');
+      container.innerHTML = ''; // Clear existing content
+
+      if (!posts || posts.length === 0) {
+        container.innerHTML = '<p>No posts found for this user.</p>';
+        return;
+      }
+
+      posts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+
+        // Post text
+        const textElement = document.createElement('p');
+        textElement.className = 'post-text';
+        textElement.textContent = post.text || 'No text available';
+        postElement.appendChild(textElement);
+
+        // Post date
+        const dateElement = document.createElement('p');
+        dateElement.className = 'post-date';
+        dateElement.textContent = post.created_at ? new Date(post.created_at).toLocaleString() : 'Date unavailable';
+        postElement.appendChild(dateElement);
+
+        // Post media (basic handling for images in entities.urls)
+        if (post.entities?.urls) {
+          post.entities.urls.forEach(url => {
+            if (url.images?.[0]?.url) {
+              const mediaElement = document.createElement('div');
+              mediaElement.className = 'post-media';
+              const img = document.createElement('img');
+              img.src = url.images[0].url;
+              img.alt = 'Post media';
+              img.loading = 'lazy';
+              mediaElement.appendChild(img);
+              postElement.appendChild(mediaElement);
+            }
+          });
+        }
+
+        container.appendChild(postElement);
+      });
+    }
+
+    // Main function to orchestrate fetching and rendering
+    async function main() {
+      const container = document.getElementById('posts-container');
+      try {
+        console.log('Starting main function');
+        // Check if running locally (file://)
+        if (window.location.protocol === 'file:') {
+          throw new Error('This page is loaded locally (file://), which causes CORS errors with API requests. Deploy to GitHub Pages (https://) or test using a local server (e.g., npx http-server).');
+        }
+        const userId = await getUserId(USERNAME);
+        const posts = await fetchPosts(userId);
+        renderPosts(posts);
+      } catch (error) {
+        console.error('Main error:', error);
+        container.innerHTML = `<p class="error-message">Error loading posts: ${error.message} Check the Network tab in DevTools for the HTTP response.</p>`;
+      }
+    }
+
+    // Run the main function
+    main();
+  </script>
+</body>
+</html>
