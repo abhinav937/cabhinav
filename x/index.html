@@ -189,18 +189,17 @@
     </div>
   </div>
 
-  <script>
-  async function loadTweets() {
-    try {
-      const response = await fetch('./x-proxy/tweets.json');
-      if (!response.ok) throw new Error(`Failed to load tweets.json`);
-      const data = await response.json();
-      return { tweets: data.data || [], includes: data.includes || {} };
-    } catch (e) {
-      console.error('Error loading tweets:', e.message);
-      return { tweets: [], includes: {} };
-    }
+  <script>async function loadTweets() {
+  try {
+    const response = await fetch('../x-proxy/tweets.json'); // Changed from './x-proxy/tweets.json' to '../x-proxy/tweets.json'
+    if (!response.ok) throw new Error(`Failed to load tweets.json`);
+    const data = await response.json();
+    return { tweets: data.data || [], includes: data.includes || {} };
+  } catch (e) {
+    console.error('Error loading tweets:', e.message);
+    return { tweets: [], includes: {} };
   }
+}
 
   function renderPosts({ tweets, includes }) {
     const container = document.getElementById('posts-container');
