@@ -1,276 +1,106 @@
 {
   "data": [
     {
+      "author_id": "977864508453437446",
+      "text": "Apple is working on wireless charging for iPad",
       "entities": {
-        "urls": [
-          {
-            "start": 115,
-            "end": 138,
-            "url": "https://t.co/qszQIY5aqi",
-            "expanded_url": "https://x.com/abhinav_937/status/1917852153198084502/photo/1",
-            "display_url": "pic.x.com/qszQIY5aqi",
-            "media_key": "16_1917852147409915904"
-          }
-        ],
-        "annotations": [
-          {
-            "start": 17,
-            "end": 25,
-            "probability": 0.7281,
-            "type": "Other",
-            "normalized_text": "annapurna"
-          },
-          {
-            "start": 33,
-            "end": 38,
-            "probability": 0.4123,
-            "type": "Other",
-            "normalized_text": "amazon"
-          },
-          {
-            "start": 41,
-            "end": 46,
-            "probability": 0.3521,
-            "type": "Place",
-            "normalized_text": "austin"
-          }
-        ]
-      },
-      "edit_history_tweet_ids": [
-        "1917852153198084502"
-      ],
-      "text": "thrilled to join annapurna labs (amazon, austin) this summer as a hardware intern on their power electronics team! https://t.co/qszQIY5aqi",
-      "id": "1917852153198084502",
-      "created_at": "2025-05-01T08:02:39.000Z",
-      "attachments": {
-        "media_keys": [
-          "16_1917852147409915904"
-        ]
-      }
-    },
-    {
-      "edit_history_tweet_ids": [
-        "1917482029593006104"
-      ],
-      "text": "@abhijit86k They’re awesome. Idk why soldering microscopes doesn’t come with this as default attachment. And for some reason these polarizers are costly too.",
-      "id": "1917482029593006104",
-      "created_at": "2025-04-30T07:31:55.000Z",
-      "entities": {
-        "mentions": [
-          {
-            "start": 0,
-            "end": 11,
-            "username": "abhijit86k",
-            "id": "52645161"
-          }
-        ]
-      }
-    },
-    {
-      "edit_history_tweet_ids": [
-        "1917287240364908716"
-      ],
-      "text": "😎😎😎",
-      "id": "1917287240364908716",
-      "created_at": "2025-04-29T18:37:54.000Z"
-    },
-    {
-      "entities": {
-        "urls": [
-          {
-            "start": 15,
-            "end": 38,
-            "url": "https://t.co/K6YOznfbJv",
-            "expanded_url": "https://x.com/abhinav_937/status/1916728982508019936/photo/1",
-            "display_url": "pic.x.com/K6YOznfbJv",
-            "media_key": "16_1916728977013579776"
-          }
-        ],
-        "mentions": [
-          {
-            "start": 0,
-            "end": 14,
-            "username": "KettlebellDan",
-            "id": "1578127809792409616"
-          }
-        ]
-      },
-      "edit_history_tweet_ids": [
-        "1916728982508019936"
-      ],
-      "text": "@KettlebellDan https://t.co/K6YOznfbJv",
-      "id": "1916728982508019936",
-      "created_at": "2025-04-28T05:39:35.000Z",
-      "attachments": {
-        "media_keys": [
-          "16_1916728977013579776"
-        ]
-      }
-    },
-    {
-      "entities": {
-        "urls": [
-          {
-            "start": 20,
-            "end": 43,
-            "url": "https://t.co/87umJIqKGL",
-            "expanded_url": "https://x.com/abhinav_937/status/1916208559555313898/photo/1",
-            "display_url": "pic.x.com/87umJIqKGL",
-            "media_key": "3_1916208550298238976"
-          }
-        ]
-      },
-      "edit_history_tweet_ids": [
-        "1916208559555313898"
-      ],
-      "text": "It wasn’t that hard https://t.co/87umJIqKGL",
-      "id": "1916208559555313898",
-      "created_at": "2025-04-26T19:11:36.000Z",
-      "attachments": {
-        "media_keys": [
-          "3_1916208550298238976"
-        ]
-      }
-    },
-    {
-      "entities": {
-        "urls": [
-          {
-            "start": 6,
-            "end": 29,
-            "url": "https://t.co/vUdyKdGqR3",
-            "expanded_url": "https://x.com/abhinav_937/status/1916171571971969187/video/1",
-            "display_url": "pic.x.com/vUdyKdGqR3",
-            "media_key": "13_1916171435304701952"
-          }
-        ],
         "annotations": [
           {
             "start": 0,
             "end": 4,
-            "probability": 0.6997,
-            "type": "Other",
-            "normalized_text": "Crazy"
-          }
-        ]
-      },
-      "edit_history_tweet_ids": [
-        "1916171571971969187"
-      ],
-      "text": "Crazy https://t.co/vUdyKdGqR3",
-      "id": "1916171571971969187",
-      "created_at": "2025-04-26T16:44:38.000Z",
-      "attachments": {
-        "media_keys": [
-          "13_1916171435304701952"
-        ]
-      }
-    },
-    {
-      "entities": {
-        "urls": [
+            "probability": 0.8426,
+            "type": "Organization",
+            "normalized_text": "Apple"
+          },
           {
-            "start": 29,
-            "end": 52,
-            "url": "https://t.co/yaTPmLlSQj",
-            "expanded_url": "https://twitter.com/DanielW_Kiwi/status/1915712271919308858",
-            "display_url": "x.com/DanielW_Kiwi/s…"
+            "start": 42,
+            "end": 45,
+            "probability": 0.9916,
+            "type": "Product",
+            "normalized_text": "iPad"
           }
         ]
       },
+      "id": "1930837449002946790",
       "edit_history_tweet_ids": [
-        "1915895371789722011"
+        "1930837449002946790"
       ],
-      "text": "Officially a vibe coder now! https://t.co/yaTPmLlSQj",
-      "id": "1915895371789722011",
-      "created_at": "2025-04-25T22:27:06.000Z"
+      "created_at": "2025-06-06T04:01:35.000Z"
     },
     {
+      "author_id": "977864508453437446",
+      "text": "Louis resigning and rachel doing dumb shit is the wildest thing in a same episode",
       "entities": {
-        "urls": [
+        "annotations": [
           {
-            "start": 27,
-            "end": 50,
-            "url": "https://t.co/iMzhvGNTuS",
-            "expanded_url": "https://github.com/abhinav937/latex-to-svg/issues",
-            "display_url": "github.com/abhinav937/lat…",
-            "status": 200,
-            "title": "Issues · abhinav937/latex-to-svg",
-            "description": "Generate high-quality SVG images from LaTeX code, no installation required. A web-based alternative to TexText for Inkscape. - Issues · abhinav937/latex-to-svg",
-            "unwound_url": "https://github.com/abhinav937/latex-to-svg/issues"
-          }
-        ]
-      },
-      "edit_history_tweet_ids": [
-        "1915780153025695778"
-      ],
-      "text": "Request any features here.\nhttps://t.co/iMzhvGNTuS",
-      "id": "1915780153025695778",
-      "created_at": "2025-04-25T14:49:16.000Z"
-    },
-    {
-      "entities": {
-        "urls": [
+            "start": 0,
+            "end": 4,
+            "probability": 0.6002,
+            "type": "Person",
+            "normalized_text": "Louis"
+          },
           {
             "start": 20,
-            "end": 43,
-            "url": "https://t.co/4yoBU3HyBw",
-            "expanded_url": "https://latex.cabhinav.com?z",
-            "display_url": "latex.cabhinav.com/?z",
-            "images": [
-              {
-                "url": "https://pbs.twimg.com/news_img/1915780193735639040/22kN8UGi?format=jpg&name=orig",
-                "width": 1135,
-                "height": 713
-              },
-              {
-                "url": "https://pbs.twimg.com/news_img/1915780193735639040/22kN8UGi?format=jpg&name=150x150",
-                "width": 150,
-                "height": 150
-              }
-            ],
-            "status": 200,
-            "title": "LaTeX Image Generator",
-            "description": "Generate high-quality SVG images from LaTeX code, no installation required. A web-based alternative to TexText for Inkscape.",
-            "unwound_url": "https://latex.cabhinav.com?z"
+            "end": 25,
+            "probability": 0.5679,
+            "type": "Person",
+            "normalized_text": "rachel"
           }
         ]
       },
+      "id": "1930113387637207186",
       "edit_history_tweet_ids": [
-        "1915780150551081329"
+        "1930113387637207186"
       ],
-      "text": "Refreshed version. \nhttps://t.co/4yoBU3HyBw",
-      "id": "1915780150551081329",
-      "created_at": "2025-04-25T14:49:16.000Z"
+      "created_at": "2025-06-04T04:04:26.000Z"
+    },
+    {
+      "author_id": "977864508453437446",
+      "attachments": {
+        "media_keys": [
+          "3_1930083534695247872"
+        ]
+      },
+      "text": "This gotta be the best promotion ever https://t.co/njZM4J1CPH",
+      "entities": {
+        "urls": [
+          {
+            "start": 38,
+            "end": 61,
+            "url": "https://t.co/njZM4J1CPH",
+            "expanded_url": "https://x.com/abhinav_937/status/1930083537635393678/photo/1",
+            "display_url": "pic.x.com/njZM4J1CPH",
+            "media_key": "3_1930083534695247872"
+          }
+        ]
+      },
+      "id": "1930083537635393678",
+      "edit_history_tweet_ids": [
+        "1930083537635393678"
+      ],
+      "created_at": "2025-06-04T02:05:49.000Z"
     }
   ],
   "includes": {
+    "users": [
+      {
+        "profile_image_url": "https://pbs.twimg.com/profile_images/1927391280914386945/H7odsFKa_normal.jpg",
+        "name": "Abhinav Chinnusamy",
+        "username": "abhinav_937",
+        "id": "977864508453437446"
+      }
+    ],
     "media": [
       {
-        "media_key": "16_1917852147409915904",
-        "preview_image_url": "https://pbs.twimg.com/tweet_video_thumb/Gp2UXeoWkAABjh_.jpg",
-        "type": "animated_gif"
-      },
-      {
-        "media_key": "16_1916728977013579776",
-        "preview_image_url": "https://pbs.twimg.com/tweet_video_thumb/GpmW2W2XoAAAolt.jpg",
-        "type": "animated_gif"
-      },
-      {
-        "media_key": "3_1916208550298238976",
+        "media_key": "3_1930083534695247872",
         "type": "photo",
-        "url": "https://pbs.twimg.com/media/Gpe9hiQXwAAaaEQ.jpg"
-      },
-      {
-        "media_key": "13_1916171435304701952",
-        "preview_image_url": "https://pbs.twimg.com/amplify_video_thumb/1916171435304701952/img/fo5OojXW5sQqbzdw.jpg",
-        "type": "video"
+        "url": "https://pbs.twimg.com/media/GskIv7BXMAA_tE-.jpg"
       }
     ]
   },
   "meta": {
-    "newest_id": "1917852153198084502",
-    "oldest_id": "1915780150551081329",
-    "result_count": 9
+    "newest_id": "1930837449002946790",
+    "oldest_id": "1930083537635393678",
+    "result_count": 3
   }
 }
