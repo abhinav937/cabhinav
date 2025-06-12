@@ -34,7 +34,7 @@
     }
 
     .post {
-      flex: 0 0 370px; /* Changed from 300px to 400px */
+      flex: 0 0 370px;
       background: #fff;
       border: 1px solid #e6ecf0;
       border-radius: 16px;
@@ -138,16 +138,6 @@
       margin-left: 4px;
     }
 
-    .cache-note {
-      font-size: 14px;
-      color: #536471;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 8px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-    }
-
     .scroll-buttons {
       display: flex;
       justify-content: center;
@@ -177,167 +167,18 @@
   </style>
 </head>
 <body>
+
+
   <div class="max-w-4xl mx-auto px-4 py-6 container">
     <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">My Latest X Posts</h1>
-    <div class="cache-note">
-      Posts are pre-fetched monthly to conserve the Free tier's 100-post monthly limit (10 requests at 10 posts each).
-    </div>
     <div id="posts-container" class="posts-container"></div>
-    <div class="scroll-buttons">
-      <button id="scroll-left" class="scroll-button">← Previous</button>
-      <button id="scroll-right" class="scroll-button">Next →</button>
-    </div>
   </div>
 
-  <script>async function loadTweets() {
-  try {
-    const response = await fetch('../x-proxy/tweets.json'); // Changed from './x-proxy/tweets.json' to '../x-proxy/tweets.json'
-    if (!response.ok) throw new Error(`Failed to load tweets.json`);
-    const data = await response.json();
-    return { tweets: data.data || [], includes: data.includes || {} };
-  } catch (e) {
-    console.error('Error loading tweets:', e.message);
-    return { tweets: [], includes: {} };
-  }
-}
-
-  function renderPosts({ tweets, includes }) {
-    const container = document.getElementById('posts-container');
-    container.innerHTML = '';
-
-    if (tweets.length === 0) {
-      container.innerHTML = '<p class="text-center text-gray-600">No recent posts found.</p>';
-      return;
-    }
-
-    const doubledTweets = [...tweets, ...tweets]; // Double for infinite scrolling
-    const fallbackImg = 'https://pbs.twimg.com/profile_images/1927391280914386945/H7odsFKa_400x400.jpg';
-
-    doubledTweets.forEach((tweet, i) => {
-      const postEl = document.createElement('div');
-      postEl.className = 'post';
-      postEl.dataset.index = i;
-
-      const user = includes.users?.find(u => u.id === tweet.author_id) || {
-        name: 'Abhinav Chinnusamy',
-        username: 'abhinav_937',
-        profile_image_url: fallbackImg
-      };
-
-      const header = document.createElement('div');
-      header.className = 'post-header';
-      const img = document.createElement('img');
-      img.src = user.profile_image_url;
-      img.alt = 'Profile';
-      header.appendChild(img);
-
-      const info = document.createElement('div');
-      const name = document.createElement('span');
-      name.className = 'username';
-      name.textContent = user.name;
-
-      const handle = document.createElement('span');
-      handle.className = 'handle';
-      handle.textContent = `@${user.username}`;
-
-      info.appendChild(name);
-      info.appendChild(handle);
-      header.appendChild(info);
-      postEl.appendChild(header);
-
-      // Text
-      let text = tweet.text || '';
-      if (tweet.entities?.mentions) {
-        tweet.entities.mentions.forEach(m => {
-          text = text.replace(new RegExp(`@${m.username}\\b`, 'g'), `<a href="https://twitter.com/${m.username}" target="_blank">@${m.username}</a>`);
-        });
-      }
-      if (tweet.entities?.urls) {
-        tweet.entities.urls.forEach(u => {
-          text = text.replace(u.url, `<a href="${u.expanded_url}" target="_blank">${u.display_url}</a>`);
-        });
-      }
-
-      const textEl = document.createElement('p');
-      textEl.className = 'post-text';
-      textEl.innerHTML = text;
-      postEl.appendChild(textEl);
-
-      // Date
-      const date = document.createElement('div');
-      date.className = 'post-date';
-      date.textContent = new Date(tweet.created_at).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit', hour12: true
-      });
-      postEl.appendChild(date);
-
-      // Media
-      if (tweet.attachments?.media_keys && includes.media) {
-        const media = tweet.attachments.media_keys.map(k => includes.media.find(m => m.media_key === k)).filter(Boolean);
-        media.forEach(m => {
-          const mediaEl = document.createElement('div');
-          mediaEl.className = 'post-media';
-          const img = document.createElement('img');
-          img.src = m.url || m.preview_image_url;
-          img.alt = 'Media';
-          img.loading = 'lazy';
-          mediaEl.appendChild(img);
-          postEl.appendChild(mediaEl);
-        });
-      }
-
-      container.appendChild(postEl);
-    });
-
-    // Animate in
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.post').forEach(el => observer.observe(el));
-
-    // Scroll buttons functionality
-    const scrollLeftBtn = document.getElementById('scroll-left');
-    const scrollRightBtn = document.getElementById('scroll-right');
-    const cardWidth = 400 + 16; // Changed from 300 + 16 to 400 + 16
-    const originalLen = tweets.length;
-
-    scrollLeftBtn.addEventListener('click', () => {
-      container.scrollLeft -= cardWidth;
-      if (container.scrollLeft <= 0) {
-        container.scrollLeft += cardWidth * originalLen;
-      }
-    });
-
-    scrollRightBtn.addEventListener('click', () => {
-      container.scrollLeft += cardWidth;
-      if (container.scrollLeft >= cardWidth * originalLen) {
-        container.scrollLeft -= cardWidth * originalLen;
-      }
-    });
-
-    // Update button states
-    function updateButtonStates() {
-      scrollLeftBtn.disabled = container.scrollLeft <= 0;
-      scrollRightBtn.disabled = container.scrollLeft >= container.scrollWidth - container.clientWidth;
-    }
-
-    container.addEventListener('scroll', updateButtonStates);
-    updateButtonStates();
-  }
-
-  async function main() {
-    const data = await loadTweets();
-    renderPosts(data);
-  }
-
-  main();
-</script>
+    <!-- Elfsight Twitter Feed | Untitled Twitter Feed -->
+<script src="https://static.elfsight.com/platform/platform.js" async></script>
+<div class="elfsight-app-791effc1-d311-436c-8512-58cfb568aff7" data-elfsight-app-lazy></div>
+  
 </body>
+
+
 </html>
