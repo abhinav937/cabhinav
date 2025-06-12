@@ -936,6 +936,7 @@ MdRipple = __decorate([
  * Accessibility Object Model reflective aria properties.
  */
 const ARIA_PROPERTIES = [
+    'role',
     'ariaAtomic',
     'ariaAutoComplete',
     'ariaBusy',
@@ -1303,7 +1304,7 @@ class Button extends buttonBaseClass {
          */
         this.hasIcon = false;
         /**
-         * The default behavior of the button. May be "text", "reset", or "submit"
+         * The default behavior of the button. May be "button", "reset", or "submit"
          * (default).
          */
         this.type = 'submit';
@@ -1340,7 +1341,10 @@ class Button extends buttonBaseClass {
       ${this.renderElevationOrOutline?.()}
       <div class="background"></div>
       <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
-      <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
+      <md-ripple
+        part="ripple"
+        for=${buttonId}
+        ?disabled="${isDisabled}"></md-ripple>
       ${buttonOrLink}
     `;
     }
@@ -3463,6 +3467,9 @@ const DIALOG_DEFAULT_CLOSE_ANIMATION = {
  * on the scrim or pressing Escape.
  */
 class Dialog extends s$1 {
+    // We do not use `delegatesFocus: true` due to a Chromium bug with
+    // selecting text.
+    // See https://bugs.chromium.org/p/chromium/issues/detail?id=950357
     /**
      * Opens the dialog when set to `true` and closes it when set to `false`.
      */
@@ -3497,6 +3504,19 @@ class Dialog extends s$1 {
          */
         this.returnValue = '';
         /**
+         * Disables focus trapping, which by default keeps keyboard Tab navigation
+         * within the dialog.
+         *
+         * When disabled, after focusing the last element of a dialog, pressing Tab
+         * again will release focus from the window back to the browser (such as the
+         * URL bar).
+         *
+         * Focus trapping is recommended for accessibility, and should not typically
+         * be disabled. Only turn this off if the use case of a dialog is more
+         * accessible without focus trapping.
+         */
+        this.noFocusTrap = false;
+        /**
          * Gets the opening animation for a dialog. Set to a new function to customize
          * the animation.
          */
@@ -3530,34 +3550,18 @@ class Dialog extends s$1 {
         // in Chromium is fixed to fire 'cancel' with one escape press and close with
         // multiple.
         this.escapePressedWithoutCancel = false;
+        // This TreeWalker is used to walk through a dialog's children to find
+        // focusable elements. TreeWalker is faster than `querySelectorAll('*')`.
+        this.treewalker = document.createTreeWalker(this, NodeFilter.SHOW_ELEMENT);
         {
             this.addEventListener('submit', this.handleSubmit);
-            // We do not use `delegatesFocus: true` due to a Chromium bug with
-            // selecting text.
-            // See https://bugs.chromium.org/p/chromium/issues/detail?id=950357
-            //
-            // Material requires using focus trapping within the dialog (see
-            // b/314840853 for the bug to add it). This would normally mean we don't
-            // care about delegating focus since the `<dialog>` never receives it.
-            // However, we still need to handle situations when a user has not
-            // provided an focusable child in the content. When that happens, the
-            // `<dialog>` itself is focused.
-            //
-            // Listen to focus/blur instead of focusin/focusout since those can bubble
-            // from content.
-            this.addEventListener('focus', () => {
-                this.dialog?.focus();
-            });
-            this.addEventListener('blur', () => {
-                this.dialog?.blur();
-            });
         }
     }
     /**
      * Opens the dialog and fires a cancelable `open` event. After a dialog's
      * animation, an `opened` event is fired.
      *
-     * Add an `autocomplete` attribute to a child of the dialog that should
+     * Add an `autofocus` attribute to a child of the dialog that should
      * receive focus after opening.
      *
      * @return A Promise that resolves after the animation is finished and the
@@ -3578,6 +3582,7 @@ class Dialog extends s$1 {
         const preventOpen = !this.dispatchEvent(new Event('open', { cancelable: true }));
         if (preventOpen) {
             this.open = false;
+            this.isOpening = false;
             return;
         }
         // All Material dialogs are modal.
@@ -3649,6 +3654,16 @@ class Dialog extends s$1 {
             'show-top-divider': scrollable && !this.isAtScrollTop,
             'show-bottom-divider': scrollable && !this.isAtScrollBottom,
         };
+        // The focus trap sentinels are only added after the dialog opens, since
+        // dialog.showModal() will try to autofocus them, even with tabindex="-1".
+        const showFocusTrap = this.open && !this.noFocusTrap;
+        const focusTrap = x `
+      <div
+        class="focus-trap"
+        tabindex="0"
+        aria-hidden="true"
+        @focus=${this.handleFocusTrapFocus}></div>
+    `;
         const { ariaLabel } = this;
         return x `
       <div class="scrim"></div>
@@ -3662,6 +3677,7 @@ class Dialog extends s$1 {
         @close=${this.handleClose}
         @keydown=${this.handleKeydown}
         .returnValue=${this.returnValue || T}>
+        ${showFocusTrap ? focusTrap : T}
         <div class="container" @click=${this.handleContentClick}>
           <div class="headline">
             <div class="icon" aria-hidden="true">
@@ -3686,6 +3702,7 @@ class Dialog extends s$1 {
             <slot name="actions" @slotchange=${this.handleActionsChange}></slot>
           </div>
         </div>
+        ${showFocusTrap ? focusTrap : T}
       </dialog>
     `;
     }
@@ -3824,6 +3841,69 @@ class Dialog extends s$1 {
             this.isConnectedPromiseResolve = resolve;
         });
     }
+    handleFocusTrapFocus(event) {
+        const [firstFocusableChild, lastFocusableChild] = this.getFirstAndLastFocusableChildren();
+        if (!firstFocusableChild || !lastFocusableChild) {
+            // When a dialog does not have focusable children, the dialog itself
+            // receives focus.
+            this.dialog?.focus();
+            return;
+        }
+        // To determine which child to focus, we need to know which focus trap
+        // received focus...
+        const isFirstFocusTrap = event.target === this.firstFocusTrap;
+        const isLastFocusTrap = !isFirstFocusTrap;
+        // ...and where the focus came from (what was previously focused).
+        const focusCameFromFirstChild = event.relatedTarget === firstFocusableChild;
+        const focusCameFromLastChild = event.relatedTarget === lastFocusableChild;
+        // Although this is a focus trap, focus can come from outside the trap.
+        // This can happen when elements are programmatically `focus()`'d. It also
+        // happens when focus leaves and returns to the window, such as clicking on
+        // the browser's URL bar and pressing Tab, or switching focus between
+        // iframes.
+        const focusCameFromOutsideDialog = !focusCameFromFirstChild && !focusCameFromLastChild;
+        // Focus the dialog's first child when we reach the end of the dialog and
+        // focus is moving forward. Or, when focus is moving forwards into the
+        // dialog from outside of the window.
+        const shouldFocusFirstChild = (isLastFocusTrap && focusCameFromLastChild) ||
+            (isFirstFocusTrap && focusCameFromOutsideDialog);
+        if (shouldFocusFirstChild) {
+            firstFocusableChild.focus();
+            return;
+        }
+        // Focus the dialog's last child when we reach the beginning of the dialog
+        // and focus is moving backward. Or, when focus is moving backwards into the
+        // dialog from outside of the window.
+        const shouldFocusLastChild = (isFirstFocusTrap && focusCameFromFirstChild) ||
+            (isLastFocusTrap && focusCameFromOutsideDialog);
+        if (shouldFocusLastChild) {
+            lastFocusableChild.focus();
+            return;
+        }
+        // The booleans above are verbose for readability, but code executation
+        // won't actually reach here.
+    }
+    getFirstAndLastFocusableChildren() {
+        let firstFocusableChild = null;
+        let lastFocusableChild = null;
+        // Reset the current node back to the root host element.
+        this.treewalker.currentNode = this.treewalker.root;
+        while (this.treewalker.nextNode()) {
+            // Cast as Element since the TreeWalker filter only accepts Elements.
+            const nextChild = this.treewalker.currentNode;
+            if (!isFocusable$1(nextChild)) {
+                continue;
+            }
+            if (!firstFocusableChild) {
+                firstFocusableChild = nextChild;
+            }
+            lastFocusableChild = nextChild;
+        }
+        // We set lastFocusableChild immediately after finding a
+        // firstFocusableChild, which means the pair is either both null or both
+        // non-null. Cast since TypeScript does not recognize this.
+        return [firstFocusableChild, lastFocusableChild];
+    }
 }
 (() => {
     requestUpdateOnAriaChange(Dialog);
@@ -3840,6 +3920,9 @@ __decorate([
 __decorate([
     n$5()
 ], Dialog.prototype, "type", void 0);
+__decorate([
+    n$5({ type: Boolean, attribute: 'no-focus-trap' })
+], Dialog.prototype, "noFocusTrap", void 0);
 __decorate([
     e$5('dialog')
 ], Dialog.prototype, "dialog", void 0);
@@ -3874,6 +3957,9 @@ __decorate([
     e$5('.bottom.anchor')
 ], Dialog.prototype, "bottomAnchor", void 0);
 __decorate([
+    e$5('.focus-trap')
+], Dialog.prototype, "firstFocusTrap", void 0);
+__decorate([
     r$4()
 ], Dialog.prototype, "hasHeadline", void 0);
 __decorate([
@@ -3882,6 +3968,30 @@ __decorate([
 __decorate([
     r$4()
 ], Dialog.prototype, "hasIcon", void 0);
+function isFocusable$1(element) {
+    // Check if the element is a known built-in focusable element:
+    // - <a> and <area> with `href` attributes.
+    // - Form controls that are not disabled.
+    // - `contenteditable` elements.
+    // - Anything with a non-negative `tabindex`.
+    const knownFocusableElements = ':is(button,input,select,textarea,object,:is(a,area)[href],[tabindex],[contenteditable=true])';
+    const notDisabled = ':not(:disabled,[disabled])';
+    const notNegativeTabIndex = ':not([tabindex^="-"])';
+    if (element.matches(knownFocusableElements + notDisabled + notNegativeTabIndex)) {
+        return true;
+    }
+    const isCustomElement = element.localName.includes('-');
+    if (!isCustomElement) {
+        return false;
+    }
+    // If a custom element does not have a tabindex, it may still be focusable
+    // if it delegates focus with a shadow root. We also need to check again if
+    // the custom element is a disabled form control.
+    if (!element.matches(notDisabled)) {
+        return false;
+    }
+    return element.shadowRoot?.delegatesFocus ?? false;
+}
 
 /**
  * @license
@@ -3889,7 +3999,7 @@ __decorate([
  * SPDX-License-Identifier: Apache-2.0
  */
 // Generated stylesheet for ./dialog/internal/dialog-styles.css.
-const styles$D = i$4 `:host{border-start-start-radius:var(--md-dialog-container-shape-start-start, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-start-end-radius:var(--md-dialog-container-shape-start-end, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-end-end-radius:var(--md-dialog-container-shape-end-end, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-end-start-radius:var(--md-dialog-container-shape-end-start, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));display:contents;margin:auto;max-height:min(560px,100% - 48px);max-width:min(560px,100% - 48px);min-height:140px;min-width:280px;position:fixed;height:fit-content;width:fit-content}dialog{background:rgba(0,0,0,0);border:none;border-radius:inherit;flex-direction:column;height:inherit;margin:inherit;max-height:inherit;max-width:inherit;min-height:inherit;min-width:inherit;outline:none;overflow:visible;padding:0;width:inherit}dialog[open]{display:flex}::backdrop{background:none}.scrim{background:var(--md-sys-color-scrim, #000);display:none;inset:0;opacity:32%;pointer-events:none;position:fixed;z-index:1}:host([open]) .scrim{display:flex}h2{all:unset;align-self:stretch}.headline{align-items:center;color:var(--md-dialog-headline-color, var(--md-sys-color-on-surface, #1d1b20));display:flex;flex-direction:column;font-family:var(--md-dialog-headline-font, var(--md-sys-typescale-headline-small-font, var(--md-ref-typeface-brand, Roboto)));font-size:var(--md-dialog-headline-size, var(--md-sys-typescale-headline-small-size, 1.5rem));line-height:var(--md-dialog-headline-line-height, var(--md-sys-typescale-headline-small-line-height, 2rem));font-weight:var(--md-dialog-headline-weight, var(--md-sys-typescale-headline-small-weight, var(--md-ref-typeface-weight-regular, 400)));position:relative}slot[name=headline]::slotted(*){align-items:center;align-self:stretch;box-sizing:border-box;display:flex;gap:8px;padding:24px 24px 0}.icon{display:flex}slot[name=icon]::slotted(*){color:var(--md-dialog-icon-color, var(--md-sys-color-secondary, #625b71));fill:currentColor;font-size:var(--md-dialog-icon-size, 24px);margin-top:24px;height:var(--md-dialog-icon-size, 24px);width:var(--md-dialog-icon-size, 24px)}.has-icon slot[name=headline]::slotted(*){justify-content:center;padding-top:16px}.scrollable slot[name=headline]::slotted(*){padding-bottom:16px}.scrollable.has-headline slot[name=content]::slotted(*){padding-top:8px}.container{border-radius:inherit;display:flex;flex-direction:column;flex-grow:1;overflow:hidden;position:relative;transform-origin:top}.container::before{background:var(--md-dialog-container-color, var(--md-sys-color-surface-container-high, #ece6f0));border-radius:inherit;content:"";inset:0;position:absolute}.scroller{display:flex;flex:1;flex-direction:column;overflow:hidden;z-index:1}.scrollable .scroller{overflow-y:scroll}.content{color:var(--md-dialog-supporting-text-color, var(--md-sys-color-on-surface-variant, #49454f));font-family:var(--md-dialog-supporting-text-font, var(--md-sys-typescale-body-medium-font, var(--md-ref-typeface-plain, Roboto)));font-size:var(--md-dialog-supporting-text-size, var(--md-sys-typescale-body-medium-size, 0.875rem));line-height:var(--md-dialog-supporting-text-line-height, var(--md-sys-typescale-body-medium-line-height, 1.25rem));font-weight:var(--md-dialog-supporting-text-weight, var(--md-sys-typescale-body-medium-weight, var(--md-ref-typeface-weight-regular, 400)));height:min-content;position:relative}slot[name=content]::slotted(*){box-sizing:border-box;padding:24px}.anchor{position:absolute}.top.anchor{top:0}.bottom.anchor{bottom:0}.actions{position:relative}slot[name=actions]::slotted(*){box-sizing:border-box;display:flex;gap:8px;justify-content:flex-end;padding:16px 24px 24px}.has-actions slot[name=content]::slotted(*){padding-bottom:8px}md-divider{display:none;position:absolute}.has-headline.show-top-divider .headline md-divider,.has-actions.show-bottom-divider .actions md-divider{display:flex}.headline md-divider{bottom:0}.actions md-divider{top:0}@media(forced-colors: active){dialog{outline:2px solid WindowText}}
+const styles$D = i$4 `:host{border-start-start-radius:var(--md-dialog-container-shape-start-start, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-start-end-radius:var(--md-dialog-container-shape-start-end, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-end-end-radius:var(--md-dialog-container-shape-end-end, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));border-end-start-radius:var(--md-dialog-container-shape-end-start, var(--md-dialog-container-shape, var(--md-sys-shape-corner-extra-large, 28px)));display:contents;margin:auto;max-height:min(560px,100% - 48px);max-width:min(560px,100% - 48px);min-height:140px;min-width:280px;position:fixed;height:fit-content;width:fit-content}dialog{background:rgba(0,0,0,0);border:none;border-radius:inherit;flex-direction:column;height:inherit;margin:inherit;max-height:inherit;max-width:inherit;min-height:inherit;min-width:inherit;outline:none;overflow:visible;padding:0;width:inherit}dialog[open]{display:flex}::backdrop{background:none}.scrim{background:var(--md-sys-color-scrim, #000);display:none;inset:0;opacity:32%;pointer-events:none;position:fixed;z-index:1}:host([open]) .scrim{display:flex}h2{all:unset;align-self:stretch}.headline{align-items:center;color:var(--md-dialog-headline-color, var(--md-sys-color-on-surface, #1d1b20));display:flex;flex-direction:column;font-family:var(--md-dialog-headline-font, var(--md-sys-typescale-headline-small-font, var(--md-ref-typeface-brand, Roboto)));font-size:var(--md-dialog-headline-size, var(--md-sys-typescale-headline-small-size, 1.5rem));line-height:var(--md-dialog-headline-line-height, var(--md-sys-typescale-headline-small-line-height, 2rem));font-weight:var(--md-dialog-headline-weight, var(--md-sys-typescale-headline-small-weight, var(--md-ref-typeface-weight-regular, 400)));position:relative}slot[name=headline]::slotted(*){align-items:center;align-self:stretch;box-sizing:border-box;display:flex;gap:8px;padding:24px 24px 0}.icon{display:flex}slot[name=icon]::slotted(*){color:var(--md-dialog-icon-color, var(--md-sys-color-secondary, #625b71));fill:currentColor;font-size:var(--md-dialog-icon-size, 24px);margin-top:24px;height:var(--md-dialog-icon-size, 24px);width:var(--md-dialog-icon-size, 24px)}.has-icon slot[name=headline]::slotted(*){justify-content:center;padding-top:16px}.scrollable slot[name=headline]::slotted(*){padding-bottom:16px}.scrollable.has-headline slot[name=content]::slotted(*){padding-top:8px}.container{border-radius:inherit;display:flex;flex-direction:column;flex-grow:1;overflow:hidden;position:relative;transform-origin:top}.container::before{background:var(--md-dialog-container-color, var(--md-sys-color-surface-container-high, #ece6f0));border-radius:inherit;content:"";inset:0;position:absolute}.scroller{display:flex;flex:1;flex-direction:column;overflow:hidden;z-index:1}.scrollable .scroller{overflow-y:scroll}.content{color:var(--md-dialog-supporting-text-color, var(--md-sys-color-on-surface-variant, #49454f));font-family:var(--md-dialog-supporting-text-font, var(--md-sys-typescale-body-medium-font, var(--md-ref-typeface-plain, Roboto)));font-size:var(--md-dialog-supporting-text-size, var(--md-sys-typescale-body-medium-size, 0.875rem));line-height:var(--md-dialog-supporting-text-line-height, var(--md-sys-typescale-body-medium-line-height, 1.25rem));flex:1;font-weight:var(--md-dialog-supporting-text-weight, var(--md-sys-typescale-body-medium-weight, var(--md-ref-typeface-weight-regular, 400)));height:min-content;position:relative}slot[name=content]::slotted(*){box-sizing:border-box;padding:24px}.anchor{position:absolute}.top.anchor{top:0}.bottom.anchor{bottom:0}.actions{position:relative}slot[name=actions]::slotted(*){box-sizing:border-box;display:flex;gap:8px;justify-content:flex-end;padding:16px 24px 24px}.has-actions slot[name=content]::slotted(*){padding-bottom:8px}md-divider{display:none;position:absolute}.has-headline.show-top-divider .headline md-divider,.has-actions.show-bottom-divider .actions md-divider{display:flex}.headline md-divider{bottom:0}.actions md-divider{top:0}@media(forced-colors: active){dialog{outline:2px solid WindowText}}
 `;
 
 /**
@@ -4182,6 +4292,7 @@ class Field extends s$1 {
         this.error = false;
         this.focused = false;
         this.label = '';
+        this.noAsterisk = false;
         this.populated = false;
         this.required = false;
         this.resizable = false;
@@ -4361,7 +4472,7 @@ class Field extends s$1 {
             'resting': !isFloating,
         };
         // Add '*' if a label is present and the field is required
-        const labelText = `${this.label}${this.required ? '*' : ''}`;
+        const labelText = `${this.label}${this.required && !this.noAsterisk ? '*' : ''}`;
         return x `
       <span class="label ${e$1(classes)}" aria-hidden=${!visible}
         >${labelText}</span
@@ -4459,6 +4570,9 @@ __decorate([
 __decorate([
     n$5()
 ], Field.prototype, "label", void 0);
+__decorate([
+    n$5({ type: Boolean, attribute: 'no-asterisk' })
+], Field.prototype, "noAsterisk", void 0);
 __decorate([
     n$5({ type: Boolean })
 ], Field.prototype, "populated", void 0);
@@ -4748,7 +4862,7 @@ class IconButton extends iconButtonBaseClass {
          */
         this.selected = false;
         /**
-         * The default behavior of the button. May be "text", "reset", or "submit"
+         * The default behavior of the button. May be "button", "reset", or "submit"
          * (default).
          */
         this.type = 'submit';
@@ -7283,6 +7397,18 @@ class Menu extends s$1 {
         super.disconnectedCallback();
         this.cleanUpGlobalEventListeners();
     }
+    getBoundingClientRect() {
+        if (!this.surfaceEl) {
+            return super.getBoundingClientRect();
+        }
+        return this.surfaceEl.getBoundingClientRect();
+    }
+    getClientRects() {
+        if (!this.surfaceEl) {
+            return super.getClientRects();
+        }
+        return this.surfaceEl.getClientRects();
+    }
     render() {
         return this.renderSurface();
     }
@@ -7423,17 +7549,15 @@ class Menu extends s$1 {
      */
     animateClose() {
         let resolve;
-        let reject;
         // This promise blocks the surface position controller from setting
         // display: none on the surface which will interfere with this animation.
-        const animationEnded = new Promise((res, rej) => {
+        const animationEnded = new Promise((res) => {
             resolve = res;
-            reject = rej;
         });
         const surfaceEl = this.surfaceEl;
         const slotEl = this.slotEl;
         if (!surfaceEl || !slotEl) {
-            reject();
+            resolve(false);
             return animationEnded;
         }
         const openDirection = this.openDirection;
@@ -7501,7 +7625,7 @@ class Menu extends s$1 {
                 animation.cancel();
                 child.classList.toggle('md-menu-hidden', false);
             });
-            reject();
+            resolve(false);
         });
         surfaceHeightAnimation.addEventListener('finish', () => {
             surfaceEl.classList.toggle('animating', false);
@@ -7670,7 +7794,7 @@ __decorate([
  * SPDX-License-Identifier: Apache-2.0
  */
 // Generated stylesheet for ./menu/internal/menu-styles.css.
-const styles$m = i$4 `:host{--md-elevation-level: var(--md-menu-container-elevation, 2);--md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));min-width:112px;color:unset;display:contents}md-focus-ring{--md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px))}.menu{border-radius:var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));display:none;inset:auto;border:none;padding:0px;overflow:visible;background-color:rgba(0,0,0,0);color:inherit;opacity:0;z-index:20;position:absolute;user-select:none;max-height:inherit;height:inherit;min-width:inherit;max-width:inherit}.menu::backdrop{display:none}.fixed{position:fixed}.items{display:block;list-style-type:none;margin:0;outline:none;box-sizing:border-box;background-color:var(--md-menu-container-color, var(--md-sys-color-surface-container, #f3edf7));height:inherit;max-height:inherit;overflow:auto;min-width:inherit;max-width:inherit;border-radius:inherit}.item-padding{padding-block:8px}.has-overflow:not([popover]) .items{overflow:visible}.has-overflow.animating .items,.animating .items{overflow:hidden}.has-overflow.animating .items{pointer-events:none}.animating ::slotted(.md-menu-hidden){opacity:0}slot{display:block;height:inherit;max-height:inherit}::slotted(:is(md-divider,[role=separator])){margin:8px 0}@media(forced-colors: active){.menu{border-style:solid;border-color:CanvasText;border-width:1px}}
+const styles$m = i$4 `:host{--md-elevation-level: var(--md-menu-container-elevation, 2);--md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));min-width:112px;color:unset;display:contents}md-focus-ring{--md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px))}.menu{border-radius:var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));display:none;inset:auto;border:none;padding:0px;overflow:visible;background-color:rgba(0,0,0,0);color:inherit;opacity:0;z-index:20;position:absolute;user-select:none;max-height:inherit;height:inherit;min-width:inherit;max-width:inherit;scrollbar-width:inherit}.menu::backdrop{display:none}.fixed{position:fixed}.items{display:block;list-style-type:none;margin:0;outline:none;box-sizing:border-box;background-color:var(--md-menu-container-color, var(--md-sys-color-surface-container, #f3edf7));height:inherit;max-height:inherit;overflow:auto;min-width:inherit;max-width:inherit;border-radius:inherit;scrollbar-width:inherit}.item-padding{padding-block:8px}.has-overflow:not([popover]) .items{overflow:visible}.has-overflow.animating .items,.animating .items{overflow:hidden}.has-overflow.animating .items{pointer-events:none}.animating ::slotted(.md-menu-hidden){opacity:0}slot{display:block;height:inherit;max-height:inherit}::slotted(:is(md-divider,[role=separator])){margin:8px 0}@media(forced-colors: active){.menu{border-style:solid;border-color:CanvasText;border-width:1px}}
 `;
 
 /**
@@ -9709,7 +9833,7 @@ class Select extends selectBaseClass {
     /**
      * Returns an array of selected options.
      *
-     * NOTE: md-select only suppoprts single selection.
+     * NOTE: md-select only supports single selection.
      */
     get selectedOptions() {
         return (this.getSelectedOptions() ?? []).map(([option]) => option);
@@ -9740,6 +9864,11 @@ class Select extends selectBaseClass {
          * The floating label for the field.
          */
         this.label = '';
+        /**
+         * Disables the asterisk on the floating label, when the select is
+         * required.
+         */
+        this.noAsterisk = false;
         /**
          * Conveys additional information below the select, such as how it should
          * be used.
@@ -9923,6 +10052,7 @@ class Select extends selectBaseClass {
           aria-controls="listbox"
           class="field"
           label=${this.label}
+          ?no-asterisk=${this.noAsterisk}
           .focused=${this.focused || this.open}
           .populated=${!!this.displayText}
           .disabled=${this.disabled}
@@ -10279,6 +10409,9 @@ class Select extends selectBaseClass {
     formStateRestoreCallback(state) {
         this.value = state;
     }
+    click() {
+        this.field?.click();
+    }
     [createValidator]() {
         return new SelectValidator(() => this);
     }
@@ -10306,6 +10439,9 @@ __decorate([
 __decorate([
     n$5()
 ], Select.prototype, "label", void 0);
+__decorate([
+    n$5({ type: Boolean, attribute: 'no-asterisk' })
+], Select.prototype, "noAsterisk", void 0);
 __decorate([
     n$5({ type: String, attribute: 'supporting-text' })
 ], Select.prototype, "supportingText", void 0);
@@ -11598,6 +11734,157 @@ MdSlider = __decorate([
 
 /**
  * @license
+ * Copyright 2023 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/**
+ * A symbol used to access dispatch hooks on an event.
+ */
+const dispatchHooks = Symbol('dispatchHooks');
+/**
+ * Add a hook for an event that is called after the event is dispatched and
+ * propagates to other event listeners.
+ *
+ * This is useful for behaviors that need to check if an event is canceled.
+ *
+ * The callback is invoked synchronously, which allows for better integration
+ * with synchronous platform APIs (like `<form>` or `<label>` clicking).
+ *
+ * Note: `setupDispatchHooks()` must be called on the element before adding any
+ * other event listeners. Call it in the constructor of an element or
+ * controller.
+ *
+ * @example
+ * ```ts
+ * class MyControl extends LitElement {
+ *   constructor() {
+ *     super();
+ *     setupDispatchHooks(this, 'click');
+ *     this.addEventListener('click', event => {
+ *       afterDispatch(event, () => {
+ *         if (event.defaultPrevented) {
+ *           return
+ *         }
+ *
+ *         // ... perform logic
+ *       });
+ *     });
+ *   }
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * class MyController implements ReactiveController {
+ *   constructor(host: ReactiveElement) {
+ *     // setupDispatchHooks() may be called multiple times for the same
+ *     // element and events, making it safe for multiple controllers to use it.
+ *     setupDispatchHooks(host, 'click');
+ *     host.addEventListener('click', event => {
+ *       afterDispatch(event, () => {
+ *         if (event.defaultPrevented) {
+ *           return;
+ *         }
+ *
+ *         // ... perform logic
+ *       });
+ *     });
+ *   }
+ * }
+ * ```
+ *
+ * @param event The event to add a hook to.
+ * @param callback A hook that is called after the event finishes dispatching.
+ */
+function afterDispatch(event, callback) {
+    const hooks = event[dispatchHooks];
+    if (!hooks) {
+        throw new Error(`'${event.type}' event needs setupDispatchHooks().`);
+    }
+    hooks.addEventListener('after', callback);
+}
+/**
+ * A lookup map of elements and event types that have a dispatch hook listener
+ * set up. Used to ensure we don't set up multiple hook listeners on the same
+ * element for the same event.
+ */
+const ELEMENT_DISPATCH_HOOK_TYPES = new WeakMap();
+/**
+ * Sets up an element to add dispatch hooks to given event types. This must be
+ * called before adding any event listeners that need to use dispatch hooks
+ * like `afterDispatch()`.
+ *
+ * This function is safe to call multiple times with the same element or event
+ * types. Call it in the constructor of elements, mixins, and controllers to
+ * ensure it is set up before external listeners.
+ *
+ * @example
+ * ```ts
+ * class MyControl extends LitElement {
+ *   constructor() {
+ *     super();
+ *     setupDispatchHooks(this, 'click');
+ *     this.addEventListener('click', this.listenerUsingAfterDispatch);
+ *   }
+ * }
+ * ```
+ *
+ * @param element The element to set up event dispatch hooks for.
+ * @param eventTypes The event types to add dispatch hooks to.
+ */
+function setupDispatchHooks(element, ...eventTypes) {
+    let typesAlreadySetUp = ELEMENT_DISPATCH_HOOK_TYPES.get(element);
+    if (!typesAlreadySetUp) {
+        typesAlreadySetUp = new Set();
+        ELEMENT_DISPATCH_HOOK_TYPES.set(element, typesAlreadySetUp);
+    }
+    for (const eventType of eventTypes) {
+        // Don't register multiple dispatch hook listeners. A second registration
+        // would lead to the second listener re-dispatching a re-dispatched event,
+        // which can cause an infinite loop inside the other one.
+        if (typesAlreadySetUp.has(eventType)) {
+            continue;
+        }
+        // When we re-dispatch the event, it's going to immediately trigger this
+        // listener again. Use a flag to ignore it.
+        let isRedispatching = false;
+        element.addEventListener(eventType, (event) => {
+            if (isRedispatching) {
+                return;
+            }
+            // Do not let the event propagate to any other listener (not just
+            // bubbling listeners with `stopPropagation()`).
+            event.stopImmediatePropagation();
+            // Make a copy.
+            const eventCopy = Reflect.construct(event.constructor, [
+                event.type,
+                event,
+            ]);
+            // Add hooks onto the event.
+            const hooks = new EventTarget();
+            eventCopy[dispatchHooks] = hooks;
+            // Re-dispatch the event. We can't reuse `redispatchEvent()` since we
+            // need to add the hooks to the copy before it's dispatched.
+            isRedispatching = true;
+            const dispatched = element.dispatchEvent(eventCopy);
+            isRedispatching = false;
+            if (!dispatched) {
+                event.preventDefault();
+            }
+            // Synchronously call afterDispatch() hooks.
+            hooks.dispatchEvent(new Event('after'));
+        }, {
+            // Ensure this listener runs before other listeners.
+            // `setupDispatchHooks()` should be called in constructors to also
+            // ensure they run before any other externally-added capture listeners.
+            capture: true,
+        });
+        typesAlreadySetUp.add(eventType);
+    }
+}
+
+/**
+ * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -11638,20 +11925,29 @@ class Switch extends switchBaseClass {
          * submitted when `selected` is `false`.
          */
         this.value = 'on';
-        {
-            this.addEventListener('click', (event) => {
-                if (!isActivationClick(event) || !this.input) {
+        // This click listener does not currently need dispatch hooks since it does
+        // not check `event.defaultPrevented`.
+        this.addEventListener('click', (event) => {
+            if (!isActivationClick(event) || !this.input) {
+                return;
+            }
+            this.focus();
+            dispatchActivationClick(this.input);
+        });
+        // Add the aria keyboard interaction pattern for switch and the Enter key.
+        // See https://www.w3.org/WAI/ARIA/apg/patterns/switch/.
+        setupDispatchHooks(this, 'keydown');
+        this.addEventListener('keydown', (event) => {
+            afterDispatch(event, () => {
+                const ignoreEvent = event.defaultPrevented || event.key !== 'Enter';
+                if (ignoreEvent || this.disabled || !this.input) {
                     return;
                 }
-                this.focus();
-                dispatchActivationClick(this.input);
+                this.input.click();
             });
-        }
+        });
     }
     render() {
-        // NOTE: buttons must use only [phrasing
-        // content](https://html.spec.whatwg.org/multipage/dom.html#phrasing-content)
-        // children, which includes custom elements, but not `div`s
         return x `
       <div class="switch ${e$1(this.getRenderClasses())}">
         <input
@@ -12131,25 +12427,25 @@ MdSecondaryTab = __decorate([
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
- * @fires change {Event} Fired when the selected tab changes. The target's selected or
- * selectedItem and previousSelected or previousSelectedItem provide information
- * about the selection change. The change event is fired when a user interaction
- * like a space/enter key or click cause a selection change. The tab selection
- * based on these actions can be cancelled by calling preventDefault on the
- * triggering `keydown` or `click` event. --bubbles
+ * @fires change {Event} Fired when the selected tab changes. The target's
+ * `activeTabIndex` or `activeTab` provide information about the selection
+ * change. The change event is fired when a user interaction like a space/enter
+ * key or click cause a selection change. The tab selection based on these
+ * actions can be cancelled by calling preventDefault on the triggering
+ * `keydown` or `click` event. --bubbles
  *
  * @example
  * // perform an action if a tab is clicked
  * tabs.addEventListener('change', (event: Event) => {
- *   if (event.target.selected === 2)
- *      takeAction();
+ *   if (event.target.activeTabIndex === 2)
+ *     takeAction();
  *   }
  * });
  *
  * // prevent a click from triggering tab selection under some condition
  * tabs.addEventListener('click', (event: Event) => {
  *   if (notReady)
- *      event.preventDefault();
+ *     event.preventDefault();
  *   }
  * });
  *
@@ -12678,6 +12974,11 @@ class TextField extends textFieldBaseClass {
          */
         this.label = '';
         /**
+         * Disables the asterisk on the floating label, when the text field is
+         * required.
+         */
+        this.noAsterisk = false;
+        /**
          * Indicates that the user must specify a value for the input before the
          * owning form can be submitted and will render an error state when
          * `reportValidity()` is invoked when value is empty. Additionally the
@@ -13014,6 +13315,7 @@ class TextField extends textFieldBaseClass {
       ?has-end=${this.hasTrailingIcon}
       ?has-start=${this.hasLeadingIcon}
       label=${this.label}
+      ?no-asterisk=${this.noAsterisk}
       max=${this.maxLength}
       ?populated=${!!this.value}
       ?required=${this.required}
@@ -13059,6 +13361,7 @@ class TextField extends textFieldBaseClass {
           aria-invalid=${this.hasError}
           aria-label=${ariaLabel}
           autocomplete=${autocomplete || T}
+          name=${this.name || T}
           ?disabled=${this.disabled}
           maxlength=${hasMaxLength ? this.maxLength : T}
           minlength=${hasMinLength ? this.minLength : T}
@@ -13091,6 +13394,7 @@ class TextField extends textFieldBaseClass {
           aria-invalid=${this.hasError}
           aria-label=${ariaLabel}
           autocomplete=${autocomplete || T}
+          name=${this.name || T}
           ?disabled=${this.disabled}
           inputmode=${inputMode || T}
           max=${(this.max || T)}
@@ -13226,6 +13530,9 @@ __decorate([
 __decorate([
     n$5()
 ], TextField.prototype, "label", void 0);
+__decorate([
+    n$5({ type: Boolean, attribute: 'no-asterisk' })
+], TextField.prototype, "noAsterisk", void 0);
 __decorate([
     n$5({ type: Boolean, reflect: true })
 ], TextField.prototype, "required", void 0);

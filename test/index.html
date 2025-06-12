@@ -1,0 +1,134 @@
+ 
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Abhinav C</title>
+ 
+
+   <link rel="shortcut icon" href="./assets/icons/favicon.ico" type="image/x-icon">
+ <!-- Material Web Design 3 scripts -->
+ <script type="module" src="./index.html"></script>
+ <script src="./bundle.js"></script>
+ <link rel="stylesheet"
+   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+ <link rel="stylesheet"
+   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+
+  <style>
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--md-sys-color-on-surface);
+      font: var(--md-sys-typescale-body-medium-weight, 400)
+        var(--md-sys-typescale-body-medium-size, 0.875rem) /
+        var(--md-sys-typescale-body-medium-line-height, 1.25rem)
+        var(--md-sys-typescale-body-medium-font, 'Roboto');
+    }
+  
+    .card {
+      width: 192px;
+    }
+  
+    img {
+      border-radius: inherit;
+      background: #dadce0;
+      object-fit: contain;
+      height: 128px;
+    }
+  
+    .content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      padding: 16px;
+      gap: 16px;
+    }
+  </style>
+    <main>
+        
+        <md-navigation-bar>
+          <md-navigation-tab
+          label= Hello >
+          <md-icon slot="active-icon">open_in_new</md-icon>
+          <md-icon slot="inactive-icon">open_in_new</md-icon>
+        </md-navigation-tab>
+
+          <md-navigation-tab
+          label= Hello>
+          <md-icon slot="active-icon">open_in_new</md-icon>
+          <md-icon slot="inactive-icon">open_in_new</md-icon>
+        </md-navigation-tab>
+
+        <md-navigation-tab
+        label= Hello>
+        <md-icon slot="active-icon">open_in_new</md-icon>
+        <md-icon slot="inactive-icon">open_in_new</md-icon>
+      </md-navigation-tab>
+        </md-navigation-bar>
+
+        <md-outlined-segmented-button-set>
+          <md-outlined-segmented-button label="Enabled">
+            <md-icon slot="icon">grade</md-icon>
+          </md-outlined-segmented-button>
+  
+          <md-outlined-segmented-button selected label="Selected">
+            <md-icon slot="icon">favorite</md-icon>
+          </md-outlined-segmented-button>
+  
+          <md-outlined-segmented-button label="Enabled">
+            <md-icon slot="icon">change_history</md-icon>
+          </md-outlined-segmented-button>
+        </md-outlined-segmented-button-set>
+      </div>
+
+
+      <md-item>
+        Three line item
+        <div slot="supporting-text">
+          <div>Second line text</div>
+          <div>Third line text</div>
+        </div>
+      </md-item>
+
+      <div class="container">
+        <md-elevated-card class="card">
+          <img src="./syd_swee.webp" alt="Placeholder image" />
+          <div class="content">A static elevated card</div>
+        </md-elevated-card>
+
+        <md-filled-card class="card">
+          <img src="./assets/icons/peg_logo.jpg" alt="Placeholder image" />
+          <div class="content">A static filled card</div>
+        </md-filled-card>
+
+        <md-outlined-card class="card">
+          <img src="./assets/icons/iit_logo.png" alt="Placeholder image" />
+          <div class="content">Undergraduate Researcher, Power and Energy Group, IIT Dharwad</div>
+          <md-list>
+            <md-list-item>
+              <!-- <div slot="headline">Undergraduate Researcher, Power and Energy Group, IIT Dharwad</div> -->
+              <div slot="supporting-text">Designing a solid-state circuit breaker for Electric Vehicles and DC homes</div>
+              <div slot="supporting-text">Worked on Half-Bridge Inverter using Infineon GaN devices</div>
+              <div slot="supporting-text">Performed Double Pulse Test and evaluated its performance and switching characteristics</div>
+              <div style="color:azure" slot="overline">December 2022 - Present</div>
+            </md-list-item>
+        </md-outlined-card>
+      </div>
+
+      <md-badge>
+        
+      </md-badge>
+
+    </main>
+</body>
+
+ </html>
