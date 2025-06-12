@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,8 +8,10 @@
     <title>Publications | Abhinav Chinnusamy</title>
 
     <!-- Meta Tags -->
-    <meta name="keywords" content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, Electrical Engineering, Publications">
-    <meta name="description" content="Explore Abhinav Chinnusamy's academic publications in Power Electronics and related fields.">
+    <meta name="keywords"
+        content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, Electrical Engineering, Publications">
+    <meta name="description"
+        content="Explore Abhinav Chinnusamy's academic publications in Power Electronics and related fields.">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
     <meta name="twitter:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
@@ -36,11 +39,13 @@
             color: #f8f9fa;
             font-family: 'Poppins', sans-serif;
         }
+
         .main-content {
             padding: 40px 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .article-title {
             font-size: 2.5rem;
             font-weight: 600;
@@ -48,6 +53,7 @@
             margin-bottom: 40px;
             text-align: center;
         }
+
         .publication {
             margin-bottom: 20px;
             padding: 20px;
@@ -59,61 +65,76 @@
             transform: translateY(20px);
             transition: all 0.3s ease;
         }
+
         .publication.show {
             opacity: 1;
             transform: translateY(0);
         }
+
         .publication h3 {
             font-size: 1.5rem;
             margin-bottom: 10px;
             color: #f8f9fa;
         }
+
         .publication p {
             margin-bottom: 8px;
             color: #e9ecef;
             line-height: 1.6;
         }
+
         .publication .authors {
             font-size: 0.9rem;
             color: #ced4da;
         }
+
         .publication .authors b {
             color: #f8f9fa;
         }
+
         .publication .year {
             font-size: 0.85rem;
             color: #adb5bd;
         }
+
         .publication .links a {
             text-decoration: none;
             color: #61dafb;
             margin-right: 15px;
             font-size: 0.9rem;
         }
+
         .publication .links a:hover {
             text-decoration: underline;
         }
-        .error-message, .loading-message {
+
+        .error-message,
+        .loading-message {
             text-align: center;
             font-size: 1.1rem;
             margin-top: 20px;
         }
+
         .error-message {
             color: #ff6b6b;
         }
+
         .loading-message {
             color: #61dafb;
         }
+
         @media (max-width: 768px) {
             .article-title {
                 font-size: 2rem;
             }
+
             .publication h3 {
                 font-size: 1.2rem;
             }
         }
     </style>
 </head>
+
 <body>
     <main>
         <div class="main-content">
@@ -123,7 +144,8 @@
                 </header>
                 <div id="publications-container"></div>
                 <div id="loading-message" class="loading-message">Loading publications...</div>
-                <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please try again later.</div>
+                <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please
+                    try again later.</div>
             </article>
         </div>
     </main>
@@ -191,11 +213,12 @@
                 // Clear container
                 container.innerHTML = '';
 
-                // Create publication cards
+
+
                 data.articles.forEach((article, index) => {
                     const authors = (article.authors || 'Unknown Authors').replace(
                         'A Chinnusamy',
-                        '<b>A Chinnusamy</b>'
+                        '<b>Abhinav Chinnusamy</b>'
                     );
                     const pubDiv = document.createElement('div');
                     pubDiv.className = 'publication';
@@ -233,4 +256,5 @@
         document.addEventListener('DOMContentLoaded', fetchPublications);
     </script>
 </body>
+
 </html>
