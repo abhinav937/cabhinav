@@ -1,191 +1,237 @@
 <!DOCTYPE html>
-<html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Publications | Abhinav Chinnusamy</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publications</title>
+       <!-- Meta Tags -->
+       <meta name="keywords" content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, Electrical Engineering, Publications">
+       <meta name="description" content="Explore Abhinav Chinnusamy's academic publications in Power Electronics and related fields.">
+       <meta name="twitter:card" content="summary_large_image">
+       <meta property="og:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
+       <meta name="twitter:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
+       <meta name="twitter:creator" content="@abhinav_937">
+       <meta name="twitter:site" content="@abhinav_937">
+       <meta name="twitter:url" content="https://cabhinav.com">
+       <meta name="twitter:title" content="Abhinav Chinnusamy">
+       <meta name="twitter:description" content="Academic Publications">
 
-    <!-- Cards meta data -->
-    <meta name="keywords"
-        content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, IIT, Electrical Engineering, EE, Resume, CV, Portfolio" />
-    <meta name="description" content="Power Publications" />
+       <!-- Favicon -->
+       <link rel="shortcut icon" href="../assets/icons/favicon.ico" type="image/x-icon">
 
-    <meta name="twitter:card" content="summary_large_image">
-    </meta>
-    <meta property="og:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
-    </meta>
-    <meta name="twitter:image" content="https://cabhinav.com/assets/icons/share_preview_img.jpg">
-    </meta>
-    <meta name="twitter:creator" content="@abhinav_937">
-    </meta>
-    <meta name="twitter:site" content="@abhinav_937">
-    </meta>
-    <meta name="twitter:url" content="https://cabhinav.com">
-    </meta>
-    <meta name="twitter:title" content="Abhinav Chinnusamy">
-    </meta>
-    <meta name="twitter:description" content="Publications">
-    </meta>
+       <!-- Fonts -->
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+       <!-- CSS -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
 
-    <!--
-    - favicon
-  -->
-    <link rel="shortcut icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+       <style>
+           body {
+               background-color: #171717;
+               color: #f8f9fa;
+               font-family: 'Poppins', sans-serif;
+           }
+           .main-content {
+               padding: 40px 20px;
+               max-width: 1200px;
+               margin: 0 auto;
+           }
+           .article-title {
+               font-size: 2.5rem;
+               font-weight: 600;
+               color: #61dafb;
+               margin-bottom: 40px;
+               text-align: center;
+           }
+           .publication {
+               margin-bottom: 20px;
+               padding: 20px;
+               border: 1px solid #495057;
+               border-radius: 8px;
+               background-color: #1f1f1f;
+               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+               opacity: 0;
+               transform: translateY(20px);
+               transition: all 0.3s ease;
+           }
+           .publication.show {
+               opacity: 1;
+               transform: translateY(0);
+           }
+           .publication h3 {
+               font-size: 1.5rem;
+               margin-bottom: 10px;
+               color: #f8f9fa;
+           }
+           .publication p {
+               margin-bottom: 8px;
+               color: #e9ecef;
+               line-height: 1.6;
+           }
+           .publication .authors {
+               font-size: 0.9rem;
+               color: #ced4da;
+           }
+           .publication .authors b {
+               color: #f8f9fa;
+           }
+           .publication .year {
+               font-size: 0.85rem;
+               color: #adb5bd;
+           }
+           .publication .links a {
+               text-decoration: none;
+               color: #61dafb;
+               margin-right: 15px;
+               font-size: 0.9rem;
+           }
+           .publication .links a:hover {
+               text-decoration: underline;
+           }
+           .error-message, .loading-message {
+               text-align: center;
+               font-size: 1.1rem;
+               margin-top: 20px;
+           }
+           .error-message {
+               color: #ff6b6b;
+           }
+           .loading-message {
+               color: #61dafb;
+           }
+           @media (max-width: 768px) {
+               .article-title {
+                   font-size: 2rem;
+               }
+               .publication h3 {
+                   font-size: 1.2rem;
+               }
+           }
+       </style>
+   </head>
+   <body>
+       <main>
+           <div class="main-content">
+               <article class="about active">
+                   <header>
+                       <h2 class="article-title">Publications</h2>
+                   </header>
+                   <div id="publications-container"></div>
+                   <div id="loading-message" class="loading-message">Loading publications...</div>
+                   <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please try again later.</div>
+               </article>
+           </div>
+       </main>
 
-    <!--
-    - custom css link
-  -->
+       <!-- Scripts -->
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+       <script>
+           // Mock data for offline testing (uncomment to use)
+           /*
+           const mockData = {
+               articles: [
+                   {
+                       title: "Implementation of Protection Features for a Modular Bidirectional Solid-State Battery Disconnector",
+                       link: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=40h4Uo8AAAAJ&citation_for_view=40h4Uo8AAAAJ:d1gkVwhDpl0C",
+                       authors: "D Dsa, A Chinnusamy, SN Banavath, EL Carvalho",
+                       publication: "IEEE Journal of Emerging and Selected Topics in Power Electronics, 2024",
+                       cited_by: {
+                           value: 1,
+                           link: "https://scholar.google.com/scholar?oi=bibs&hl=en&cites=12775205883050141049"
+                       },
+                       year: "2024"
+                   },
+                   {
+                       title: "Intelligent Battery Protection System for Electric Vehicle Applications",
+                       link: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=40h4Uo8AAAAJ&citation_for_view=40h4Uo8AAAAJ:u5HHmVD_uO8C",
+                       authors: "A Chinnusamy, D Dsa, SN Banavath",
+                       publication: "2024 IEEE 18th International Conference on Compatibility, Power Electronics …, 2024",
+                       cited_by: {
+                           value: 1,
+                           link: "https://scholar.google.com/scholar?oi=bibs&hl=en&cites=7959969152602823329"
+                       },
+                       year: "2024"
+                   }
+               ]
+           };
+           */
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <!-- <link rel="stylesheet" href="./assets/css/carousel.css"> -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+           async function fetchPublications() {
+               // Use local proxy for development, custom domain for production
+               const API_URL = window.location.hostname === 'localhost' || window.location.hostname === 'https://www.api.cabhinav.com/api/server.js'; // Custom domain endpoint
 
-    <!--
-    - google font link
-  -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!DOCTYPE html>
-    <html lang="en">
+               const container = document.getElementById('publications-container');
+               const loadingMessage = document.getElementById('loading-message');
+               const errorMessage = document.getElementById('error-message');
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Publication Section</title>
-        <!DOCTYPE html>
-        <html lang="en">
+               try {
+                   // Uncomment for mock data testing
+                   // const data = mockData;
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Publication Section</title>
-            <style>
-                .publication {
-                    margin-bottom: 20px;
-                    padding: 10px 15px;
-                    border: 1px solid #495057;
-                    border-radius: 5px;
-                    background-color: rgb(23, 23, 23);
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-                    /* Add elevation effect */
-                }
+                   // Fetch from proxy
+                   const response = await fetch(API_URL);
+                   if (!response.ok) throw new Error(`Proxy request failed: ${response.statusText}`);
+                   const data = await response.json();
 
-                .publication h3 {
-                    font-size: 18px;
-                    margin: 0 0 8px;
-                    color: #f8f9fa;
-                }
+                   // Hide loading message
+                   loadingMessage.style.display = 'none';
 
-                .publication p {
-                    margin: 0 0 10px;
-                    color: #e9ecef;
-                    line-height: 1.6;
-                }
+                   // Check if articles exist
+                   if (!data.articles || data.articles.length === 0) {
+                       errorMessage.textContent = 'No publications found.';
+                       errorMessage.style.display = 'block';
+                       return;
+                   }
 
-                .publication .authors {
-                    font-size: 14px;
-                    color: #ced4da;
-                }
+                   // Clear container
+                   container.innerHTML = '';
 
-                .publication .authors b {
-                    font-weight: bold;
-                    color: #f8f9fa;
-                }
+                   // Create publication cards
+                   data.articles.forEach((article, index) => {
+                       const authors = (article.authors || 'Unknown Authors').replace(
+                           'A Chinnusamy',
+                           '<b>A Chinnusamy</b>'
+                       );
+                       const pubDiv = document.createElement('div');
+                       pubDiv.className = 'publication';
+                       pubDiv.innerHTML = `
+                           <h3>${article.title}</h3>
+                           <p class="authors">${authors}</p>
+                           <p>${article.publication || 'N/A'}</p>
+                           <p class="year">Year: ${article.year || 'N/A'}</p>
+                           <div class="links">
+                               ${article.link ? `<a href="${article.link}" target="_blank">View</a>` : ''}
+                               ${article.cited_by?.link ? `<a href="${article.cited_by.link}" target="_blank">Cited by ${article.cited_by.value}</a>` : ''}
+                           </div>
+                       `;
+                       container.appendChild(pubDiv);
 
-                .publication .year {
-                    font-size: 14px;
-                    color: #adb5bd;
-                    margin-top: 5px;
-                }
+                       // GSAP Animation
+                       gsap.to(pubDiv, {
+                           opacity: 1,
+                           y: 0,
+                           duration: 0.6,
+                           delay: index * 0.2,
+                           ease: 'power2.out',
+                           onComplete: () => pubDiv.classList.add('show')
+                       });
+                   });
+               } catch (error) {
+                   console.error('Error fetching publications:', error);
+                   loadingMessage.style.display = 'none';
+                   errorMessage.textContent = 'Failed to load publications. Ensure the proxy server is running.';
+                   errorMessage.style.display = 'block';
+               }
+           }
 
-                .publication .links {
-                    margin-top: 10px;
-                }
-
-                .publication .links a {
-                    text-decoration: none;
-                    color: #61dafb;
-                    margin-right: 15px;
-                    font-size: 14px;
-                }
-
-                .publication .links a:hover {
-                    text-decoration: underline;
-                }
-            </style>
-        </head>
-
-    <body>
-        <!-- <div id="loading_indicator"></div> -->
-
-        <main>
-            <div class="main-content">
-
-                <article class="about active">
-
-                    <header>
-                        <custom-h2 class="custom-h2 article-title">Publications</custom-h2>
-                    </header>
-                        <div class="publication">
-                            <h3>Deep Learning for Natural Language Processing</h3>
-                            <p class="authors">John Doe, <b>Your Name</b>, Alice Smith</p>
-                            <p class="year">Year: 2021</p>
-                            <div class="links">
-                                <a href="https://ieeexplore.ieee.org" target="_blank">IEEE Link</a>
-                            </div>
-                        </div>
-
-                        <div class="publication">
-                            <h3>Advances in Computer Vision</h3>
-                            <p class="authors">Jane Roe, <b>Your Name</b>, Bob Lee</p>
-                            <p class="year">Year: 2022</p>
-                            <div class="links">
-                                <a href="https://ieeexplore.ieee.org" target="_blank">IEEE Link</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <script style="color: aliceblue;" src="https://bibbase.org/show?bib=https://bibbase.org/network/files/AiPzGLoZ4yYahCD4x&jsonp=1&theme=bullets&owner=Chinnusamy"></script>  -->
-
-
-
-                </article>
-
-
-            </div>
-        </main>
-
-        <!-- <script>
-    document.onreadystatechange = function () {
-      if (document.readyState !== "complete") {
-        document.querySelector("body").style.visibility = "hidden";
-        document.getElementById("loading_indicator").style.visibility = "visible";
-      } else {
-        setTimeout(() => {
-          document.getElementById("loading_indicator").style.display = "none";
-          document.querySelector("body").style.visibility = "visible";
-        }, 1800)
-      }
-    };
-  </script> -->
-    </body>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejcustom-h4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-
-    </html>
+           // Fetch publications on page load
+           document.addEventListener('DOMContentLoaded', fetchPublications);
+       </script>
+   </body>
+   </html>
