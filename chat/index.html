@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AMA</title>
+    <style>
+        /* Basic resets for mobile */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevent body scrolling */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #111827;
+            color: #e5e7eb;
+        }
+
+        /* Chatbot container (full-screen for mobile) */
+        .chatbot-container {
+            position: fixed;
+            top: env(safe-area-inset-top);
+            left: env(safe-area-inset-left);
+            right: env(safe-area-inset-right);
+            /* bottom: env(safe-area-inset-bottom); */
+            /* We will manage the bottom dynamically or via padding-bottom on the input */
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --primary-color: rgb(64, 66, 70);
+            --secondary-color: rgb(97, 100, 107);
+            height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Adjust height for safe areas */
+        }
+
+        /* Chat window (always visible, full-screen) */
+        .chatbot-window {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%; /* Take full height of container */
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #e5e7eb;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .chatbot-messages {
+            flex: 1; /* This is crucial for filling available space and allowing scroll */
+            padding: 1rem;
+            overflow-y: auto; /* Enable scrolling for messages */
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: rgba(31, 41, 55, 0.9);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) transparent;
+            scroll-behavior: smooth;
+        }
+        .chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 1.2rem;
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.5;
+            transition: transform 0.2s ease;
+        }
+        .message:hover {
+            transform: translateY(-2px);
+        }
+        .user-message {
+            background: var(--primary-color);
+            color: #e5e7eb;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.3rem;
+        }
+        .bot-message {
+            background: rgba(55, 65, 81, 0.9);
+            color: #d1d5db;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.3rem;
+        }
+        .error-message {
+            background: rgba(127, 29, 29, 0.9);
+            color: #f87171;
+            align-self: stretch;
+            text-align: center;
+            border: 1px solid #b91c1c;
+            border-radius: 0.5rem;
+        }
+        .loading-message {
+            color: #9ca3af;
+            font-style: italic;
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .spinning-emoji {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            /* Use env(keyboard-inset-height) for dynamic padding */
+            padding-bottom: calc(1rem + env(keyboard-inset-height, 0px));
+            border-top: 1px solid rgba(55, 65, 81, 0.5);
+            background: rgba(31, 41, 55, 0.9);
+            flex-shrink: 0;
+            transition: padding-bottom 0.3s ease-out; /* Smooth transition */
+            /* Add this if you want it to explicitly stick to the bottom
+               and be controlled by JS for keyboard height on non-supporting browsers.
+               For modern browsers with virtualKeyboard.overlaysContent, this is less critical.
+            */
+            /* position: sticky; */
+            /* bottom: 0; */
+            /* width: 100%; */
+        }
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(75, 85, 99, 0.7);
+            border-radius: 1.5rem;
+            font-size: 1rem;
+            outline: none;
+            background: rgba(55, 65, 81, 0.8);
+            color: #d1d5db;
+            box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
+        }
+        .chatbot-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+        }
+        .chatbot-input input::placeholder {
+            color: #9ca3af;
+        }
+        .chatbot-input button {
+            margin-left: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: #e5e7eb;
+            border: none;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .chatbot-input button:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        .chatbot-input button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        (function () {
+            const MAX_MOBILE_WIDTH = 768;
+
+            function initChatbot() {
+                if (window.innerWidth > MAX_MOBILE_WIDTH) {
+                    console.log('Chatbot not initialized: Screen width exceeds mobile maximum.');
+                    document.body.innerHTML = '<h1 style="text-align: center; color: white; padding: 20px;">Please access this chat service on a mobile device.</h1>';
+                    return;
+                }
+
+                // *** Step 1: Enable Virtual Keyboard API behavior ***
+                // This tells the browser you'll handle keyboard overlap yourself using CSS env() or JS.
+                if ('virtualKeyboard' in navigator) {
+                    navigator.virtualKeyboard.overlaysContent = true;
+                    console.log("Virtual Keyboard API enabled: overlaysContent set to true.");
+                } else {
+                    console.warn("Virtual Keyboard API not supported or enabled.");
+                }
+
+                // Inject HTML (no changes here, as it's structurally fine)
+                const container = document.createElement('div');
+                container.className = 'chatbot-container';
+                container.innerHTML = `
+                    <div class="chatbot-window" role="dialog" aria-label="Chatbot window">
+                        <div class="chatbot-header">AMA</div>
+                        <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
+                        <div class="chatbot-input">
+                            <input type="text" id="chatbotInput" placeholder="Ask me anything..." aria-label="Message input" autocomplete="off">
+                            <button id="sendButton" aria-label="Send message">Send</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(container);
+
+                const chatMessages = document.getElementById('chatbotMessages');
+                const messageInput = document.getElementById('chatbotInput');
+                const sendButton = document.getElementById('sendButton');
+                let isLoading = false;
+
+                function addMessageToChat(text, sender, isError = false, isLoadingMsg = false) {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    if (isError) {
+                        messageElement.classList.add('error-message');
+                        messageElement.textContent = text;
+                    } else if (isLoadingMsg) {
+                        messageElement.classList.add('loading-message');
+                        messageElement.setAttribute('id', 'loading-indicator');
+                        const emoji = document.createElement('span');
+                        emoji.classList.add('spinning-emoji');
+                        emoji.textContent = '😵‍💫';
+                        messageElement.appendChild(emoji);
+                        messageElement.appendChild(document.createTextNode(' Thinking...'));
+                    } else {
+                        messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+                        messageElement.textContent = text;
+                    }
+                    chatMessages.appendChild(messageElement);
+                    // Always scroll to bottom after adding a message
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                function showLoadingIndicator() {
+                    if (isLoading) return;
+                    isLoading = true;
+                    sendButton.disabled = true;
+                    messageInput.disabled = true;
+                    addMessageToChat('', 'bot', false, true);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                function hideLoadingIndicator() {
+                    const loadingIndicator = document.getElementById('loading-indicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+                    isLoading = false;
+                    sendButton.disabled = false;
+                    messageInput.disabled = false;
+                    messageInput.focus();
+                    chatMessages.scrollTop = chatMessages.scrollHeight; // Ensure scroll after hiding
+                }
+
+                async function sendMessage() {
+                    const prompt = messageInput.value.trim();
+                    if (!prompt || isLoading) return;
+
+                    addMessageToChat(prompt, 'user');
+                    messageInput.value = '';
+                    showLoadingIndicator();
+
+                    try {
+                        const response = await fetch('https://ai-reply-bot.vercel.app/api/gemini', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ prompt })
+                        });
+
+                        hideLoadingIndicator();
+
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response.' }));
+                            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        if (data.reply) {
+                            addMessageToChat(data.reply, 'bot');
+                        } else if (data.error) {
+                            addMessageToChat(`Error: ${data.error}`, 'system', true);
+                        } else {
+                            addMessageToChat('No response from the AI.', 'system', true);
+                        }
+                    } catch (error) {
+                        hideLoadingIndicator();
+                        console.error('Error sending message:', error);
+                        addMessageToChat(`Error: ${error.message}`, 'system', true);
+                    }
+                }
+
+                // Event listeners
+                sendButton.addEventListener('click', sendMessage);
+                messageInput.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+
+                // *** Step 2: Use visualViewport for more robust keyboard handling ***
+                // This is crucial for environments where env(keyboard-inset-height) might be slow or unsupported.
+                if (window.visualViewport) {
+                    const originalViewportHeight = window.visualViewport.height; // Capture initial height
+                    const chatInput = document.querySelector('.chatbot-input');
+
+                    window.visualViewport.addEventListener('resize', () => {
+                        // Calculate the difference in height, which indicates keyboard presence
+                        const keyboardHeight = originalViewportHeight - window.visualViewport.height;
+
+                        // Apply the height as padding to the bottom of the messages or input
+                        // The CSS `padding-bottom: calc(1rem + env(keyboard-inset-height, 0px));`
+                        // combined with `virtualKeyboard.overlaysContent = true` is generally preferred.
+                        // However, if the CSS isn't reacting fast enough, you can set a direct style
+                        // for `padding-bottom` on the input or adjust the `chatbot-container` height.
+
+                        // Example of direct JS adjustment (less ideal than CSS env() but robust fallback):
+                        // If you comment out the CSS padding-bottom on .chatbot-input, you could do:
+                        // chatInput.style.paddingBottom = `${16 + keyboardHeight}px`; // 16px is 1rem
+                        // Or, adjust the overall container height if needed for older browsers.
+
+                        // The most important part here is to ensure the chat scrolls to the bottom
+                        // whenever the viewport changes (i.e., keyboard opens/closes).
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        console.log(`Viewport resized. Keyboard height: ${keyboardHeight}px`);
+                    });
+                } else {
+                    console.warn("visualViewport API not supported. Keyboard responsiveness might be limited.");
+                }
+
+                // *** Step 3: Explicit scroll on input focus/blur for immediate responsiveness ***
+                // This ensures the input and latest messages are always in view when interacting with the input.
+                messageInput.addEventListener('focusin', () => {
+                    // Give a slight delay to allow browser to adjust layout for keyboard
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        console.log("Input focused, scrolled to bottom.");
+                    }, 100); // Small delay
+                });
+
+                messageInput.addEventListener('focusout', () => {
+                    // Scroll back to bottom when keyboard dismisses (often automatically, but good to ensure)
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        console.log("Input blurred, scrolled to bottom.");
+                    }, 50);
+                });
+
+                // Handle resize to ensure mobile-only
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > MAX_MOBILE_WIDTH) {
+                        document.body.innerHTML = '<h1 style="text-align: center; color: white; padding: 20px;">Please access this chat service on a mobile device.</h1>';
+                    }
+                });
+
+                // Initial message
+                addMessageToChat("Yo, wassup?", 'bot');
+
+                // Focus input on load
+                messageInput.focus();
+            }
+
+            // Load Material Web Components
+            if (!customElements.get('md-icon')) {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/@material/web@1.0.0/all.js';
+                script.onload = initChatbot;
+                script.onerror = () => {
+                    console.error("Failed to load Material Web Components, proceeding without them.");
+                    initChatbot(); // Fallback to initialize even if script fails
+                };
+                document.head.appendChild(script);
+            } else {
+                initChatbot();
+            }
+        })();
+    </script>
+</body>
+</html>
