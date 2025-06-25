@@ -1,50 +1,82 @@
 // chatbot.js
 (function () {
+    // Define a minimum screen width for the chatbot to be active (e.g., 1024px for desktop only)
+    const MIN_DESKTOP_WIDTH = 1024; // This will exclude most tablets and all phones
+
     // Function to initialize the chatbot
     function initChatbot() {
+        // Only proceed with injecting HTML/CSS and adding listeners if on a desktop screen
+        if (window.innerWidth < MIN_DESKTOP_WIDTH) {
+            console.log('Chatbot not initialized: Screen width is less than desktop minimum.');
+            return; // Exit if not on desktop
+        }
+
         // Inject CSS
         const style = document.createElement('style');
         style.textContent = `
-            /* Chatbot container */
+            /* Basic resets and body styles */
+            body {
+                margin: 0;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+
+            /* Chatbot container (for FAB button) */
             .chatbot-container {
                 position: fixed;
-                bottom: 5rem;
-                right: 2rem;
+                bottom: calc(2rem + env(safe-area-inset-bottom)); /* Desktop specific */
+                right: calc(2rem + env(safe-area-inset-right)); /* Desktop specific */
                 z-index: 1000;
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                --primary-color:rgb(64, 66, 70);
-                --secondary-color:rgb(97, 100, 107);
+                --primary-color: rgb(64, 66, 70);
+                --secondary-color: rgb(97, 100, 107);
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
             }
+
             /* Floating button */
             md-fab.chatbot-button {
                 --md-fab-container-color: var(--primary-color);
                 --md-fab-icon-color: #e5e7eb;
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                z-index: 1000000; /* Ensure it's above other content */
             }
             md-fab.chatbot-button:hover {
                 transform: scale(1.1);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             }
+
             /* Chat window */
             .chatbot-window {
-                display: none;
-                width: min(90vw, 360px);
-                height: min(80vh, 500px);
+                display: none; /* Controlled by JS */
+                width: min(90vw, 380px); /* Desktop width */
+                
+                /* New Positioning for desktop: */
+                position: fixed; /* Anchored to viewport directly */
+                right: calc(2rem + env(safe-area-inset-right));
+                bottom: calc(4rem + 2rem + env(safe-area-inset-bottom)); /* FAB height + container bottom + safe area */
+                
+                /* Dynamic Height Adjustment (initial, will be overridden by JS for max height) */
+                max-height: calc(100vh - 4rem - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Max height to fit in viewport, leave space at top and bottom */
+
                 background: rgba(17, 24, 39, 0.95);
                 backdrop-filter: blur(10px);
                 border-radius: 1rem;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-                position: absolute;
-                bottom: 5rem;
-                right: 0;
                 flex-direction: column;
                 overflow: hidden;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 animation: slideIn 0.3s ease-out;
-                transition: height 0.3s ease, bottom 0.3s ease;
+                transform-origin: bottom right;
+                z-index: 1000000; /* Ensure it's above other content */
+            }
+            .chatbot-window.visible {
+                display: flex;
             }
             @keyframes slideIn {
-                from { transform: translateY(20px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
+                from { transform: scale(0.8) translateY(20px); opacity: 0; }
+                to { transform: scale(1) translateY(0); opacity: 1; }
             }
             .chatbot-header {
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -56,10 +88,11 @@
                 justify-content: space-between;
                 align-items: center;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                flex-shrink: 0;
             }
             .chatbot-close {
                 cursor: pointer;
-                font-size: 1rem;
+                font-size: 1.2rem;
                 transition: transform 0.2s ease;
             }
             .chatbot-close:hover {
@@ -67,7 +100,7 @@
             }
             .chatbot-messages {
                 flex: 1;
-                padding: 1.5rem;
+                padding: 1rem 1.5rem;
                 overflow-y: auto;
                 display: flex;
                 flex-direction: column;
@@ -75,6 +108,7 @@
                 background: rgba(31, 41, 55, 0.9);
                 scrollbar-width: thin;
                 scrollbar-color: var(--primary-color) transparent;
+                scroll-behavior: smooth;
             }
             .chatbot-messages::-webkit-scrollbar {
                 width: 6px;
@@ -86,10 +120,10 @@
             .message {
                 padding: 0.75rem 1rem;
                 border-radius: 1.2rem;
-                max-width: 80%;
+                max-width: 85%;
                 word-wrap: break-word;
                 line-height: 1.5;
-                transition: transform 0.2s ease;
+                transition: transform 0.2s ease, background-color 0.2s ease;
             }
             .message:hover {
                 transform: translateY(-2px);
@@ -136,6 +170,7 @@
                 background: rgba(31, 41, 55, 0.9);
                 position: relative;
                 z-index: 10;
+                flex-shrink: 0;
             }
             .chatbot-input input {
                 flex: 1;
@@ -148,7 +183,7 @@
                 transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 background: rgba(55, 65, 81, 0.8);
                 color: #d1d5db;
-                box-shadow: 0 0 8px rgba(37, 99, 235, 0.3), 0 0 12px rgba(30, 64, 175, 0.2);
+                box-shadow: 0 0 8px rgba(37, 99, 235, 0.1), 0 0 12px rgba(30, 64, 175, 0.05);
             }
             .chatbot-input input:focus {
                 border-color: var(--primary-color);
@@ -176,16 +211,7 @@
                 background: #4b5563;
                 cursor: not-allowed;
                 transform: none;
-            }
-            @media (max-width: 480px) {
-                .chatbot-window {
-                    width: 90vw;
-                    height: 60vh;
-                    bottom: 4.5rem;
-                }
-                md-fab.chatbot-button {
-                    --md-fab-container-size: 3rem;
-                }
+                opacity: 0.7;
             }
         `;
         document.head.appendChild(style);
@@ -220,10 +246,37 @@
         const closeButton = document.querySelector('.chatbot-close');
         let isLoading = false;
 
+        function adjustChatWindowPosition() {
+            // Calculate available space for the chatbot window
+            const viewportHeight = window.innerHeight;
+            const fabHeight = fabButton.offsetHeight;
+            const fabBottomSpacing = parseFloat(getComputedStyle(fabButton.parentElement).bottom); // Spacing from bottom of viewport
+
+            // Calculate current bottom edge of the chat window if it were to open
+            // This is bottom of FAB + spacing between FAB and chat window
+            const chatWindowBottomEdge = fabHeight + fabBottomSpacing + 1.5 * 16; // 1.5rem, assuming 16px/rem
+
+            // Define a minimum top spacing (e.g., 2rem from the top of the viewport)
+            const minTopSpacing = 2 * 16; // 2rem, assuming 16px/rem
+
+            // Calculate the maximum possible height the window can take
+            const maxCalculatedHeight = viewportHeight - chatWindowBottomEdge - minTopSpacing;
+            
+            // Set the max-height based on available space, ensuring it doesn't go negative
+            chatWindow.style.maxHeight = `${Math.max(200, maxCalculatedHeight)}px`; // Ensure a reasonable minimum height
+
+            // The 'bottom' CSS property already handles the position correctly,
+            // the max-height ensures it doesn't go off-screen upwards.
+            // No explicit 'top' calculation is needed if max-height handles overflow.
+        }
+
         function toggleChatbot() {
-            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
-            if (chatWindow.style.display === 'flex') {
+            chatWindow.classList.toggle('visible');
+            if (chatWindow.classList.contains('visible')) {
                 messageInput.focus();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                // Adjust position when opening to ensure it fits
+                adjustChatWindowPosition();
             }
         }
 
@@ -238,15 +291,17 @@
                 messageElement.setAttribute('id', 'loading-indicator');
                 const emoji = document.createElement('span');
                 emoji.classList.add('spinning-emoji');
-                emoji.textContent = '🌀😵';
+                emoji.textContent = '😵‍💫';
                 messageElement.appendChild(emoji);
-                messageElement.appendChild(document.createTextNode(' Brain’s doing cartwheels...'));
+                messageElement.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
             } else {
                 messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
                 messageElement.textContent = text;
             }
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Re-adjust max height after new message might have been added and scrolled
+            adjustChatWindowPosition(); 
         }
 
         function showLoadingIndicator() {
@@ -255,6 +310,8 @@
             sendButton.disabled = true;
             messageInput.disabled = true;
             addMessageToChat('', 'bot', false, true);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            adjustChatWindowPosition(); // Adjust for loading message height
         }
 
         function hideLoadingIndicator() {
@@ -266,6 +323,7 @@
             sendButton.disabled = false;
             messageInput.disabled = false;
             messageInput.focus();
+            adjustChatWindowPosition(); // Adjust after loading message removed
         }
 
         async function sendMessage() {
@@ -305,6 +363,19 @@
             }
         }
 
+        // Debounce function
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        const debouncedAdjustChatWindowPosition = debounce(adjustChatWindowPosition, 100);
+
         // Event listeners
         fabButton.addEventListener('click', toggleChatbot);
         closeButton.addEventListener('click', toggleChatbot);
@@ -315,31 +386,31 @@
             }
         });
 
-        // Mobile keyboard handling
-        function adjustChatWindowForKeyboard() {
-            if (window.innerWidth > 480) return;
-            const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            const keyboardHeight = window.innerHeight - viewportHeight;
-            if (keyboardHeight > 100) {
-                chatWindow.style.height = `calc(75vh - ${keyboardHeight}px)`;
-                chatWindow.style.bottom = `calc(-5rem + ${keyboardHeight}px)`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Listen to window resize to adjust max-height
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < MIN_DESKTOP_WIDTH) {
+                // If resized to mobile/tablet size, ensure chatbot is hidden and cleaned up
+                if (chatWindow.classList.contains('visible')) {
+                    toggleChatbot(); // Close if open
+                }
+                // Optional: remove elements if you want to completely destroy it for mobile
+                // For now, just stopping interaction and hiding is sufficient
             } else {
-                chatWindow.style.height = '60vh';
-                chatWindow.style.bottom = '2.5rem';
+                // If resized back to desktop size or just a desktop resize, adjust position
+                 fabButton.style.display = 'flex'; // Ensure FAB is visible on desktop
+                 debouncedAdjustChatWindowPosition(); // Adjust position based on new window size
             }
-        }
-
-        messageInput.addEventListener('focus', adjustChatWindowForKeyboard);
-        messageInput.addEventListener('blur', adjustChatWindowForKeyboard);
-        window.visualViewport?.addEventListener('resize', adjustChatWindowForKeyboard);
-        window.addEventListener('resize', adjustChatWindowForKeyboard);
+        });
 
         // Initial message
         addMessageToChat("Yo, what's up?", 'bot');
+
+        // Initial adjustment on load to set correct max-height
+        adjustChatWindowPosition();
     }
 
-    // Load Material Web Components if not already present
+    // Load Material Web Components
+    // The initChatbot call is now conditional inside this onload
     if (!customElements.get('md-fab')) {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/@material/web@1.0.0/all.js';
