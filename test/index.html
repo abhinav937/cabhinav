@@ -258,6 +258,9 @@
 
     </main>
 </body>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@material/web@1.0.0/all.js"></script>
+
 <style>
     /* Chatbot container */
     .chatbot-container {
@@ -268,28 +271,17 @@
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         --primary-color: #3b82f6;
         --secondary-color: #1e3a8a;
-        --bg-color: rgba(255, 255, 255, 0.9);
     }
 
     /* Floating button */
-    .chatbot-button {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        font-size: 1.5rem;
+    md-fab.chatbot-button {
+        --md-fab-container-color: var(--primary-color);
+        --md-fab-icon-color: white;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .chatbot-button:hover {
+    md-fab.chatbot-button:hover {
         transform: scale(1.1);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
     /* Chat window */
@@ -308,6 +300,7 @@
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.2);
         animation: slideIn 0.3s ease-out;
+        transition: height 0.3s ease, bottom 0.3s ease;
     }
 
     @keyframes slideIn {
@@ -398,6 +391,18 @@
         color: #6b7280;
         font-style: italic;
         align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .spinning-emoji {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
 
     .chatbot-input {
@@ -405,6 +410,8 @@
         padding: 1rem;
         border-top: 1px solid rgba(229, 231, 235, 0.5);
         background: rgba(248, 250, 252, 0.9);
+        position: relative;
+        z-index: 10;
     }
 
     .chatbot-input input {
@@ -450,23 +457,23 @@
     @media (max-width: 480px) {
         .chatbot-window {
             width: 90vw;
-            height: 70vh;
+            height: 60vh;
             bottom: 4.5rem;
         }
 
-        .chatbot-button {
-            width: 3rem;
-            height: 3rem;
-            font-size: 1.25rem;
+        md-fab.chatbot-button {
+            --md-fab-container-size: 3rem;
         }
     }
 </style>
 
 <div class="chatbot-container">
-    <div class="chatbot-button" onclick="toggleChatbot()" role="button" aria-label="Toggle chatbot">💬</div>
+    <md-fab class="chatbot-button" aria-label="Toggle chatbot" onclick="toggleChatbot()">
+        <md-icon slot="icon">chat</md-icon>
+    </md-fab>
     <div class="chatbot-window" id="chatbotWindow" role="dialog" aria-label="Chatbot window">
         <div class="chatbot-header">
-            <span>AI Assistant</span>
+            <span>DumbMiniMe</span>
             <span class="chatbot-close" onclick="toggleChatbot()" role="button" aria-label="Close chatbot">✖</span>
         </div>
         <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
@@ -481,12 +488,12 @@
     const chatMessages = document.getElementById('chatbotMessages');
     const messageInput = document.getElementById('chatbotInput');
     const sendButton = document.getElementById('sendButton');
+    const chatWindow = document.getElementById('chatbotWindow');
     let isLoading = false;
 
     function toggleChatbot() {
-        const window = document.getElementById('chatbotWindow');
-        window.style.display = window.style.display === 'flex' ? 'none' : 'flex';
-        if (window.style.display === 'flex') {
+        chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+        if (chatWindow.style.display === 'flex') {
             messageInput.focus();
         }
     }
@@ -496,16 +503,21 @@
         messageElement.classList.add('message');
         if (isError) {
             messageElement.classList.add('error-message');
+            messageElement.textContent = text;
         } else if (isLoadingMsg) {
             messageElement.classList.add('loading-message');
             messageElement.setAttribute('id', 'loading-indicator');
+            const emoji = document.createElement('span');
+            emoji.classList.add('spinning-emoji');
+            emoji.textContent = '🌀😵';
+            messageElement.appendChild(emoji);
+            messageElement.appendChild(document.createTextNode(' Brain’s doing cartwheels...'));
         } else {
             messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            messageElement.textContent = text;
         }
-        messageElement.textContent = text;
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        return messageElement;
     }
 
     function showLoadingIndicator() {
@@ -513,7 +525,7 @@
         isLoading = true;
         sendButton.disabled = true;
         messageInput.disabled = true;
-        addMessageToChat('AI is thinking...', 'bot', false, true);
+        addMessageToChat('', 'bot', false, true);
     }
 
     function hideLoadingIndicator() {
@@ -570,6 +582,26 @@
         }
     });
 
-    addMessageToChat('Hello! How can I assist you today?', 'bot');
+    // Mobile keyboard handling
+    function adjustChatWindowForKeyboard() {
+        if (window.innerWidth > 480) return; // Skip for non-mobile
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const keyboardHeight = window.innerHeight - viewportHeight;
+        if (keyboardHeight > 100) { // Keyboard is likely open
+            chatWindow.style.height = `calc(60vh - ${keyboardHeight}px)`;
+            chatWindow.style.bottom = `calc(4.5rem + ${keyboardHeight}px)`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else { // Keyboard is closed
+            chatWindow.style.height = '60vh';
+            chatWindow.style.bottom = '4.5rem';
+        }
+    }
+
+    messageInput.addEventListener('focus', adjustChatWindowForKeyboard);
+    messageInput.addEventListener('blur', adjustChatWindowForKeyboard);
+    window.visualViewport?.addEventListener('resize', adjustChatWindowForKeyboard);
+    window.addEventListener('resize', adjustChatWindowForKeyboard);
+
+    addMessageToChat("Yo, what's up? I'm DumbMiniMe, the slickest AI this side of the galaxy. Ready to blow your mind with my wit? Drop a question, peasant!", 'bot');
 </script>
  </html>
