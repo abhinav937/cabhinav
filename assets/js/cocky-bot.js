@@ -8,8 +8,8 @@
             /* Chatbot container */
             .chatbot-container {
                 position: fixed;
-                bottom: 5.5rem;
-                right: 1.5rem;
+                bottom: 5rem;
+                right: 2rem;
                 z-index: 1000;
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 --primary-color:rgb(64, 66, 70);
@@ -321,8 +321,8 @@
             const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             const keyboardHeight = window.innerHeight - viewportHeight;
             if (keyboardHeight > 100) {
-                chatWindow.style.height = `calc(40vh - ${keyboardHeight}px)`;
-                chatWindow.style.bottom = `calc(2.5rem + ${keyboardHeight}px)`;
+                chatWindow.style.height = `calc(75vh - ${keyboardHeight}px)`;
+                chatWindow.style.bottom = `calc(-5rem + ${keyboardHeight}px)`;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } else {
                 chatWindow.style.height = '60vh';
