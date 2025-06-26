@@ -58,9 +58,17 @@
         // Function to parse and format text
         function formatText(text) {
             console.log('Formatting text:', text);
+            // Triple backtick code blocks (with optional language)
+            text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+            });
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Bold
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Line breaks
             text = text.replace(/\n/g, '<br>');
             console.log('Formatted text:', text);
             return text;
@@ -69,10 +77,6 @@
         // Add welcome message if empty
         if (messagesContainer.children.length === 0) {
             addMessage('Yo! wassup?', 'bot');
-            // Test formatting immediately
-            setTimeout(() => {
-                addMessage('**Test**: This should be *bold* and `code`!', 'bot');
-            }, 500);
         }
         
         // Send button click handler
@@ -199,9 +203,17 @@
         // Function to parse and format text
         function formatMessageText(text) {
             console.log('Desktop formatting text:', text);
+            // Triple backtick code blocks (with optional language)
+            text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+            });
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Bold
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Line breaks
             text = text.replace(/\n/g, '<br>');
             console.log('Desktop formatted text:', text);
             return text;
@@ -347,10 +359,6 @@
         // Only add welcome message if chat is empty
         if (!desktopMessages.hasChildNodes()) {
             addMessageToChat("Yo! wassup?", 'bot');
-            // Test formatting immediately
-            setTimeout(() => {
-                addMessageToChat("**Desktop Test**: This should be *bold* and `code`!", 'bot');
-            }, 500);
         }
 
         // Focus input on load
