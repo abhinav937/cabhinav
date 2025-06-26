@@ -55,9 +55,24 @@
         
         let isLoading = false;
         
+        // Function to parse and format text
+        function formatText(text) {
+            console.log('Formatting text:', text);
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            text = text.replace(/\n/g, '<br>');
+            console.log('Formatted text:', text);
+            return text;
+        }
+        
         // Add welcome message if empty
         if (messagesContainer.children.length === 0) {
             addMessage('Yo! wassup?', 'bot');
+            // Test formatting immediately
+            setTimeout(() => {
+                addMessage('**Test**: This should be *bold* and `code`!', 'bot');
+            }, 500);
         }
         
         // Send button click handler
@@ -102,7 +117,11 @@
             } else if (type === 'error') {
                 messageDiv.className = 'mobile-message mobile-error-message';
                 messageDiv.textContent = text;
+            } else if (type === 'bot') {
+                // Apply formatting to bot messages
+                messageDiv.innerHTML = formatText(text);
             } else {
+                // User messages - no formatting for security
                 messageDiv.textContent = text;
             }
             
@@ -154,6 +173,7 @@
                 const data = await response.json();
                 
                 if (data.reply) {
+                    console.log('Raw AI response:', data.reply);
                     addMessage(data.reply, 'bot');
                 } else if (data.error) {
                     addMessage('Something went wrong. Please try again.', 'error');
@@ -178,10 +198,12 @@
 
         // Function to parse and format text
         function formatMessageText(text) {
+            console.log('Desktop formatting text:', text);
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
             text = text.replace(/`(.*?)`/g, '<code>$1</code>');
             text = text.replace(/\n/g, '<br>');
+            console.log('Desktop formatted text:', text);
             return text;
         }
 
@@ -265,6 +287,7 @@
 
                 const data = await response.json();
                 if (data.reply) {
+                    console.log('Desktop Raw AI response:', data.reply);
                     addMessageToChat(data.reply, 'bot');
                 } else if (data.error) {
                     // Show simple error message based on error type
@@ -324,6 +347,10 @@
         // Only add welcome message if chat is empty
         if (!desktopMessages.hasChildNodes()) {
             addMessageToChat("Yo! wassup?", 'bot');
+            // Test formatting immediately
+            setTimeout(() => {
+                addMessageToChat("**Desktop Test**: This should be *bold* and `code`!", 'bot');
+            }, 500);
         }
 
         // Focus input on load
