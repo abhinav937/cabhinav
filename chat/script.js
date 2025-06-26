@@ -57,7 +57,7 @@
         
         // Add welcome message if empty
         if (messagesContainer.children.length === 0) {
-            addMessage('Hello! 👋 How can I help you today?', 'bot');
+            addMessage('Yo! wassup?', 'bot');
         }
         
         // Send button click handler
@@ -323,7 +323,7 @@
 
         // Only add welcome message if chat is empty
         if (!desktopMessages.hasChildNodes()) {
-            addMessageToChat("Hello! 👋 How can I help you today?", 'bot');
+            addMessageToChat("Yo! wassup?", 'bot');
         }
 
         // Focus input on load

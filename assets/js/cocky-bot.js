@@ -522,7 +522,7 @@
         });
 
         // Initial message
-        addMessageToChat("Hello! 👋 How can I help you today?", 'bot');
+        addMessageToChat("Yo! wassup?", 'bot');
 
         // Focus input on load
         setTimeout(() => {
