@@ -8,12 +8,30 @@
         return; // Exit early if on chat page
     }
 
+    // Function to check if device is mobile/tablet
+    function isMobileDevice() {
+        // Check screen width
+        if (window.innerWidth < MIN_DESKTOP_WIDTH) {
+            return true;
+        }
+        
+        // Check for mobile user agent
+        const userAgent = navigator.userAgent.toLowerCase();
+        const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+        return mobileKeywords.some(keyword => userAgent.includes(keyword));
+        
+        // Check for touch capability (most mobile devices have touch)
+        // if ('ontouchstart' in window && window.innerWidth < 1024) {
+        //     return true;
+        // }
+    }
+
     // Function to initialize the chatbot
     function initChatbot() {
         // Only proceed with injecting HTML/CSS and adding listeners if on a desktop screen
-        if (window.innerWidth < MIN_DESKTOP_WIDTH) {
-            console.log('Chatbot not initialized: Screen width is less than desktop minimum.');
-            return; // Exit if not on desktop
+        if (isMobileDevice()) {
+            console.log('Chatbot not initialized: Mobile device detected or screen width is less than desktop minimum.');
+            return; // Exit if mobile device
         }
 
         // Inject CSS
