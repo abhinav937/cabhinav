@@ -38,7 +38,7 @@
         const style = document.createElement('style');
         style.textContent = `
             /* Material 3 Design System */
-            :root {
+            .chatbot-container {
                 --md-sys-color-primary: #6750A4;
                 --md-sys-color-on-primary: #FFFFFF;
                 --md-sys-color-primary-container: #EADDFF;
@@ -68,12 +68,6 @@
                 --md-sys-color-on-error-container: #410002;
             }
 
-            /* Basic resets and body styles */
-            body {
-                margin: 0;
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            }
-
             /* Chatbot container (for FAB button) */
             .chatbot-container {
                 position: fixed;
@@ -89,20 +83,20 @@
             }
 
             /* Floating button */
-            md-fab.chatbot-button {
+            .chatbot-container md-fab.chatbot-button {
                 --md-fab-container-color: var(--primary-color);
                 --md-fab-icon-color: #e5e7eb;
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                 z-index: 1000000; /* Ensure it's above other content */
             }
-            md-fab.chatbot-button:hover {
+            .chatbot-container md-fab.chatbot-button:hover {
                 transform: scale(1.1);
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             }
 
             /* Chat window */
-            .chatbot-window {
+            .chatbot-container .chatbot-window {
                 display: none; /* Controlled by JS */
                 width: min(90vw, 380px); /* Desktop width */
                 
@@ -114,27 +108,26 @@
                 /* Dynamic Height Adjustment (initial, will be overridden by JS for max height) */
                 max-height: calc(100vh - 4rem - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* Max height to fit in viewport, leave space at top and bottom */
 
-                background: var(--md-sys-color-surface);
-                backdrop-filter: blur(10px);
+                background: rgba(15, 15, 25, 0.98);
                 border-radius: 16px;
                 box-shadow: 
-                    0 8px 32px rgba(0, 0, 0, 0.1),
-                    0 4px 16px rgba(103, 80, 164, 0.1);
+                    0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 4px 16px rgba(103, 80, 164, 0.2);
                 flex-direction: column;
                 overflow: hidden;
-                border: 1px solid var(--md-sys-color-outline-variant);
+                border: 1px solid rgba(255, 255, 255, 0.15);
                 animation: slideIn 0.3s ease-out;
                 transform-origin: bottom right;
                 z-index: 1000000; /* Ensure it's above other content */
             }
-            .chatbot-window.visible {
+            .chatbot-container .chatbot-window.visible {
                 display: flex;
             }
             @keyframes slideIn {
                 from { transform: scale(0.8) translateY(20px); opacity: 0; }
                 to { transform: scale(1) translateY(0); opacity: 1; }
             }
-            .chatbot-header {
+            .chatbot-container .chatbot-header {
                 background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, #7C3AED 100%);
                 color: var(--md-sys-color-on-primary);
                 padding: 1rem 1.5rem;
@@ -149,38 +142,35 @@
                     0 2px 8px rgba(103, 80, 164, 0.2),
                     0 1px 3px rgba(0, 0, 0, 0.12);
             }
-            .chatbot-close {
+            .chatbot-container .chatbot-close {
                 cursor: pointer;
                 font-size: 1.2rem;
                 transition: transform 0.2s ease;
                 color: var(--md-sys-color-on-primary);
             }
-            .chatbot-close:hover {
+            .chatbot-container .chatbot-close:hover {
                 transform: rotate(90deg);
             }
-            .chatbot-messages {
+            .chatbot-container .chatbot-messages {
                 flex: 1;
                 padding: 1rem 1.5rem;
                 overflow-y: auto;
                 display: flex;
                 flex-direction: column;
                 gap: 0.75rem;
-                background: 
-                    radial-gradient(circle at 20% 80%, rgba(103, 80, 164, 0.03) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
-                    var(--md-sys-color-surface);
+                background: rgba(10, 10, 20, 0.6);
                 scrollbar-width: thin;
                 scrollbar-color: var(--md-sys-color-primary) transparent;
                 scroll-behavior: smooth;
             }
-            .chatbot-messages::-webkit-scrollbar {
+            .chatbot-container .chatbot-messages::-webkit-scrollbar {
                 width: 6px;
             }
-            .chatbot-messages::-webkit-scrollbar-thumb {
+            .chatbot-container .chatbot-messages::-webkit-scrollbar-thumb {
                 background: var(--md-sys-color-primary);
                 border-radius: 3px;
             }
-            .message {
+            .chatbot-container .message {
                 padding: 0.75rem 1rem;
                 border-radius: 1.2rem;
                 max-width: 85%;
@@ -200,146 +190,123 @@
                     transform: translateY(0) scale(1);
                 }
             }
-            .message:hover {
+            .chatbot-container .message:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             }
-            .user-message {
-                background: var(--md-sys-color-primary-container);
-                color: var(--md-sys-color-on-primary-container);
+            .chatbot-container .user-message {
+                background: rgba(103, 80, 164, 0.3);
+                color: #FFFFFF;
                 align-self: flex-end;
                 border-bottom-right-radius: 0.3rem;
-                box-shadow: 
-                    0 2px 8px rgba(103, 80, 164, 0.15),
-                    0 1px 3px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(103, 80, 164, 0.3);
+                box-shadow: 0 8px 24px rgba(103, 80, 164, 0.2);
             }
-            .bot-message {
-                background: var(--md-sys-color-surface-variant);
-                color: var(--md-sys-color-on-surface-variant);
+            .chatbot-container .bot-message {
+                background: rgba(255, 255, 255, 0.15);
+                color: #FFFFFF;
                 align-self: flex-start;
                 border-bottom-left-radius: 0.3rem;
-                box-shadow: 
-                    0 2px 8px rgba(0, 0, 0, 0.08),
-                    0 1px 3px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             }
-            .message strong, .message b {
+            .chatbot-container .message strong, .chatbot-container .message b {
                 font-weight: 600;
-                color: var(--md-sys-color-primary);
+                color: #EADDFF;
             }
-            .message em, .message i {
+            .chatbot-container .message em, .chatbot-container .message i {
                 font-style: italic;
-                color: var(--md-sys-color-secondary);
+                color: #D0BCFF;
             }
-            .message code {
-                background: var(--md-sys-color-surface);
+            .chatbot-container .message code {
+                background: rgba(0, 0, 0, 0.3);
                 padding: 2px 6px;
                 border-radius: 4px;
                 font-family: 'Roboto Mono', monospace;
                 font-size: 0.85rem;
-                color: var(--md-sys-color-tertiary);
-                border: 1px solid var(--md-sys-color-outline-variant);
+                color: #FFFFFF;
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
-            .error-message {
-                background: var(--md-sys-color-error-container);
-                color: var(--md-sys-color-on-error-container);
+            .chatbot-container .error-message {
+                background: rgba(186, 26, 26, 0.3);
+                color: #FFFFFF;
                 align-self: stretch;
                 text-align: center;
-                border: 1px solid var(--md-sys-color-error);
+                border: 1px solid rgba(186, 26, 26, 0.4);
                 border-radius: 0.5rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 8px 24px rgba(186, 26, 26, 0.2);
             }
-            .loading-message {
-                color: var(--md-sys-color-on-surface-variant);
+            .chatbot-container .loading-message {
+                background: rgba(255, 255, 255, 0.15);
+                color: #FFFFFF;
                 font-style: italic;
                 align-self: flex-start;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                background: var(--md-sys-color-surface-variant);
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 border-radius: 1.2rem;
                 padding: 0.75rem 1rem;
-                box-shadow: 
-                    0 2px 8px rgba(0, 0, 0, 0.08),
-                    0 1px 3px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
                 animation: loadingPulse 2s ease-in-out infinite;
             }
             @keyframes loadingPulse {
                 0%, 100% {
-                    box-shadow: 
-                        0 2px 8px rgba(0, 0, 0, 0.08),
-                        0 1px 3px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
                 }
                 50% {
-                    box-shadow: 
-                        0 4px 16px rgba(103, 80, 164, 0.15),
-                        0 2px 8px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 12px 32px rgba(103, 80, 164, 0.3);
                 }
             }
-            .spinning-emoji {
+            .chatbot-container .spinning-emoji {
                 animation: spin 1.5s linear infinite;
                 font-size: 1rem;
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
             }
             @keyframes spin {
                 from { transform: rotate(0deg); }
                 to { transform: rotate(360deg); }
             }
-            .chatbot-input {
+            .chatbot-container .chatbot-input {
                 display: flex;
                 padding: 1rem;
-                border-top: 1px solid var(--md-sys-color-outline-variant);
-                background: var(--md-sys-color-surface);
+                background: rgba(255, 255, 255, 0.05);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
                 position: relative;
                 z-index: 10;
                 flex-shrink: 0;
                 gap: 0.75rem;
                 align-items: center;
             }
-            .chatbot-input input {
+            .chatbot-container .chatbot-input input {
                 flex: 1;
                 padding: 0.75rem 1rem;
-                border: 2px solid var(--md-sys-color-outline);
+                border: 2px solid rgba(255, 255, 255, 0.2);
                 border-radius: 1.5rem;
                 font-size: 0.95rem;
                 outline: none;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                background: var(--md-sys-color-surface);
-                color: var(--md-sys-color-on-surface);
+                background: rgba(255, 255, 255, 0.1);
+                color: #FFFFFF;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
                 font-family: inherit;
             }
-            .chatbot-input input:focus {
-                border-color: var(--md-sys-color-primary);
-                border-width: 2px;
-                box-shadow: 
-                    0 0 0 4px rgba(103, 80, 164, 0.1),
-                    0 4px 16px rgba(103, 80, 164, 0.2),
-                    0 2px 8px rgba(0, 0, 0, 0.1);
-                transform: translateY(-1px);
+            .chatbot-container .chatbot-input input:focus {
+                border-color: rgba(103, 80, 164, 0.8);
+                background: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.2);
             }
-            .chatbot-input input:hover {
-                border-color: var(--md-sys-color-primary);
-                box-shadow: 
-                    0 2px 12px rgba(103, 80, 164, 0.15),
-                    0 2px 8px rgba(0, 0, 0, 0.08);
+            .chatbot-container .chatbot-input input::placeholder {
+                color: rgba(255, 255, 255, 0.6);
             }
-            .chatbot-input input::placeholder {
-                color: var(--md-sys-color-on-surface-variant);
-                transition: color 0.3s ease;
-            }
-            .chatbot-input input:focus::placeholder {
-                color: var(--md-sys-color-primary);
-                opacity: 0.7;
-            }
-            .chatbot-input md-filled-tonal-icon-button {
+            .chatbot-container .chatbot-input md-filled-tonal-icon-button {
                 width: 48px;
                 height: 48px;
                 border-radius: 24px;
                 flex-shrink: 0;
-                --md-filled-tonal-icon-button-container-color: var(--md-sys-color-primary);
-                --md-filled-tonal-icon-button-icon-color: var(--md-sys-color-on-primary);
+                --md-filled-tonal-icon-button-container-color: rgba(103, 80, 164, 0.8);
+                --md-filled-tonal-icon-button-icon-color: #FFFFFF;
             }
-            .chatbot-input md-filled-tonal-icon-button md-icon {
+            .chatbot-container .chatbot-input md-filled-tonal-icon-button md-icon {
                 width: 24px;
                 height: 24px;
             }
@@ -371,7 +338,14 @@
 
         // Add event listener to FAB button
         const fabButton = container.querySelector('.chatbot-button');
-        fabButton.addEventListener('click', openChatbot);
+        fabButton.addEventListener('click', () => {
+            const chatWindow = document.querySelector('.chatbot-container .chatbot-window');
+            if (chatWindow && chatWindow.classList.contains('visible')) {
+                closeChatbot();
+            } else {
+                openChatbot();
+            }
+        });
 
         // Initialize chat functionality
         initChatFunctionality();
@@ -532,37 +506,42 @@
 
     // Function to adjust chat window position based on viewport
     function adjustChatWindowPosition() {
-        const chatWindow = document.querySelector('.chatbot-window');
+        const chatWindow = document.querySelector('.chatbot-container .chatbot-window');
         if (!chatWindow) return;
 
         const viewportHeight = window.innerHeight;
         const viewportWidth = window.innerWidth;
-        const chatWindowHeight = chatWindow.offsetHeight;
-        const chatWindowWidth = chatWindow.offsetWidth;
-
+        
         // Calculate maximum height (leave some space at top and bottom)
-        const maxHeight = viewportHeight - 100; // 100px buffer
+        const maxHeight = Math.max(300, viewportHeight - 120); // Minimum 300px height, 120px buffer
         chatWindow.style.maxHeight = `${maxHeight}px`;
 
-        // Ensure the chat window doesn't go off-screen
-        const rightPosition = Math.min(
-            parseInt(getComputedStyle(chatWindow).right),
-            viewportWidth - chatWindowWidth - 20
-        );
-        chatWindow.style.right = `${rightPosition}px`;
+        // Ensure the chat window doesn't go off-screen horizontally
+        const chatWindowWidth = Math.min(380, viewportWidth - 40); // Max 380px or viewport - 40px
+        chatWindow.style.width = `${chatWindowWidth}px`;
+
+        // Ensure the chat window doesn't go off-screen vertically
+        const chatWindowHeight = chatWindow.offsetHeight;
+        const maxBottom = viewportHeight - 20; // 20px buffer from bottom
+        const currentBottom = parseInt(getComputedStyle(chatWindow).bottom) || 0;
+        
+        if (currentBottom + chatWindowHeight > maxBottom) {
+            chatWindow.style.bottom = `${maxBottom - chatWindowHeight}px`;
+        }
     }
 
     // Global functions for opening/closing
     window.openChatbot = function() {
-        const chatWindow = document.querySelector('.chatbot-window');
+        const chatWindow = document.querySelector('.chatbot-container .chatbot-window');
         if (chatWindow) {
             chatWindow.classList.add('visible');
-            adjustChatWindowPosition();
+            // Delay adjustment to ensure window is rendered
+            setTimeout(adjustChatWindowPosition, 50);
         }
     };
 
     window.closeChatbot = function() {
-        const chatWindow = document.querySelector('.chatbot-window');
+        const chatWindow = document.querySelector('.chatbot-container .chatbot-window');
         if (chatWindow) {
             chatWindow.classList.remove('visible');
         }
@@ -576,12 +555,58 @@
     }
 
     // Handle window resize
-    window.addEventListener('resize', adjustChatWindowPosition);
+    window.addEventListener('resize', () => {
+        // Debounce resize events
+        clearTimeout(window.resizeTimeout);
+        window.resizeTimeout = setTimeout(adjustChatWindowPosition, 100);
+    });
+
+    // Load Material Web Components with error handling
+    function loadMaterialComponents() {
+        if (!customElements.get('md-icon')) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/@material/web@1.0.0/all.js';
+            script.onerror = () => {
+                console.warn('Failed to load Material Web Components, using fallback styling');
+                // Add fallback styles for when Material Web Components fail to load
+                const fallbackStyle = document.createElement('style');
+                fallbackStyle.textContent = `
+                    .chatbot-container md-fab {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 50%;
+                        background: var(--primary-color);
+                        color: #e5e7eb;
+                        border: none;
+                        cursor: pointer;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    }
+                    .chatbot-container md-icon {
+                        font-size: 24px;
+                        font-family: 'Material Icons', sans-serif;
+                    }
+                    .chatbot-container md-filled-tonal-icon-button {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 24px;
+                        background: rgba(103, 80, 164, 0.8);
+                        color: #FFFFFF;
+                        border: none;
+                        cursor: pointer;
+                    }
+                `;
+                document.head.appendChild(fallbackStyle);
+            };
+            document.head.appendChild(script);
+        }
+    }
 
     // Load Material Web Components
-    if (!customElements.get('md-icon')) {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@material/web@1.0.0/all.js';
-        document.head.appendChild(script);
-    }
+    loadMaterialComponents();
 })();
