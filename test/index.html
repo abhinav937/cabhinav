@@ -643,12 +643,12 @@
 
         <div class="component-demo">
           <h3>Text Fields</h3>
-          <div class="form-demo">
-            <md-outlined-text-field label="Favorite color" value="Purple"></md-outlined-text-field>
-            <md-outlined-text-field label="Email" type="email"></md-outlined-text-field>
-            <md-outlined-text-field label="Password" type="password"></md-outlined-text-field>
-            <md-outlined-button type="reset">Reset</md-outlined-button>
-          </div>
+          <form id="test-form" class="form-demo">
+            <md-outlined-text-field id="color-field" label="Favorite color" value="Purple"></md-outlined-text-field>
+            <md-outlined-text-field id="email-field" label="Email" type="email" value="test@example.com"></md-outlined-text-field>
+            <md-outlined-text-field id="password-field" label="Password" type="password" value="password123"></md-outlined-text-field>
+            <md-outlined-button type="button" onclick="resetForm()">Reset</md-outlined-button>
+          </form>
         </div>
       </div>
     </div>
@@ -698,24 +698,6 @@
     </div>
   </main>
 
-  <!-- Chatbot -->
-  <div class="chatbot-container">
-    <md-fab class="chatbot-button" aria-label="Toggle chatbot" onclick="toggleChatbot()">
-      <md-icon slot="icon">chat</md-icon>
-    </md-fab>
-    <div class="chatbot-window" id="chatbotWindow" role="dialog" aria-label="Chatbot window">
-      <div class="chatbot-header">
-        <span>Material Design 3 Assistant</span>
-        <span class="chatbot-close" onclick="toggleChatbot()" role="button" aria-label="Close chatbot">✖</span>
-      </div>
-      <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
-      <div class="chatbot-input">
-        <input type="text" id="chatbotInput" placeholder="Ask about Material Design 3..." aria-label="Message input" autocomplete="off">
-        <button id="sendButton" onclick="sendMessage()" aria-label="Send message">Send</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     // Menu functionality
     const anchorEl = document.body.querySelector('#usage-document-anchor');
@@ -723,106 +705,28 @@
 
     anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
 
-    // Chatbot functionality
-    const chatMessages = document.getElementById('chatbotMessages');
-    const messageInput = document.getElementById('chatbotInput');
-    const sendButton = document.getElementById('sendButton');
-    const chatWindow = document.getElementById('chatbotWindow');
-    let isLoading = false;
-
-    function toggleChatbot() {
-      chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
-      if (chatWindow.style.display === 'flex') {
-        messageInput.focus();
-      }
+    function resetForm() {
+      // Reset the form
+      document.getElementById('test-form').reset();
+      
+      // Reset Material Design text fields
+      const colorField = document.getElementById('color-field');
+      const emailField = document.getElementById('email-field');
+      const passwordField = document.getElementById('password-field');
+      
+      // Reset to original values
+      colorField.value = 'Purple';
+      emailField.value = 'test@example.com';
+      passwordField.value = 'password123';
+      
+      // Trigger input events to update Material Design styling
+      colorField.dispatchEvent(new Event('input', { bubbles: true }));
+      emailField.dispatchEvent(new Event('input', { bubbles: true }));
+      passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      // Visual feedback
+      console.log('Form reset successfully!');
     }
-
-    function addMessageToChat(text, sender, isError = false, isLoadingMsg = false) {
-      const messageElement = document.createElement('div');
-      messageElement.classList.add('message');
-      if (isError) {
-        messageElement.classList.add('error-message');
-        messageElement.textContent = text;
-      } else if (isLoadingMsg) {
-        messageElement.classList.add('loading-message');
-        messageElement.setAttribute('id', 'loading-indicator');
-        const emoji = document.createElement('span');
-        emoji.classList.add('spinning-emoji');
-        emoji.textContent = '🌀';
-        messageElement.appendChild(emoji);
-        messageElement.appendChild(document.createTextNode(' Processing...'));
-      } else {
-        messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        messageElement.textContent = text;
-      }
-      chatMessages.appendChild(messageElement);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function showLoadingIndicator() {
-      if (isLoading) return;
-      isLoading = true;
-      sendButton.disabled = true;
-      messageInput.disabled = true;
-      addMessageToChat('', 'bot', false, true);
-    }
-
-    function hideLoadingIndicator() {
-      const loadingIndicator = document.getElementById('loading-indicator');
-      if (loadingIndicator) {
-        loadingIndicator.remove();
-      }
-      isLoading = false;
-      sendButton.disabled = false;
-      messageInput.disabled = false;
-      messageInput.focus();
-    }
-
-    async function sendMessage() {
-      const prompt = messageInput.value.trim();
-      if (!prompt || isLoading) return;
-
-      addMessageToChat(prompt, 'user');
-      messageInput.value = '';
-      showLoadingIndicator();
-
-      try {
-        const response = await fetch('https://ai-reply-bot.vercel.app/api/gemini', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-
-        hideLoadingIndicator();
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response.' }));
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.reply) {
-          addMessageToChat(data.reply, 'bot');
-        } else if (data.error) {
-          addMessageToChat(`Error: ${data.error}`, 'system', true);
-        } else {
-          addMessageToChat('Received an empty response from the AI.', 'system', true);
-        }
-      } catch (error) {
-        hideLoadingIndicator();
-        console.error('Error sending message:', error);
-        addMessageToChat(`Error: ${error.message}`, 'system', true);
-      }
-    }
-
-    messageInput.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
-        sendMessage();
-      }
-    });
-
-    // Initialize chatbot
-    addMessageToChat("Hello! I'm your Material Design 3 assistant. Ask me anything about MD3 components, design principles, or implementation!", 'bot');
   </script>
 </body>
 </html>

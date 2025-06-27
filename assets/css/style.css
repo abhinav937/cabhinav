@@ -3321,8 +3321,7 @@ body {
 
 /* Focus states for accessibility */
 .md-chip-overlay:focus-within {
-  outline: 2px solid #007acc;
-  outline-offset: 2px;
+  outline: none;
   border-radius: 8px;
 }
 
@@ -3493,14 +3492,13 @@ body {
 
 /* Focus states without movement */
 .md-chip-overlay:focus-within {
-  outline: 2px solid #007acc;
-  outline-offset: 2px;
+  outline: none;
   border-radius: 8px;
 }
 
 .md-chip-overlay:focus-within md-assist-chip {
   --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.98);
-  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Remove active state animations */

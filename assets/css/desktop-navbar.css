@@ -239,43 +239,4 @@
   .desktop-nav-segment[data-nav-link].active .material-symbols-rounded {
     animation: none !important;
   }
-}
-
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .desktop-nav-bar {
-    background: rgba(0, 0, 0, 0.95) !important;
-  }
-  
-  .desktop-nav-segment:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-}
-
-/* Light mode support (if needed) */
-@media (prefers-color-scheme: light) {
-  .desktop-nav-bar {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
-  }
-  
-  .desktop-nav-label-text {
-    color: rgba(0, 0, 0, 0.7) !important;
-  }
-  
-  .desktop-nav-segment:hover {
-    background: rgba(0, 0, 0, 0.08) !important;
-  }
-  
-  .desktop-nav-segment:hover .desktop-nav-label-text {
-    color: rgba(0, 0, 0, 0.9) !important;
-  }
-  
-  .desktop-nav-segment[data-nav-link].active .desktop-nav-label-text {
-    color: #00695c !important;
-  }
-  
-  .desktop-nav-segment[data-nav-link].active .desktop-nav-state-layer span {
-    color: #00695c !important;
-  }
 } 
