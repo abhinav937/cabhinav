@@ -17,7 +17,7 @@
   <title>Abhinav Chinnusamy</title>
   <meta name="keywords"
     content="Abhinav Chinnusamy, Power Electronics, Pulsed Power, Marx Generators, SSMGs, WEMPEC, UW Madison, Wisconsin, Madison, IIT Dharwad, ECE, Electrical Engineering, EE, Resume, CV, website" />
-  <meta name="description" content="" />
+  <meta name="description" content="Abhinav Chinnusamy - Master's Student at UW-Madison specializing in Power Electronics and Pulsed Power applications. Graduate researcher at WEMPEC with expertise in GaN inverters, solid-state circuit breakers, and embedded systems." />
 
   <meta property="og:title" content="Abhinav Chinnusamy" />
   <meta property="og:url" content="https://cabhinav.com" />
@@ -30,11 +30,17 @@
   <meta name="twitter:site" content="@abhinav_937" />
   <meta name="twitter:url" content="https://cabhinav.com/" />
   <meta name="twitter:title" content="Abhinav Chinnusamy" />
-  <meta name="twitter:description" content="" />
-  <meta property="og:description" content="" />
+  <meta name="twitter:description" content="Abhinav Chinnusamy - Master's Student at UW-Madison specializing in Power Electronics and Pulsed Power applications. Graduate researcher at WEMPEC with expertise in GaN inverters, solid-state circuit breakers, and embedded systems." />
+  <meta property="og:description" content="Abhinav Chinnusamy - Master's Student at UW-Madison specializing in Power Electronics and Pulsed Power applications. Graduate researcher at WEMPEC with expertise in GaN inverters, solid-state circuit breakers, and embedded systems." />
 
   <meta name="google-site-verification" content="2QpZ3PoyZSAzXzPcu_apaa9SvPi2Ph3UOe_xRPsy6lU" />
 
+  <!-- Preload critical resources -->
+  <link rel="preload" href="./assets/icons/profile.JPG" as="image">
+  <link rel="preload" href="./assets/css/style.css" as="style">
+  <link rel="preload" href="./assets/js/script.js" as="script">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" as="style">
 
   <!-- X user id: 977864508453437446 -->
 
@@ -166,7 +172,7 @@
     <div class="main-content">
       <!--- #NAVBAR --->
       <nav class="nav-bar">
-        <button class="segment" id="about1" data-nav-link onclick="toggleContent('about', this)">
+        <button class="segment" id="about1" data-nav-link onclick="toggleContent('about', this)" aria-label="About section">
           <div class="icon-container">
             <div class="state-layer">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
@@ -177,7 +183,7 @@
           <div class="label-text" style="font-family: system-ui;">About</div>
         </button>
 
-        <button class="segment" data-nav-link onclick="toggleContent('resume', this)">
+        <button class="segment" data-nav-link onclick="toggleContent('resume', this)" aria-label="Resume section">
           <div class="icon-container">
             <div class="state-layer">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
@@ -188,7 +194,7 @@
           <div class="label-text" style="font-family: system-ui;">Resume</div>
         </button>
 
-        <button class="segment" data-nav-link onclick="toggleContent('contact', this)">
+        <button class="segment" data-nav-link onclick="toggleContent('contact', this)" aria-label="Contact section">
           <div class="icon-container">
             <div class="state-layer">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
@@ -221,13 +227,13 @@
             <div slot="headline">Google Scholar</div>
             <div slot="supporting-text">Abhinav Chinnusamy</div>
             <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-          </md-list-item style="color: #cce8e7;">
+          </md-list-item>
           <md-divider style="color:rgba(255, 255, 255, 0.472);"></md-divider>
           <md-list-item interactive href="https://in.linkedin.com/in/abhinavchinnusamy" target="_blank">
             <div slot="headline">LinkedIn</div>
             <div slot="supporting-text">abhinavchinnusamy</div>
             <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-          </md-list-item style="color: #cce8e7;">
+          </md-list-item>
 
         </md-list>
       </article>
@@ -247,7 +253,9 @@
               <p class="title">Master's Student at UW-Madison</p>
             </div>
             <div class="profile-img">
-              <img src="./assets/icons/profile.JPG" alt="Abhinav Chinnusamy's picture">
+              <div class="image-container">
+                <img src="./assets/icons/profile.JPG" alt="Abhinav Chinnusamy's picture">
+              </div>
             </div>
           </header>
           <section class="about-text">
@@ -366,12 +374,16 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/yeswegan1.JPEG" class="d-block w-100"
-                      alt="YesWeGaN 3-Phase GaN Inverter">
+                    <div class="image-container">
+                      <img src="./assets/Projects/yeswegan1.JPEG" class="d-block w-100"
+                        alt="YesWeGaN 3-Phase GaN Inverter" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/yeswegan2.JPEG" class="d-block w-100"
-                      alt="YesWeGaN 3-Phase GaN Inverter">
+                    <div class="image-container">
+                      <img src="./assets/Projects/yeswegan2.JPEG" class="d-block w-100"
+                        alt="YesWeGaN 3-Phase GaN Inverter" loading="lazy">
+                    </div>
                   </div>
                   <!-- <div class="carousel-item">
                                 <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
@@ -380,11 +392,11 @@
                 </div>
                 <!-- Overlay button with the provided styles -->
                 <!-- use absolute path always to avid .html extension in the link  -->
-                <!-- <div class="md-chip-overlay">
-                  <a href="/projects/e-fuse/">  
+                <div class="md-chip-overlay">
+                  <a href="https://github.com/abhinav937/YesWeGaN" target="_blank">
                     <md-assist-chip elevated label="learn more"></md-assist-chip>
                   </a>
-                </div>  -->
+                </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval0"
                   data-bs-slide="prev">
                   <i class="fa-solid fa-circle-chevron-left"></i> <!-- Font Awesome icon for previous -->
@@ -412,13 +424,19 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/gan.webp" class="d-block w-100" alt="GaN Half Bridge inverter 1">
+                    <div class="image-container">
+                      <img src="./assets/Projects/gan.webp" class="d-block w-100" alt="GaN Half Bridge inverter 1" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/hb_2.webp" class="d-block w-100" alt="GaN Half Bridge inverter 2">
+                    <div class="image-container">
+                      <img src="./assets/Projects/hb_2.webp" class="d-block w-100" alt="GaN Half Bridge inverter 2" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/hb_3.webp" class="d-block w-100" alt="GaN Half Bridge inverter 3">
+                    <div class="image-container">
+                      <img src="./assets/Projects/hb_3.webp" class="d-block w-100" alt="GaN Half Bridge inverter 3" loading="lazy">
+                    </div>
                   </div>
                 </div>
                 <div class="md-chip-overlay">
@@ -456,16 +474,22 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/modular-sscb.webp" class="d-block w-100"
-                      alt="E-Fuse Solid State Circuit Breaker SSCB">
+                    <div class="image-container">
+                      <img src="./assets/Projects/modular-sscb.webp" class="d-block w-100"
+                        alt="E-Fuse Solid State Circuit Breaker SSCB" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/efuse-top.webp" class="d-block w-100"
-                      alt="E-Fuse Solid State Circuit Breaker SSCB">
+                    <div class="image-container">
+                      <img src="./assets/Projects/efuse-top.webp" class="d-block w-100"
+                        alt="E-Fuse Solid State Circuit Breaker SSCB" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/efuse-side.webp" class="d-block w-100"
-                      alt="E-Fuse Solid State Circuit Breaker SSCB">
+                    <div class="image-container">
+                      <img src="./assets/Projects/efuse-side.webp" class="d-block w-100"
+                        alt="E-Fuse Solid State Circuit Breaker SSCB" loading="lazy">
+                    </div>
                   </div>
                 </div>
                 <div class="md-chip-overlay">
@@ -502,13 +526,19 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/rp2.webp" class="d-block w-100" alt="RP2040-Dev-Board">
+                    <div class="image-container">
+                      <img src="./assets/Projects/rp2.webp" class="d-block w-100" alt="RP2040-Dev-Board" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/rp2040.webp" class="d-block w-100" alt="RP2040-Dev-Board">
+                    <div class="image-container">
+                      <img src="./assets/Projects/rp2040.webp" class="d-block w-100" alt="RP2040-Dev-Board" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/rp1.webp" class="d-block w-100" alt="RP2040-Dev-Board">
+                    <div class="image-container">
+                      <img src="./assets/Projects/rp1.webp" class="d-block w-100" alt="RP2040-Dev-Board" loading="lazy">
+                    </div>
                   </div>
                 </div>
                 <!-- Overlay button with the provided styles -->
@@ -546,17 +576,28 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/opav2.webp" class="d-block w-100"
-                      alt="v2 texas instruments opa855 OpAmp">
+                    <div class="image-container">
+                      <img src="./assets/Projects/opav2.webp" class="d-block w-100"
+                        alt="v2 texas instruments opa855 OpAmp" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/opa1.webp" class="d-block w-100"
-                      alt="v1 texas instruments opa855 OpAmp">
+                    <div class="image-container">
+                      <img src="./assets/Projects/opa1.webp" class="d-block w-100"
+                        alt="v1 texas instruments opa855 OpAmp" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
-                      alt="texas instruments opa855 OpAmp microscopic view">
+                    <div class="image-container">
+                      <img src="./assets/Projects/current_sensor.webp" class="d-block w-100"
+                        alt="texas instruments opa855 OpAmp microscopic view" loading="lazy">
+                    </div>
                   </div>
+                </div>
+                <div class="md-chip-overlay">
+                  <a href="https://github.com/abhinav937/High-BW-Current-Sensor" target="_blank">
+                    <md-assist-chip elevated label="learn more"></md-assist-chip>
+                  </a>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval4"
                   data-bs-slide="prev">
@@ -586,13 +627,19 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img src="./assets/Projects/sos_1.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band">
+                    <div class="image-container">
+                      <img src="./assets/Projects/sos_1.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/sos_2.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band">
+                    <div class="image-container">
+                      <img src="./assets/Projects/sos_2.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band" loading="lazy">
+                    </div>
                   </div>
                   <div class="carousel-item">
-                    <img src="./assets/Projects/sos_3.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band">
+                    <div class="image-container">
+                      <img src="./assets/Projects/sos_3.webp" class="d-block w-100" alt="RP2040-SoS-Smart Band" loading="lazy">
+                    </div>
                   </div>
                 </div>
                 <!-- Overlay button with the provided styles -->
@@ -746,7 +793,9 @@
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
         <div class="work-history">
           <div class="job-entry">
-            <img src="./assets/icons/annapurna_labs_logo.webp" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/annapurna_labs_logo.webp" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">Intern</p>
               <p class="company-location">Amazon • Austin, TX</p>
@@ -756,7 +805,9 @@
             </div>
           </div>
           <div class="job-entry">
-            <img src="./assets/icons/wempec logo.png" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/wempec logo.png" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">Graduate Researcher</p>
               <p class="company-location">WEMPEC • Wisconsin, USA </p>
@@ -766,7 +817,9 @@
             </div>
           </div>
           <div class="job-entry">
-            <img src="./assets/icons/uw_mad_ece_logo.png" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/uw_mad_ece_logo.png" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">TA</p>
               <p class="company-location">UW ECE</p>
@@ -776,7 +829,9 @@
             </div>
           </div>
           <div class="job-entry">
-            <img src="./assets/icons/wisc_union_logo.svg" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/wisc_union_logo.svg" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">Kiosks</p>
               <p class="company-location">Union South</p>
@@ -786,7 +841,9 @@
             </div>
           </div>
           <div class="job-entry">
-            <img src="./assets/icons/peg_logo.jpg" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/peg_logo.jpg" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">Undergraduate Researcher</p>
               <p class="company-location">PEG • Dharwad, IN</p>
@@ -802,7 +859,9 @@
 
         <div class="work-history">
           <div class="job-entry">
-            <img src="./assets/icons/uw-madison_logo.png" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/uw-madison_logo.png" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">UW - Madison</p>
               <p class="company-location">Wisconsin, USA</p>
@@ -815,7 +874,9 @@
 
         <div class="work-history">
           <div class="job-entry">
-            <img src="./assets/icons/iit_logo.png" alt="Profile Icon">
+            <div class="image-container">
+              <img src="./assets/icons/iit_logo.png" alt="Profile Icon" loading="lazy">
+            </div>
             <div class="job-details">
               <p class="job-title">IIT - Dharwad</p>
               <p class="company-location">Dharwad, IN</p>
@@ -842,6 +903,7 @@
   <!--
     - custom js link
   -->
+  <script src="./assets/js/optimizations.js"></script>
   <script src="./assets/js/script.js"></script>
   <script src="./assets/js/bootstrap.js"></script>
   <script src="./assets/js/haptics.js"></script>
@@ -895,6 +957,19 @@
     // Set the total scroll distance threshold (in pixels)
     const scrollThreshold = 300; // The bar hides/shows only after 50 pixels of scrolling
 
+    // Debounce function to limit scroll event frequency
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
     // Function to handle the scroll event
     function handleScroll() {
       // Get the current scroll position
@@ -923,8 +998,11 @@
       prevScrollPos = currentScrollPos;
     }
 
-    // Attach the handleScroll function to the scroll event
-    window.addEventListener('scroll', handleScroll);
+    // Create debounced version of handleScroll
+    const debouncedHandleScroll = debounce(handleScroll, 10);
+
+    // Attach the debounced handleScroll function to the scroll event
+    window.addEventListener('scroll', debouncedHandleScroll);
   </script>
 
 
@@ -933,7 +1011,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script>
   // Fetch publications on page load

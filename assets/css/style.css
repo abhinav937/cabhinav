@@ -7,11 +7,35 @@
 \*-----------------------------------*/
 
 /* Material 3 colors */
-
-/* Inlined custom CSS from provided style.css, relevant parts only */
 :root {
   --md-sys-color-primary: #cce8e7;
+  --md-sys-color-on-primary: #cce8e7;
+  --md-sys-color-secondary: #cce8e7;
+  --md-icon-button-icon-color: #cce8e7;
+  --md-sys-color-outline: #cce8e7;
   --md-sys-color-on-surface: #191c1c;
+  --md-sys-color-secondary-container: #cce8e7;
+  --md-suggestion-chip-icon-size: 24px;
+  --md-list-container-color: #201f1f;
+  --md-list-item-label-text-color: #ffffff;
+  --md-list-item-supporting-text-color: #cce8e7;
+  --md-suggestion-chip-label-text-color: #dadada;
+  --md-circular-progress-size: 40px;
+  --md-circular-progress-active-indicator-width: 15;
+  --md-filter-chip-label-text-font: system-ui;
+  --md-text-button-label-text-font: system-ui;
+  --md-outlined-button-label-text-font: system-ui;
+  --md-list-item-overline-font: system-ui;
+  --md-suggestion-chip-label-text-font: system-ui;
+  --md-list-item-label-text-font: system-ui;
+  --md-list-item-supporting-text-font: system-ui;
+  --md-list-item-trailing-supporting-text-font: system-ui;
+  --md-outlined-segmented-button-unselected-icon-color: #dadada;
+  --md-outlined-segmented-button-unselected-label-text-color: #dadada;
+  --md-outlined-segmented-button-unselected-hover-label-text-color: #aea7a7;
+  --md-outlined-segmented-button-unselected-hover-icon-color: #aea7a7;
+  
+  /* Original color variables */
   --jet: hsl(0, 0%, 10%);
   --onyx: hsl(240, 1%, 12%);
   --eerie-black-2: #201f1f;
@@ -191,7 +215,6 @@ body {
   --md-list-item-overline-font: system-ui;
   --md-suggestion-chip-label-text-font: system-ui;
   --md-list-item-label-text-font: system-ui;
-  --md-list-item-supporting-text-font: system-ui;
   --md-list-item-supporting-text-font: system-ui;
   --md-list-item-trailing-supporting-text-font: system-ui;
   --md-outlined-segmented-button-unselected-icon-color: #dadada;
@@ -3007,10 +3030,40 @@ body {
 
 .job-entry {
   display: flex;
-  align-items: center; /* Changed from flex-start to center for better vertical alignment */
-  padding: 15px 0;
-  border-bottom: 1px solid #333;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.job-entry .image-container {
+  margin-right: 18px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.job-entry .image-container img {
+  border-radius: 12px;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Remove shimmer background after image loads */
+.image-container img.loaded ~ * {
+  display: none !important;
+}
+.image-container img.loaded {
+  /* Remove shimmer background from parent */
+}
+.image-container.loaded {
+  background: none !important;
+  animation: none !important;
+}
+
+.job-details {
+  flex: 1;
 }
 
 .job-entry img {
@@ -3021,14 +3074,6 @@ body {
   border-radius: 10px;
   object-fit: contain; /* Ensure logos scale properly without distortion */
   flex-shrink: 0; /* Prevent the image from shrinking */
-}
-
-.job-details {
-  flex: 1;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 4px; /* Add consistent spacing between text elements */
 }
 
 /* Base font sizes */
@@ -3135,4 +3180,588 @@ body {
   .bullet-points li {
     font-size: 18px; /* Increased from 16px */
   }
+}
+
+/* Blur-up loading effect */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.image-container img {
+  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  filter: blur(10px);
+  opacity: 0;
+}
+
+.image-container img.loaded {
+  filter: blur(0);
+  opacity: 1;
+}
+
+/* Specific styles for carousel images */
+.carousel-item .image-container {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  height: auto;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fallback for browsers without aspect-ratio support */
+@supports not (aspect-ratio: 4 / 3) {
+  .carousel-item .image-container {
+    height: 0;
+    padding-bottom: 75%; /* 4:3 aspect ratio fallback */
+  }
+}
+
+.carousel-item .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Work history image containers */
+.job-entry .image-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.job-entry .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Profile image container */
+.profile-img .image-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-img .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive Learn More button overlay for carousels */
+.md-chip-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  /* Ensure minimum touch target size for mobile */
+  min-width: 44px;
+  min-height: 44px;
+  /* Add subtle shadow for better visibility */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.md-chip-overlay a {
+  text-decoration: none;
+  display: block;
+  /* Ensure the entire button area is clickable */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-chip-overlay md-assist-chip {
+  --md-assist-chip-container-shape: 8px;
+  --md-assist-chip-container-height: 32px;
+  --md-assist-chip-label-text-weight: 500;
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.85);
+  --md-assist-chip-label-text-color: white;
+  --md-assist-chip-hover-label-text-color: white;
+  --md-assist-chip-hover-state-layer-color: rgba(255, 255, 255, 0.1);
+  --md-assist-chip-label-text-font: system-ui;
+  --md-sys-color-outline: #6f7979;
+  --md-sys-color-on-surface: #191c1c;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  /* Ensure proper contrast and readability */
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.md-chip-overlay:hover md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Focus states for accessibility */
+.md-chip-overlay:focus-within {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.md-chip-overlay:focus-within md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.98);
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Active state for touch devices */
+.md-chip-overlay:active md-assist-chip {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+/* Mobile devices (up to 600px) */
+@media only screen and (max-width: 600px) {
+  .md-chip-overlay {
+    top: 0.75rem;
+    right: 0.75rem;
+    /* Larger touch target on mobile */
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 28px;
+    --md-assist-chip-label-text-weight: 400;
+    font-size: 13px;
+  }
+}
+
+/* Tablet devices (601px to 1024px) */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .md-chip-overlay {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+/* Desktop devices (1025px and above) */
+@media only screen and (min-width: 1025px) {
+  .md-chip-overlay {
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 36px;
+    --md-assist-chip-label-text-weight: 500;
+    font-size: 15px;
+  }
+}
+
+/* Large desktop devices (1440px and above) */
+@media only screen and (min-width: 1440px) {
+  .md-chip-overlay {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+/* Ensure carousel container has relative positioning */
+.carousel {
+  position: relative;
+}
+
+/* Add subtle animation on page load */
+.md-chip-overlay {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-elevated-container-color: rgba(0, 0, 0, 0.9);
+    --md-assist-chip-label-text-color: white;
+    border: 2px solid white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .md-chip-overlay {
+    animation: none;
+    transition: none;
+  }
+  
+  .md-chip-overlay:hover md-assist-chip {
+    transform: none;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    transition: none;
+  }
+}
+
+/* Fixed Learn More button overlay for carousels - always top-right corner */
+.md-chip-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure minimum touch target size */
+  min-width: 44px;
+  min-height: 44px;
+  /* Prevent any movement or animation that could cause positioning issues */
+  transform: none !important;
+  transition: none;
+  /* Ensure it stays within bounds */
+  max-width: calc(100% - 24px);
+  max-height: calc(100% - 24px);
+}
+
+.md-chip-overlay a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.md-chip-overlay md-assist-chip {
+  --md-assist-chip-container-shape: 8px;
+  --md-assist-chip-container-height: 32px;
+  --md-assist-chip-label-text-weight: 500;
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.9);
+  --md-assist-chip-label-text-color: white;
+  --md-assist-chip-hover-label-text-color: white;
+  --md-assist-chip-hover-state-layer-color: rgba(255, 255, 255, 0.1);
+  --md-assist-chip-label-text-font: system-ui;
+  --md-sys-color-outline: #6f7979;
+  --md-sys-color-on-surface: #191c1c;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Remove any transitions that could cause movement */
+  transition: none;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  /* Ensure it doesn't grow beyond reasonable size */
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Remove hover animations that could cause movement */
+.md-chip-overlay:hover md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.95);
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus states without movement */
+.md-chip-overlay:focus-within {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.md-chip-overlay:focus-within md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.98);
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Remove active state animations */
+.md-chip-overlay:active md-assist-chip {
+  transform: none;
+}
+
+/* Mobile devices - keep same positioning */
+@media only screen and (max-width: 600px) {
+  .md-chip-overlay {
+    top: 12px;
+    right: 12px;
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 28px;
+    --md-assist-chip-label-text-weight: 400;
+    font-size: 13px;
+  }
+}
+
+/* Tablet devices - keep same positioning */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .md-chip-overlay {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* Desktop devices - keep same positioning */
+@media only screen and (min-width: 1025px) {
+  .md-chip-overlay {
+    top: 12px;
+    right: 12px;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 36px;
+    --md-assist-chip-label-text-weight: 500;
+    font-size: 15px;
+  }
+}
+
+/* Large desktop devices - keep same positioning */
+@media only screen and (min-width: 1440px) {
+  .md-chip-overlay {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* Ensure carousel container has relative positioning */
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Remove any animations that could cause movement */
+.md-chip-overlay {
+  animation: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .md-chip-overlay md-assist-chip {
+    --md-assist-chip-elevated-container-color: rgba(0, 0, 0, 0.9);
+    --md-assist-chip-label-text-color: white;
+    border: 2px solid white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .md-chip-overlay {
+    animation: none;
+    transition: none;
+  }
+  
+  .md-chip-overlay:hover md-assist-chip {
+    transform: none;
+  }
+  
+  .md-chip-overlay md-assist-chip {
+    transition: none;
+  }
+}
+
+/* Override any conflicting md-chip-overlay rules - ensure fixed top-right positioning */
+.carousel .md-chip-overlay {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  max-width: calc(100% - 24px) !important;
+  max-height: calc(100% - 24px) !important;
+}
+
+.carousel .md-chip-overlay a {
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.carousel .md-chip-overlay md-assist-chip {
+  --md-assist-chip-container-shape: 8px !important;
+  --md-assist-chip-container-height: 32px !important;
+  --md-assist-chip-label-text-weight: 500 !important;
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.9) !important;
+  --md-assist-chip-label-text-color: white !important;
+  --md-assist-chip-hover-label-text-color: white !important;
+  --md-assist-chip-hover-state-layer-color: rgba(255, 255, 255, 0.1) !important;
+  --md-assist-chip-label-text-font: system-ui !important;
+  --md-sys-color-outline: #6f7979 !important;
+  --md-sys-color-on-surface: #191c1c !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: none !important;
+  font-size: 14px !important;
+  letter-spacing: 0.5px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transform: none !important;
+}
+
+.carousel .md-chip-overlay:hover md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.95) !important;
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Mobile override */
+@media only screen and (max-width: 600px) {
+  .carousel .md-chip-overlay {
+    top: 12px !important;
+    right: 12px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+  }
+  
+  .carousel .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 28px !important;
+    --md-assist-chip-label-text-weight: 400 !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Tablet override */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .carousel .md-chip-overlay {
+    top: 12px !important;
+    right: 12px !important;
+  }
+}
+
+/* Desktop override */
+@media only screen and (min-width: 1025px) {
+  .carousel .md-chip-overlay {
+    top: 12px !important;
+    right: 12px !important;
+  }
+  
+  .carousel .md-chip-overlay md-assist-chip {
+    --md-assist-chip-container-height: 36px !important;
+    --md-assist-chip-label-text-weight: 500 !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Large desktop override */
+@media only screen and (min-width: 1440px) {
+  .carousel .md-chip-overlay {
+    top: 12px !important;
+    right: 12px !important;
+  }
+}
+
+/* Simple fixed Learn More button for 4:3 carousel images */
+.carousel .md-chip-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  /* Ensure proper rendering on Chrome mobile */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Force hardware acceleration */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.carousel .md-chip-overlay a {
+  text-decoration: none;
+  /* Ensure proper touch handling on Chrome */
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+.carousel .md-chip-overlay md-assist-chip {
+  --md-assist-chip-container-shape: 8px;
+  --md-assist-chip-container-height: 32px;
+  --md-assist-chip-label-text-weight: 500;
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.9);
+  --md-assist-chip-label-text-color: white;
+  --md-assist-chip-hover-label-text-color: white;
+  --md-assist-chip-hover-state-layer-color: rgba(255, 255, 255, 0.1);
+  --md-assist-chip-label-text-font: system-ui;
+  --md-sys-color-outline: #6f7979;
+  --md-sys-color-on-surface: #191c1c;
+  /* Chrome mobile fallback for backdrop-filter */
+  background-color: rgba(39, 44, 48, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  /* Ensure proper rendering on Chrome */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Force repaint */
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+.carousel .md-chip-overlay:hover md-assist-chip {
+  --md-assist-chip-elevated-container-color: rgba(39, 44, 48, 0.95);
+  background-color: rgba(39, 44, 48, 0.98);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Chrome mobile specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .carousel .md-chip-overlay md-assist-chip {
+    /* Force Chrome to render properly */
+    -webkit-appearance: none;
+    appearance: none;
+    /* Ensure text is crisp */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Ensure carousel has relative positioning */
+.carousel {
+  position: relative;
+  /* Chrome mobile fix */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }

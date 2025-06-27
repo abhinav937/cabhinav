@@ -129,7 +129,7 @@ var activeContentId = "about";
   }
 })();
 
-// Revised toggleContent function
+// Revised toggleContent function with better error handling
 function toggleContent(id, button) {
   console.log("toggleContent called with id:", id, "button:", button);
 
@@ -154,7 +154,7 @@ function toggleContent(id, button) {
     content.scrollIntoView({ behavior: "smooth" });
     console.log("Showing content:", id);
   } else {
-    console.log("No content found for id:", id);
+    console.error("No content found for id:", id);
     return;
   }
 
@@ -163,7 +163,7 @@ function toggleContent(id, button) {
   document
     .querySelectorAll(".nav-bar .segment[data-nav-link]")
     .forEach((navBtn) => {
-      if (navBtn.getAttribute("onclick").includes(`'${id}'`)) {
+      if (navBtn.getAttribute("onclick") && navBtn.getAttribute("onclick").includes(`'${id}'`)) {
         targetNavButton = navBtn;
       }
     });
@@ -209,19 +209,13 @@ function toggleContent(id, button) {
     if (icon) {
       icon.style.color = "#FFFFFF";
       icon.classList.add("filled");
-      console.log(
-        "Set active icon color for navbar button:",
-        targetNavButton,
-        "to:",
-        icon.style.color
-      );
+      console.log("Applied active styling to:", targetNavButton);
     }
-  } else {
-    console.log("No corresponding navbar button found for id:", id);
   }
 
+  // Update the active content ID
   activeContentId = id;
-  console.log("Updated activeContentId to:", activeContentId);
+  console.log("Updated activeContentId to:", id);
 }
 
 // Function to calculate the number of months between two dates
