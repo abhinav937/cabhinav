@@ -1,0 +1,281 @@
+/*-----------------------------------*\
+  #DESKTOP NAVIGATION BAR - MATERIAL 3 EXPRESSIVE
+  Completely unique class names to prevent conflicts
+\*-----------------------------------*/
+
+/* MODERN DESKTOP NAVIGATION BAR - Material 3 Expressive */
+@media (min-width: 1250px) {
+  .desktop-nav-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    top: 0 !important;
+    bottom: auto !important;
+    padding: 16px 24px !important;
+    background: #0d0d0d !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-top: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 1000 !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 
+      0 4px 24px rgba(0, 0, 0, 0.3),
+      0 1px 8px rgba(0, 0, 0, 0.2) !important;
+    max-height: none !important;
+    padding-bottom: 16px !important;
+    padding-left: 24px !important;
+  }
+  
+  .desktop-nav-bar-hidden {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+  }
+}
+
+/* MODERN DESKTOP SEGMENT - Material 3 Expressive */
+@media (min-width: 1250px) {
+  .desktop-nav-segment {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    min-width: 120px !important;
+    height: 48px !important;
+    border-radius: 24px !important;
+    background: transparent !important;
+    border: none !important;
+    width: auto !important;
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
+}
+
+/* MODERN DESKTOP ICON CONTAINER */
+@media (min-width: 1250px) {
+  .desktop-nav-icon-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    padding: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+}
+
+/* MODERN DESKTOP HOVER EFFECTS */
+@media (min-width: 1250px) {
+  .desktop-nav-icon-container:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+/* MODERN DESKTOP STATE LAYER */
+@media (min-width: 1250px) {
+  .desktop-nav-state-layer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: inherit !important;
+    padding: 0 !important;
+  }
+}
+
+/* MODERN DESKTOP LABEL TEXT */
+@media (min-width: 1250px) {
+  .desktop-nav-label-text {
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 16px !important;
+    letter-spacing: 0.5px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-align: center !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    height: auto !important;
+  }
+}
+
+/* MODERN DESKTOP HOVER STATES */
+@media (min-width: 1250px) {
+  .desktop-nav-segment:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateY(-2px) !important;
+  }
+  
+  .desktop-nav-segment:hover .desktop-nav-label-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+}
+
+/* MODERN DESKTOP ACTIVE STATES */
+@media (min-width: 1250px) {
+  .desktop-nav-segment[data-nav-link].active,
+  .desktop-nav-segment[data-nav-link]:active {
+    background: rgba(204, 232, 231, 0.12) !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .desktop-nav-icon-container,
+  .desktop-nav-segment[data-nav-link]:active .desktop-nav-icon-container {
+    background: rgba(204, 232, 231, 0.2) !important;
+    box-shadow: 
+      0 0 0 1px rgba(204, 232, 231, 0.3),
+      0 4px 12px rgba(204, 232, 231, 0.15) !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .desktop-nav-label-text,
+  .desktop-nav-segment[data-nav-link]:active .desktop-nav-label-text {
+    color: #cce8e7 !important;
+    font-weight: 600 !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .desktop-nav-state-layer span,
+  .desktop-nav-segment[data-nav-link]:active .desktop-nav-state-layer span {
+    color: #cce8e7 !important;
+  }
+}
+
+/* Material 3 Ripple Effect - Desktop Only */
+@media (min-width: 1250px) {
+  .desktop-nav-segment::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    pointer-events: none;
+  }
+
+  .desktop-nav-segment:active::before {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+/* Focus States for Accessibility - Desktop Only */
+@media (min-width: 1250px) {
+  .desktop-nav-segment:focus-visible {
+    outline: 2px solid #cce8e7 !important;
+    outline-offset: 2px !important;
+    background: rgba(204, 232, 231, 0.08) !important;
+  }
+}
+
+/* MODERN DESKTOP ICON STYLES */
+@media (min-width: 1250px) {
+  .desktop-nav-segment .material-symbols-rounded {
+    font-size: 20px !important;
+  }
+}
+
+/* Active Icon Animation - Desktop Only */
+@media (min-width: 1250px) {
+  .desktop-nav-segment[data-nav-link].active .material-symbols-rounded {
+    animation: desktopIconPop 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  @keyframes desktopIconPop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .desktop-nav-bar {
+    background: rgba(0, 0, 0, 0.98) !important;
+    border-top: 2px solid #cce8e7 !important;
+  }
+  
+  .desktop-nav-segment:hover {
+    background: rgba(204, 232, 231, 0.2) !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active {
+    background: rgba(204, 232, 231, 0.3) !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .desktop-nav-bar,
+  .desktop-nav-segment,
+  .desktop-nav-icon-container,
+  .desktop-nav-label-text,
+  .desktop-nav-state-layer,
+  .desktop-nav-segment .material-symbols-rounded {
+    transition: none !important;
+  }
+  
+  .desktop-nav-segment:hover {
+    transform: none !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .material-symbols-rounded {
+    animation: none !important;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .desktop-nav-bar {
+    background: rgba(0, 0, 0, 0.95) !important;
+  }
+  
+  .desktop-nav-segment:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Light mode support (if needed) */
+@media (prefers-color-scheme: light) {
+  .desktop-nav-bar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  .desktop-nav-label-text {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
+  
+  .desktop-nav-segment:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  .desktop-nav-segment:hover .desktop-nav-label-text {
+    color: rgba(0, 0, 0, 0.9) !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .desktop-nav-label-text {
+    color: #00695c !important;
+  }
+  
+  .desktop-nav-segment[data-nav-link].active .desktop-nav-state-layer span {
+    color: #00695c !important;
+  }
+} 

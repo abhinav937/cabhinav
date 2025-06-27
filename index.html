@@ -57,6 +57,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/desktop-navbar.css">
+  <link rel="stylesheet" href="./assets/css/mobile-navbar.css">
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="./assets/js/fallingLogos.js"></script>
 
@@ -171,38 +173,38 @@
 
     <div class="main-content">
       <!--- #NAVBAR --->
-      <nav class="nav-bar">
-        <button class="segment" id="about1" data-nav-link onclick="toggleContent('about', this)" aria-label="About section">
-          <div class="icon-container">
-            <div class="state-layer">
+      <nav class="nav-bar desktop-nav-bar mobile-nav-container">
+        <button class="segment desktop-nav-segment mobile-nav-item" id="about1" data-nav-link onclick="toggleContent('about', this)" aria-label="About section">
+          <div class="icon-container desktop-nav-icon-container mobile-icon-wrapper">
+            <div class="state-layer desktop-nav-state-layer mobile-icon-inner">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
                 home
               </span>
             </div>
           </div>
-          <div class="label-text" style="font-family: system-ui;">About</div>
+          <div class="label-text desktop-nav-label-text mobile-nav-label" style="font-family: system-ui;">About</div>
         </button>
 
-        <button class="segment" data-nav-link onclick="toggleContent('resume', this)" aria-label="Resume section">
-          <div class="icon-container">
-            <div class="state-layer">
+        <button class="segment desktop-nav-segment mobile-nav-item" data-nav-link onclick="toggleContent('resume', this)" aria-label="Resume section">
+          <div class="icon-container desktop-nav-icon-container mobile-icon-wrapper">
+            <div class="state-layer desktop-nav-state-layer mobile-icon-inner">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
                 work
               </span>
             </div>
           </div>
-          <div class="label-text" style="font-family: system-ui;">Resume</div>
+          <div class="label-text desktop-nav-label-text mobile-nav-label" style="font-family: system-ui;">Resume</div>
         </button>
 
-        <button class="segment" data-nav-link onclick="toggleContent('contact', this)" aria-label="Contact section">
-          <div class="icon-container">
-            <div class="state-layer">
+        <button class="segment desktop-nav-segment mobile-nav-item" data-nav-link onclick="toggleContent('contact', this)" aria-label="Contact section">
+          <div class="icon-container desktop-nav-icon-container mobile-icon-wrapper">
+            <div class="state-layer desktop-nav-state-layer mobile-icon-inner">
               <span class="material-symbols-rounded" style="color: rgba(255, 255, 255, 0.472);">
                 group
               </span>
             </div>
           </div>
-          <div class="label-text" style="font-family: system-ui;">Contact</div>
+          <div class="label-text desktop-nav-label-text mobile-nav-label" style="font-family: system-ui;">Contact</div>
         </button>
       </nav>
       <article class="about" id="contact" data-page="contact">
