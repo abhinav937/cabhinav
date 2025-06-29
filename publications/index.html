@@ -54,41 +54,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script>
-        // Mock data for offline testing (uncomment to use)
-        /*
-        const mockData = {
-            articles: [
-                {
-                    title: "Implementation of Protection Features for a Modular Bidirectional Solid-State Battery Disconnector",
-                    link: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=40h4Uo8AAAAJ&citation_for_view=40h4Uo8AAAAJ:d1gkVwhDpl0C",
-                    authors: "D Dsa, A Chinnusamy, SN Banavath, EL Carvalho",
-                    publication: "IEEE Journal of Emerging and Selected Topics in Power Electronics, 2024",
-                    cited_by: {
-                        value: 1,
-                        link: "https://scholar.google.com/scholar?oi=bibs&hl=en&cites=12775205883050141049"
-                    },
-                    year: "2024"
-                },
-                {
-                    title: "Intelligent Battery Protection System for Electric Vehicle Applications",
-                    link: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=40h4Uo8AAAAJ&citation_for_view=40h4Uo8AAAAJ:u5HHmVD_uO8C",
-                    authors: "A Chinnusamy, D Dsa, SN Banavath",
-                    publication: "2024 IEEE 18th International Conference on Compatibility, Power Electronics …, 2024",
-                    cited_by: {
-                        value: 1,
-                        link: "https://scholar.google.com/scholar?oi=bibs&hl=en&cites=7959969152602823329"
-                    },
-                    year: "2024"
-                }
-            ]
-        };
-        */
-
-        async function fetchPublications(delayMs = 1000) {
+        async function fetchPublications(delayMs = 1500) {
             const API_URL = 'https://api.cabhinav.com/api/server.js'; // Custom domain endpoint
 
             const container = document.getElementById('publications-container');
-            const loadingMessage = document.getElementById('loading-message');
             const errorMessage = document.getElementById('error-message');
 
             // Show skeleton loader first
@@ -98,23 +67,23 @@
             await new Promise(resolve => setTimeout(resolve, delayMs));
 
             try {
-                // Uncomment for mock data testing
-                // const data = mockData;
-
-                // Fetch from proxy
+                // Fetch from API
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error(`Proxy request failed: ${response.statusText}`);
+                if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
                 const data = await response.json();
-
-                // Hide loading message
-                loadingMessage.style.display = 'none';
+                
+                console.log('API fetch successful:', data);
 
                 // Check if articles exist
                 if (!data.articles || data.articles.length === 0) {
+                    console.log('No articles found in API response');
                     errorMessage.textContent = 'No publications found.';
                     errorMessage.style.display = 'block';
+                    container.innerHTML = ''; // Clear skeleton loader
                     return;
                 }
+
+                console.log(`Found ${data.articles.length} publications`);
 
                 // Clear container
                 container.innerHTML = '';
@@ -148,11 +117,13 @@
                         onComplete: () => pubDiv.classList.add('show')
                     });
                 });
+                
+                console.log('Publications loaded and displayed successfully');
             } catch (error) {
                 console.error('Error fetching publications:', error);
-                loadingMessage.style.display = 'none';
-                errorMessage.textContent = 'Failed to load publications. Ensure the proxy server is running.';
+                errorMessage.textContent = 'Failed to load publications. Please try again later.';
                 errorMessage.style.display = 'block';
+                container.innerHTML = ''; // Clear skeleton loader
             }
         }
 

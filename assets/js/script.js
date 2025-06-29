@@ -382,18 +382,23 @@ async function fetchPublications(delayMs = 1000) {
   try {
     const response = await fetch(API_URL);
     if (!response.ok) {
-      throw new Error(`Proxy request failed: ${response.statusText}`);
+      throw new Error(`API request failed: ${response.statusText}`);
     }
     const data = await response.json();
+    
+    console.log('API fetch successful:', data);
 
     // Clear skeleton loader
     container.innerHTML = "";
 
     if (!data.articles || data.articles.length === 0) {
+      console.log('No articles found in API response');
       errorMessage.textContent = "No publications found.";
       errorMessage.style.display = "block";
       return;
     }
+
+    console.log(`Found ${data.articles.length} publications`);
 
     data.articles.forEach((article, index) => {
       const authors = (article.authors || "Unknown Authors").replace(
@@ -427,10 +432,13 @@ async function fetchPublications(delayMs = 1000) {
         });
       }
     });
+    
+    console.log('Publications loaded and displayed successfully');
   } catch (error) {
     console.error("Error fetching publications:", error);
-    errorMessage.textContent = "Failed to load publications. Ensure the proxy server is running.";
+    errorMessage.textContent = "Failed to load publications. Please try again later.";
     errorMessage.style.display = "block";
+    container.innerHTML = ''; // Clear skeleton loader
   }
 }
 
