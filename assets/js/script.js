@@ -95,8 +95,11 @@ class NavigationManager {
 
     // Fetch publications only when resume section is shown
     if (sectionName === 'resume' && typeof window.publicationsFetched === 'undefined') {
+      console.log('Resume section shown, fetching publications...');
       window.publicationsFetched = true;
       fetchPublications();
+    } else if (sectionName === 'resume' && window.publicationsFetched) {
+      console.log('Resume section shown, but publications already fetched');
     }
   }
 
@@ -368,7 +371,8 @@ document.querySelectorAll(".date-duration").forEach((element) => {
 // PUBLICATIONS FETCHING
 // ========================================
 
-async function fetchPublications(delayMs = 1000) {
+async function fetchPublications(delayMs = 1500) {
+  console.log('fetchPublications function called with delay:', delayMs);
   const API_URL = "https://api.cabhinav.com/api/server.js";
   const container = document.getElementById("publications-container");
   const errorMessage = document.getElementById("error-message");
