@@ -44,7 +44,6 @@
                     <h2 class="article-title">Publications</h2>
                 </header>
                 <div id="publications-container"></div>
-                <div id="loading-message" class="loading-message">Loading publications...</div>
                 <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please
                     try again later.</div>
             </article>
@@ -85,12 +84,18 @@
         };
         */
 
-        async function fetchPublications() {
+        async function fetchPublications(delayMs = 1000) {
             const API_URL = 'https://api.cabhinav.com/api/server.js'; // Custom domain endpoint
 
             const container = document.getElementById('publications-container');
             const loadingMessage = document.getElementById('loading-message');
             const errorMessage = document.getElementById('error-message');
+
+            // Show skeleton loader first
+            showSkeletonLoader(container);
+
+            // Add configurable delay to show loading animation
+            await new Promise(resolve => setTimeout(resolve, delayMs));
 
             try {
                 // Uncomment for mock data testing
@@ -113,8 +118,6 @@
 
                 // Clear container
                 container.innerHTML = '';
-
-
 
                 data.articles.forEach((article, index) => {
                     const authors = (article.authors || 'Unknown Authors').replace(
@@ -151,6 +154,43 @@
                 errorMessage.textContent = 'Failed to load publications. Ensure the proxy server is running.';
                 errorMessage.style.display = 'block';
             }
+        }
+
+        // Function to show skeleton loader
+        function showSkeletonLoader(container) {
+            container.innerHTML = `
+                <div class="publications-skeleton">
+                    <div class="skeleton-item">
+                        <div class="skeleton-title"></div>
+                        <div class="skeleton-authors"></div>
+                        <div class="skeleton-publication"></div>
+                        <div class="skeleton-year"></div>
+                        <div class="skeleton-links">
+                            <div class="skeleton-link"></div>
+                            <div class="skeleton-link"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-item">
+                        <div class="skeleton-title"></div>
+                        <div class="skeleton-authors"></div>
+                        <div class="skeleton-publication"></div>
+                        <div class="skeleton-year"></div>
+                        <div class="skeleton-links">
+                            <div class="skeleton-link"></div>
+                            <div class="skeleton-link"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-item">
+                        <div class="skeleton-title"></div>
+                        <div class="skeleton-authors"></div>
+                        <div class="skeleton-publication"></div>
+                        <div class="skeleton-year"></div>
+                        <div class="skeleton-links">
+                            <div class="skeleton-link"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Fetch publications on page load

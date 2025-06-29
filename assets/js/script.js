@@ -92,6 +92,12 @@ class NavigationManager {
 
     // Update current section
     this.currentSection = sectionName;
+
+    // Fetch publications only when resume section is shown
+    if (sectionName === 'resume' && typeof window.publicationsFetched === 'undefined') {
+      window.publicationsFetched = true;
+      fetchPublications();
+    }
   }
 
   updateNavigationButtons(activeSection) {
@@ -362,11 +368,16 @@ document.querySelectorAll(".date-duration").forEach((element) => {
 // PUBLICATIONS FETCHING
 // ========================================
 
-async function fetchPublications() {
+async function fetchPublications(delayMs = 1000) {
   const API_URL = "https://api.cabhinav.com/api/server.js";
   const container = document.getElementById("publications-container");
-  const loadingMessage = document.getElementById("loading-message");
   const errorMessage = document.getElementById("error-message");
+
+  // Show skeleton loader first
+  showSkeletonLoader(container);
+
+  // Add configurable delay to show loading animation
+  await new Promise(resolve => setTimeout(resolve, delayMs));
 
   try {
     const response = await fetch(API_URL);
@@ -375,15 +386,14 @@ async function fetchPublications() {
     }
     const data = await response.json();
 
-    loadingMessage.style.display = "none";
+    // Clear skeleton loader
+    container.innerHTML = "";
 
     if (!data.articles || data.articles.length === 0) {
       errorMessage.textContent = "No publications found.";
       errorMessage.style.display = "block";
       return;
     }
-
-    container.innerHTML = "";
 
     data.articles.forEach((article, index) => {
       const authors = (article.authors || "Unknown Authors").replace(
@@ -419,8 +429,44 @@ async function fetchPublications() {
     });
   } catch (error) {
     console.error("Error fetching publications:", error);
-    loadingMessage.style.display = "none";
     errorMessage.textContent = "Failed to load publications. Ensure the proxy server is running.";
     errorMessage.style.display = "block";
   }
+}
+
+// Function to show skeleton loader
+function showSkeletonLoader(container) {
+  container.innerHTML = `
+    <div class="publications-skeleton">
+      <div class="skeleton-item">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-authors"></div>
+        <div class="skeleton-publication"></div>
+        <div class="skeleton-year"></div>
+        <div class="skeleton-links">
+          <div class="skeleton-link"></div>
+          <div class="skeleton-link"></div>
+        </div>
+      </div>
+      <div class="skeleton-item">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-authors"></div>
+        <div class="skeleton-publication"></div>
+        <div class="skeleton-year"></div>
+        <div class="skeleton-links">
+          <div class="skeleton-link"></div>
+          <div class="skeleton-link"></div>
+        </div>
+      </div>
+      <div class="skeleton-item">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-authors"></div>
+        <div class="skeleton-publication"></div>
+        <div class="skeleton-year"></div>
+        <div class="skeleton-links">
+          <div class="skeleton-link"></div>
+        </div>
+      </div>
+    </div>
+  `;
 } 

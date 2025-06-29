@@ -1,15 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>https://cabhinav.com/</loc>
-        <lastmod>2025-03-24</lastmod>
-        <priority>1.0</priority>
-        <changefreq>weekly</changefreq>
-    </url>
-    <url>
-        <loc>https://cabhinav.com/PowerElectronics.html</loc>
-        <lastmod>2025-03-24</lastmod>
-        <priority>0.8</priority>
-        <changefreq>monthly</changefreq>
-    </url>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://cabhinav.com/</loc><image:image><image:loc>https://cabhinav.com/assets/Projects/yeswegan1.JPEG</image:loc></image:image><image:image><image:loc>https://cabhinav.com/assets/Projects/gan.webp</image:loc></image:image><image:image><image:loc>https://cabhinav.com/assets/Projects/opav2.webp</image:loc></image:image>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/</loc>
+    <lastmod>2025-06-27</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>

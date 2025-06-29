@@ -826,7 +826,6 @@
         <h2 class="custom-h3" style="margin-top: 20px;">Publications</h2>
         <div class="work-history">
           <div id="publications-container"></div>
-          <div id="loading-message" class="loading-message">Loading publications...</div>
           <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please try
             again later.</div>
         </div>
@@ -949,8 +948,8 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script>
-  // Fetch publications on page load
-  document.addEventListener("DOMContentLoaded", fetchPublications);
+  // Publications will be fetched only when Resume section is accessed
+  // This prevents wasting API credits on initial page load
 </script>
 <script src="./assets/js/cocky-bot.js"></script>
 </html>
