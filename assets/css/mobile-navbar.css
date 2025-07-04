@@ -1,30 +1,56 @@
 /*-----------------------------------*\
-  #MOBILE NAVIGATION BAR - REDESIGNED
-  Completely different code but same visual appearance
-  No highlighters or active states for mobile
-  Using primary colors from style.css
+  #MOBILE NAVIGATION BAR - SIMPLE & WORKING
+  Clean implementation that definitely works
 \*-----------------------------------*/
 
-/* Mobile Navigation Bar Container */
+
+
+/* CSS Variables from test2 */
+:root {
+  --font-family-roboto: 'Roboto', sans-serif;
+  --text-rgb-29-27-32: rgba(29, 27, 32, 1);
+  --text-rgb-73-69-79: rgba(73, 69, 79, 1);
+}
+
+/* Mobile Navigation Bar Container - Simple & Working */
 @media (max-width: 1249px) {
   .mobile-nav-container {
+    /* Basic positioning */
+    position: fixed !important;
+    bottom: 4px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 9999 !important;
+    
+    /* Layout */
     display: flex !important;
     flex-direction: row !important;
-    align-items: flex-start !important;
-    padding: 0px 8px !important;
-    gap: 8px !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    background: #0d0d0d !important; /* From style.css nav-bar background */
-    backdrop-filter: blur(10px) !important;
-    z-index: 5 !important;
-    transition: transform 0.3s ease-out !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    
+    /* Sizing */
+    width: calc(100% - 32px) !important;
+    max-width: 400px !important;
+    min-width: 280px !important;
+    
+    /* Styling */
+    background-color: rgba(243, 237, 247, 1) !important;
+    border-radius: 80px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    padding: 8px !important;
+    
+    /* Animation */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform-origin: center bottom !important;
   }
   
-  .mobile-nav-container.hidden {
-    transform: translateY(100%) !important;
+  /* Hidden state */
+  .mobile-nav-container.navbar-hidden {
+    transform: translateX(-50%) translateY(120px) scale(0.1) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
 }
 
@@ -35,26 +61,19 @@
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    padding: 12px 0px 16px !important;
     gap: 4px !important;
-    width: 100% !important;
-    height: 80px !important;
-    background: transparent !important;
-    border: none !important;
+    padding: 12px 0px 16px 0px !important;
+    min-width: 80px !important;
     cursor: pointer !important;
-    transition: none !important;
-  }
-  
-  .mobile-nav-item:hover {
-    background: transparent !important;
-  }
-  
-  .mobile-nav-item:active {
-    background: transparent !important;
-  }
-  
-  .mobile-nav-item.active {
-    background: transparent !important;
+    border: none !important;
+    background: none !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
   }
 }
 
@@ -62,280 +81,118 @@
 @media (max-width: 1249px) {
   .mobile-icon-wrapper {
     display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
     align-items: center !important;
-    padding: 0px !important;
-    max-width: 64px !important;
-    max-height: 32px !important;
-    background: rgba(255, 255, 255, 0.1) !important; /* Neutral gray instead of HSL */
-    border-radius: 16px !important;
-    transition: none !important;
-  }
-  
-  .mobile-icon-wrapper:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  .mobile-nav-item:hover .mobile-icon-wrapper {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  .mobile-nav-item:active .mobile-icon-wrapper {
-    background: rgba(255, 255, 255, 0.1) !important;
+    justify-content: center !important;
+    border-radius: 999px !important;
+    padding: 8px 20px !important;
+    background: none !important;
+    transition: background 0.3s ease !important;
   }
   
   .mobile-nav-item.active .mobile-icon-wrapper {
-    background: rgba(255, 255, 255, 0.25) !important; /* Brighter for active state */
+    background: rgba(232, 222, 248, 1) !important;
   }
 }
 
-/* Mobile Icon Inner Container */
+/* Mobile Icon Inner */
 @media (max-width: 1249px) {
   .mobile-icon-inner {
     display: flex !important;
-    flex-direction: row !important;
-    justify-content: center !important;
     align-items: center !important;
-    padding: 4px 20px !important;
-    width: 64px !important;
-    height: 32px !important;
+    justify-content: center !important;
   }
 }
 
 /* Mobile Navigation Labels */
 @media (max-width: 1249px) {
   .mobile-nav-label {
-    width: 119.33px !important;
-    height: 16px !important;
-    font-family: "Roboto", system-ui, -apple-system, sans-serif !important;
-    font-style: normal !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-    line-height: 16px !important;
-    text-align: center !important;
+    font-family: var(--font-family-roboto) !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
     letter-spacing: 0.5px !important;
-    color: #e6e0e983 !important; /* From style.css label-text */
-    transition: none !important;
-  }
-  
-  .mobile-nav-item:hover .mobile-nav-label {
-    color: #e6e0e983 !important;
-  }
-  
-  .mobile-nav-item:active .mobile-nav-label {
-    color: #e6e0e983 !important;
+    line-height: 16px !important;
+    color: var(--text-rgb-73-69-79) !important;
+    transition: color 0.3s ease, font-weight 0.3s ease !important;
   }
   
   .mobile-nav-item.active .mobile-nav-label {
-    color: #ffffff !important; /* Brighter white for active state */
-    font-weight: 500 !important; /* Slightly bolder for active state */
+    color: var(--text-rgb-29-27-32) !important;
+    font-weight: 700 !important;
   }
 }
 
 /* Mobile Icon Styles */
 @media (max-width: 1249px) {
   .mobile-nav-item .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important; /* From style.css */
+    color: var(--text-rgb-73-69-79) !important;
     font-variation-settings: "FILL" 0 !important;
-    transition: none !important;
-  }
-  
-  .mobile-nav-item:hover .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important;
-  }
-  
-  .mobile-nav-item:active .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important;
+    font-size: 20px !important;
+    transition: color 0.3s ease !important;
+    filter: grayscale(1) brightness(0.6) !important;
   }
   
   .mobile-nav-item.active .material-symbols-rounded {
-    color: #ffffff !important; /* Bright white for active state */
-    font-variation-settings: "FILL" 1 !important; /* Filled icon for active state */
-  }
-  
-  .mobile-icon-wrapper:hover .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important;
+    color: var(--text-rgb-29-27-32) !important;
+    filter: none !important;
   }
 }
 
-/* CRITICAL: Override original CSS classes on mobile */
-@media (max-width: 1249px) {
-  /* Override original icon-container hover effects */
-  .icon-container:hover {
-    background: rgba(255, 255, 255, 0.1) !important; /* Neutral gray instead of HSL */
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .mobile-nav-container {
+    width: calc(100% - 16px) !important;
+    max-width: 360px !important;
+    min-width: 260px !important;
+    padding: 4px !important;
   }
   
-  .segment:hover .icon-container {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  .segment:active .icon-container {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  .segment.active .icon-container {
-    background: rgba(255, 255, 255, 0.25) !important; /* Brighter for active state */
-  }
-  
-  /* Override original label-text styles */
-  .label-text {
-    color: #e6e0e983 !important; /* From style.css label-text */
-    font-weight: 400 !important;
-    font-family: "Roboto", system-ui, -apple-system, sans-serif !important;
-  }
-  
-  .segment:hover .label-text {
-    color: #e6e0e983 !important;
-  }
-  
-  .segment:active .label-text {
-    color: #e6e0e983 !important;
-  }
-  
-  .segment.active .label-text {
-    color: #ffffff !important; /* Brighter white for active state */
-    font-weight: 500 !important; /* Slightly bolder for active state */
-  }
-  
-  /* Override original icon styles */
-  .segment .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important; /* From style.css */
-    font-variation-settings: "FILL" 0 !important;
-  }
-  
-  .segment:hover .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important;
-    font-variation-settings: "FILL" 0 !important;
-  }
-  
-  .segment:active .material-symbols-rounded {
-    color: rgba(255, 255, 255, 0.472) !important;
-    font-variation-settings: "FILL" 0 !important;
-  }
-  
-  .segment.active .material-symbols-rounded {
-    color: #ffffff !important; /* Bright white for active state */
-    font-variation-settings: "FILL" 1 !important; /* Filled icon for active state */
-  }
-  
-  /* Override original nav-bar background */
-  .nav-bar {
-    background: #0d0d0d !important; /* From style.css nav-bar */
-  }
-}
-
-/* Disable all touch feedback and highlights */
-@media (max-width: 1249px) {
   .mobile-nav-item {
-    -webkit-tap-highlight-color: transparent !important;
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    -khtml-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
-    outline: none !important;
+    min-width: 70px !important;
+    padding: 8px 0px 12px 0px !important;
   }
   
-  .mobile-nav-item:focus {
-    outline: none !important;
+  .mobile-icon-wrapper {
+    padding: 6px 16px !important;
   }
   
-  .mobile-nav-item:focus-visible {
-    outline: none !important;
+  .mobile-nav-label {
+    font-size: 11px !important;
   }
   
-  .mobile-nav-item::before,
-  .mobile-nav-item::after {
+  .mobile-nav-item .material-symbols-rounded {
+    font-size: 18px !important;
+  }
+}
+
+/* Ensure mobile navbar is hidden on desktop, but not desktop navbar */
+@media (min-width: 1250px) {
+  .mobile-nav-container:not(.desktop-nav-bar) {
     display: none !important;
   }
-  
-  /* Also disable for original classes */
-  .segment {
+}
+
+/* Remove focus indicators from mobile navigation elements only */
+@media (max-width: 1249px) {
+  .mobile-nav-item {
+    outline: none !important;
+    outline-color: transparent !important;
+    outline-style: none !important;
+    outline-width: 0 !important;
     -webkit-tap-highlight-color: transparent !important;
     -webkit-touch-callout: none !important;
     -webkit-user-select: none !important;
-    -khtml-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
     user-select: none !important;
-    outline: none !important;
   }
   
-  .segment:focus {
+  .mobile-nav-item:focus,
+  .mobile-nav-item:focus-visible {
     outline: none !important;
-  }
-  
-  .segment:focus-visible {
-    outline: none !important;
-  }
-}
-
-/* iOS Safari specific overrides */
-@media (max-width: 1249px) {
-  .mobile-nav-item {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
+    outline-color: transparent !important;
+    outline-style: none !important;
+    outline-width: 0 !important;
   }
   
   .mobile-nav-item::-moz-focus-inner {
     border: 0 !important;
-  }
-  
-  /* Also for original classes */
-  .segment {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-  }
-  
-  .segment::-moz-focus-inner {
-    border: 0 !important;
-  }
-}
-
-/* Additional mobile-specific overrides */
-@media (max-width: 1249px) {
-  .mobile-nav-container,
-  .nav-bar {
-    background: #0d0d0d !important; /* From style.css nav-bar */
-    backdrop-filter: blur(10px) !important;
-  }
-  
-  /* Ensure no white backgrounds appear */
-  .mobile-nav-container *,
-  .nav-bar * {
-    background-color: transparent !important;
-  }
-  
-  .mobile-nav-container,
-  .nav-bar {
-    background-color: #0d0d0d !important; /* From style.css nav-bar */
-  }
-}
-
-/* High contrast mode support */
-@media (max-width: 1249px) and (prefers-contrast: high) {
-  .mobile-nav-container {
-    background: #000000 !important;
-    border-top: 1px solid #ffffff !important;
-  }
-  
-  .mobile-nav-label {
-    color: #ffffff !important;
-  }
-}
-
-/* Reduced motion support */
-@media (max-width: 1249px) and (prefers-reduced-motion: reduce) {
-  .mobile-nav-container,
-  .mobile-nav-item,
-  .mobile-icon-wrapper,
-  .mobile-nav-label,
-  .mobile-nav-item .material-symbols-rounded {
-    transition: none !important;
-    animation: none !important;
   }
 } 

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Navigation bar design with interactive functionality">
+  <title>Navigation Bar Test</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="iphone-16-1-1">
+    <nav class="xr-xr-navigation-bar-2" role="navigation" aria-label="Main navigation">
+      <div class="nav-item-01-3" role="tab" aria-selected="true" data-tab="explore">
+        <div class="icon-container-4 active">
+          <div class="state-layer-5">
+            <div class="icon-6">
+              <img src="images/icon-7.svg" class="icon-7" alt="Explore icon" />
+            </div>
+          </div>
+        </div>
+        <p class="text-8"><span class="text-rgb-29-27-32">Explore</span></p>
+      </div>
+      
+      <div class="nav-item-02-9" role="tab" aria-selected="false" data-tab="saved">
+        <div class="icon-container-10">
+          <div class="state-layer-11">
+            <div class="icon-12">
+              <img src="images/icon-13.svg" class="icon-13" alt="Saved icon" />
+            </div>
+          </div>
+        </div>
+        <p class="text-14"><span class="text-rgb-73-69-79">Saved</span></p>
+      </div>
+      
+      <div class="nav-item-03-15" role="tab" aria-selected="false" data-tab="updates">
+        <div class="icon-container-16">
+          <div class="state-layer-17">
+            <div class="icon-18">
+              <img src="images/icon-19.svg" class="icon-19" alt="Updates icon" />
+            </div>
+          </div>
+        </div>
+        <p class="text-20"><span class="text-rgb-73-69-79">Updates</span></p>
+      </div>
+    </nav>
+    
+    <!-- Content areas for testing navigation -->
+    <div class="content-area">
+      <div class="content-panel active" id="explore-content">
+        <h2>Explore Content</h2>
+        <p>This is the explore section. Here you can discover new content and features.</p>
+        <div class="test-content">
+          <h3>Sample Explore Items:</h3>
+          <ul>
+            <li>Featured Articles</li>
+            <li>Trending Topics</li>
+            <li>Recommended Content</li>
+            <li>Popular Categories</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="content-panel" id="saved-content">
+        <h2>Saved Content</h2>
+        <p>This is the saved section. Here you can view your bookmarked items.</p>
+        <div class="test-content">
+          <h3>Your Saved Items:</h3>
+          <ul>
+            <li>Article: "Getting Started with Web Development"</li>
+            <li>Video: "CSS Grid Tutorial"</li>
+            <li>Document: "JavaScript Best Practices"</li>
+            <li>Project: "Responsive Design Guide"</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="content-panel" id="updates-content">
+        <h2>Updates & Notifications</h2>
+        <p>This is the updates section. Here you can see recent notifications and updates.</p>
+        <div class="test-content">
+          <h3>Recent Updates:</h3>
+          <ul>
+            <li>New feature: Dark mode available</li>
+            <li>System maintenance completed</li>
+            <li>New content added to your feed</li>
+            <li>Profile update reminder</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Navigation logic for testing
+    document.addEventListener('DOMContentLoaded', function() {
+      const navItems = document.querySelectorAll('[data-tab]');
+      const contentPanels = document.querySelectorAll('.content-panel');
+      
+      function switchTab(tabName) {
+        navItems.forEach(item => {
+          item.setAttribute('aria-selected', 'false');
+          // Remove active from all icon containers
+          const iconContainer = item.querySelector('[class^="icon-container"]');
+          if (iconContainer) iconContainer.classList.remove('active');
+        });
+        contentPanels.forEach(panel => {
+          panel.classList.remove('active');
+        });
+        const activeNavItem = document.querySelector(`[data-tab="${tabName}"]`);
+        const activeContentPanel = document.getElementById(`${tabName}-content`);
+        if (activeNavItem && activeContentPanel) {
+          activeNavItem.setAttribute('aria-selected', 'true');
+          const iconContainer = activeNavItem.querySelector('[class^="icon-container"]');
+          if (iconContainer) iconContainer.classList.add('active');
+          activeContentPanel.classList.add('active');
+        }
+      }
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          switchTab(tabName);
+        });
+      });
+      document.addEventListener('keydown', function(e) {
+        const activeTab = document.querySelector('[aria-selected="true"]');
+        if (!activeTab) return;
+        let nextTab;
+        switch(e.key) {
+          case 'ArrowLeft':
+            nextTab = activeTab.previousElementSibling;
+            break;
+          case 'ArrowRight':
+            nextTab = activeTab.nextElementSibling;
+            break;
+          default:
+            return;
+        }
+        if (nextTab && nextTab.hasAttribute('data-tab')) {
+          e.preventDefault();
+          const tabName = nextTab.getAttribute('data-tab');
+          switchTab(tabName);
+        }
+      });
+      switchTab('explore');
+    });
+  </script>
+</body>
+</html>

@@ -9,13 +9,119 @@ class NavigationManager {
     this.currentSection = 'about';
     this.sections = ['about', 'resume', 'contact'];
     this.isDesktop = window.innerWidth >= 1250;
+    this.isMobile = window.innerWidth < 1250;
+    this.lastScrollY = 0;
+    this.scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+    this.isNavbarHidden = false;
     this.init();
   }
 
   init() {
     this.setupNavigationButtons();
     this.setupContentSections();
+    this.setupMobileNavbar();
+    this.setupScrollHandler();
     this.showSection('about');
+    this.setupResizeHandler();
+  }
+
+  setupScrollHandler() {
+    if (this.isMobile) {
+      let lastScrollY = window.pageYOffset;
+      let ticking = false;
+      
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const currentScrollY = window.pageYOffset;
+            const scrollDelta = currentScrollY - lastScrollY;
+            
+            // Hide navbar when scrolling down
+            if (scrollDelta > 10 && currentScrollY > 50) {
+              this.hideMobileNavbar();
+            }
+            // Show navbar when scrolling up
+            else if (scrollDelta < -10) {
+              this.showMobileNavbar();
+            }
+            // Always show at top
+            else if (currentScrollY <= 20) {
+              this.showMobileNavbar();
+            }
+            
+            lastScrollY = currentScrollY;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+  }
+
+  hideMobileNavbar() {
+    const mobileNavContainer = document.querySelector('.mobile-nav-container');
+    if (mobileNavContainer && !mobileNavContainer.classList.contains('navbar-hidden')) {
+      mobileNavContainer.classList.add('navbar-hidden');
+      this.isNavbarHidden = true;
+    }
+  }
+
+  showMobileNavbar() {
+    const mobileNavContainer = document.querySelector('.mobile-nav-container');
+    if (mobileNavContainer && mobileNavContainer.classList.contains('navbar-hidden')) {
+      mobileNavContainer.classList.remove('navbar-hidden');
+      this.isNavbarHidden = false;
+    }
+  }
+
+  // Test function to manually trigger hide/show
+  testNavbarHide() {
+    this.hideMobileNavbar();
+  }
+
+  testNavbarShow() {
+    this.showMobileNavbar();
+  }
+
+  setupResizeHandler() {
+    window.addEventListener('resize', () => {
+      const wasDesktop = this.isDesktop;
+      this.isDesktop = window.innerWidth >= 1250;
+      this.isMobile = window.innerWidth < 1250;
+      
+      // Re-initialize if switching between desktop and mobile
+      if (wasDesktop !== this.isDesktop) {
+        this.updateNavigationButtons(this.currentSection);
+        if (this.isMobile) {
+          this.setupScrollHandler();
+        } else {
+          // Reset navbar state on desktop
+          this.isNavbarHidden = false;
+          this.lastScrollY = 0;
+          this.showMobileNavbar(); // Ensure navbar is visible on desktop
+        }
+      }
+    });
+  }
+
+  setupMobileNavbar() {
+    if (this.isMobile) {
+      // Add mobile-specific classes and behaviors
+      const mobileNavContainer = document.querySelector('.mobile-nav-container');
+      if (mobileNavContainer) {
+        // Add smooth entrance animation
+        mobileNavContainer.style.opacity = '0';
+        mobileNavContainer.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          mobileNavContainer.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          mobileNavContainer.style.opacity = '1';
+          mobileNavContainer.style.transform = 'translateY(0)';
+        }, 100);
+      }
+    }
   }
 
   setupNavigationButtons() {
@@ -28,9 +134,62 @@ class NavigationManager {
         const sectionName = this.getSectionFromButton(button);
         if (sectionName) {
           this.showSection(sectionName);
+          this.addClickAnimation(button);
         }
       });
+
+      // Add touch feedback for mobile
+      if (this.isMobile) {
+        button.addEventListener('touchstart', () => {
+          this.addTouchFeedback(button, true);
+        });
+        
+        button.addEventListener('touchend', () => {
+          this.addTouchFeedback(button, false);
+        });
+      }
     });
+  }
+
+  addClickAnimation(button) {
+    if (this.isMobile) {
+      // Add ripple effect for mobile
+      const ripple = document.createElement('div');
+      ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+      `;
+      
+      button.style.position = 'relative';
+      button.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+  }
+
+  addTouchFeedback(button, isPressed) {
+    const iconWrapper = button.querySelector('.mobile-icon-wrapper');
+    const icon = button.querySelector('.material-symbols-rounded');
+    
+    if (isPressed) {
+      if (iconWrapper) iconWrapper.style.transform = 'scale(0.9)';
+      if (icon) icon.style.transform = 'scale(0.9)';
+    } else {
+      if (iconWrapper) iconWrapper.style.transform = '';
+      if (icon) icon.style.transform = '';
+    }
   }
 
   getSectionFromButton(button) {
@@ -60,6 +219,8 @@ class NavigationManager {
       const section = document.getElementById(sectionName);
       if (section) {
         section.style.display = 'none';
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
       }
     });
   }
@@ -67,22 +228,48 @@ class NavigationManager {
   showSection(sectionName) {
     if (!this.sections.includes(sectionName)) return;
 
-    // Hide current section
+    // Hide current section with animation
     if (this.currentSection && this.currentSection !== sectionName) {
       const currentSectionElement = document.getElementById(this.currentSection);
       if (currentSectionElement) {
-        currentSectionElement.style.display = 'none';
+        currentSectionElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        currentSectionElement.style.opacity = '0';
+        currentSectionElement.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+          currentSectionElement.style.display = 'none';
+        }, 300);
       }
     }
 
-    // Show new section
+    // Show new section with animation
     const newSectionElement = document.getElementById(sectionName);
     if (newSectionElement) {
       newSectionElement.style.display = 'block';
-      // Only scroll on desktop to prevent mobile jumping
-      if (this.isDesktop) {
-        newSectionElement.scrollIntoView({ behavior: 'smooth' });
-      }
+      newSectionElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      
+      // Small delay to ensure display: block is applied
+      setTimeout(() => {
+        newSectionElement.style.opacity = '1';
+        newSectionElement.style.transform = 'translateY(0)';
+        
+        // Scroll to top of page for both desktop and mobile
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Ensure desktop navbar stays at top
+        if (this.isDesktop) {
+          const desktopNavBar = document.querySelector('.desktop-nav-bar');
+          if (desktopNavBar) {
+            desktopNavBar.style.position = 'fixed !important';
+            desktopNavBar.style.top = '0 !important';
+            desktopNavBar.style.left = '0 !important';
+            desktopNavBar.style.right = '0 !important';
+            desktopNavBar.style.bottom = 'auto !important';
+            desktopNavBar.style.transform = 'none !important';
+            desktopNavBar.style.zIndex = '1000 !important';
+          }
+        }
+      }, 50);
     } else {
       return;
     }
@@ -115,14 +302,60 @@ class NavigationManager {
         button.classList.add('active');
         if (this.isDesktop) {
           this.setDesktopButtonActiveStyle(button);
+        } else {
+          this.setMobileButtonActiveStyle(button);
         }
       } else {
         button.classList.remove('active');
         if (this.isDesktop) {
           this.setDesktopButtonInactiveStyle(button);
+        } else {
+          this.setMobileButtonInactiveStyle(button);
         }
       }
     });
+  }
+
+  setMobileButtonActiveStyle(button) {
+    const iconContainer = button.querySelector('.mobile-icon-wrapper');
+    const labelText = button.querySelector('.mobile-nav-label');
+    const icon = button.querySelector('.material-symbols-rounded');
+    
+    if (iconContainer) {
+      iconContainer.style.background = 'rgba(232, 222, 248, 1)'; // Exact test2 active background
+    }
+    
+    if (labelText) {
+      labelText.style.color = 'rgba(29, 27, 32, 1)'; // Exact test2 active color
+      labelText.style.fontWeight = '700'; // Exact test2 active weight
+    }
+    
+    if (icon) {
+      icon.style.color = 'rgba(29, 27, 32, 1)'; // Exact test2 active color
+      icon.style.fontVariationSettings = '"FILL" 0';
+      icon.style.filter = 'none'; // Exact test2 active filter
+    }
+  }
+
+  setMobileButtonInactiveStyle(button) {
+    const iconContainer = button.querySelector('.mobile-icon-wrapper');
+    const labelText = button.querySelector('.mobile-nav-label');
+    const icon = button.querySelector('.material-symbols-rounded');
+    
+    if (iconContainer) {
+      iconContainer.style.background = 'none';
+    }
+    
+    if (labelText) {
+      labelText.style.color = 'rgba(73, 69, 79, 1)'; // Exact test2 inactive color
+      labelText.style.fontWeight = '500';
+    }
+    
+    if (icon) {
+      icon.style.color = 'rgba(73, 69, 79, 1)'; // Exact test2 inactive color
+      icon.style.fontVariationSettings = '"FILL" 0';
+      icon.style.filter = 'grayscale(1) brightness(0.6)'; // Exact test2 filter
+    }
   }
 
   setDesktopButtonActiveStyle(button) {
@@ -303,6 +536,19 @@ setupFilterLogic();
 
 document.addEventListener('DOMContentLoaded', () => {
   window.navigationManager = new NavigationManager();
+  
+  // Add test functions to global scope for debugging
+  window.testHideNavbar = () => {
+    if (window.navigationManager) {
+      window.navigationManager.testNavbarHide();
+    }
+  };
+  
+  window.testShowNavbar = () => {
+    if (window.navigationManager) {
+      window.navigationManager.testNavbarShow();
+    }
+  };
 });
 
 // Legacy function for backward compatibility
