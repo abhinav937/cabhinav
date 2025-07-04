@@ -34,7 +34,8 @@
     min-width: 280px !important;
     
     /* Styling */
-    background-color: rgba(243, 237, 247, 1) !important;
+    background-color: rgba(34, 40, 49, 0.92) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
     border-radius: 80px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     padding: 8px !important;
@@ -102,7 +103,7 @@
   }
   
   .mobile-nav-item.active .mobile-icon-wrapper {
-    background: rgba(232, 222, 248, 1) !important;
+    background: rgba(60, 60, 80, 0.85) !important;
     transition: background 0.3s ease-out !important;
   }
 }
@@ -124,13 +125,13 @@
     font-size: 12px !important;
     letter-spacing: 0.5px !important;
     line-height: 16px !important;
-    color: var(--text-rgb-73-69-79) !important;
+    color: rgba(200,200,210,0.85) !important;
     transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
     will-change: color, font-weight !important;
   }
   
   .mobile-nav-item.active .mobile-nav-label {
-    color: var(--text-rgb-29-27-32) !important;
+    color: var(--md-sys-color-primary, var(--primary-color, #cce8e7)) !important;
     font-weight: 700 !important;
     transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
   }
@@ -139,16 +140,16 @@
 /* Mobile Icon Styles */
 @media (max-width: 1249px) {
   .mobile-nav-item .material-symbols-rounded {
-    color: var(--text-rgb-73-69-79) !important;
+    color: rgba(200,200,210,0.85) !important;
     font-variation-settings: "FILL" 0 !important;
     font-size: 20px !important;
     transition: color 0.3s ease-out, filter 0.3s ease-out !important;
-    filter: grayscale(1) brightness(0.6) !important;
+    filter: none !important;
     will-change: color, filter !important;
   }
   
   .mobile-nav-item.active .material-symbols-rounded {
-    color: var(--text-rgb-29-27-32) !important;
+    color: var(--md-sys-color-primary, var(--primary-color, #cce8e7)) !important;
     filter: none !important;
     transition: color 0.3s ease-out, filter 0.3s ease-out !important;
   }
