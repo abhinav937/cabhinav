@@ -74,8 +74,10 @@
                 
                 console.log('API fetch successful:', data);
 
-                // Check if articles exist
-                if (!data.articles || data.articles.length === 0) {
+                // Handle the nested data structure from your API
+                const articles = data.data?.articles || data.articles || [];
+                
+                if (!articles || articles.length === 0) {
                     console.log('No articles found in API response');
                     errorMessage.textContent = 'No publications found.';
                     errorMessage.style.display = 'block';
@@ -83,12 +85,12 @@
                     return;
                 }
 
-                console.log(`Found ${data.articles.length} publications`);
+                console.log(`Found ${articles.length} publications`);
 
                 // Clear container
                 container.innerHTML = '';
 
-                data.articles.forEach((article, index) => {
+                articles.forEach((article, index) => {
                     const authors = (article.authors || 'Unknown Authors').replace(
                         'A Chinnusamy',
                         '<b>Abhinav Chinnusamy</b>'

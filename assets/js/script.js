@@ -395,16 +395,19 @@ async function fetchPublications(delayMs = 1500) {
     // Clear skeleton loader
     container.innerHTML = "";
 
-    if (!data.articles || data.articles.length === 0) {
+    // Check if the response has the expected structure
+    const articles = data.data?.articles || data.articles;
+    
+    if (!articles || articles.length === 0) {
       console.log('No articles found in API response');
       errorMessage.textContent = "No publications found.";
       errorMessage.style.display = "block";
       return;
     }
 
-    console.log(`Found ${data.articles.length} publications`);
+    console.log(`Found ${articles.length} publications`);
 
-    data.articles.forEach((article, index) => {
+    articles.forEach((article, index) => {
       const authors = (article.authors || "Unknown Authors").replace(
         "A Chinnusamy",
         "<b>Abhinav Chinnusamy</b>"
