@@ -49,7 +49,7 @@
   
   /* Hidden state with enhanced animation */
   .mobile-nav-container.navbar-hidden {
-    transform: translateX(-50%) translateY(100px) scale(0.95) !important;
+    transform: translateX(-50%) scale(0.5) !important;
     opacity: 0 !important;
     visibility: hidden !important;
     transition: all 0.4s ease-out !important;
