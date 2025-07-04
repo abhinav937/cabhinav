@@ -79,12 +79,45 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--jet);
   font-family: Arial, sans-serif;
   color: var(--white-2);
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; /* For iOS smooth scrolling */
+}
+
+/* Enhanced smooth scrolling for all scrollable elements */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0; /* Ensure scroll to top works properly */
+}
+
+/* Smooth scrolling for specific containers */
+.main-content,
+.about,
+.resume,
+.contact {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Optimize scrolling performance */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Ensure smooth scrolling on mobile devices */
+@media (max-width: 1249px) {
+  body, html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
 
 .profile-card {
@@ -4089,4 +4122,113 @@ body {
   75% {
     transform: translateX(5px);
   }
+}
+
+/* Enhanced page transition animations */
+.about,
+.resume,
+.contact {
+  transition: opacity 0.5s ease-out, 
+              transform 0.5s ease-out !important;
+  will-change: opacity, transform !important;
+  position: relative !important;
+}
+
+/* Initial state for new sections */
+.about:not(.active),
+.resume:not(.active),
+.contact:not(.active) {
+  opacity: 0 !important;
+  transform: translateY(20px) !important;
+}
+
+/* Active state for current section */
+.about.active,
+.resume.active,
+.contact.active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Transition states for smooth page changes */
+.page-transitioning {
+  opacity: 0 !important;
+  transform: translateY(-15px) !important;
+  transition: opacity 0.3s ease-out, 
+              transform 0.3s ease-out !important;
+  pointer-events: none !important;
+}
+
+.page-loading {
+  opacity: 0 !important;
+  transform: translateY(20px) !important;
+  transition: opacity 0.5s ease-out, 
+              transform 0.5s ease-out !important;
+  pointer-events: none !important;
+}
+
+/* Subtle loading indicator during transition */
+.page-loading::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 10000;
+  opacity: 0.7;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Smooth fade for the entire page during transitions */
+body.page-transitioning {
+  overflow: hidden;
+}
+
+/* Enhanced transition timing for better UX */
+.page-transition-delay {
+  transition-delay: 0.2s !important;
+}
+
+/* Remove all page transition and animation styles for instant navigation */
+.about,
+.resume,
+.contact {
+  transition: none !important;
+  will-change: auto !important;
+  position: static !important;
+  opacity: 1 !important;
+  transform: none !important;
+  display: none;
+}
+
+.about.active,
+.resume.active,
+.contact.active {
+  display: block;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.page-transitioning,
+.page-loading,
+.page-loading::before {
+  transition: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  display: none !important;
+}
+
+body.page-transitioning {
+  overflow: auto !important;
 }

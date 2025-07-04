@@ -39,18 +39,20 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     padding: 8px !important;
     
-    /* Animation */
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    /* Enhanced Animation */
+    transition: all 0.4s ease-out !important;
     opacity: 1 !important;
     visibility: visible !important;
     transform-origin: center bottom !important;
+    will-change: transform, opacity, visibility !important;
   }
   
-  /* Hidden state */
+  /* Hidden state with enhanced animation */
   .mobile-nav-container.navbar-hidden {
-    transform: translateX(-50%) translateY(120px) scale(0.1) !important;
+    transform: translateX(-50%) translateY(100px) scale(0.95) !important;
     opacity: 0 !important;
     visibility: hidden !important;
+    transition: all 0.4s ease-out !important;
   }
 }
 
@@ -68,12 +70,21 @@
     border: none !important;
     background: none !important;
     border-radius: 8px !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s ease-out !important;
     outline: none !important;
     -webkit-tap-highlight-color: transparent !important;
     -webkit-touch-callout: none !important;
     -webkit-user-select: none !important;
     user-select: none !important;
+    will-change: transform, background-color !important;
+  }
+  
+  .mobile-nav-item:hover {
+    transform: translateY(-1px) !important;
+  }
+  
+  .mobile-nav-item:active {
+    transform: translateY(0px) scale(0.98) !important;
   }
 }
 
@@ -86,11 +97,13 @@
     border-radius: 999px !important;
     padding: 8px 20px !important;
     background: none !important;
-    transition: background 0.3s ease !important;
+    transition: background 0.3s ease-out !important;
+    will-change: background-color !important;
   }
   
   .mobile-nav-item.active .mobile-icon-wrapper {
     background: rgba(232, 222, 248, 1) !important;
+    transition: background 0.3s ease-out !important;
   }
 }
 
@@ -112,12 +125,14 @@
     letter-spacing: 0.5px !important;
     line-height: 16px !important;
     color: var(--text-rgb-73-69-79) !important;
-    transition: color 0.3s ease, font-weight 0.3s ease !important;
+    transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
+    will-change: color, font-weight !important;
   }
   
   .mobile-nav-item.active .mobile-nav-label {
     color: var(--text-rgb-29-27-32) !important;
     font-weight: 700 !important;
+    transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
   }
 }
 
@@ -127,13 +142,15 @@
     color: var(--text-rgb-73-69-79) !important;
     font-variation-settings: "FILL" 0 !important;
     font-size: 20px !important;
-    transition: color 0.3s ease !important;
+    transition: color 0.3s ease-out, filter 0.3s ease-out !important;
     filter: grayscale(1) brightness(0.6) !important;
+    will-change: color, filter !important;
   }
   
   .mobile-nav-item.active .material-symbols-rounded {
     color: var(--text-rgb-29-27-32) !important;
     filter: none !important;
+    transition: color 0.3s ease-out, filter 0.3s ease-out !important;
   }
 }
 

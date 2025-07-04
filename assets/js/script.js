@@ -1,6 +1,58 @@
 "use strict";
 
 // ========================================
+// SMOOTH SCROLLING UTILITIES
+// ========================================
+
+// Enhanced smooth scrolling utility function
+const smoothScrollTo = (target, options = {}) => {
+  const {
+    duration = 600,
+    easing = 'ease-out',
+    offset = 0
+  } = options;
+
+  return new Promise((resolve) => {
+    const startPosition = window.pageYOffset || document.documentElement.scrollTop;
+    const targetPosition = typeof target === 'number' ? target : 
+      (target.offsetTop || target.getBoundingClientRect().top + startPosition) - offset;
+    
+    const distance = targetPosition - startPosition;
+    const startTime = performance.now();
+    
+    // Dynamic duration based on distance
+    const actualDuration = Math.min(duration, Math.max(300, Math.abs(distance) * 0.6));
+    
+    // Non-bouncy easing function
+    const easeOut = (t) => 1 - Math.pow(1 - t, 2);
+    
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / actualDuration, 1);
+      const easedProgress = easeOut(progress);
+      
+      const newPosition = startPosition + (distance * easedProgress);
+      window.scrollTo(0, newPosition);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      } else {
+        // Ensure we reach the exact target
+        window.scrollTo(0, targetPosition);
+        resolve();
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
+  });
+};
+
+// Smooth scroll to top utility
+const smoothScrollToTop = () => {
+  return smoothScrollTo(0, { duration: 500 });
+};
+
+// ========================================
 // OPTIMIZED NAVIGATION SYSTEM
 // ========================================
 
@@ -36,15 +88,15 @@ class NavigationManager {
             const currentScrollY = window.pageYOffset;
             const scrollDelta = currentScrollY - lastScrollY;
             
-            // Hide navbar when scrolling down
-            if (scrollDelta > 10 && currentScrollY > 50) {
+            // Hide navbar when scrolling down with smooth threshold
+            if (scrollDelta > 8 && currentScrollY > 50) {
               this.hideMobileNavbar();
             }
-            // Show navbar when scrolling up
-            else if (scrollDelta < -10) {
+            // Show navbar when scrolling up with smooth threshold
+            else if (scrollDelta < -8) {
               this.showMobileNavbar();
             }
-            // Always show at top
+            // Always show at top with smooth transition
             else if (currentScrollY <= 20) {
               this.showMobileNavbar();
             }
@@ -63,6 +115,7 @@ class NavigationManager {
   hideMobileNavbar() {
     const mobileNavContainer = document.querySelector('.mobile-nav-container');
     if (mobileNavContainer && !mobileNavContainer.classList.contains('navbar-hidden')) {
+      mobileNavContainer.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
       mobileNavContainer.classList.add('navbar-hidden');
       this.isNavbarHidden = true;
     }
@@ -71,6 +124,7 @@ class NavigationManager {
   showMobileNavbar() {
     const mobileNavContainer = document.querySelector('.mobile-nav-container');
     if (mobileNavContainer && mobileNavContainer.classList.contains('navbar-hidden')) {
+      mobileNavContainer.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
       mobileNavContainer.classList.remove('navbar-hidden');
       this.isNavbarHidden = false;
     }
@@ -228,50 +282,22 @@ class NavigationManager {
   showSection(sectionName) {
     if (!this.sections.includes(sectionName)) return;
 
-    // Hide current section with animation
+    // Instantly hide current section
     if (this.currentSection && this.currentSection !== sectionName) {
       const currentSectionElement = document.getElementById(this.currentSection);
       if (currentSectionElement) {
-        currentSectionElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        currentSectionElement.style.opacity = '0';
-        currentSectionElement.style.transform = 'translateY(-20px)';
-        
-        setTimeout(() => {
-          currentSectionElement.style.display = 'none';
-        }, 300);
+        currentSectionElement.classList.remove('active');
+        currentSectionElement.style.display = 'none';
       }
     }
 
-    // Show new section with animation
+    // Instantly show new section
     const newSectionElement = document.getElementById(sectionName);
     if (newSectionElement) {
       newSectionElement.style.display = 'block';
-      newSectionElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-      
-      // Small delay to ensure display: block is applied
-      setTimeout(() => {
-        newSectionElement.style.opacity = '1';
-        newSectionElement.style.transform = 'translateY(0)';
-        
-        // Scroll to top of page for both desktop and mobile
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        // Ensure desktop navbar stays at top
-        if (this.isDesktop) {
-          const desktopNavBar = document.querySelector('.desktop-nav-bar');
-          if (desktopNavBar) {
-            desktopNavBar.style.position = 'fixed !important';
-            desktopNavBar.style.top = '0 !important';
-            desktopNavBar.style.left = '0 !important';
-            desktopNavBar.style.right = '0 !important';
-            desktopNavBar.style.bottom = 'auto !important';
-            desktopNavBar.style.transform = 'none !important';
-            desktopNavBar.style.zIndex = '1000 !important';
-          }
-        }
-      }, 50);
-    } else {
-      return;
+      newSectionElement.classList.add('active');
+      // Instantly scroll to top
+      window.scrollTo(0, 0);
     }
 
     // Update navigation button states
@@ -531,11 +557,42 @@ function setupFilterLogic() {
 setupFilterLogic();
 
 // ========================================
+// GLOBAL SMOOTH SCROLLING SETUP
+// ========================================
+
+// Enhance all anchor links with smooth scrolling
+const setupGlobalSmoothScrolling = () => {
+  // Handle anchor links
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('a[href^="#"]');
+    if (target) {
+      e.preventDefault();
+      const targetId = target.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        smoothScrollTo(targetElement, { duration: 600, offset: 20 });
+      }
+    }
+  });
+
+  // Handle buttons that should scroll to top
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-scroll-to-top]');
+    if (target) {
+      e.preventDefault();
+      smoothScrollToTop();
+    }
+  });
+};
+
+// ========================================
 // INITIALIZATION
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
   window.navigationManager = new NavigationManager();
+  setupGlobalSmoothScrolling();
   
   // Add test functions to global scope for debugging
   window.testHideNavbar = () => {
