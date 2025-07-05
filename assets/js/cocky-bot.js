@@ -8,6 +8,97 @@
         return; // Exit early if on chat page
     }
 
+    // ChatBot class for session management
+    class ChatBot {
+        constructor(apiUrl) {
+            this.apiUrl = apiUrl;
+            this.sessionId = null;
+        }
+
+        async sendMessage(message) {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add session ID if we have one
+            if (this.sessionId) {
+                headers['X-Session-ID'] = this.sessionId;
+            }
+
+            const response = await fetch(`${this.apiUrl}/api/gemini`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ prompt: message })
+            });
+
+            const data = await response.json();
+            
+            // Save session ID from first response
+            if (!this.sessionId && data.sessionId) {
+                this.sessionId = data.sessionId;
+                this.updateSessionInfo();
+            }
+
+            return data;
+        }
+
+        async clearHistory() {
+            if (!this.sessionId) return;
+
+            const response = await fetch(`${this.apiUrl}/api/conversation`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Session-ID': this.sessionId
+                }
+            });
+
+            return response.json();
+        }
+
+        async getHistory() {
+            if (!this.sessionId) return [];
+
+            const response = await fetch(`${this.apiUrl}/api/conversation`, {
+                method: 'GET',
+                headers: {
+                    'X-Session-ID': this.sessionId
+                }
+            });
+
+            const data = await response.json();
+            return data.messages;
+        }
+
+        // Helper method to validate and fix conversation history roles
+        validateConversationHistory(history) {
+            if (!Array.isArray(history)) return [];
+            
+            return history.map(message => {
+                // Ensure role is either 'user' or 'model'
+                if (message.role === 'bot' || message.role === 'assistant') {
+                    return { ...message, role: 'model' };
+                }
+                if (message.role !== 'user' && message.role !== 'model') {
+                    return { ...message, role: 'user' }; // Default to user if invalid
+                }
+                return message;
+            });
+        }
+
+
+
+        // Method to update session info display
+        updateSessionInfo() {
+            const sessionInfo = document.getElementById('sessionInfo');
+            if (sessionInfo && this.sessionId) {
+                sessionInfo.textContent = `Session: ${this.sessionId.substring(0, 8)}...`;
+                sessionInfo.title = `Full Session ID: ${this.sessionId}`;
+            }
+        }
+
+
+    }
+
     // Function to check if device is mobile/tablet
     function isMobileDevice() {
         // Check screen width
@@ -141,6 +232,18 @@
                 box-shadow: 
                     0 2px 8px rgba(103, 80, 164, 0.2),
                     0 1px 3px rgba(0, 0, 0, 0.12);
+            }
+            .chatbot-container .chatbot-title {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .chatbot-container .session-info {
+                font-family: 'Roboto Mono', monospace;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 2px 6px;
+                border-radius: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
             .chatbot-container .chatbot-close {
                 cursor: pointer;
@@ -322,7 +425,10 @@
             </md-fab>
             <div class="chatbot-window">
                 <div class="chatbot-header">
-                    <span>Ask Me Anything</span>
+                    <div class="chatbot-title">
+                        <span>Ask Me Anything</span>
+                        <div class="session-info" id="sessionInfo" style="font-size: 0.7rem; opacity: 0.8; margin-top: 2px;"></div>
+                    </div>
                     <div class="chatbot-close" onclick="closeChatbot()">×</div>
                 </div>
                 <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
@@ -356,6 +462,9 @@
         const messageInput = document.getElementById('chatbotInput');
         const sendButton = document.getElementById('sendButton');
         let isLoading = false;
+
+        // Initialize ChatBot instance
+        const bot = new ChatBot('https://ai-reply-bot.vercel.app');
 
         // Function to parse and format text with bold and italic support
         function formatMessageText(text) {
@@ -431,20 +540,10 @@
             showLoadingIndicator();
 
             try {
-                const response = await fetch('https://ai-reply-bot.vercel.app/api/gemini', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                });
-
+                const data = await bot.sendMessage(prompt);
+                
                 hideLoadingIndicator();
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'Network error' }));
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
                 if (data.reply) {
                     addMessageToChat(data.reply, 'bot');
                 } else if (data.error) {
@@ -482,6 +581,8 @@
                 return 'Server error occurred';
             } else if (errorStr.includes('quota') || errorStr.includes('limit')) {
                 return 'Service limit reached';
+            } else if (errorStr.includes('invalid_argument') || errorStr.includes('valid role')) {
+                return 'Conversation context error - please try again';
             } else {
                 return 'Something went wrong';
             }

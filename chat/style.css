@@ -98,11 +98,26 @@ html, body {
 }
 
 .desktop-chat-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.desktop-chat-title h2 {
     font-size: 24px;
     font-weight: 600;
     color: #FFFFFF;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.session-info {
+    font-family: 'Roboto Mono', monospace;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
 }
 
 .desktop-messages {
@@ -334,11 +349,26 @@ html, body {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
+.mobile-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .mobile-header h1 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-session-info {
+    font-family: 'Roboto Mono', monospace;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
 }
 
 .mobile-messages {

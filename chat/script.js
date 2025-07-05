@@ -1,4 +1,106 @@
 (function () {
+    // ChatBot class for session management
+    class ChatBot {
+        constructor(apiUrl) {
+            this.apiUrl = apiUrl;
+            this.sessionId = null;
+        }
+
+        async sendMessage(message) {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add session ID if we have one
+            if (this.sessionId) {
+                headers['X-Session-ID'] = this.sessionId;
+            }
+
+            const response = await fetch(`${this.apiUrl}/api/gemini`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ prompt: message })
+            });
+
+            const data = await response.json();
+            
+            // Save session ID from first response
+            if (!this.sessionId && data.sessionId) {
+                this.sessionId = data.sessionId;
+                this.updateSessionInfo();
+            }
+
+            return data;
+        }
+
+        async clearHistory() {
+            if (!this.sessionId) return;
+
+            const response = await fetch(`${this.apiUrl}/api/conversation`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Session-ID': this.sessionId
+                }
+            });
+
+            return response.json();
+        }
+
+        async getHistory() {
+            if (!this.sessionId) return [];
+
+            const response = await fetch(`${this.apiUrl}/api/conversation`, {
+                method: 'GET',
+                headers: {
+                    'X-Session-ID': this.sessionId
+                }
+            });
+
+            const data = await response.json();
+            return data.messages;
+        }
+
+        // Helper method to validate and fix conversation history roles
+        validateConversationHistory(history) {
+            if (!Array.isArray(history)) return [];
+            
+            return history.map(message => {
+                // Ensure role is either 'user' or 'model'
+                if (message.role === 'bot' || message.role === 'assistant') {
+                    return { ...message, role: 'model' };
+                }
+                if (message.role !== 'user' && message.role !== 'model') {
+                    return { ...message, role: 'user' }; // Default to user if invalid
+                }
+                return message;
+            });
+        }
+
+        // Method to update session info display
+        updateSessionInfo() {
+            const sessionInfo = document.getElementById('sessionInfo');
+            const mobileSessionInfo = document.getElementById('mobileSessionInfo');
+            
+            if (this.sessionId) {
+                const sessionText = `Session: ${this.sessionId.substring(0, 8)}...`;
+                const sessionTitle = `Full Session ID: ${this.sessionId}`;
+                
+                if (sessionInfo) {
+                    sessionInfo.textContent = sessionText;
+                    sessionInfo.title = sessionTitle;
+                }
+                
+                if (mobileSessionInfo) {
+                    mobileSessionInfo.textContent = sessionText;
+                    mobileSessionInfo.title = sessionTitle;
+                }
+            }
+        }
+    }
+
+    // Initialize ChatBot instance
+    const bot = new ChatBot('https://ai-reply-bot.vercel.app');
+
     // Space Background Animation
     function initSpaceBackground() {
         const canvas = document.getElementById('background');
@@ -253,19 +355,9 @@
         
         async function sendToAPI(prompt) {
             try {
-                const response = await fetch('https://ai-reply-bot.vercel.app/api/gemini', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                });
+                const data = await bot.sendMessage(prompt);
                 
                 hideLoading();
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
                 
                 if (data.reply) {
                     console.log('Raw AI response:', data.reply);
@@ -375,20 +467,10 @@
             showLoadingIndicator();
 
             try {
-                const response = await fetch('https://ai-reply-bot.vercel.app/api/gemini', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                });
-
+                const data = await bot.sendMessage(prompt);
+                
                 hideLoadingIndicator();
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'Network error' }));
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
                 if (data.reply) {
                     console.log('Desktop Raw AI response:', data.reply);
                     addMessageToChat(data.reply, 'bot');
@@ -427,6 +509,8 @@
                 return 'Server error occurred';
             } else if (errorStr.includes('quota') || errorStr.includes('limit')) {
                 return 'Service limit reached';
+            } else if (errorStr.includes('invalid_argument') || errorStr.includes('valid role')) {
+                return 'Conversation context error - please try again';
             } else {
                 return 'Something went wrong';
             }
