@@ -708,7 +708,9 @@
     // Global function for new chat session
     window.newChatbotSession = async function() {
         try {
-            // Clear conversation history
+            // Discard old session
+            bot.sessionId = null;
+            // Clear conversation history (optional, for backend cleanup)
             await bot.clearHistory();
             
             // Clear messages

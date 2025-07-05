@@ -101,7 +101,9 @@
     // Function to create a new session
     async function createNewSession() {
         try {
-            // Send a simple message to create a session
+            // Discard old session
+            bot.sessionId = null;
+            // Send a simple message to create a new session
             const data = await bot.sendMessage("Hello");
             
             // Clear the messages containers and add welcome message
