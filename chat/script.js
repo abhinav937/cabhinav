@@ -82,17 +82,14 @@
             const mobileSessionInfo = document.getElementById('mobileSessionInfo');
             
             if (this.sessionId) {
-                const sessionText = `Session: ${this.sessionId.substring(0, 8)}...`;
-                const sessionTitle = `Full Session ID: ${this.sessionId}`;
+                const sessionText = `Session: ${this.sessionId}`;
                 
                 if (sessionInfo) {
                     sessionInfo.textContent = sessionText;
-                    sessionInfo.title = sessionTitle;
                 }
                 
                 if (mobileSessionInfo) {
                     mobileSessionInfo.textContent = sessionText;
-                    mobileSessionInfo.title = sessionTitle;
                 }
             }
         }
@@ -100,6 +97,45 @@
 
     // Initialize ChatBot instance
     const bot = new ChatBot('https://ai-reply-bot.vercel.app');
+
+    // Function to create a new session
+    async function createNewSession() {
+        try {
+            // Send a simple message to create a session
+            const data = await bot.sendMessage("Hello");
+            
+            // Clear the messages containers and add welcome message
+            const desktopMessages = document.getElementById('desktopMessages');
+            const mobileMessages = document.getElementById('mobileMessages');
+            
+            if (desktopMessages) {
+                desktopMessages.innerHTML = '';
+                // Create a simple welcome message element
+                const welcomeElement = document.createElement('div');
+                welcomeElement.classList.add('desktop-message', 'desktop-bot-message');
+                welcomeElement.textContent = "Yo! wassup?";
+                desktopMessages.appendChild(welcomeElement);
+            }
+            
+            if (mobileMessages) {
+                mobileMessages.innerHTML = '';
+                // Create a simple welcome message element
+                const welcomeElement = document.createElement('div');
+                welcomeElement.classList.add('mobile-message', 'mobile-bot-message');
+                welcomeElement.textContent = "Yo! wassup?";
+                mobileMessages.appendChild(welcomeElement);
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Error creating new session:', error);
+        }
+    }
+
+    // Create session on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(createNewSession, 1000); // Small delay to ensure everything is loaded
+    });
 
     // Space Background Animation
     function initSpaceBackground() {
@@ -282,6 +318,24 @@
                 handleSend();
             }
         });
+
+        // New chat button event listener for mobile
+        const mobileNewChatButton = document.getElementById('mobileNewChatButton');
+        if (mobileNewChatButton) {
+            mobileNewChatButton.addEventListener('click', async () => {
+                // Clear conversation history
+                await bot.clearHistory();
+                
+                // Clear messages
+                messagesContainer.innerHTML = '';
+                
+                // Create new session
+                await createNewSession();
+                
+                // Focus input
+                input.focus();
+            });
+        }
         
         // Focus input on load
         setTimeout(() => input.focus(), 100);
@@ -524,6 +578,24 @@
                 sendMessage();
             }
         });
+
+        // New chat button event listener
+        const newChatButton = document.getElementById('newChatButton');
+        if (newChatButton) {
+            newChatButton.addEventListener('click', async () => {
+                // Clear conversation history
+                await bot.clearHistory();
+                
+                // Clear messages
+                desktopMessages.innerHTML = '';
+                
+                // Create new session
+                await createNewSession();
+                
+                // Focus input
+                desktopInput.focus();
+            });
+        }
 
         // Auto-resize textarea
         desktopInput.addEventListener('input', () => {
