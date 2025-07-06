@@ -255,31 +255,6 @@
                 align-items: center;
                 gap: 8px;
             }
-            .chatbot-container .chatbot-new-chat {
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 8px;
-                color: var(--md-sys-color-on-primary);
-                padding: 6px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 32px;
-                height: 32px;
-            }
-            .chatbot-container .chatbot-new-chat:hover {
-                background: rgba(255, 255, 255, 0.2);
-                border-color: rgba(255, 255, 255, 0.3);
-                transform: translateY(-1px);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            }
-            .chatbot-container .chatbot-new-chat md-icon {
-                width: 18px;
-                height: 18px;
-            }
             .chatbot-container .chatbot-close:hover {
                 transform: rotate(90deg);
             }
@@ -470,9 +445,6 @@
                         <div class="session-info" id="sessionInfo" style="font-size: 0.7rem; opacity: 0.8; margin-top: 2px;"></div>
                     </div>
                     <div class="chatbot-controls">
-                        <button class="chatbot-new-chat" onclick="newChatbotSession()" title="New chat">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                        </button>
                         <div class="chatbot-close" onclick="closeChatbot()">×</div>
                     </div>
                 </div>
@@ -705,33 +677,7 @@
         }
     };
 
-    // Global function for new chat session
-    window.newChatbotSession = async function() {
-        try {
-            // Discard old session
-            bot.sessionId = null;
-            // Clear conversation history (optional, for backend cleanup)
-            await bot.clearHistory();
-            
-            // Clear messages
-            const chatMessages = document.getElementById('chatbotMessages');
-            if (chatMessages) {
-                chatMessages.innerHTML = '';
-                addMessageToChat("Yo! wassup?", 'bot');
-            }
-            
-            // Create new session
-            await bot.sendMessage("Hello");
-            
-            // Focus input
-            const messageInput = document.getElementById('chatbotInput');
-            if (messageInput) {
-                messageInput.focus();
-            }
-        } catch (error) {
-            console.error('Error creating new chatbot session:', error);
-        }
-    };
+
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
