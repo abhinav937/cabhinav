@@ -154,94 +154,6 @@
         setTimeout(createNewSession, 1000); // Small delay to ensure everything is loaded
     });
 
-    // Space Background Animation
-    function initSpaceBackground() {
-        const canvas = document.getElementById('background');
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Set up gradient background as a semicircle from the top
-        function drawBackground() {
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const gradient = ctx.createRadialGradient(
-                canvas.width / 2, 0, 0,
-                canvas.width / 2, 0, Math.max(canvas.width, canvas.height) / 1.5
-            );
-            gradient.addColorStop(0, 'rgba(100, 100, 100, 0.8)');
-            gradient.addColorStop(0.6, 'rgba(100, 100, 100, 0.2)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, 0, Math.max(canvas.width, canvas.height) / 1.5, 0, Math.PI, true);
-            ctx.fill();
-        }
-
-        // Create particles with mobile optimization
-        const particles = [];
-        const isMobile = window.innerWidth <= 768;
-        const particleCount = isMobile ? 50 : 100; // Fewer particles on mobile
-        const maxBrightSize = isMobile ? 3 : 5; // Smaller bright particles on mobile
-        const maxNormalSize = isMobile ? 1.5 : 2; // Smaller normal particles on mobile
-        
-        for (let i = 0; i < particleCount; i++) {
-            const isBright = Math.random() < 0.1;
-            const speed = Math.random() * 0.1 + 0.05;
-            const angle = Math.random() * Math.PI * 2;
-            particles.push({
-                x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
-                y: Math.floor(Math.random() * (canvas.height / 20)) * 20,
-                size: isBright ? maxBrightSize : maxNormalSize,
-                opacitySpeed: Math.random() * 0.001 + 0.0005,
-                phase: Math.random() * Math.PI * 2,
-                vx: speed * Math.cos(angle),
-                vy: speed * Math.sin(angle)
-            });
-        }
-
-        function animate() {
-            // Draw gradient background
-            drawBackground();
-
-            particles.forEach(p => {
-                // Update position
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // Wrap around canvas edges
-                if (p.x > canvas.width) p.x -= canvas.width;
-                if (p.x < 0) p.x += canvas.width;
-                if (p.y > canvas.height) p.y -= canvas.height;
-                if (p.y < 0) p.y += canvas.height;
-
-                const opacity = (Math.sin(Date.now() * p.opacitySpeed + p.phase) + 1) / 2;
-                const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
-                gradient.addColorStop(0, `rgba(255,255,255,${opacity})`);
-                gradient.addColorStop(1, 'transparent');
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.shadowBlur = isMobile ? 10 : 20; // Less blur on mobile
-                ctx.shadowColor = 'white';
-                ctx.fill();
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    }
-
     const MOBILE_BREAKPOINT = 768;
     let isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
     let currentTab = 'chat';
@@ -249,8 +161,6 @@
     let desktopChatInitialized = false;
 
     function initApp() {
-        // Initialize space background
-        initSpaceBackground();
         
         updateLayout();
         if (isMobile && !mobileChatInitialized) {

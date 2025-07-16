@@ -29,18 +29,6 @@
     --md-sys-color-on-error-container: #410002;
 }
 
-/* Space Background Canvas */
-canvas#background {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-}
-
 /* Base Styles */
 * {
     box-sizing: border-box;
@@ -53,19 +41,25 @@ html, body {
     width: 100%;
     overflow: hidden;
     font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: transparent;
-    color: #FFFFFF;
+    /* background: #181818 !important; */
+    /* color: #FFFFFF; */
     font-size: 16px;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Ensure chat containers are above the space background */
+.desktop-container, .mobile-container {
+    position: relative;
+    z-index: 1;
+}
+
 /* Desktop Layout */
 .desktop-container {
     display: none;
     height: 100vh;
-    background: transparent;
+    /* background: transparent; */
     position: relative;
     z-index: 10;
     padding: 20px;
@@ -79,7 +73,7 @@ html, body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: transparent;
+    /* background: transparent; */
     position: relative;
 }
 
@@ -167,7 +161,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    background: transparent;
+    /* background: transparent; */
     position: relative;
     z-index: 20;
     margin-bottom: 20px;
@@ -395,7 +389,7 @@ html, body {
     right: 0;
     bottom: 0;
     flex-direction: column;
-    background: transparent;
+    /* background: transparent; */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow: hidden;
     position: relative;
@@ -484,7 +478,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: transparent;
+    /* background: transparent; */
     position: relative;
     z-index: 20;
     
