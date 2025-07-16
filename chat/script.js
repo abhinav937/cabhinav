@@ -106,26 +106,36 @@
             // Send a simple message to create a new session
             const data = await bot.sendMessage("Hello");
             
-            // Clear the messages containers and add welcome message
-            const desktopMessages = document.getElementById('desktopMessages');
-            const mobileMessages = document.getElementById('mobileMessages');
-            
-            if (desktopMessages) {
-                desktopMessages.innerHTML = '';
-                // Create a simple welcome message element
-                const welcomeElement = document.createElement('div');
-                welcomeElement.classList.add('desktop-message', 'desktop-bot-message');
-                welcomeElement.textContent = "Yo! wassup?";
-                desktopMessages.appendChild(welcomeElement);
-            }
-            
-            if (mobileMessages) {
-                mobileMessages.innerHTML = '';
-                // Create a simple welcome message element
-                const welcomeElement = document.createElement('div');
-                welcomeElement.classList.add('mobile-message', 'mobile-bot-message');
-                welcomeElement.textContent = "Yo! wassup?";
-                mobileMessages.appendChild(welcomeElement);
+            // Only proceed if sessionId is set
+            if (bot.sessionId) {
+                // Remove 'Loading...' message
+                const sessionInfo = document.getElementById('sessionInfo');
+                const mobileSessionInfo = document.getElementById('mobileSessionInfo');
+                if (sessionInfo) {
+                    const loadingElement = document.getElementById('session-loading-message');
+                    if (loadingElement) loadingElement.remove();
+                }
+                if (mobileSessionInfo) {
+                    const loadingElement = document.getElementById('session-loading-message');
+                    if (loadingElement) loadingElement.remove();
+                }
+                // Remove 'Loading...' message from session info and show session ID
+                bot.updateSessionInfo();
+                // Add welcome message
+                const desktopMessages = document.getElementById('desktopMessages');
+                const mobileMessages = document.getElementById('mobileMessages');
+                if (desktopMessages) {
+                    const welcomeElement = document.createElement('div');
+                    welcomeElement.classList.add('desktop-message', 'desktop-bot-message');
+                    welcomeElement.textContent = "Yo! wassup?";
+                    desktopMessages.appendChild(welcomeElement);
+                }
+                if (mobileMessages) {
+                    const welcomeElement = document.createElement('div');
+                    welcomeElement.classList.add('mobile-message', 'mobile-bot-message');
+                    welcomeElement.textContent = "Yo! wassup?";
+                    mobileMessages.appendChild(welcomeElement);
+                }
             }
             
             return data;
@@ -136,6 +146,11 @@
 
     // Create session on page load
     document.addEventListener('DOMContentLoaded', () => {
+        // Set session info to 'Loading...' immediately
+        const sessionInfo = document.getElementById('sessionInfo');
+        const mobileSessionInfo = document.getElementById('mobileSessionInfo');
+        if (sessionInfo) sessionInfo.textContent = 'Session: Loading...';
+        if (mobileSessionInfo) mobileSessionInfo.textContent = 'Session: Loading...';
         setTimeout(createNewSession, 1000); // Small delay to ensure everything is loaded
     });
 
@@ -303,11 +318,6 @@
             text = text.replace(/\n/g, '<br>');
             console.log('Formatted text:', text);
             return text;
-        }
-        
-        // Add welcome message if empty
-        if (messagesContainer.children.length === 0) {
-            addMessage('Yo! wassup?', 'bot');
         }
         
         // Send button click handler
@@ -606,9 +616,9 @@
         });
 
         // Only add welcome message if chat is empty
-        if (!desktopMessages.hasChildNodes()) {
-            addMessageToChat("Yo! wassup?", 'bot');
-        }
+        // if (!desktopMessages.hasChildNodes()) {
+        //     addMessageToChat("Yo! wassup?", 'bot');
+        // }
 
         // Focus input on load
         setTimeout(() => {
