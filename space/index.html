@@ -24,68 +24,167 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // Set up gradient background as a semicircle from the top
-        function drawBackground() {
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Parameters for star layers - significantly increased counts
+        const STAR_LAYERS = [
+            { count: 1000, speed: 0.03, size: [0.3, 0.8], color: 'white' }, // Increased from 360 to 1000
+            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'rgba(180,200,255,0.7)' }, // Increased from 180 to 500
+            { count: 200, speed: 0.005, size: [1.3, 2], color: 'rgba(255,220,200,0.6)' } // Increased from 80 to 200
+        ];
 
-            const gradient = ctx.createRadialGradient(
-                canvas.width / 2, 0, 0,
-                canvas.width / 2, 0, Math.max(canvas.width, canvas.height) / 1.5
-            );
-            gradient.addColorStop(0, 'rgba(100, 100, 100, 0.8)');
-            gradient.addColorStop(0.6, 'rgba(100, 100, 100, 0.2)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, 0, Math.max(canvas.width, canvas.height) / 1.5, 0, Math.PI, true);
-            ctx.fill();
+        // Helper to get random between min and max
+        function rand(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
-        // Create particles
-        const particles = [];
-        for (let i = 0; i < 100; i++) {
-            const isBright = Math.random() < 0.1;
-            const speed = Math.random() * 0.1 + 0.05;
-            const angle = Math.random() * Math.PI * 2;
-            particles.push({
-                x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
-                y: Math.floor(Math.random() * (canvas.height / 20)) * 20,
-                size: isBright ? 5 : 2,
-                opacitySpeed: Math.random() * 0.001 + 0.0005,
-                phase: Math.random() * Math.PI * 2,
-                vx: speed * Math.cos(angle),
-                vy: speed * Math.sin(angle)
+        // Generate stars for each layer
+        let stars = [];
+        function createStars() {
+            stars = [];
+            STAR_LAYERS.forEach((layer, i) => {
+                for (let j = 0; j < layer.count; j++) {
+                    // Each star gets a random radius and initial angle for orbit
+                    const angle = rand(0, Math.PI * 2);
+                    const radius = rand(
+                        0, // Start from center to ensure coverage near edges
+                        Math.max(canvas.width, canvas.height) * 1.5 // Extended range for full coverage
+                    );
+                    stars.push({
+                        baseSize: rand(layer.size[0], layer.size[1]),
+                        color: layer.color,
+                        twinkleSpeed: rand(0.001, 0.003),
+                        twinklePhase: rand(0, Math.PI * 2),
+                        layer: i,
+                        angle: angle,
+                        radius: radius
+                    });
+                }
+            });
+        }
+        createStars();
+
+        // Nebula/galaxy effect
+        function drawNebula() {
+            // Remove nebula effect for pure black background
+        }
+
+        function drawBackground() {
+            // Use #161618 as the background color
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#161618';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // No nebula
+        }
+
+        // Center of rotation far from the bottom right corner (unchanged)
+        function drawStars(globalAngle) {
+            const now = Date.now();
+            const cx = canvas.width * 1.5;
+            const cy = canvas.height * 1.5;
+            stars.forEach(star => {
+                // All stars rotate together
+                const angle = star.angle + globalAngle;
+                const x = cx + Math.cos(angle) * star.radius;
+                const y = cy + Math.sin(angle) * star.radius;
+
+                // Twinkle effect
+                const twinkle = 0.7 + 0.3 * Math.sin(now * star.twinkleSpeed + star.twinklePhase);
+                const size = star.baseSize * twinkle;
+
+                // Soft glow for larger stars
+                if (star.baseSize > 1.5) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.3 * twinkle;
+                    ctx.shadowBlur = 16;
+                    ctx.shadowColor = star.color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size * 1.7, 0, Math.PI * 2);
+                    ctx.fillStyle = star.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // Main star
+                ctx.save();
+                ctx.globalAlpha = 0.85 * twinkle;
+                ctx.shadowBlur = star.baseSize > 2 ? 8 : 2;
+                ctx.shadowColor = star.color;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        let globalAngle = 0;
+        // --- Shooting Stars (Comets) ---
+        const SHOOTING_STAR_FREQ = 0.002;
+        const SHOOTING_STAR_LIFETIME = 1200;
+        let shootingStars = [];
+
+        function spawnShootingStar() {
+            const margin = 40;
+            const x = rand(margin, canvas.width - margin);
+            const y = margin;
+            // Angle: always from right to left, 15° to 45° from the horizontal
+            const angleBase = rand(Math.PI / 12, Math.PI / 4); // 15° to 45°
+            const angle = Math.PI - angleBase; // always leftward
+            const dx = Math.cos(angle);
+            const dy = Math.sin(angle);
+            shootingStars.push({
+                x, y, dx, dy, start: Date.now(),
+                len: rand(320, 480),
+                size: rand(1.1, 1.7),
+                color: 'rgba(255,255,255,0.98)'
+            });
+        }
+
+        function drawShootingStars() {
+            const now = Date.now();
+            shootingStars = shootingStars.filter(star => now - star.start < SHOOTING_STAR_LIFETIME);
+            shootingStars.forEach(star => {
+                const age = now - star.start;
+                const fade = 1 - age / SHOOTING_STAR_LIFETIME;
+                star.x += star.dx * star.len / SHOOTING_STAR_LIFETIME * 16;
+                star.y += star.dy * star.len / SHOOTING_STAR_LIFETIME * 16;
+                let tailLen = star.len * fade;
+                const tailX = star.x - star.dx * tailLen;
+                const tailY = star.y - star.dy * tailLen;
+                const grad = ctx.createLinearGradient(star.x, star.y, tailX, tailY);
+                grad.addColorStop(0, `rgba(255,255,255,${0.8 * fade})`);
+                grad.addColorStop(0.2, `rgba(255,255,255,${0.25 * fade})`);
+                grad.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.save();
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(star.x, star.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.lineWidth = star.size * (0.8 + 0.7 * fade);
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = 'white';
+                ctx.stroke();
+                ctx.restore();
+                ctx.save();
+                ctx.globalAlpha = 0.85 * fade;
+                ctx.shadowBlur = 18;
+                ctx.shadowColor = 'white';
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size * 1.3, 0, Math.PI * 2);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                ctx.restore();
             });
         }
 
         function animate() {
-            // Draw gradient background
             drawBackground();
-
-            particles.forEach(p => {
-                // Update position
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // Wrap around canvas edges
-                if (p.x > canvas.width) p.x -= canvas.width;
-                if (p.x < 0) p.x += canvas.width;
-                if (p.y > canvas.height) p.y -= canvas.height;
-                if (p.y < 0) p.y += canvas.height;
-
-                const opacity = (Math.sin(Date.now() * p.opacitySpeed + p.phase) + 1) / 2;
-                const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
-                gradient.addColorStop(0, `rgba(255,255,255,${opacity})`);
-                gradient.addColorStop(1, 'transparent');
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = 'white';
-                ctx.fill();
-            });
-
+            drawStars(globalAngle);
+            drawShootingStars();
+            globalAngle += 0.00024;
+            if (Math.random() < SHOOTING_STAR_FREQ) {
+                spawnShootingStar();
+            }
             requestAnimationFrame(animate);
         }
 
@@ -94,6 +193,7 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            createStars();
         });
     </script>
 </body>
