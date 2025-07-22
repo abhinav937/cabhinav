@@ -670,6 +670,63 @@ html, body {
     font-size: 24px;
 }
 
+/* Options Bar Styles */
+.desktop-message-options, .mobile-message-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.desktop-message-options:hover, .mobile-message-options:hover {
+    opacity: 1;
+}
+
+.options-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    backdrop-filter: blur(10px);
+}
+
+.options-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.options-btn:active {
+    transform: translateY(0);
+}
+
+.options-btn.active {
+    background: rgba(103, 80, 164, 0.6);
+    border-color: rgba(103, 80, 164, 0.8);
+    color: #FFFFFF;
+}
+
+.options-btn.copied {
+    background: rgba(76, 175, 80, 0.6);
+    border-color: rgba(76, 175, 80, 0.8);
+    color: #FFFFFF;
+}
+
+.options-btn svg {
+    display: block;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .mobile-container {
@@ -677,6 +734,21 @@ html, body {
     }
     .desktop-container {
         display: none;
+    }
+    .mobile-message-options {
+        gap: 6px;
+        margin-top: 6px;
+    }
+    
+    .mobile-message-options .options-btn {
+        min-width: 24px;
+        height: 24px;
+        padding: 4px;
+    }
+    
+    .mobile-message-options .options-btn svg {
+        width: 14px;
+        height: 14px;
     }
 }
 
