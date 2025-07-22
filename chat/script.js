@@ -98,6 +98,92 @@
     // Initialize ChatBot instance
     const bot = new ChatBot('https://ai-reply-bot.vercel.app');
 
+    // Google Sheets logging
+    const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx4YMBhm3rlBwpACEE1JRmAQT3O2WhYI3W4cMO-2f8yF1tJ9ML21B-jSiPfdcbKrgrgfw/exec';
+
+    function logChatToSheet({ sessionId, sender, message, feedback }) {
+      fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          sessionId,
+          sender,
+          message,
+          feedback: feedback || ''
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      }).catch(err => console.log('Logging error:', err));
+    }
+
+    function createOptionsBar({ messageText, sessionId, container, isMobile }) {
+      const bar = document.createElement('div');
+      bar.className = isMobile ? 'mobile-message-options' : 'desktop-message-options';
+      
+      // Copy button
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'options-btn copy-btn';
+      copyBtn.title = 'Copy';
+      copyBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(messageText).then(() => {
+          copyBtn.classList.add('copied');
+          setTimeout(() => copyBtn.classList.remove('copied'), 1000);
+        }).catch(() => {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = messageText;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          copyBtn.classList.add('copied');
+          setTimeout(() => copyBtn.classList.remove('copied'), 1000);
+        });
+      };
+      
+      // Like button
+      const likeBtn = document.createElement('button');
+      likeBtn.className = 'options-btn like-btn';
+      likeBtn.title = 'Like';
+      likeBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>`;
+      
+      // Dislike button
+      const dislikeBtn = document.createElement('button');
+      dislikeBtn.className = 'options-btn dislike-btn';
+      dislikeBtn.title = 'Dislike';
+      dislikeBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>`;
+      
+      // Feedback logic
+      let feedbackState = null;
+      likeBtn.onclick = () => {
+        if (feedbackState === 'like') {
+          feedbackState = null;
+          likeBtn.classList.remove('active');
+        } else {
+          feedbackState = 'like';
+          likeBtn.classList.add('active');
+          dislikeBtn.classList.remove('active');
+          logChatToSheet({ sessionId, sender: 'feedback', message: messageText, feedback: 'like' });
+        }
+      };
+      
+      dislikeBtn.onclick = () => {
+        if (feedbackState === 'dislike') {
+          feedbackState = null;
+          dislikeBtn.classList.remove('active');
+        } else {
+          feedbackState = 'dislike';
+          dislikeBtn.classList.add('active');
+          likeBtn.classList.remove('active');
+          logChatToSheet({ sessionId, sender: 'feedback', message: messageText, feedback: 'dislike' });
+        }
+      };
+      
+      bar.appendChild(copyBtn);
+      bar.appendChild(likeBtn);
+      bar.appendChild(dislikeBtn);
+      container.appendChild(bar);
+    }
+
     // Function to create a new session
     async function createNewSession() {
         try {
@@ -293,9 +379,13 @@
             } else if (type === 'bot') {
                 // Apply formatting to bot messages
                 messageDiv.innerHTML = formatText(text);
+                logChatToSheet({ sessionId: bot.sessionId, sender: 'bot', message: text });
+                // Add options bar
+                createOptionsBar({ messageText: text, sessionId: bot.sessionId, container: messageDiv, isMobile: true });
             } else {
                 // User messages - no formatting for security
                 messageDiv.textContent = text;
+                logChatToSheet({ sessionId: bot.sessionId, sender: 'user', message: text });
             }
             
             messagesContainer.appendChild(messageDiv);
@@ -398,8 +488,12 @@
                 
                 if (sender === 'bot') {
                     messageElement.innerHTML = formatMessageText(text);
+                    logChatToSheet({ sessionId: bot.sessionId, sender: 'bot', message: text });
+                    // Add options bar
+                    createOptionsBar({ messageText: text, sessionId: bot.sessionId, container: messageElement, isMobile: false });
                 } else {
                     messageElement.textContent = text;
+                    logChatToSheet({ sessionId: bot.sessionId, sender: 'user', message: text });
                 }
             }
             
