@@ -295,6 +295,8 @@
             } else if (type === 'bot') {
                 contentDiv.innerHTML = formatText(text);
                 setTimeout(() => attachCopyListeners(contentDiv), 0);
+            } else if (type === 'user') {
+                contentDiv.innerHTML = text.replace(/\n/g, '<br>');
             } else {
                 contentDiv.textContent = text;
             }
@@ -464,6 +466,8 @@
                 if (sender === 'bot') {
                     contentDiv.innerHTML = formatMessageText(text);
                     setTimeout(() => attachCopyListeners(contentDiv), 0);
+                } else if (sender === 'user') {
+                    contentDiv.innerHTML = text.replace(/\n/g, '<br>');
                 } else {
                     contentDiv.textContent = text;
                 }
@@ -543,6 +547,7 @@
             if (!prompt || isLoading) return;
             addMessageToChat(prompt, 'user');
             desktopInput.value = '';
+            desktopInput.style.height = 'auto'; // Reset textarea height
             showLoadingIndicator();
             lastDesktopSentTimestamp = Date.now();
             (async () => {

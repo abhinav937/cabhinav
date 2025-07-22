@@ -30,8 +30,8 @@
         // Star layers
         const STAR_LAYERS = [
             { count: 1000, speed: 0.03, size: [0.3, 0.8], color: 'white' },
-            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'rgba(180,200,255,0.7)' },
-            { count: 200, speed: 0.005, size: [1.3, 2], color: 'rgba(255,220,200,0.6)' }
+            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'white' },
+            { count: 200, speed: 0.005, size: [1.3, 2], color: 'white' }
         ];
         let stars = [];
         function createStars() {
@@ -56,7 +56,7 @@
 
         function drawBackground() {
             ctx.globalAlpha = 1;
-            ctx.fillStyle = '#161618';
+            ctx.fillStyle = '#0B0B0C'; // pitch black
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
@@ -81,9 +81,11 @@
                     ctx.fill();
                     ctx.restore();
                 }
+                const fadeAlpha = 0.85 * twinkle;
+                const fadeBlur = (star.baseSize > 2 ? 8 : 2) * fadeAlpha; // scale blur with alpha
                 ctx.save();
-                ctx.globalAlpha = 0.85 * twinkle;
-                ctx.shadowBlur = star.baseSize > 2 ? 8 : 2;
+                ctx.globalAlpha = fadeAlpha;
+                ctx.shadowBlur = fadeBlur;
                 ctx.shadowColor = star.color;
                 ctx.beginPath();
                 ctx.arc(x, y, size, 0, Math.PI * 2);
