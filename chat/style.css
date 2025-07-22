@@ -195,13 +195,13 @@ html, body {
 
 .desktop-input-area {
     padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(24px);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(103, 80, 164, 0.18), 0 1.5px 8px 0 rgba(0,0,0,0.10);
+    z-index: 1002;
     position: relative;
-    z-index: 30;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.2s;
 }
 
 .desktop-input-container {
@@ -658,19 +658,21 @@ html, body {
 
 .mobile-input-area {
     display: flex;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    gap: 12px;
+    flex-direction: row;
     align-items: center;
-    flex-shrink: 0;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(18px);
+    border-radius: 16px;
+    box-shadow: 0 4px 18px 0 rgba(103, 80, 164, 0.16), 0 1.5px 8px 0 rgba(0,0,0,0.10);
+    z-index: 1002;
     position: relative;
-    z-index: 30;
+    transition: box-shadow 0.2s;
+    padding: 12px 10px;
 }
-
 .mobile-input-area input {
-    flex: 1;
+    flex: 1 1 0%;
+    min-width: 0;
     padding: 12px 16px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
@@ -681,23 +683,13 @@ html, body {
     color: #FFFFFF;
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 48px;
+    min-height: 44px;
+    margin-right: 0;
 }
-
-.mobile-input-area input:focus {
-    border-color: rgba(103, 80, 164, 0.8);
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.2);
-}
-
-.mobile-input-area input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
 .mobile-input-area button {
-    width: 48px;
-    height: 48px;
-    border-radius: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
     background: rgba(103, 80, 164, 0.8);
     backdrop-filter: blur(10px);
     color: #FFFFFF;
@@ -709,6 +701,33 @@ html, body {
     flex-shrink: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 16px rgba(103, 80, 164, 0.3);
+    margin-left: 0;
+}
+@media (max-width: 480px) {
+    .mobile-input-area {
+        gap: 6px;
+        padding: 8px 4px;
+    }
+    .mobile-input-area input {
+        font-size: 15px;
+        padding: 10px 10px;
+        min-height: 38px;
+    }
+    .mobile-input-area button {
+        width: 38px;
+        height: 38px;
+        border-radius: 19px;
+    }
+}
+
+.mobile-input-area input:focus {
+    border-color: rgba(103, 80, 164, 0.8);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 4px rgba(103, 80, 164, 0.2);
+}
+
+.mobile-input-area input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .mobile-input-area button:hover {
@@ -873,4 +892,107 @@ html, body {
     margin-left: 10px;
     align-self: center;
     font-family: 'Roboto Mono', monospace;
+} 
+
+/* --- Compact Modern Header Styles --- */
+.compact-header {
+    padding: 8px 16px !important;
+    min-height: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
+    background: rgba(103, 80, 164, 0.22) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0 !important;
+    justify-content: space-between !important;
+}
+.desktop-chat-title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.desktop-title-icon, .mobile-title-icon {
+    font-size: 1.6em;
+    color: #fff;
+    background: #6C47C7;
+    border-radius: 50%;
+    padding: 4px;
+    margin-right: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff2;
+    box-shadow: none;
+}
+.desktop-title-text, .mobile-title-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-right: 8px;
+}
+.session-info, .mobile-session-info {
+    display: inline-block;
+    font-size: 0.72em;
+    background: rgba(255,255,255,0.10);
+    border-radius: 4px;
+    padding: 1.5px 7px;
+    border: 1px solid rgba(255,255,255,0.16);
+    color: #e0e0e0;
+    font-family: 'Roboto Mono', monospace;
+    opacity: 0.85;
+    min-width: 120px;
+    max-width: 220px;
+    text-align: center;
+    transition: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 8px 0 0;
+    letter-spacing: 0.02em;
+}
+.new-chat-button.compact, .mobile-new-chat-button.compact {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0;
+    box-shadow: none;
+    flex-shrink: 0;
+}
+.new-chat-button.compact .material-symbols-outlined,
+.mobile-new-chat-button.compact .material-symbols-outlined {
+    font-size: 1.3em;
+    margin: 0;
+}
+@media (max-width: 768px) {
+    .compact-header {
+        padding: 6px 8px !important;
+        border-radius: 8px !important;
+        gap: 0 !important;
+    }
+    .mobile-title-icon {
+        font-size: 1.3em;
+        padding: 2px;
+    }
+    .mobile-title-text {
+        font-size: 1em;
+        margin-right: 4px;
+    }
+    .mobile-session-info {
+        font-size: 0.65em;
+        min-width: 80px;
+        max-width: 120px;
+        padding: 1px 5px;
+    }
 } 
