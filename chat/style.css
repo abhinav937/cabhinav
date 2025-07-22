@@ -381,6 +381,64 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Code block wrapper and copy button styles */
+.code-block-wrapper {
+    position: relative;
+    margin: 16px 0;
+    background: rgba(30, 30, 40, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(103, 80, 164, 0.08);
+    overflow: auto;
+    padding-top: 32px;
+}
+.code-block-wrapper pre {
+    margin: 0;
+    padding: 16px 16px 16px 16px;
+    background: none;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    font-size: 15px;
+    color: #fff;
+    font-family: 'Roboto Mono', monospace;
+    overflow-x: auto;
+}
+.code-block-wrapper .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: rgba(103, 80, 164, 0.15);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: #EADDFF;
+    z-index: 2;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(103, 80, 164, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.code-block-wrapper .copy-btn svg {
+    display: block;
+    pointer-events: none;
+}
+.code-block-wrapper .copy-btn:hover {
+    background: rgba(103, 80, 164, 0.35);
+    color: #fff;
+}
+.code-block-wrapper .copy-btn.copied {
+    background: #6750A4;
+    color: #fff;
+    box-shadow: 0 0 0 2px #EADDFF;
+    animation: copiedFade 1.2s;
+}
+@keyframes copiedFade {
+    0% { box-shadow: 0 0 0 2px #EADDFF; }
+    80% { box-shadow: 0 0 0 2px #EADDFF; }
+    100% { box-shadow: 0 2px 8px rgba(103, 80, 164, 0.08); }
+}
+
 /* Mobile Layout */
 .mobile-container {
     display: none;
@@ -731,4 +789,79 @@ html, body {
     .mobile-container {
         height: 100vh;
     }
+} 
+
+.message-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 0 4px 0 4px;
+    opacity: 0.85;
+    font-size: 0;
+}
+.desktop-bot-message .message-actions,
+.mobile-bot-message .message-actions {
+    justify-content: flex-start;
+}
+.desktop-user-message .message-actions,
+.mobile-user-message .message-actions {
+    justify-content: flex-end;
+}
+/* Remove any opacity/hover rules for always visible copy button */
+.copy-btn.message-copy-btn {
+    position: static;
+    margin: 0;
+    background: rgba(103, 80, 164, 0.10);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: #EADDFF;
+    z-index: 1;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    font-size: 0;
+}
+@media (min-width: 769px) {
+  .desktop-message .copy-btn.message-copy-btn {
+    opacity: 1;
+  }
+  .desktop-message:hover .copy-btn.message-copy-btn,
+  .desktop-message:focus-within .copy-btn.message-copy-btn {
+    opacity: 1;
+  }
+}
+.copy-btn.message-copy-btn:hover {
+    background: rgba(103, 80, 164, 0.18);
+    color: #fff;
+    box-shadow: none;
+}
+.copy-btn.message-copy-btn:active {
+    background: rgba(103, 80, 164, 0.28);
+    color: #fff;
+    box-shadow: none;
+}
+.copy-btn.message-copy-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.copy-btn.message-copy-btn.copied {
+    background: #6750A4;
+    color: #fff;
+    box-shadow: 0 0 0 2px #EADDFF;
+    animation: copiedFade 1.2s;
+}
+.message-content {
+    font-size: 16px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.desktop-message, .mobile-message {
+    padding-top: 16px;
+    padding-bottom: 8px;
 } 

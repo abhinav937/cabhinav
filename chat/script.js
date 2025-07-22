@@ -213,10 +213,10 @@
         
         // Function to parse and format text
         function formatText(text) {
-            console.log('Formatting text:', text);
             // Triple backtick code blocks (with optional language)
             text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
-                return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+                // Add a wrapper for code block with a copy button
+                return '<div class="code-block-wrapper"><button class="copy-btn" title="Copy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre></div>';
             });
             // Inline code
             text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
@@ -226,7 +226,6 @@
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
             // Line breaks
             text = text.replace(/\n/g, '<br>');
-            console.log('Formatted text:', text);
             return text;
         }
         
@@ -280,24 +279,54 @@
         function addMessage(text, type) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `mobile-message mobile-${type}-message`;
-            
+            // Message content
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
             if (type === 'loading') {
                 const emoji = document.createElement('span');
                 emoji.className = 'mobile-loading-emoji';
                 emoji.textContent = '😵‍💫';
-                messageDiv.appendChild(emoji);
-                messageDiv.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
+                contentDiv.appendChild(emoji);
+                contentDiv.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
             } else if (type === 'error') {
                 messageDiv.className = 'mobile-message mobile-error-message';
-                messageDiv.textContent = text;
+                contentDiv.textContent = text;
             } else if (type === 'bot') {
-                // Apply formatting to bot messages
-                messageDiv.innerHTML = formatText(text);
+                contentDiv.innerHTML = formatText(text);
+                setTimeout(() => attachCopyListeners(contentDiv), 0);
             } else {
-                // User messages - no formatting for security
-                messageDiv.textContent = text;
+                contentDiv.textContent = text;
             }
-            
+            messageDiv.appendChild(contentDiv);
+            // Action bar
+            if (type !== 'loading' && type !== 'error') {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                // Copy button only for bot messages
+                if (type === 'bot') {
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn message-copy-btn';
+                    copyBtn.title = 'Copy';
+                    copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                    copyBtn.onclick = function(e) {
+                        e.preventDefault();
+                        let copyText = text;
+                        navigator.clipboard.writeText(copyText).then(() => {
+                            copyBtn.classList.add('copied');
+                            copyBtn.title = 'Copied!';
+                            copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                            setTimeout(() => {
+                                copyBtn.classList.remove('copied');
+                                copyBtn.title = 'Copy';
+                                copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                            }, 1200);
+                        });
+                    };
+                    actionsDiv.appendChild(copyBtn);
+                }
+                // Add more actions here later
+                messageDiv.appendChild(actionsDiv);
+            }
             messagesContainer.appendChild(messageDiv);
             scrollToBottom();
         }
@@ -350,6 +379,29 @@
                 addMessage('Network error. Please check your connection.', 'error');
             }
         }
+
+        // Attach copy listeners for code blocks (mobile)
+        function attachCopyListeners(container) {
+            const copyBtns = container.querySelectorAll('.copy-btn');
+            copyBtns.forEach(btn => {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    const code = btn.parentElement.querySelector('code');
+                    if (code) {
+                        navigator.clipboard.writeText(code.innerText).then(() => {
+                            btn.classList.add('copied');
+                            btn.title = 'Copied!';
+                            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                            setTimeout(() => {
+                                btn.classList.remove('copied');
+                                btn.title = 'Copy';
+                                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                            }, 1200);
+                        });
+                    }
+                };
+            });
+        }
     }
 
     function initDesktopChat() {
@@ -361,10 +413,9 @@
 
         // Function to parse and format text
         function formatMessageText(text) {
-            console.log('Desktop formatting text:', text);
             // Triple backtick code blocks (with optional language)
             text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
-                return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+                return '<div class="code-block-wrapper"><button class="copy-btn" title="Copy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre></div>';
             });
             // Inline code
             text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
@@ -374,35 +425,65 @@
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
             // Line breaks
             text = text.replace(/\n/g, '<br>');
-            console.log('Desktop formatted text:', text);
             return text;
         }
 
         function addMessageToChat(text, sender, isError = false, isLoadingMsg = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('desktop-message');
-            
+            // Message content
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
             if (isError) {
                 messageElement.classList.add('desktop-error-message');
-                messageElement.textContent = text;
+                contentDiv.textContent = text;
             } else if (isLoadingMsg) {
                 messageElement.classList.add('desktop-loading-message');
                 messageElement.setAttribute('id', 'desktop-loading-indicator');
                 const emoji = document.createElement('span');
                 emoji.classList.add('desktop-spinning-emoji');
                 emoji.textContent = '😵‍💫';
-                messageElement.appendChild(emoji);
-                messageElement.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
+                contentDiv.appendChild(emoji);
+                contentDiv.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
             } else {
                 messageElement.classList.add(sender === 'user' ? 'desktop-user-message' : 'desktop-bot-message');
-                
                 if (sender === 'bot') {
-                    messageElement.innerHTML = formatMessageText(text);
+                    contentDiv.innerHTML = formatMessageText(text);
+                    setTimeout(() => attachCopyListeners(contentDiv), 0);
                 } else {
-                    messageElement.textContent = text;
+                    contentDiv.textContent = text;
                 }
             }
-            
+            messageElement.appendChild(contentDiv);
+            // Action bar
+            if (!isError && !isLoadingMsg) {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                // Copy button only for bot messages
+                if (sender === 'bot') {
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn message-copy-btn';
+                    copyBtn.title = 'Copy';
+                    copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                    copyBtn.onclick = function(e) {
+                        e.preventDefault();
+                        let copyText = text;
+                        navigator.clipboard.writeText(copyText).then(() => {
+                            copyBtn.classList.add('copied');
+                            copyBtn.title = 'Copied!';
+                            copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                            setTimeout(() => {
+                                copyBtn.classList.remove('copied');
+                                copyBtn.title = 'Copy';
+                                copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                            }, 1200);
+                        });
+                    };
+                    actionsDiv.appendChild(copyBtn);
+                }
+                // Add more actions here later
+                messageElement.appendChild(actionsDiv);
+            }
             desktopMessages.appendChild(messageElement);
             scrollToBottom(desktopMessages);
         }
