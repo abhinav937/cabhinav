@@ -994,10 +994,7 @@ html, body {
         margin-right: 4px;
     }
     .mobile-session-info {
-        font-size: 0.65em;
-        min-width: 80px;
-        max-width: 120px;
-        padding: 1px 5px;
+        display: none !important;
     }
 } 
 
