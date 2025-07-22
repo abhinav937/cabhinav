@@ -303,13 +303,14 @@ html, body {
 }
 
 .desktop-bot-message {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
+    background: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     color: #FFFFFF;
     align-self: flex-start;
-    border-bottom-left-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    padding: 0 0 8px 0 !important;
 }
 
 .desktop-error-message {
@@ -324,19 +325,19 @@ html, body {
 }
 
 .desktop-loading-message {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
+    background: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     color: #FFFFFF;
     align-self: flex-start;
     display: flex;
     align-items: center;
     gap: 12px;
     font-style: italic;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 16px 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    animation: loadingPulse 2s ease-in-out infinite;
+    padding: 0 0 8px 0 !important;
+    animation: none !important;
 }
 
 @keyframes loadingPulse {
@@ -533,13 +534,14 @@ html, body {
 }
 
 .mobile-bot-message {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
+    background: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     color: #FFFFFF;
     align-self: flex-start;
-    border-bottom-left-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    padding: 0 0 8px 0 !important;
 }
 
 .mobile-error-message {
@@ -554,18 +556,19 @@ html, body {
 }
 
 .mobile-loading-message {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
+    background: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     color: #FFFFFF;
     align-self: flex-start;
     display: flex;
     align-items: center;
     gap: 8px;
     font-style: italic;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    animation: loadingPulse 2s ease-in-out infinite;
+    padding: 0 0 8px 0 !important;
+    animation: none !important;
 }
 
 .mobile-loading-emoji {
