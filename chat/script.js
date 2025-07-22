@@ -261,22 +261,23 @@
         // Focus input on load
         setTimeout(() => input.focus(), 100);
         
+        // In mobile: handleSend and sendToAPI
+        let lastSentTimestamp = null;
         function handleSend() {
             const message = input.value.trim();
             if (!message || isLoading) return;
-            
             // Add user message
             addMessage(message, 'user');
             input.value = '';
-            
             // Show loading
             showLoading();
-            
+            // Mark send time
+            lastSentTimestamp = Date.now();
             // Send to API
             sendToAPI(message);
         }
         
-        function addMessage(text, type) {
+        function addMessage(text, type, responseTime = null) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `mobile-message mobile-${type}-message`;
             // Message content
@@ -323,6 +324,13 @@
                         });
                     };
                     actionsDiv.appendChild(copyBtn);
+                    // Response time
+                    if (responseTime) {
+                        const timeSpan = document.createElement('span');
+                        timeSpan.className = 'response-time';
+                        timeSpan.textContent = responseTime;
+                        actionsDiv.appendChild(timeSpan);
+                    }
                 }
                 // Add more actions here later
                 messageDiv.appendChild(actionsDiv);
@@ -365,8 +373,14 @@
                 hideLoading();
                 
                 if (data.reply) {
+                    // Calculate response time
+                    let responseTime = null;
+                    if (lastSentTimestamp) {
+                        responseTime = ((Date.now() - lastSentTimestamp) / 1000).toFixed(2) + 's';
+                        lastSentTimestamp = null;
+                    }
                     console.log('Raw AI response:', data.reply);
-                    addMessage(data.reply, 'bot');
+                    addMessage(data.reply, 'bot', responseTime);
                 } else if (data.error) {
                     addMessage('Something went wrong. Please try again.', 'error');
                 } else {
@@ -428,7 +442,7 @@
             return text;
         }
 
-        function addMessageToChat(text, sender, isError = false, isLoadingMsg = false) {
+        function addMessageToChat(text, sender, isError = false, isLoadingMsg = false, responseTime = null) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('desktop-message');
             // Message content
@@ -480,6 +494,13 @@
                         });
                     };
                     actionsDiv.appendChild(copyBtn);
+                    // Response time
+                    if (responseTime) {
+                        const timeSpan = document.createElement('span');
+                        timeSpan.className = 'response-time';
+                        timeSpan.textContent = responseTime;
+                        actionsDiv.appendChild(timeSpan);
+                    }
                 }
                 // Add more actions here later
                 messageElement.appendChild(actionsDiv);
@@ -515,35 +536,39 @@
             scrollToBottom(desktopMessages);
         }
 
+        // Desktop: track response time
+        let lastDesktopSentTimestamp = null;
         async function sendMessage() {
             const prompt = desktopInput.value.trim();
             if (!prompt || isLoading) return;
-
             addMessageToChat(prompt, 'user');
             desktopInput.value = '';
             showLoadingIndicator();
-
-            try {
-                const data = await bot.sendMessage(prompt);
-                
-                hideLoadingIndicator();
-
-                if (data.reply) {
-                    console.log('Desktop Raw AI response:', data.reply);
-                    addMessageToChat(data.reply, 'bot');
-                } else if (data.error) {
-                    // Show simple error message based on error type
-                    const simpleError = getSimpleErrorMessage(data.error);
+            lastDesktopSentTimestamp = Date.now();
+            (async () => {
+                try {
+                    const data = await bot.sendMessage(prompt);
+                    hideLoadingIndicator();
+                    let responseTime = null;
+                    if (lastDesktopSentTimestamp) {
+                        responseTime = ((Date.now() - lastDesktopSentTimestamp) / 1000).toFixed(2) + 's';
+                        lastDesktopSentTimestamp = null;
+                    }
+                    if (data.reply) {
+                        addMessageToChat(data.reply, 'bot', false, false, responseTime);
+                    } else if (data.error) {
+                        const simpleError = getSimpleErrorMessage(data.error);
+                        addMessageToChat(simpleError, 'system', true);
+                    } else {
+                        addMessageToChat('No response received', 'system', true);
+                    }
+                } catch (error) {
+                    hideLoadingIndicator();
+                    console.error('Error sending message:', error);
+                    const simpleError = getSimpleErrorMessage(error.message);
                     addMessageToChat(simpleError, 'system', true);
-                } else {
-                    addMessageToChat('No response received', 'system', true);
                 }
-            } catch (error) {
-                hideLoadingIndicator();
-                console.error('Error sending message:', error);
-                const simpleError = getSimpleErrorMessage(error.message);
-                addMessageToChat(simpleError, 'system', true);
-            }
+            })();
         }
 
         // Function to convert complex errors to simple messages
