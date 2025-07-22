@@ -722,100 +722,18 @@
         <script src="./assets/js/resumeViewer.js"></script>
 
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
-        <div class="work-history">
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/annapurna_labs_logo.webp" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">Intern</p>
-              <p class="company-location">Amazon • Austin, TX</p>
-              <p class="date-duration" data-start="Jun 2025" data-end="Aug 2025">
-                June 2025 - Present • <span class="duration" style="display: inline;"></span>
-              </p>
-            </div>
-          </div>
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/wempec logo.png" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">Graduate Researcher</p>
-              <p class="company-location">WEMPEC • Wisconsin, USA </p>
-              <p class="date-duration" data-start="Aug 2024" data-end="Present">
-                Aug 2024 - May 2025 • <span class="duration" style="display: inline;"></span>
-              </p>
-            </div>
-          </div>
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/uw_mad_ece_logo.png" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">TA</p>
-              <p class="company-location">UW ECE</p>
-              <p class="date-duration" data-start="Jan 2025" data-end="Present">
-                Jan 2025 - May 2025 • <span class="duration" style="display: inline;"></span>
-              </p>
-            </div>
-          </div>
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/wisc_union_logo.svg" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">Kiosks</p>
-              <p class="company-location">Union South</p>
-              <p class="date-duration" data-start="Aug 2024" data-end="Dec 2024">
-                Aug 2024 - Dec 2024 • <span class="duration" style="display: inline;"></span>
-              </p>
-            </div>
-          </div>
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/peg_logo.jpg" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">Undergraduate Researcher</p>
-              <p class="company-location">PEG • Dharwad, IN</p>
-              <p class="date-duration" data-start="Dec 2022" data-end="Apr 2024">
-                Dec 2022 - Apr 2024 • <span class="duration" style="display: inline;"></span>
-              </p>
-            </div>
-          </div>
+        <div class="icon-row">
+          <img src="./assets/icons/annapurna_labs_logo.webp" alt="Annapurna Labs" loading="lazy">
+          <img src="./assets/icons/wempec logo.png" alt="WEMPEC" loading="lazy">
+          <img src="./assets/icons/uw_mad_ece_logo.png" alt="UW ECE" loading="lazy">
+          <img src="./assets/icons/wisc_union_logo.svg" alt="Union South" loading="lazy">
+          <img src="./assets/icons/peg_logo.jpg" alt="PEG" loading="lazy">
         </div>
 
         <h2 class="custom-h3" style="margin-top: 20px;">Education</h2>
-
-
-        <div class="work-history">
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/uw-madison_logo.png" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">UW - Madison</p>
-              <p class="company-location">Wisconsin, USA</p>
-              <p class="date-duration" data-start="Aug 2024" data-end="Present">
-                2024 - Present
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="work-history">
-          <div class="job-entry">
-            <div class="image-container">
-              <img src="./assets/icons/iit_logo.png" alt="Profile Icon" loading="lazy">
-            </div>
-            <div class="job-details">
-              <p class="job-title">IIT - Dharwad</p>
-              <p class="company-location">Dharwad, IN</p>
-              <p class="date-duration" data-start="Aug 2020" data-end="May 2024">
-                2020 - 2024
-              </p>
-            </div>
-          </div>
+        <div class="icon-row">
+          <img src="./assets/icons/uw-madison_logo.png" alt="UW - Madison" loading="lazy">
+          <img src="./assets/icons/iit_logo.png" alt="IIT - Dharwad" loading="lazy">
         </div>
 
         <h2 class="custom-h3" style="margin-top: 20px;">Publications</h2>
@@ -935,7 +853,24 @@
     window.addEventListener('scroll', debouncedHandleScroll);
   </script>
 
-
+  <style>
+.icon-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.icon-row img {
+  height: 90px;   /* or 80px, or whatever size you prefer */
+  width: auto;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+</style>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
