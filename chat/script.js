@@ -642,15 +642,55 @@
         }, 500);
     }
 
+    // Global keyboard autofocus functionality
+    function setupKeyboardAutofocus() {
+        document.addEventListener('keydown', (event) => {
+            // Don't interfere if user is already typing in an input field
+            if (event.target.tagName === 'INPUT' || 
+                event.target.tagName === 'TEXTAREA' || 
+                event.target.contentEditable === 'true') {
+                return;
+            }
+            
+            // Don't interfere with special keys
+            if (event.ctrlKey || event.metaKey || event.altKey || 
+                event.key === 'Escape' || event.key === 'Tab' || 
+                event.key === 'F5' || event.key.startsWith('F') ||
+                event.key === 'Enter' || event.key === 'Backspace' ||
+                event.key === 'Delete' || event.key.startsWith('Arrow')) {
+                return;
+            }
+            
+            // Only focus for printable characters
+            if (event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
+                const currentInput = isMobile ? 
+                    document.getElementById('mobileInput') : 
+                    document.getElementById('desktopInput');
+                
+                if (currentInput && !currentInput.disabled) {
+                    event.preventDefault();
+                    currentInput.focus();
+                    // Add the character to the input
+                    currentInput.value += event.key;
+                    // Trigger input event for any listeners (like auto-resize)
+                    currentInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        });
+    }
+
     // Initialize immediately and also wait for Material Web Components
     function initializeApp() {
         try {
             initApp();
+            // Setup keyboard autofocus after app initialization
+            setupKeyboardAutofocus();
         } catch (error) {
             // Fallback: try to initialize basic functionality
             setTimeout(() => {
                 try {
                     initApp();
+                    setupKeyboardAutofocus();
                 } catch (fallbackError) {
                     // Silent fallback
                 }
