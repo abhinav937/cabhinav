@@ -722,29 +722,29 @@
 
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
         <div class="icon-row">
-          <div class="clickable-icon" onclick="openWorkDialog('annapurna')">
+          <div class="work-item" onclick="openWorkDialog('annapurna')">
             <img src="./assets/icons/annapurna_labs_logo.webp" alt="Annapurna Labs" loading="lazy">
           </div>
-          <div class="clickable-icon" onclick="openWorkDialog('wempec')">
+          <div class="work-item" onclick="openWorkDialog('wempec')">
             <img src="./assets/icons/wempec logo.png" alt="WEMPEC" loading="lazy">
           </div>
-          <div class="clickable-icon" onclick="openWorkDialog('uw_ece')">
+          <div class="work-item" onclick="openWorkDialog('uw_ece')">
             <img src="./assets/icons/uw_mad_ece_logo.png" alt="UW ECE" loading="lazy">
           </div>
-          <div class="clickable-icon" onclick="openWorkDialog('union_south')">
+          <div class="work-item" onclick="openWorkDialog('union_south')">
             <img src="./assets/icons/wisc_union_logo.svg" alt="Union South" loading="lazy">
           </div>
-          <div class="clickable-icon" onclick="openWorkDialog('peg')">
+          <div class="work-item" onclick="openWorkDialog('peg')">
             <img src="./assets/icons/peg_logo.jpg" alt="PEG" loading="lazy">
           </div>
         </div>
 
         <h2 class="custom-h3" style="margin-top: 20px;">Education</h2>
         <div class="icon-row">
-          <div class="clickable-icon" onclick="openEducationDialog('uw_madison')">
+          <div class="education-item" onclick="openEducationDialog('uw_madison')">
             <img src="./assets/icons/uw-madison_logo.png" alt="UW - Madison" loading="lazy">
           </div>
-          <div class="clickable-icon" onclick="openEducationDialog('iit_dharwad')">
+          <div class="education-item" onclick="openEducationDialog('iit_dharwad')">
             <img src="./assets/icons/iit_logo.png" alt="IIT - Dharwad" loading="lazy">
           </div>
         </div>
@@ -786,7 +786,23 @@
 
     </div>
 
-  </main>
+    </main>
+
+  <!-- Overlay Dialog -->
+  <div id="overlayDialog" class="overlay-dialog" style="display: none;">
+    <div class="dialog-backdrop" onclick="closeDialog()"></div>
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h3 id="dialogTitle"></h3>
+        <button class="dialog-close" onclick="closeDialog()">
+          <span>×</span>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div id="dialogInfo"></div>
+      </div>
+    </div>
+  </div>
 
   <!--
     - custom js link
@@ -804,9 +820,72 @@
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 
+  <!------------------------------------------- Overlay Dialog Functions --------------------------------------->
+  <script src="./assets/js/data.js"></script>
+  <script>
+    function openWorkDialog(id) {
+      const work = workData[id];
+      if (!work) return;
+
+      document.getElementById('dialogTitle').textContent = work.title;
+      
+      // Build details array, filtering out empty/undefined values
+      const details = [];
+      if (work.role && work.role.trim()) details.push(work.role);
+      if (work.duration && work.duration.trim()) details.push(work.duration);
+      if (work.location && work.location.trim()) details.push(work.location);
+      
+      const detailsHTML = details.map(detail => `<div class="detail-item">${detail}</div>`).join('');
+      
+      const content = `
+        ${work.description && work.description.trim() ? `<div class="dialog-description">${work.description}</div>` : ''}
+        ${detailsHTML ? `<div class="dialog-details">${detailsHTML}</div>` : ''}
+      `;
+      
+      document.getElementById('dialogInfo').innerHTML = content;
+      document.getElementById('overlayDialog').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openEducationDialog(id) {
+      const education = educationData[id];
+      if (!education) return;
+
+      document.getElementById('dialogTitle').textContent = education.title;
+      
+      // Build details array, filtering out empty/undefined values
+      const details = [];
+      if (education.degree && education.degree.trim()) details.push(education.degree);
+      if (education.duration && education.duration.trim()) details.push(education.duration);
+      if (education.location && education.location.trim()) details.push(education.location);
+      
+      const detailsHTML = details.map(detail => `<div class="detail-item">${detail}</div>`).join('');
+      
+      const content = `
+        ${education.description && education.description.trim() ? `<div class="dialog-description">${education.description}</div>` : ''}
+        ${detailsHTML ? `<div class="dialog-details">${detailsHTML}</div>` : ''}
+      `;
+      
+      document.getElementById('dialogInfo').innerHTML = content;
+      document.getElementById('overlayDialog').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDialog() {
+      document.getElementById('overlayDialog').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // Close dialog with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeDialog();
+      }
+    });
+  </script>
+
   <!------------------------------------------- Haptics --------------------------------------->
   <script>
-
     // Get references to all the buttons in the navigation menu
     const buttons = document.querySelectorAll('.segment');
 
@@ -904,5 +983,5 @@
   // Publications will be fetched only when Resume section is accessed
   // This prevents wasting API credits on initial page load
 </script>
-<!-- <script src="./assets/js/cocky-bot.js"></script> -->
+
 </html>
