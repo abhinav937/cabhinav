@@ -1,87 +1,268 @@
 (function () {
-    // ChatBot class for session management
-    class ChatBot {
+    // ===== CONFIGURATION =====
+    // Update this URL to match your Vercel deployment
+    const API_URL = 'https://ai-reply-bot.vercel.app'; // ⚠️ CHANGE THIS TO YOUR ACTUAL VERCEL URL
+    
+    // Alternative API endpoints for testing (uncomment to use)
+    // const API_URL = 'https://your-alternative-api.vercel.app';
+    // const API_URL = '/api'; // For same-domain API
+    
+    // Debug mode - set to false to reduce console noise
+    const DEBUG_MODE = false;
+    
+    // Fallback to relative URLs if API is not accessible
+    const USE_RELATIVE_URLS = false; // Set to true if your chat is hosted on the same domain as your API
+    
+    // Enable local fallback mode when API is unavailable
+    const ENABLE_LOCAL_FALLBACK = true;
+    
+    // ===== END CONFIGURATION =====
+    
+    // ChatAPI class for better API management
+    class ChatAPI {
         constructor(apiUrl) {
             this.apiUrl = apiUrl;
-            this.sessionId = null;
-            this.isConnected = false;
-            this.networkError = false;
-            this.lastNetworkCheck = 0;
-            this.networkCheckInterval = 10000; // Check every 10 seconds
+            this.sessionId = this.getSessionId();
+            this.isAvailable = false;
+            this.lastCheck = 0;
+            this.checkInterval = 30000; // Check availability every 30 seconds
             
             // Rate limiting properties
-            this.rateLimitActive = false;
+            this.rateLimited = false;
             this.rateLimitResetTime = null;
-            this.lastRateLimitCheck = 0;
-            this.rateLimitCheckInterval = 5000; // Check every 5 seconds
             this.rateLimitRetryAfter = null;
+            
+            if (DEBUG_MODE) {
+                console.log('🔧 ChatAPI initialized with URL:', apiUrl);
+                console.log('🔧 Session ID:', this.sessionId);
+            }
         }
 
-        // Check network connectivity
-        async checkNetworkConnectivity() {
+        getSessionId() {
+            let sessionId = localStorage.getItem('chatSessionId');
+            if (!sessionId) {
+                // Generate a 32-character hexadecimal session ID as per the API docs
+                sessionId = crypto.randomUUID().replace(/-/g, '');
+                localStorage.setItem('chatSessionId', sessionId);
+            }
+            return sessionId;
+        }
+
+        async checkAvailability() {
             const now = Date.now();
-            if (now - this.lastNetworkCheck < this.networkCheckInterval) {
-                return this.isConnected;
+            if (now - this.lastCheck < this.checkInterval) {
+                return this.isAvailable;
             }
             
-            this.lastNetworkCheck = now;
+            try {
+                // Try a HEAD request to the main API endpoint instead of health
+                const response = await fetch(`${this.apiUrl}/api/gemini`, {
+                    method: 'HEAD',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // Consider 405 (Method Not Allowed) as available since it means the endpoint exists
+                this.isAvailable = response.ok || response.status === 405;
+                this.lastCheck = now;
+                
+                if (DEBUG_MODE) {
+                    console.log(`🔍 API availability check: ${this.isAvailable ? '✅ Available' : '❌ Unavailable'}`);
+                }
+                
+                return this.isAvailable;
+            } catch (error) {
+                this.isAvailable = false;
+                this.lastCheck = now;
+                
+                if (DEBUG_MODE) {
+                    console.log('❌ API availability check failed:', error.message);
+                }
+                
+                return false;
+            }
+        }
+
+        async makeRequest(endpoint, options = {}) {
+            // Check if API is available first
+            const isAvailable = await this.checkAvailability();
+            if (!isAvailable) {
+                throw new Error('API is not available');
+            }
             
+            const url = `${this.apiUrl}${endpoint}`;
+            const defaultHeaders = {
+                'Content-Type': 'application/json',
+                'X-Session-ID': this.sessionId
+            };
+
+            const requestOptions = {
+                ...options,
+                headers: {
+                    ...defaultHeaders,
+                    ...options.headers
+                },
+                mode: 'cors',
+                credentials: 'omit'
+            };
+
+            try {
+                const response = await fetch(url, requestOptions);
+                return response;
+            } catch (error) {
+                console.error(`❌ Network error for ${endpoint}:`, error.message);
+                
+                // Mark API as unavailable
+                this.isAvailable = false;
+                this.lastCheck = Date.now();
+                
+                throw error;
+            }
+        }
+
+        async checkHealth() {
+            try {
+                // Try a simple HEAD request to check if API is available
+                const response = await fetch(`${this.apiUrl}/api/gemini`, {
+                    method: 'HEAD',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // Consider 405 (Method Not Allowed) as healthy since it means the endpoint exists
+                if (response.ok || response.status === 405) {
+                    console.log('✅ API is healthy');
+                    return true;
+                } else {
+                    throw new Error('API is unhealthy');
+                }
+            } catch (error) {
+                console.error('❌ Health check failed:', error);
+                // If it's a network error, assume API is down
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    console.log('Network error during health check - API unavailable');
+                }
+                return false;
+            }
+        }
+
+        async checkRateLimit() {
+            try {
+                // Since we don't have a dedicated rate limit endpoint, 
+                // we'll assume not rate limited and let the main API handle rate limiting
+                return { rateLimited: false, remainingRequests: 10 };
+            } catch (error) {
+                console.error('❌ Rate limit check failed:', error);
+                // If it's a network error, don't treat it as rate limiting
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    console.log('Network error during rate limit check - assuming not rate limited');
+                    return { rateLimited: false, remainingRequests: 10 };
+                }
+                throw error;
+            }
+        }
+
+        async sendMessage(prompt) {
+            try {
+                const response = await this.makeRequest('/api/gemini', {
+                    method: 'POST',
+                    body: JSON.stringify({ prompt })
+                });
+
+                if (response.status === 429) {
+                    // Rate limited - extract retry info
+                    const retryAfter = response.headers.get('Retry-After');
+                    const retrySeconds = retryAfter ? parseInt(retryAfter) : 30;
+                    
+                    // Set rate limit info
+                    this.rateLimited = true;
+                    this.rateLimitResetTime = new Date(Date.now() + (retrySeconds * 1000));
+                    this.rateLimitRetryAfter = retrySeconds;
+                    
+                    throw new Error(`Rate limit exceeded. Try again in ${retrySeconds} seconds.`);
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                
+                // Convert 'reply' to 'response' for consistency
+                if (data.reply && !data.response) {
+                    data.response = data.reply;
+                }
+                
+                // Extract rate limit info from headers
+                const remainingHeader = response.headers.get('X-RateLimit-Remaining');
+                if (remainingHeader) {
+                    data.remainingRequests = parseInt(remainingHeader);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('❌ Send message failed:', error);
+                throw error;
+            }
+        }
+
+        async clearHistory() {
+            try {
+                const response = await this.makeRequest('/api/clear', {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Clear history failed: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('❌ Clear history failed:', error);
+                // Return success anyway since it's not critical
+                return { success: true };
+            }
+        }
+    }
+
+    // Local fallback responses when API is unavailable
+    const LOCAL_FALLBACK_RESPONSES = [
+        "I'm currently offline, but I'd be happy to help when I'm back online!",
+        "Sorry, I can't connect to my server right now. Please try again later.",
+        "I'm experiencing some technical difficulties. Please check back soon!",
+        "Unable to process your request at the moment. I'll be back online shortly.",
+        "My connection is down right now. Please try again in a few minutes."
+    ];
+
+    // ChatBot class with improved error handling
+    class ChatBot {
+        constructor(apiUrl) {
+            this.chatAPI = new ChatAPI(apiUrl);
+            this.networkError = false;
+            this.rateLimited = false;
+            this.remainingRequests = 10;
+            this.resetTime = null;
+        }
+
+        async checkNetworkConnectivity() {
             try {
                 // Quick network check with timeout
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
                 
-                // Try health endpoint first, fallback to main API
-                let response;
-                try {
-                    response = await fetch(`${this.apiUrl}/api/health`, {
-                        method: 'GET',
-                        signal: controller.signal
-                    });
-                } catch (healthError) {
-                    // If health endpoint fails, try the main API endpoint
-                    response = await fetch(`${this.apiUrl}/api/gemini`, {
-                        method: 'HEAD', // Just check if endpoint is reachable
-                        signal: controller.signal
-                    });
-                }
-                
-                clearTimeout(timeoutId);
-                
-                if (response.ok || response.status === 405) { // 405 is OK for HEAD requests
-                    this.isConnected = true;
-                    this.networkError = false;
-                    return true;
-                } else {
-                    this.isConnected = false;
-                    this.networkError = true;
-                    return false;
-                }
-            } catch (error) {
-                console.log('Network check failed:', error.message);
-                this.isConnected = false;
-                this.networkError = true;
-                return false;
-            }
-        }
-
-        // Check rate limit status
-        async checkRateLimitStatus() {
-            const now = Date.now();
-            if (now - this.lastRateLimitCheck < this.rateLimitCheckInterval) {
-                return !this.rateLimitActive;
-            }
-            
-            this.lastRateLimitCheck = now;
-            
-            try {
-                // Quick rate limit check with timeout
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
-                
-                const response = await fetch(`${this.apiUrl}/api/rate-limit-status`, {
-                    method: 'GET',
+                // Try HEAD request to the main API endpoint
+                const response = await fetch(`${this.chatAPI.apiUrl}/api/gemini`, {
+                    method: 'HEAD',
                     signal: controller.signal,
+                    mode: 'cors',
+                    credentials: 'omit',
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -89,169 +270,107 @@
                 
                 clearTimeout(timeoutId);
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Check if rate limited
-                    if (data.rateLimited) {
-                        this.rateLimitActive = true;
-                        this.rateLimitResetTime = data.resetTime ? new Date(data.resetTime) : null;
-                        this.rateLimitRetryAfter = data.retryAfter || 30; // Default 30 seconds
-                        return false;
-                    } else {
-                        this.rateLimitActive = false;
-                        this.rateLimitResetTime = null;
-                        this.rateLimitRetryAfter = null;
-                        return true;
-                    }
-                } else if (response.status === 429) {
-                    // Rate limited response
-                    this.rateLimitActive = true;
-                    
-                    // Try to get retry-after header
-                    const retryAfter = response.headers.get('Retry-After');
-                    this.rateLimitRetryAfter = retryAfter ? parseInt(retryAfter) : 30;
-                    
-                    // Calculate reset time
-                    this.rateLimitResetTime = new Date(Date.now() + (this.rateLimitRetryAfter * 1000));
-                    return false;
-                } else {
-                    // Other errors, assume not rate limited
-                    this.rateLimitActive = false;
-                    this.rateLimitResetTime = null;
-                    this.rateLimitRetryAfter = null;
+                // Consider 405 (Method Not Allowed) as connected since it means the endpoint exists
+                if (response.ok || response.status === 405) {
+                    this.networkError = false;
                     return true;
+                } else {
+                    this.networkError = true;
+                    return false;
                 }
             } catch (error) {
-                console.log('Rate limit check failed:', error.message);
-                // If we can't check rate limit, assume it's not active
-                this.rateLimitActive = false;
-                this.rateLimitResetTime = null;
-                this.rateLimitRetryAfter = null;
-                return true;
+                if (DEBUG_MODE) console.log('Network check failed:', error.message);
+                this.networkError = true;
+                return false;
             }
         }
 
-        // Get remaining time until rate limit resets
-        getRateLimitRemainingTime() {
-            if (!this.rateLimitActive || !this.rateLimitResetTime) {
-                return 0;
+        async checkRateLimitStatus() {
+            try {
+                const data = await this.chatAPI.checkRateLimit();
+                this.rateLimited = data.rateLimited;
+                this.remainingRequests = data.remainingRequests || 10;
+                this.resetTime = data.resetTime;
+                
+                            // Only log rate limit status if there's an issue
+            if (data.rateLimited && DEBUG_MODE) {
+                console.log('Rate limit status:', data);
             }
-            
-            const now = new Date();
-            const remaining = this.rateLimitResetTime.getTime() - now.getTime();
-            return Math.max(0, Math.ceil(remaining / 1000));
+                
+                return data;
+            } catch (error) {
+                console.error('❌ Rate limit check failed:', error);
+                // Assume not rate limited on error
+                this.rateLimited = false;
+                this.remainingRequests = 10;
+                return { rateLimited: false, remainingRequests: 10 };
+            }
+        }
+
+        getRateLimitRemainingTime() {
+            if (!this.resetTime) return 0;
+            const now = Date.now();
+            const resetTime = this.resetTime instanceof Date ? this.resetTime.getTime() : new Date(this.resetTime).getTime();
+            return Math.max(0, Math.ceil((resetTime - now) / 1000));
         }
 
         async sendMessage(message) {
-            // Check network before sending
-            const isConnected = await this.checkNetworkConnectivity();
-            if (!isConnected) {
-                throw new Error('NETWORK_ERROR');
-            }
-
-            // Check rate limit before sending
-            const isNotRateLimited = await this.checkRateLimitStatus();
-            if (!isNotRateLimited) {
-                throw new Error('RATE_LIMIT_ERROR');
-            }
-
             try {
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-
-                if (this.sessionId) {
-                    headers['X-Session-ID'] = this.sessionId;
-                }
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-                
-                const response = await fetch(`${this.apiUrl}/api/gemini`, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({ prompt: message }),
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-                    console.error('API Error:', errorMessage);
-                    
-                    // Handle specific HTTP status codes
-                    if (response.status === 401) {
-                        throw new Error('Authentication failed. Please refresh the page.');
-                    } else if (response.status === 403) {
-                        throw new Error('Access denied. Please check your permissions.');
-                    } else if (response.status === 429) {
-                        // Handle rate limiting
-                        const retryAfter = response.headers.get('Retry-After');
-                        const retrySeconds = retryAfter ? parseInt(retryAfter) : 30;
-                        
-                        this.rateLimitActive = true;
-                        this.rateLimitResetTime = new Date(Date.now() + (retrySeconds * 1000));
-                        this.rateLimitRetryAfter = retrySeconds;
-                        
-                        throw new Error('RATE_LIMIT_ERROR');
-                    } else if (response.status >= 500) {
-                        throw new Error('Server error. Please try again later.');
+                // Check if API is available
+                const isAvailable = await this.chatAPI.checkAvailability();
+                if (!isAvailable) {
+                    if (ENABLE_LOCAL_FALLBACK) {
+                        // Return a random fallback response
+                        const randomResponse = LOCAL_FALLBACK_RESPONSES[
+                            Math.floor(Math.random() * LOCAL_FALLBACK_RESPONSES.length)
+                        ];
+                        return { response: randomResponse, fallback: true };
                     } else {
-                        throw new Error(`Request failed (${response.status}). Please try again.`);
+                        throw new Error('API is not available');
                     }
                 }
 
-                const data = await response.json();
+                const data = await this.chatAPI.sendMessage(message);
                 
-                if (!this.sessionId && data.sessionId) {
-                    this.sessionId = data.sessionId;
+                // Update remaining requests from response headers if available
+                if (data.remainingRequests !== undefined) {
+                    this.remainingRequests = data.remainingRequests;
                 }
-
-                this.isConnected = true;
-                this.networkError = false;
-                this.rateLimitActive = false; // Reset rate limit on successful request
+                
+                // Reset rate limit on successful request
+                this.rateLimited = false;
+                this.resetTime = null;
+                
                 return data;
             } catch (error) {
-                console.error('API Error:', error);
+                console.error('❌ Send message failed:', error);
                 
-                // Check if it's a network error
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    this.isConnected = false;
-                    this.networkError = true;
-                    throw new Error('NETWORK_ERROR');
-                } else if (error.name === 'AbortError') {
-                    this.isConnected = false;
-                    this.networkError = true;
-                    throw new Error('NETWORK_ERROR');
+                // Check if it's a rate limit error
+                if (error.message.includes('Rate limit exceeded')) {
+                    // Update rate limit info from the ChatAPI
+                    this.rateLimited = this.chatAPI.rateLimited;
+                    this.resetTime = this.chatAPI.rateLimitResetTime;
+                    this.rateLimitRetryAfter = this.chatAPI.rateLimitRetryAfter;
+                    
+                    // Re-throw the rate limit error to trigger proper handling
+                    throw error;
                 }
                 
-                // Handle rate limiting specifically
-                if (error.message === 'RATE_LIMIT_ERROR') {
-                    // Keep network status as connected for rate limiting
-                    this.isConnected = true;
-                    this.networkError = false;
-                    throw error; // Re-throw the rate limit error
+                if (ENABLE_LOCAL_FALLBACK) {
+                    // Return a fallback response for other errors
+                    const randomResponse = LOCAL_FALLBACK_RESPONSES[
+                        Math.floor(Math.random() * LOCAL_FALLBACK_RESPONSES.length)
+                    ];
+                    return { response: randomResponse, fallback: true };
                 }
                 
-                this.isConnected = false;
                 throw error;
             }
         }
 
         async clearHistory() {
-            if (!this.sessionId) return;
-
             try {
-                const response = await fetch(`${this.apiUrl}/api/conversation`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-Session-ID': this.sessionId
-                    }
-                });
-
-                return response.json();
+                return await this.chatAPI.clearHistory();
             } catch (error) {
                 console.error('Error clearing history:', error);
                 return { success: true }; // Fallback
@@ -260,7 +379,8 @@
     }
 
     // Initialize ChatBot instance with fallback
-    const bot = new ChatBot('https://ai-reply-bot.vercel.app');
+    // You can change this URL to match your Vercel deployment
+    const bot = new ChatBot(API_URL);
 
     // Chat interface elements
     const messagesContainer = document.getElementById('messagesContainer');
@@ -268,6 +388,14 @@
     const sendButton = document.getElementById('sendButton');
     const editBtn = document.querySelector('.edit-btn');
     const networkStatus = document.getElementById('networkStatus');
+    const rateLimitTimer = document.getElementById('rateLimitTimer');
+    const timerSeconds = document.getElementById('timerSeconds');
+    
+    // Debug: Check if timer elements exist
+    console.log('Timer elements found:', {
+        rateLimitTimer: !!rateLimitTimer,
+        timerSeconds: !!timerSeconds
+    });
 
     let isLoading = false;
     let lastSentTimestamp = null;
@@ -281,12 +409,194 @@
     let rateLimitCheckInterval = null;
     let rateLimitCountdownInterval = null; // Add countdown interval
 
+    // Test API connection
+    async function testAPIConnection() {
+        try {
+            if (DEBUG_MODE) console.log('🔍 Testing API connection to:', API_URL);
+            const response = await fetch(`${API_URL}/api/gemini`, {
+                method: 'HEAD',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            // Consider 405 (Method Not Allowed) as successful since it means the endpoint exists
+            if (response.ok || response.status === 405) {
+                if (DEBUG_MODE) console.log('✅ API connection successful');
+                return true;
+            } else {
+                if (DEBUG_MODE) console.log('❌ API connection failed:', response.status);
+                return false;
+            }
+        } catch (error) {
+            if (DEBUG_MODE) console.log('❌ API connection error:', error.message);
+            return false;
+        }
+    }
+
+    // Test API accessibility from current domain
+    async function testAPIAccessibility() {
+        if (!DEBUG_MODE) return; // Skip if debug mode is off
+        
+        console.log('🔍 Testing API accessibility...');
+        console.log('Current domain:', window.location.origin);
+        console.log('API URL:', API_URL);
+        
+        // Test if API is accessible from current domain
+        const isSameDomain = window.location.origin === new URL(API_URL).origin;
+        console.log('Same domain:', isSameDomain);
+        
+        if (!isSameDomain) {
+            console.log('⚠️ API is on different domain - CORS might be required');
+            console.log('💡 Solution: Make sure your Vercel API allows CORS from this domain');
+        }
+        
+        // Test basic connectivity
+        try {
+            const response = await fetch(`${API_URL}/api/gemini`, {
+                method: 'HEAD',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            // Consider 405 (Method Not Allowed) as accessible since it means the endpoint exists
+            if (response.ok || response.status === 405) {
+                console.log('✅ API is accessible from this domain');
+                return true;
+            } else {
+                console.log('❌ API returned status:', response.status);
+                return false;
+            }
+        } catch (error) {
+            console.log('❌ API not accessible:', error.message);
+            console.log('💡 Possible solutions:');
+            console.log('1. Check if your Vercel API is deployed and running');
+            console.log('2. Verify the API_URL is correct');
+            console.log('3. Check CORS settings in your Vercel API');
+            console.log('4. Try using relative URLs if hosting on same domain');
+            return false;
+        }
+    }
+
+    // Help function to diagnose API issues
+    function diagnoseAPI() {
+        console.log('🔧 API Diagnosis:');
+        console.log('Current API URL:', API_URL);
+        console.log('Expected endpoints:');
+        console.log('  - GET /api/health');
+        console.log('  - POST /api/gemini');
+        console.log('');
+        console.log('To fix this:');
+        console.log('1. Check your Vercel deployment URL');
+        console.log('2. Update the API_URL constant above');
+        console.log('3. Make sure your Vercel app has the required endpoints');
+        console.log('');
+        console.log('Example:');
+        console.log('const API_URL = "https://your-app-name.vercel.app";');
+        console.log('');
+        console.log('Rate limit endpoint should have these CORS headers:');
+        console.log('res.setHeader("Access-Control-Allow-Origin", "*");');
+        console.log('res.setHeader("Access-Control-Allow-Methods", "GET");');
+        console.log('res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Session-ID");');
+    }
+
+    // Manual test function for debugging
+    async function testRateLimitEndpoint() {
+        console.log('🧪 Testing rate limit endpoint manually...');
+        
+        try {
+            const response = await fetch(`${API_URL}/api/rate-limit-status`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Session-ID': 'test-session-123'
+                }
+            });
+            
+            console.log('📊 Rate limit response status:', response.status);
+            console.log('📊 Rate limit response headers:', Object.fromEntries(response.headers.entries()));
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Rate limit endpoint working:', data);
+                return true;
+            } else {
+                const errorText = await response.text();
+                console.log('❌ Rate limit endpoint error:', errorText);
+                return false;
+            }
+        } catch (error) {
+            console.log('❌ Rate limit endpoint network error:', error.message);
+            return false;
+        }
+    }
+
+    // Check which endpoints are available
+    async function checkAvailableEndpoints() {
+        if (!DEBUG_MODE) return; // Skip if debug mode is off
+        
+        const endpoints = [
+            { path: '/api/gemini', method: 'HEAD', name: 'API Availability' },
+            { path: '/api/gemini', method: 'POST', name: 'Gemini API' }
+        ];
+        
+        console.log('🔍 Checking available endpoints...');
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint.path}`, {
+                    method: endpoint.method,
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log(`✅ ${endpoint.name} - Available`);
+                } else if (response.status === 405) {
+                    console.log(`⚠️ ${endpoint.name} - Method not allowed (endpoint exists)`);
+                } else if (response.status === 404) {
+                    console.log(`❌ ${endpoint.name} - Not Found (404)`);
+                } else {
+                    console.log(`⚠️ ${endpoint.name} - Status ${response.status}`);
+                }
+            } catch (error) {
+                console.log(`❌ ${endpoint.name} - Network Error: ${error.message}`);
+            }
+        }
+    }
+
+
+
     // Initialize chat
     function initChat() {
         if (!messagesContainer || !messageInput || !sendButton) {
             console.error('Chat elements not found');
             return;
         }
+
+        // Test API connection first
+        testAPIConnection().then(isConnected => {
+            if (!isConnected) {
+                console.warn('⚠️ API is not available. Chat functionality may be limited.');
+                diagnoseAPI(); // Run diagnosis to help debug
+                addMessage('API is not available. Please check your connection or try again later.', 'error');
+            } else {
+                console.log('✅ API connection verified successfully');
+                // Check which endpoints are available
+                checkAvailableEndpoints();
+            }
+        });
+        
+        // Also test API accessibility
+        testAPIAccessibility();
 
         // Event listeners
         sendButton.addEventListener('click', handleSend);
@@ -319,20 +629,20 @@
         // Check network immediately
         checkNetworkStatus();
         
-        // Set up periodic network checks
-        networkCheckInterval = setInterval(checkNetworkStatus, 10000); // Check every 10 seconds
+        // Set up periodic network checks (reduced frequency)
+        networkCheckInterval = setInterval(checkNetworkStatus, 30000); // Check every 30 seconds
         
         // Also check when window gains focus
         window.addEventListener('focus', checkNetworkStatus);
         
         // Check when online/offline status changes
         window.addEventListener('online', () => {
-            console.log('Browser went online');
+            if (DEBUG_MODE) console.log('Browser went online');
             checkNetworkStatus();
         });
         
         window.addEventListener('offline', () => {
-            console.log('Browser went offline');
+            if (DEBUG_MODE) console.log('Browser went offline');
             handleNetworkError();
         });
         
@@ -345,8 +655,8 @@
         // Check rate limit immediately
         checkRateLimitStatus();
         
-        // Set up periodic rate limit checks
-        rateLimitCheckInterval = setInterval(checkRateLimitStatus, 5000); // Check every 5 seconds
+        // Set up periodic rate limit checks (reduced frequency)
+        rateLimitCheckInterval = setInterval(checkRateLimitStatus, 15000); // Check every 15 seconds
         
         // Also check when window gains focus
         window.addEventListener('focus', checkRateLimitStatus);
@@ -388,16 +698,21 @@
             clearInterval(rateLimitCountdownInterval);
         }
         
-        console.log('Starting rate limit countdown timer');
+        if (DEBUG_MODE) console.log('Starting rate limit countdown timer');
+        
+        // Show the timer widget
+        if (rateLimitTimer) {
+            rateLimitTimer.style.display = 'flex';
+        }
         
         // Start countdown that updates every second
         rateLimitCountdownInterval = setInterval(() => {
             const remainingTime = bot.getRateLimitRemainingTime();
-            console.log('Countdown timer tick - remaining time:', remainingTime);
+            const totalTime = bot.rateLimitRetryAfter || 30;
             
             if (remainingTime <= 0) {
                 // Rate limit expired, stop countdown
-                console.log('Rate limit countdown finished - resetting');
+                if (DEBUG_MODE) console.log('Rate limit countdown finished - resetting');
                 clearInterval(rateLimitCountdownInterval);
                 rateLimitCountdownInterval = null;
                 
@@ -406,12 +721,18 @@
                 return;
             }
             
-            // Update the status indicator with current countdown
-            if (networkStatus) {
-                networkStatus.style.display = 'flex'; // Ensure it's visible
-                networkStatus.innerHTML = `<span class="material-symbols-outlined">timer</span><span class="status-text">${remainingTime}s</span>`;
-                networkStatus.className = 'network-status rate-limited';
-                console.log('Updated countdown display:', remainingTime + 's');
+            // Update the timer widget
+            if (timerSeconds) {
+                timerSeconds.textContent = remainingTime;
+            }
+            
+            // Update the progress circle
+            if (rateLimitTimer) {
+                const progressElement = rateLimitTimer.querySelector('.timer-progress');
+                if (progressElement) {
+                    const progress = ((totalTime - remainingTime) / totalTime) * 100;
+                    progressElement.style.strokeDashoffset = 100 - progress;
+                }
             }
         }, 1000); // Update every second
     }
@@ -419,15 +740,20 @@
     // Stop countdown timer
     function stopRateLimitCountdown() {
         if (rateLimitCountdownInterval) {
-            console.log('Stopping rate limit countdown timer');
+            if (DEBUG_MODE) console.log('Stopping rate limit countdown timer');
             clearInterval(rateLimitCountdownInterval);
             rateLimitCountdownInterval = null;
+        }
+        
+        // Hide the timer widget
+        if (rateLimitTimer) {
+            rateLimitTimer.style.display = 'none';
         }
     }
 
     // Ensure rate limit status is visible and not overridden
     function ensureRateLimitStatusVisible() {
-        if (bot.rateLimitActive && networkStatus) {
+        if (bot.rateLimited && networkStatus) {
             const remainingTime = bot.getRateLimitRemainingTime();
             const timeText = remainingTime > 0 ? `${remainingTime}s` : 'Rate Limited';
             networkStatus.style.display = 'flex';
@@ -439,14 +765,13 @@
     // Check network status and update UI accordingly
     async function checkNetworkStatus() {
         try {
-            // If rate limit is active, ensure it stays visible and skip network status updates
-            if (bot.rateLimitActive) {
-                ensureRateLimitStatusVisible();
+            // If rate limit is active, skip network status updates
+            if (bot.rateLimited) {
                 return;
             }
             
             // Show checking indicator briefly (but not if rate limit is active)
-            if (networkStatus && !bot.networkError && !bot.rateLimitActive) {
+            if (networkStatus && !bot.networkError && !bot.rateLimited) {
                 networkStatus.style.display = 'flex';
                 networkStatus.innerHTML = '<span class="material-symbols-outlined">sync</span><span class="status-text">Checking...</span>';
                 networkStatus.className = 'network-status checking';
@@ -466,12 +791,17 @@
                 }
                 
                 // Hide network status indicator only if rate limit is not active
-                if (networkStatus && !bot.rateLimitActive) {
+                if (networkStatus && !bot.rateLimited) {
                     networkStatus.style.display = 'none';
                 }
             } else {
                 // Network error detected
                 handleNetworkError();
+                
+                // In fallback mode, show a different status
+                if (ENABLE_LOCAL_FALLBACK && networkStatus) {
+                    networkStatus.innerHTML = '<span class="material-symbols-outlined">wifi_off</span><span class="status-text">Offline Mode</span>';
+                }
             }
         } catch (error) {
             console.error('Network check failed:', error);
@@ -488,27 +818,22 @@
                 return;
             }
             
-            const isNotRateLimited = await bot.checkRateLimitStatus();
+            const data = await bot.checkRateLimitStatus();
             
-            if (isNotRateLimited) {
+            if (data.rateLimited) {
+                // Rate limit detected
+                handleRateLimit();
+            } else {
                 // Rate limit is cleared
-                if (bot.rateLimitActive) {
-                    bot.rateLimitActive = false;
+                if (bot.rateLimited) {
+                    bot.rateLimited = false;
                     stopRateLimitCountdown(); // Stop countdown
                     enableInput();
-                    console.log('Rate limit cleared');
+                    if (DEBUG_MODE) console.log('Rate limit cleared');
                     
                     // Show brief success message
                     addMessage('Rate limit cleared. You can now send messages.', 'bot');
                 }
-                
-                // Hide rate limit status indicator
-                if (networkStatus && networkStatus.className.includes('rate-limited')) {
-                    networkStatus.style.display = 'none';
-                }
-            } else {
-                // Rate limit detected
-                handleRateLimit();
             }
         } catch (error) {
             console.error('Rate limit check failed:', error);
@@ -519,7 +844,6 @@
     // Handle network errors
     function handleNetworkError() {
         bot.networkError = true;
-        disableInput();
         
         // Show network status indicator
         if (networkStatus) {
@@ -528,28 +852,36 @@
             networkStatus.className = 'network-status offline';
         }
         
-        // Show network error message only once
-        if (!networkErrorShown) {
-            addMessage('Network connection lost. Please check your internet connection and try again.', 'error');
-            networkErrorShown = true;
+        // Don't disable input if fallback mode is enabled
+        if (!ENABLE_LOCAL_FALLBACK) {
+            disableInput();
+            
+            // Show network error message only once
+            if (!networkErrorShown) {
+                addMessage('Network connection lost. Please check your internet connection and try again.', 'error');
+                networkErrorShown = true;
+            }
         }
     }
 
     // Handle rate limiting
     function handleRateLimit() {
-        console.log('Handling rate limit - current state:', bot.rateLimitActive, 'countdown:', rateLimitCountdownInterval);
+        console.log('handleRateLimit called - current state:', bot.rateLimited, 'countdown:', rateLimitCountdownInterval);
         
-        bot.rateLimitActive = true;
+        bot.rateLimited = true;
         disableInputForRateLimit();
         
-        // Show rate limit status indicator with initial countdown
-        if (networkStatus) {
+        // Show rate limit timer widget with initial countdown
+        if (rateLimitTimer && timerSeconds) {
             const remainingTime = bot.getRateLimitRemainingTime();
-            const timeText = remainingTime > 0 ? `${remainingTime}s` : 'Rate Limited';
-            networkStatus.style.display = 'flex';
-            networkStatus.innerHTML = `<span class="material-symbols-outlined">timer</span><span class="status-text">${timeText}</span>`;
-            networkStatus.className = 'network-status rate-limited';
-            console.log('Set initial rate limit display:', timeText);
+            timerSeconds.textContent = remainingTime;
+            rateLimitTimer.style.display = 'flex';
+            console.log('Set initial rate limit timer:', remainingTime + 's');
+        }
+        
+        // Hide network status widget during rate limiting
+        if (networkStatus) {
+            networkStatus.style.display = 'none';
         }
         
         // Start countdown timer
@@ -563,14 +895,14 @@
                 : 'Too many requests. Please wait a moment and try again.';
             addMessage(message, 'error');
             rateLimitShown = true;
-            console.log('Showed rate limit message:', message);
+            if (DEBUG_MODE) console.log('Showed rate limit message:', message);
         }
         
         // Auto-reset after the retry time (backup in case countdown fails)
-        const retryTime = bot.rateLimitRetryAfter || 30;
-        console.log('Setting backup timeout for rate limit reset in', retryTime, 'seconds');
+        const retryTime = bot.getRateLimitRemainingTime(); // Use remaining time from API
+        if (DEBUG_MODE) console.log('Setting backup timeout for rate limit reset in', retryTime, 'seconds');
         rateLimitTimeout = setTimeout(() => {
-            console.log('Backup timeout triggered - resetting rate limit');
+            if (DEBUG_MODE) console.log('Backup timeout triggered - resetting rate limit');
             resetRateLimit();
         }, retryTime * 1000);
     }
@@ -603,7 +935,7 @@
         }
         
         // Hide network status indicator only if rate limit is not active
-        if (networkStatus && !bot.rateLimitActive) {
+        if (networkStatus && !bot.rateLimited && !bot.networkError) {
             networkStatus.style.display = 'none';
         }
         
@@ -637,9 +969,9 @@
 
     // Reset rate limiting
     function resetRateLimit() {
-        console.log('Resetting rate limit - active:', bot.rateLimitActive, 'countdown:', rateLimitCountdownInterval);
+        if (DEBUG_MODE) console.log('Resetting rate limit - active:', bot.rateLimited, 'countdown:', rateLimitCountdownInterval);
         
-        bot.rateLimitActive = false;
+        bot.rateLimited = false;
         rateLimitShown = false;
         
         // Stop countdown timer
@@ -656,9 +988,14 @@
             editBtn.disabled = false;
         }
         
-        // Hide rate limit status indicator
-        if (networkStatus) {
-            networkStatus.style.display = 'none';
+        // Hide rate limit timer widget
+        if (rateLimitTimer) {
+            rateLimitTimer.style.display = 'none';
+        }
+        
+        // Show network status widget again after rate limit is cleared
+        if (networkStatus && bot.networkError) {
+            networkStatus.style.display = 'flex';
         }
         
         // Clear any existing rate limit error messages
@@ -672,7 +1009,7 @@
             }
         });
         
-        console.log('Rate limit reset - input enabled');
+        if (DEBUG_MODE) console.log('Rate limit reset - input enabled');
     }
 
     // Handle send message
@@ -687,7 +1024,7 @@
         }
 
         // Check rate limiting before sending
-        if (bot.rateLimitActive) {
+        if (bot.rateLimited) {
             const remainingTime = bot.getRateLimitRemainingTime();
             const message = remainingTime > 0 
                 ? `Too many requests. Please wait ${remainingTime} seconds and try again.`
@@ -721,8 +1058,8 @@
                 lastSentTimestamp = null;
             }
 
-            if (data.reply) {
-                addMessage(data.reply, 'bot', responseTime);
+            if (data.response) { // Changed from data.reply to data.response
+                addMessage(data.response, 'bot', responseTime, data.fallback);
             } else if (data.error) {
                 addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'error');
             } else {
@@ -733,13 +1070,14 @@
             console.error('Error:', error);
             
             // Handle network errors specifically
-            if (error.message === 'NETWORK_ERROR') {
+            if (error.message === 'API is not available') {
                 handleNetworkError();
                 return;
             }
             
             // Handle rate limiting separately from network errors
-            if (error.message === 'RATE_LIMIT_ERROR') {
+            if (error.message.includes('Rate limit exceeded')) {
+                console.log('Rate limit detected in handleSend, calling handleRateLimit');
                 handleRateLimit();
                 return;
             }
@@ -783,11 +1121,16 @@
     }
 
     // Add message to chat
-    function addMessage(text, type, responseTime = null) {
+    function addMessage(text, type, responseTime = null, isFallback = false) {
         if (!messagesContainer) return;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}-message`;
+        
+        // Add fallback indicator if this is a fallback response
+        if (isFallback) {
+            messageDiv.classList.add('fallback-message');
+        }
 
         // Create message content
         const content = document.createElement('div');
@@ -1123,7 +1466,7 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Chat interface with visual feedback initializing...');
+        if (DEBUG_MODE) console.log('Chat interface with visual feedback initializing...');
         initChat();
         
         // Initialize space background
@@ -1131,7 +1474,7 @@
             const spaceContainer = document.querySelector('.space-bg-container');
             if (spaceContainer) {
                 initSpaceBackground(spaceContainer);
-                console.log('Space background initialized');
+                if (DEBUG_MODE) console.log('Space background initialized');
             }
         }
         
@@ -1141,12 +1484,17 @@
                 const isConnected = await bot.checkNetworkConnectivity();
                 if (isConnected && !bot.networkError) {
                     addMessage('Hey there! What\'s up?', 'bot');
+                } else if (ENABLE_LOCAL_FALLBACK) {
+                    // Show welcome message even if API is down (in fallback mode)
+                    addMessage('Hey there! I\'m currently in offline mode, but I\'d be happy to chat when I\'m back online!', 'bot', null, true);
                 }
             } catch (error) {
                 console.log('Network check failed during initialization:', error);
-                // Don't show welcome message if network is down
+                if (ENABLE_LOCAL_FALLBACK) {
+                    addMessage('Hey there! I\'m currently in offline mode, but I\'d be happy to chat when I\'m back online!', 'bot', null, true);
+                }
             }
         }, 500);
     });
 
-})(); 
+})();
