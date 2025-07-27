@@ -787,4 +787,185 @@ function showSkeletonLoader(container) {
       </div>
     </div>
   `;
-} 
+}
+
+// ========================================
+// CAROUSEL ENHANCEMENTS
+// ========================================
+
+// Keyboard navigation for carousels
+function setupCarouselKeyboardNavigation() {
+  document.addEventListener('keydown', (e) => {
+    // Only handle arrow keys when not typing in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    const activeCarousel = document.querySelector('.carousel.active, .carousel:focus-within');
+    if (!activeCarousel) return;
+    
+    const carouselInstance = bootstrap.Carousel.getInstance(activeCarousel);
+    if (!carouselInstance) return;
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        carouselInstance.prev();
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        carouselInstance.next();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        carouselInstance.pause();
+        break;
+    }
+  });
+}
+
+// Auto-pause on hover functionality
+function setupCarouselHoverPause() {
+  const carousels = document.querySelectorAll('.carousel');
+  
+  carousels.forEach(carousel => {
+    const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+    if (!carouselInstance) return;
+    
+    carousel.addEventListener('mouseenter', () => {
+      carouselInstance.pause();
+    });
+    
+    carousel.addEventListener('mouseleave', () => {
+      carouselInstance.cycle();
+    });
+  });
+}
+
+// Mobile touch gestures for carousels
+function setupCarouselTouchGestures() {
+  const carousels = document.querySelectorAll('.carousel');
+  
+  carousels.forEach(carousel => {
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+    
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDragging = false;
+    };
+    
+    const handleTouchMove = (e) => {
+      if (!startX || !startY) return;
+      
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const diffX = startX - currentX;
+      const diffY = startY - currentY;
+      
+      // Only trigger if horizontal movement is greater than vertical
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+        isDragging = true;
+        e.preventDefault();
+      }
+    };
+    
+    const handleTouchEnd = (e) => {
+      if (!isDragging) return;
+      
+      const currentX = e.changedTouches[0].clientX;
+      const diffX = startX - currentX;
+      const threshold = 50;
+      
+      const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+      if (!carouselInstance) return;
+      
+      if (diffX > threshold) {
+        carouselInstance.next();
+      } else if (diffX < -threshold) {
+        carouselInstance.prev();
+      }
+      
+      startX = 0;
+      startY = 0;
+      isDragging = false;
+    };
+    
+    carousel.addEventListener('touchstart', handleTouchStart, { passive: false });
+    carousel.addEventListener('touchmove', handleTouchMove, { passive: false });
+    carousel.addEventListener('touchend', handleTouchEnd, { passive: false });
+  });
+}
+
+// Enhanced mobile controls
+function setupEnhancedMobileControls() {
+  // Add larger touch targets for mobile
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .carousel-control-prev,
+      .carousel-control-next {
+        width: 50px !important;
+        height: 50px !important;
+        background: rgba(0, 0, 0, 0.3) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      
+      .carousel-control-prev:hover,
+      .carousel-control-next:hover {
+        background: rgba(0, 0, 0, 0.5) !important;
+      }
+      
+      .carousel-indicators button {
+        width: 12px !important;
+        height: 12px !important;
+        border-radius: 50% !important;
+        margin: 0 4px !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Image preloading for carousels
+function preloadCarouselImages() {
+  const carousels = document.querySelectorAll('.carousel');
+  
+  carousels.forEach(carousel => {
+    const images = carousel.querySelectorAll('img');
+    images.forEach((img, index) => {
+      // Preload first image, lazy load others
+      if (index === 0) {
+        img.loading = 'eager';
+      } else {
+        img.loading = 'lazy';
+      }
+    });
+  });
+}
+
+// Initialize all carousel enhancements
+function initializeCarouselEnhancements() {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setupCarouselKeyboardNavigation();
+      setupCarouselHoverPause();
+      setupCarouselTouchGestures();
+      setupEnhancedMobileControls();
+      preloadCarouselImages();
+    });
+  } else {
+    setupCarouselKeyboardNavigation();
+    setupCarouselHoverPause();
+    setupCarouselTouchGestures();
+    setupEnhancedMobileControls();
+    preloadCarouselImages();
+  }
+}
+
+// Initialize carousel enhancements
+initializeCarouselEnhancements();
