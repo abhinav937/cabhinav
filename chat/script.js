@@ -5,9 +5,66 @@
             this.apiUrl = apiUrl;
             this.sessionId = null;
             this.isConnected = false;
+            this.networkError = false;
+            this.lastNetworkCheck = 0;
+            this.networkCheckInterval = 10000; // Check every 10 seconds
+        }
+
+        // Check network connectivity
+        async checkNetworkConnectivity() {
+            const now = Date.now();
+            if (now - this.lastNetworkCheck < this.networkCheckInterval) {
+                return this.isConnected;
+            }
+            
+            this.lastNetworkCheck = now;
+            
+            try {
+                // Quick network check with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                
+                // Try health endpoint first, fallback to main API
+                let response;
+                try {
+                    response = await fetch(`${this.apiUrl}/api/health`, {
+                        method: 'GET',
+                        signal: controller.signal
+                    });
+                } catch (healthError) {
+                    // If health endpoint fails, try the main API endpoint
+                    response = await fetch(`${this.apiUrl}/api/gemini`, {
+                        method: 'HEAD', // Just check if endpoint is reachable
+                        signal: controller.signal
+                    });
+                }
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok || response.status === 405) { // 405 is OK for HEAD requests
+                    this.isConnected = true;
+                    this.networkError = false;
+                    return true;
+                } else {
+                    this.isConnected = false;
+                    this.networkError = true;
+                    return false;
+                }
+            } catch (error) {
+                console.log('Network check failed:', error.message);
+                this.isConnected = false;
+                this.networkError = true;
+                return false;
+            }
         }
 
         async sendMessage(message) {
+            // Check network before sending
+            const isConnected = await this.checkNetworkConnectivity();
+            if (!isConnected) {
+                throw new Error('NETWORK_ERROR');
+            }
+
             try {
                 const headers = {
                     'Content-Type': 'application/json'
@@ -54,9 +111,30 @@
                 }
 
                 this.isConnected = true;
+                this.networkError = false;
                 return data;
             } catch (error) {
                 console.error('API Error:', error);
+                
+                // Check if it's a network error
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    this.isConnected = false;
+                    this.networkError = true;
+                    throw new Error('NETWORK_ERROR');
+                } else if (error.name === 'AbortError') {
+                    this.isConnected = false;
+                    this.networkError = true;
+                    throw new Error('NETWORK_ERROR');
+                }
+                
+                // Don't treat rate limiting as network error
+                if (error.message.includes('Too many requests')) {
+                    // Keep network status as connected for rate limiting
+                    this.isConnected = true;
+                    this.networkError = false;
+                    throw error; // Re-throw the original error
+                }
+                
                 this.isConnected = false;
                 throw error;
             }
@@ -89,11 +167,17 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const editBtn = document.querySelector('.edit-btn');
+    const networkStatus = document.getElementById('networkStatus');
 
     let isLoading = false;
     let lastSentTimestamp = null;
     let userScrolling = false;
     let scrollTimeout = null;
+    let networkErrorShown = false;
+    let networkCheckInterval = null;
+    let rateLimitActive = false;
+    let rateLimitShown = false;
+    let rateLimitTimeout = null;
 
     // Initialize chat
     function initChat() {
@@ -118,7 +202,8 @@
             messagesWrapper.addEventListener('scroll', handleUserScroll);
         }
         
-
+        // Start network monitoring
+        startNetworkMonitoring();
 
         // Focus input on load (desktop only)
         if (window.innerWidth > 768) {
@@ -126,10 +211,163 @@
         }
     }
 
+    // Start continuous network monitoring
+    function startNetworkMonitoring() {
+        // Check network immediately
+        checkNetworkStatus();
+        
+        // Set up periodic network checks
+        networkCheckInterval = setInterval(checkNetworkStatus, 10000); // Check every 10 seconds
+        
+        // Also check when window gains focus
+        window.addEventListener('focus', checkNetworkStatus);
+        
+        // Check when online/offline status changes
+        window.addEventListener('online', () => {
+            console.log('Browser went online');
+            checkNetworkStatus();
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('Browser went offline');
+            handleNetworkError();
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', cleanupNetworkMonitoring);
+    }
+
+    // Cleanup network monitoring
+    function cleanupNetworkMonitoring() {
+        if (networkCheckInterval) {
+            clearInterval(networkCheckInterval);
+            networkCheckInterval = null;
+        }
+        
+        if (rateLimitTimeout) {
+            clearTimeout(rateLimitTimeout);
+            rateLimitTimeout = null;
+        }
+    }
+
+    // Check network status and update UI accordingly
+    async function checkNetworkStatus() {
+        try {
+            // Show checking indicator briefly
+            if (networkStatus && !bot.networkError) {
+                networkStatus.style.display = 'flex';
+                networkStatus.innerHTML = '<span class="material-symbols-outlined">sync</span><span class="status-text">Checking...</span>';
+                networkStatus.className = 'network-status checking';
+            }
+            
+            const isConnected = await bot.checkNetworkConnectivity();
+            
+            if (isConnected) {
+                // Network is back online
+                if (bot.networkError) {
+                    bot.networkError = false;
+                    enableInput();
+                    console.log('Network connection restored');
+                    
+                    // Show brief success message
+                    addMessage('Network connection restored. You can now send messages.', 'bot');
+                }
+                
+                // Hide network status indicator
+                if (networkStatus) {
+                    networkStatus.style.display = 'none';
+                }
+            } else {
+                // Network error detected
+                handleNetworkError();
+            }
+        } catch (error) {
+            console.error('Network check failed:', error);
+            handleNetworkError();
+        }
+    }
+
+    // Handle network errors
+    function handleNetworkError() {
+        bot.networkError = true;
+        disableInput();
+        
+        // Show network status indicator
+        if (networkStatus) {
+            networkStatus.style.display = 'flex';
+            networkStatus.innerHTML = '<span class="material-symbols-outlined">wifi_off</span><span class="status-text">Offline</span>';
+            networkStatus.className = 'network-status offline';
+        }
+        
+        // Show network error message only once
+        if (!networkErrorShown) {
+            addMessage('Network connection lost. Please check your internet connection and try again.', 'error');
+            networkErrorShown = true;
+        }
+    }
+
+    // Disable input when network is down
+    function disableInput() {
+        if (messageInput) {
+            messageInput.disabled = true;
+            messageInput.placeholder = 'Network unavailable...';
+        }
+        if (sendButton) {
+            sendButton.disabled = true;
+        }
+        if (editBtn) {
+            editBtn.disabled = true;
+        }
+    }
+
+    // Enable input when network is back
+    function enableInput() {
+        if (messageInput) {
+            messageInput.disabled = false;
+            messageInput.placeholder = 'Message...';
+        }
+        if (sendButton) {
+            sendButton.disabled = false;
+        }
+        if (editBtn) {
+            editBtn.disabled = false;
+        }
+        
+        // Hide network status indicator
+        if (networkStatus) {
+            networkStatus.style.display = 'none';
+        }
+        
+        // Clear any existing error messages
+        const errorMessages = messagesContainer.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMsg => {
+            const messageDiv = errorMsg.closest('.message');
+            if (messageDiv) {
+                messageDiv.remove();
+            }
+        });
+        
+        // Reset error state
+        networkErrorShown = false;
+        rateLimitShown = false;
+    }
+
     // Handle send message
     async function handleSend() {
         const message = messageInput.value.trim();
         if (!message || isLoading) return;
+
+        // Check network before sending
+        if (bot.networkError) {
+            addMessage('Network connection lost. Please check your internet connection and try again.', 'error');
+            return;
+        }
+
+        // Check rate limiting before sending
+        if (rateLimitActive) {
+            addMessage('Too many requests. Please wait a moment and try again.', 'error');
+            return;
+        }
 
         // Add user message
         addMessage(message, 'user');
@@ -167,6 +405,18 @@
             hideLoading();
             console.error('Error:', error);
             
+            // Handle network errors specifically
+            if (error.message === 'NETWORK_ERROR') {
+                handleNetworkError();
+                return;
+            }
+            
+            // Handle rate limiting separately from network errors
+            if (error.message.includes('Too many requests')) {
+                handleRateLimit();
+                return;
+            }
+            
             // Handle different types of errors with specific messages
             let errorMessage = 'I\'m having trouble connecting to the server. Please check your internet connection and try again.';
             
@@ -176,8 +426,6 @@
                 errorMessage = 'Authentication failed. Please refresh the page and try again.';
             } else if (error.message.includes('Access denied')) {
                 errorMessage = 'Access denied. Please check your permissions and try again.';
-            } else if (error.message.includes('Too many requests')) {
-                errorMessage = 'Too many requests. Please wait a moment and try again.';
             } else if (error.message.includes('Server error')) {
                 errorMessage = 'Server error. Please try again later.';
             } else if (error.message.includes('Request failed')) {
@@ -398,6 +646,78 @@
         console.log(feedbackMsg);
     }
 
+    // Handle rate limiting
+    function handleRateLimit() {
+        rateLimitActive = true;
+        disableInputForRateLimit();
+        
+        // Show rate limit status indicator
+        if (networkStatus) {
+            networkStatus.style.display = 'flex';
+            networkStatus.innerHTML = '<span class="material-symbols-outlined">timer</span><span class="status-text">Rate Limited</span>';
+            networkStatus.className = 'network-status rate-limited';
+        }
+        
+        // Show rate limit message only once
+        if (!rateLimitShown) {
+            addMessage('Too many requests. Please wait a moment and try again.', 'error');
+            rateLimitShown = true;
+        }
+        
+        // Auto-reset after 30 seconds
+        rateLimitTimeout = setTimeout(() => {
+            resetRateLimit();
+        }, 30000);
+    }
+
+    // Disable input for rate limiting
+    function disableInputForRateLimit() {
+        if (messageInput) {
+            messageInput.disabled = true;
+            messageInput.placeholder = 'Rate limited...';
+        }
+        if (sendButton) {
+            sendButton.disabled = true;
+        }
+        if (editBtn) {
+            editBtn.disabled = true;
+        }
+    }
+
+    // Reset rate limiting
+    function resetRateLimit() {
+        rateLimitActive = false;
+        rateLimitShown = false;
+        
+        if (messageInput) {
+            messageInput.disabled = false;
+            messageInput.placeholder = 'Message...';
+        }
+        if (sendButton) {
+            sendButton.disabled = false;
+        }
+        if (editBtn) {
+            editBtn.disabled = false;
+        }
+        
+        // Hide rate limit status indicator
+        if (networkStatus) {
+            networkStatus.style.display = 'none';
+        }
+        
+        // Clear any existing rate limit error messages
+        const errorMessages = messagesContainer.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMsg => {
+            if (errorMsg.textContent.includes('Too many requests')) {
+                const messageDiv = errorMsg.closest('.message');
+                if (messageDiv) {
+                    messageDiv.remove();
+                }
+            }
+        });
+        
+        console.log('Rate limit reset - input enabled');
+    }
 
 
     // Handle new chat
@@ -412,7 +732,11 @@
             clearTimeout(scrollTimeout);
         }
         
-        addMessage('Hey there! What\'s up?', 'bot');
+        // Check network status before showing welcome message
+        if (!bot.networkError) {
+            addMessage('Hey there! What\'s up?', 'bot');
+        }
+        
         if (messageInput && window.innerWidth > 768) messageInput.focus();
     }
 
@@ -558,9 +882,17 @@
             }
         }
         
-        // Add welcome message
-        setTimeout(() => {
-            addMessage('Hey there! What\'s up?', 'bot');
+        // Check network status before showing welcome message
+        setTimeout(async () => {
+            try {
+                const isConnected = await bot.checkNetworkConnectivity();
+                if (isConnected && !bot.networkError) {
+                    addMessage('Hey there! What\'s up?', 'bot');
+                }
+            } catch (error) {
+                console.log('Network check failed during initialization:', error);
+                // Don't show welcome message if network is down
+            }
         }, 500);
     });
 
