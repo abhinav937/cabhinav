@@ -531,28 +531,114 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
 function setupFilterLogic() {
   const elements = document.querySelectorAll("md-filter-chip");
+  const projectItems = document.querySelectorAll(".project-item");
+  
+  // Add project count to filter chips
+  function updateFilterCounts() {
+    const counts = {
+      all: projectItems.length,
+      power: 0,
+      embedded: 0,
+      analog: 0
+    };
+    
+    projectItems.forEach(item => {
+      const category = item.dataset.category;
+      if (category && counts.hasOwnProperty(category)) {
+        counts[category]++;
+      }
+    });
+    
+    // Update chip labels with counts
+    elements.forEach(element => {
+      const category = element.id;
+      const count = counts[category] || 0;
+      const originalLabel = element.getAttribute('data-original-label') || element.label;
+      
+      if (!element.getAttribute('data-original-label')) {
+        element.setAttribute('data-original-label', originalLabel);
+      }
+      
+      element.label = `${originalLabel} (${count})`;
+    });
+  }
   
   function deselectAll() {
     elements.forEach((element) => (element.selected = false));
   }
   
+  function filterProjects(category) {
+  const items = document.querySelectorAll(".project-item");
+  
+  items.forEach((item, index) => {
+    const shouldShow = category === "all" || item.dataset.category === category;
+    
+    if (shouldShow) {
+      item.style.display = "block";
+      item.style.opacity = "0";
+      item.style.transform = "translateY(20px)";
+      
+      // Stagger animation for visible items
+      setTimeout(() => {
+        item.style.transition = "all 0.4s ease-out";
+        item.style.opacity = "1";
+        item.style.transform = "translateY(0)";
+      }, index * 100);
+    } else {
+      item.style.transition = "all 0.3s ease-in";
+      item.style.opacity = "0";
+      item.style.transform = "translateY(-20px)";
+      
+      setTimeout(() => {
+        item.style.display = "none";
+      }, 300);
+    }
+  });
+  
+  // Update URL without page reload
+  const url = new URL(window.location);
+  if (category === "all") {
+    url.searchParams.delete('filter');
+  } else {
+    url.searchParams.set('filter', category);
+  }
+  window.history.replaceState({}, '', url);
+}
+  
+  // Initialize filter counts
+  updateFilterCounts();
+  
+  // Handle filter chip clicks
   elements.forEach((element) => {
     element.addEventListener("click", () => {
       deselectAll();
       element.selected = true;
       const clickedId = element.id;
-      const items = document.querySelectorAll(".project-item");
       
-      items.forEach((item) => {
-        if (clickedId === "all" || item.dataset.category === clickedId) {
-          item.style.display = "block";
-        } else {
-          item.style.display = "none";
-        }
-      });
+      // Add visual feedback
+      element.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        element.style.transform = "scale(1)";
+      }, 150);
+      
+      filterProjects(clickedId);
     });
   });
+  
+
+  
+  // Check URL parameters on page load
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialFilter = urlParams.get('filter');
+  if (initialFilter) {
+    const filterElement = document.getElementById(initialFilter);
+    if (filterElement) {
+      filterElement.click();
+    }
+  }
 }
+
+
 
 setupFilterLogic();
 

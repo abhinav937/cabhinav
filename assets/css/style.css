@@ -278,7 +278,119 @@ html {
   --md-filter-chip-pressed-label-text-color: white;
   --md-filter-chip-selected-label-text-color: rgb(0, 0, 0);
   --md-filter-chip-label-text-color: white;
+  --md-filter-chip-selected-outline-color: transparent;
+  --md-filter-chip-selected-outline-width: 0px;
+  transition: transform 0.15s ease;
 }
+
+/* Override any default focus/outline styles */
+md-filter-chip:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+md-filter-chip[selected]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any default browser focus styles */
+md-filter-chip:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Additional Material Design overrides */
+md-filter-chip {
+  --md-filter-chip-selected-outline-color: transparent !important;
+  --md-filter-chip-selected-outline-width: 0px !important;
+  --md-filter-chip-focus-outline-color: transparent !important;
+  --md-filter-chip-focus-outline-width: 0px !important;
+}
+
+md-filter-chip[selected] {
+  --md-filter-chip-selected-outline-color: transparent !important;
+  --md-filter-chip-selected-outline-width: 0px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+
+/* Project item animations */
+.project-item {
+  transition: all 0.4s ease-out;
+}
+
+.project-item[style*="display: none"] {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Enhanced filter chip interactions */
+md-filter-chip {
+  cursor: pointer;
+  user-select: none;
+}
+
+md-filter-chip:hover {
+  transform: translateY(-1px);
+}
+
+md-filter-chip:active {
+  transform: translateY(0px);
+}
+
+/* Mobile responsive filter chips */
+@media (max-width: 768px) {
+  md-chip-set {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 10px;
+    margin: 0 -10px;
+  }
+  
+  md-chip-set::-webkit-scrollbar {
+    display: none;
+  }
+  
+  md-filter-chip {
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+  
+
+}
+
+/* Focus styles for accessibility */
+md-filter-chip:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Loading state for filters */
+.filter-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.filter-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid #cce8e7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+
 
 .filter-chip-style-rounded {
   --md-filter-chip-hover-label-text-color: #4da6ff;
@@ -2789,10 +2901,24 @@ img.bg {
 /* Enhanced indicators */
 .carousel-indicators button {
   transition: all 0.3s ease;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  margin: 0 4px !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
 .carousel-indicators button:hover {
   transform: scale(1.2);
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.carousel-indicators button.active {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  transform: scale(1.1);
 }
 
 /* Focus styles for accessibility */
@@ -2835,14 +2961,22 @@ img.bg {
   }
   
   .carousel-indicators {
-    bottom: 10px !important;
+    bottom: 15px !important;
   }
   
   .carousel-indicators button {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
     border-radius: 50% !important;
     margin: 0 4px !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  .carousel-indicators button.active {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    transform: scale(1.1);
   }
 }
 
