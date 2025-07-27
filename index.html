@@ -722,17 +722,31 @@
 
         <h2 class="custom-h3" style="padding-top: 20px;">Work History</h2>
         <div class="icon-row">
-          <img src="./assets/icons/annapurna_labs_logo.webp" alt="Annapurna Labs" loading="lazy">
-          <img src="./assets/icons/wempec logo.png" alt="WEMPEC" loading="lazy">
-          <img src="./assets/icons/uw_mad_ece_logo.png" alt="UW ECE" loading="lazy">
-          <img src="./assets/icons/wisc_union_logo.svg" alt="Union South" loading="lazy">
-          <img src="./assets/icons/peg_logo.jpg" alt="PEG" loading="lazy">
+          <div class="clickable-icon" onclick="openWorkDialog('annapurna')">
+            <img src="./assets/icons/annapurna_labs_logo.webp" alt="Annapurna Labs" loading="lazy">
+          </div>
+          <div class="clickable-icon" onclick="openWorkDialog('wempec')">
+            <img src="./assets/icons/wempec logo.png" alt="WEMPEC" loading="lazy">
+          </div>
+          <div class="clickable-icon" onclick="openWorkDialog('uw_ece')">
+            <img src="./assets/icons/uw_mad_ece_logo.png" alt="UW ECE" loading="lazy">
+          </div>
+          <div class="clickable-icon" onclick="openWorkDialog('union_south')">
+            <img src="./assets/icons/wisc_union_logo.svg" alt="Union South" loading="lazy">
+          </div>
+          <div class="clickable-icon" onclick="openWorkDialog('peg')">
+            <img src="./assets/icons/peg_logo.jpg" alt="PEG" loading="lazy">
+          </div>
         </div>
 
         <h2 class="custom-h3" style="margin-top: 20px;">Education</h2>
         <div class="icon-row">
-          <img src="./assets/icons/uw-madison_logo.png" alt="UW - Madison" loading="lazy">
-          <img src="./assets/icons/iit_logo.png" alt="IIT - Dharwad" loading="lazy">
+          <div class="clickable-icon" onclick="openEducationDialog('uw_madison')">
+            <img src="./assets/icons/uw-madison_logo.png" alt="UW - Madison" loading="lazy">
+          </div>
+          <div class="clickable-icon" onclick="openEducationDialog('iit_dharwad')">
+            <img src="./assets/icons/iit_logo.png" alt="IIT - Dharwad" loading="lazy">
+          </div>
         </div>
 
         <h2 class="custom-h3" style="margin-top: 20px;">Publications</h2>
@@ -741,26 +755,32 @@
           <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please try
             again later.</div>
         </div>
-        <h2 class="custom-h3" style="margin-top: 20px;">Scripts & Projects</h2>
-        <div class="work-history">
-          <md-list style="max-width: 600px;">
-            <md-list-item interactive href="https://latex.cabhinav.com/" target="_blank">
-              <div slot="headline">Latex-SVG for inkscape</div>
-              <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-            </md-list-item>
-            <md-list-item interactive href="https://github.com/abhinav937/Lattice_NanoIce" target="_blank">
-              <div slot="headline">Lattice NanoIce</div>
-              <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-            </md-list-item>
-            <md-list-item interactive href="https://github.com/abhinav937/icesugar_nano_examples" target="_blank">
-              <div slot="headline">icesugar nano examples</div>
-              <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-            </md-list-item>
-            <md-list-item interactive href="https://github.com/abhinav937/ssh-push" target="_blank">
-              <div slot="headline">ssh push</div>
-              <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
-            </md-list-item>
-          </md-list>
+        <div class="scripts-projects-section">
+          <h2 class="custom-h3">Scripts & Projects</h2>
+          <div class="scripts-projects-list">
+            <md-list>
+              <md-list-item interactive href="https://latex.cabhinav.com/" target="_blank">
+                <div slot="headline">Latex-SVG for inkscape</div>
+                <div slot="supporting-text">LaTeX to SVG converter for Inkscape</div>
+                <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
+              </md-list-item>
+              <md-list-item interactive href="https://github.com/abhinav937/Lattice_NanoIce" target="_blank">
+                <div slot="headline">Lattice NanoIce</div>
+                <div slot="supporting-text">FPGA development examples and tools</div>
+                <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
+              </md-list-item>
+              <md-list-item interactive href="https://github.com/abhinav937/icesugar_nano_examples" target="_blank">
+                <div slot="headline">icesugar nano examples</div>
+                <div slot="supporting-text">FPGA examples for iCE40 nano</div>
+                <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
+              </md-list-item>
+              <md-list-item interactive href="https://github.com/abhinav937/ssh-push" target="_blank">
+                <div slot="headline">ssh push</div>
+                <div slot="supporting-text">Automated SSH deployment script</div>
+                <md-icon style="color: #cce8e7;" slot="end">open_in_new</md-icon>
+              </md-list-item>
+            </md-list>
+          </div>
         </div>
       </article>
 
@@ -873,24 +893,7 @@
     window.addEventListener('scroll', debouncedHandleScroll);
   </script>
 
-  <style>
-.icon-row {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}
-.icon-row img {
-  height: 90px;   /* or 80px, or whatever size you prefer */
-  width: auto;
-  border-radius: 8px;
-  object-fit: contain;
-  background: #fff;
-  padding: 4px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-}
-</style>
+
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
