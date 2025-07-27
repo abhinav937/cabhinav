@@ -501,29 +501,7 @@ for (let i = 0; i < formInputs.length; i++) {
   });
 }
 
-// ========================================
-// PAGE NAVIGATION
-// ========================================
 
-const navigationLinks = document.querySelectorAll("[data-nav-link]");
-const pages = document.querySelectorAll("[data-page]");
-
-for (let i = 0; i < navigationLinks.length; i++) {
-  navigationLinks[i].addEventListener("click", function () {
-    const clickedLinkText = this.innerHTML.toLowerCase().trim();
-    for (let j = 0; j < pages.length; j++) {
-      const pageName = pages[j].dataset.page.toLowerCase();
-      if (clickedLinkText.includes(pageName) || pageName === clickedLinkText) {
-        pages[j].classList.add("active");
-        this.classList.add("active");
-      } else {
-        pages[j].classList.remove("active");
-        navigationLinks[j].classList.remove("active");
-      }
-    }
-    window.scrollTo(0, 0);
-  });
-}
 
 // ========================================
 // FILTER CHIPS
@@ -636,6 +614,8 @@ function setupFilterLogic() {
       filterElement.click();
     }
   }
+  
+
 }
 
 
@@ -677,29 +657,212 @@ const setupGlobalSmoothScrolling = () => {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.navigationManager = new NavigationManager();
   setupGlobalSmoothScrolling();
   
-  // Add test functions to global scope for debugging
-  window.testHideNavbar = () => {
-    if (window.navigationManager) {
-      window.navigationManager.testNavbarHide();
-    }
-  };
+  // Initialize hash navigation
+  const hashSuccess = handleHashNavigation();
   
-  window.testShowNavbar = () => {
-    if (window.navigationManager) {
-      window.navigationManager.testNavbarShow();
+  // If no hash or invalid hash, default to about
+  if (!hashSuccess) {
+    const aboutSection = document.getElementById('about');
+    const aboutButton = document.querySelector('[onclick*="about"]');
+    if (aboutSection && aboutButton) {
+      toggleContent('about', aboutButton);
     }
-  };
+  }
+  
+  // Listen for hash changes
+  window.addEventListener('hashchange', handleHashNavigation);
+  
+  // Add keyboard navigation (exact same as desktop)
+  document.addEventListener('keydown', (e) => {
+    // Only handle navigation keys when not typing in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    const navButtons = document.querySelectorAll('[data-nav-link]');
+    const activeButton = document.querySelector('[data-nav-link].active');
+    const currentIndex = Array.from(navButtons).indexOf(activeButton);
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        if (currentIndex > 0) {
+          const prevButton = navButtons[currentIndex - 1];
+          const prevId = prevButton.getAttribute('onclick')?.match(/toggleContent\('([^']+)'/)?.[1];
+          if (prevId) toggleContent(prevId, prevButton);
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        if (currentIndex < navButtons.length - 1) {
+          const nextButton = navButtons[currentIndex + 1];
+          const nextId = nextButton.getAttribute('onclick')?.match(/toggleContent\('([^']+)'/)?.[1];
+          if (nextId) toggleContent(nextId, nextButton);
+        }
+        break;
+      case 'Home':
+        e.preventDefault();
+        const firstButton = navButtons[0];
+        const firstId = firstButton.getAttribute('onclick')?.match(/toggleContent\('([^']+)'/)?.[1];
+        if (firstId) toggleContent(firstId, firstButton);
+        break;
+      case 'End':
+        e.preventDefault();
+        const lastButton = navButtons[navButtons.length - 1];
+        const lastId = lastButton.getAttribute('onclick')?.match(/toggleContent\('([^']+)'/)?.[1];
+        if (lastId) toggleContent(lastId, lastButton);
+        break;
+    }
+  });
+  
+  // Add focus management (exact same as desktop)
+  const navButtons = document.querySelectorAll('[data-nav-link]');
+  navButtons.forEach(button => {
+    button.addEventListener('focus', () => {
+      // Ensure proper focus styling
+      button.setAttribute('tabindex', '0');
+    });
+    
+    button.addEventListener('blur', () => {
+      // Maintain accessibility
+      if (!button.classList.contains('active')) {
+        button.setAttribute('tabindex', '0');
+      }
+    });
+  });
+  
+  // Handle resize events to update button states when switching between mobile/desktop
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // Re-apply current active state to ensure proper styling
+      const activeButton = document.querySelector('[data-nav-link].active');
+      if (activeButton) {
+        const activeId = activeButton.getAttribute('onclick')?.match(/toggleContent\('([^']+)'/)?.[1];
+        if (activeId) {
+          // Re-apply the active state without changing the URL
+          const navButtons = document.querySelectorAll('[data-nav-link]');
+          const isMobile = window.innerWidth < 1250;
+          
+          navButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (!isMobile) {
+              const stateLayer = btn.querySelector('.state-layer');
+              const desktopIcon = btn.querySelector('.material-symbols-rounded');
+              if (stateLayer) stateLayer.style.backgroundColor = 'transparent';
+              if (desktopIcon) desktopIcon.style.color = 'rgba(255, 255, 255, 0.472)';
+            }
+          });
+          
+          activeButton.classList.add('active');
+          if (!isMobile) {
+            const stateLayer = activeButton.querySelector('.state-layer');
+            const desktopIcon = activeButton.querySelector('.material-symbols-rounded');
+            if (stateLayer) stateLayer.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            if (desktopIcon) desktopIcon.style.color = 'rgba(255, 255, 255, 1)';
+          }
+        }
+      }
+    }, 100);
+  });
 });
 
-// Legacy function for backward compatibility
+// Simple navigation function - back to the old way
 function toggleContent(id, button) {
-  if (window.navigationManager) {
-    window.navigationManager.showSection(id);
+  // Get all content sections
+  const sections = document.querySelectorAll('article[data-page]');
+  const targetSection = document.getElementById(id);
+  
+  if (targetSection) {
+    // Hide all sections instantly
+    sections.forEach(section => {
+      section.classList.remove('active');
+      section.style.display = 'none';
+    });
+    
+    // Show target section instantly
+    targetSection.classList.add('active');
+    targetSection.style.display = 'block';
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+  
+  // Update navigation button states (exact same functionality for desktop and mobile)
+  const navButtons = document.querySelectorAll('[data-nav-link]');
+  const isMobile = window.innerWidth < 1250;
+  
+  navButtons.forEach(btn => {
+    btn.classList.remove('active');
+    
+    if (!isMobile) {
+      // Desktop button states - only apply on desktop
+      const stateLayer = btn.querySelector('.state-layer');
+      const desktopIcon = btn.querySelector('.material-symbols-rounded');
+      
+      if (stateLayer) stateLayer.style.backgroundColor = 'transparent';
+      if (desktopIcon) desktopIcon.style.color = 'rgba(255, 255, 255, 0.472)';
+    }
+    // Mobile button states are handled entirely by CSS via .active class
+  });
+  
+  if (button) {
+    button.classList.add('active');
+    
+    if (!isMobile) {
+      // Desktop button states - only apply on desktop
+      const stateLayer = button.querySelector('.state-layer');
+      const desktopIcon = button.querySelector('.material-symbols-rounded');
+      
+      if (stateLayer) stateLayer.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+      if (desktopIcon) desktopIcon.style.color = 'rgba(255, 255, 255, 1)';
+    }
+    // Mobile button states are handled entirely by CSS via .active class
+  }
+  
+  // Update URL with hash (only for non-default pages)
+  if (id !== 'about') {
+    window.location.hash = id;
+  } else {
+    // Remove hash for about page (default)
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+  
+  // Fetch publications only when resume section is shown
+  if (id === 'resume' && typeof window.publicationsFetched === 'undefined') {
+    console.log('Resume section shown, fetching publications...');
+    window.publicationsFetched = true;
+    fetchPublications();
   }
 }
+
+// Handle hash-based navigation on page load
+function handleHashNavigation() {
+  const hash = window.location.hash.substring(1);
+  const validPages = ['about', 'resume', 'contact'];
+  
+  if (hash && validPages.includes(hash)) {
+    const targetSection = document.getElementById(hash);
+    const targetButton = document.querySelector(`[onclick*="${hash}"]`);
+    
+    if (targetSection && targetButton) {
+      toggleContent(hash, targetButton);
+      return true;
+    }
+  } else if (!hash) {
+    // No hash means default to about page
+    const aboutSection = document.getElementById('about');
+    const aboutButton = document.querySelector('[onclick*="about"]');
+    if (aboutSection && aboutButton) {
+      toggleContent('about', aboutButton);
+      return true;
+    }
+  }
+  return false;
+}
+
+
 
 // ========================================
 // JOB DURATION CALCULATIONS

@@ -709,10 +709,15 @@ article {
 
 article {
   display: none;
+  transition: all 0.4s ease-out;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 article.active {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
   animation: fade 0.5s ease backwards;
 }
 
