@@ -8,6 +8,13 @@
             this.networkError = false;
             this.lastNetworkCheck = 0;
             this.networkCheckInterval = 10000; // Check every 10 seconds
+            
+            // Rate limiting properties
+            this.rateLimitActive = false;
+            this.rateLimitResetTime = null;
+            this.lastRateLimitCheck = 0;
+            this.rateLimitCheckInterval = 5000; // Check every 5 seconds
+            this.rateLimitRetryAfter = null;
         }
 
         // Check network connectivity
@@ -58,11 +65,95 @@
             }
         }
 
+        // Check rate limit status
+        async checkRateLimitStatus() {
+            const now = Date.now();
+            if (now - this.lastRateLimitCheck < this.rateLimitCheckInterval) {
+                return !this.rateLimitActive;
+            }
+            
+            this.lastRateLimitCheck = now;
+            
+            try {
+                // Quick rate limit check with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+                
+                const response = await fetch(`${this.apiUrl}/api/rate-limit-status`, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Check if rate limited
+                    if (data.rateLimited) {
+                        this.rateLimitActive = true;
+                        this.rateLimitResetTime = data.resetTime ? new Date(data.resetTime) : null;
+                        this.rateLimitRetryAfter = data.retryAfter || 30; // Default 30 seconds
+                        return false;
+                    } else {
+                        this.rateLimitActive = false;
+                        this.rateLimitResetTime = null;
+                        this.rateLimitRetryAfter = null;
+                        return true;
+                    }
+                } else if (response.status === 429) {
+                    // Rate limited response
+                    this.rateLimitActive = true;
+                    
+                    // Try to get retry-after header
+                    const retryAfter = response.headers.get('Retry-After');
+                    this.rateLimitRetryAfter = retryAfter ? parseInt(retryAfter) : 30;
+                    
+                    // Calculate reset time
+                    this.rateLimitResetTime = new Date(Date.now() + (this.rateLimitRetryAfter * 1000));
+                    return false;
+                } else {
+                    // Other errors, assume not rate limited
+                    this.rateLimitActive = false;
+                    this.rateLimitResetTime = null;
+                    this.rateLimitRetryAfter = null;
+                    return true;
+                }
+            } catch (error) {
+                console.log('Rate limit check failed:', error.message);
+                // If we can't check rate limit, assume it's not active
+                this.rateLimitActive = false;
+                this.rateLimitResetTime = null;
+                this.rateLimitRetryAfter = null;
+                return true;
+            }
+        }
+
+        // Get remaining time until rate limit resets
+        getRateLimitRemainingTime() {
+            if (!this.rateLimitActive || !this.rateLimitResetTime) {
+                return 0;
+            }
+            
+            const now = new Date();
+            const remaining = this.rateLimitResetTime.getTime() - now.getTime();
+            return Math.max(0, Math.ceil(remaining / 1000));
+        }
+
         async sendMessage(message) {
             // Check network before sending
             const isConnected = await this.checkNetworkConnectivity();
             if (!isConnected) {
                 throw new Error('NETWORK_ERROR');
+            }
+
+            // Check rate limit before sending
+            const isNotRateLimited = await this.checkRateLimitStatus();
+            if (!isNotRateLimited) {
+                throw new Error('RATE_LIMIT_ERROR');
             }
 
             try {
@@ -96,7 +187,15 @@
                     } else if (response.status === 403) {
                         throw new Error('Access denied. Please check your permissions.');
                     } else if (response.status === 429) {
-                        throw new Error('Too many requests. Please wait a moment and try again.');
+                        // Handle rate limiting
+                        const retryAfter = response.headers.get('Retry-After');
+                        const retrySeconds = retryAfter ? parseInt(retryAfter) : 30;
+                        
+                        this.rateLimitActive = true;
+                        this.rateLimitResetTime = new Date(Date.now() + (retrySeconds * 1000));
+                        this.rateLimitRetryAfter = retrySeconds;
+                        
+                        throw new Error('RATE_LIMIT_ERROR');
                     } else if (response.status >= 500) {
                         throw new Error('Server error. Please try again later.');
                     } else {
@@ -112,6 +211,7 @@
 
                 this.isConnected = true;
                 this.networkError = false;
+                this.rateLimitActive = false; // Reset rate limit on successful request
                 return data;
             } catch (error) {
                 console.error('API Error:', error);
@@ -127,12 +227,12 @@
                     throw new Error('NETWORK_ERROR');
                 }
                 
-                // Don't treat rate limiting as network error
-                if (error.message.includes('Too many requests')) {
+                // Handle rate limiting specifically
+                if (error.message === 'RATE_LIMIT_ERROR') {
                     // Keep network status as connected for rate limiting
                     this.isConnected = true;
                     this.networkError = false;
-                    throw error; // Re-throw the original error
+                    throw error; // Re-throw the rate limit error
                 }
                 
                 this.isConnected = false;
@@ -178,6 +278,8 @@
     let rateLimitActive = false;
     let rateLimitShown = false;
     let rateLimitTimeout = null;
+    let rateLimitCheckInterval = null;
+    let rateLimitCountdownInterval = null; // Add countdown interval
 
     // Initialize chat
     function initChat() {
@@ -202,8 +304,9 @@
             messagesWrapper.addEventListener('scroll', handleUserScroll);
         }
         
-        // Start network monitoring
+        // Start network and rate limit monitoring
         startNetworkMonitoring();
+        startRateLimitMonitoring();
 
         // Focus input on load (desktop only)
         if (window.innerWidth > 768) {
@@ -237,6 +340,21 @@
         window.addEventListener('beforeunload', cleanupNetworkMonitoring);
     }
 
+    // Start continuous rate limit monitoring
+    function startRateLimitMonitoring() {
+        // Check rate limit immediately
+        checkRateLimitStatus();
+        
+        // Set up periodic rate limit checks
+        rateLimitCheckInterval = setInterval(checkRateLimitStatus, 5000); // Check every 5 seconds
+        
+        // Also check when window gains focus
+        window.addEventListener('focus', checkRateLimitStatus);
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', cleanupRateLimitMonitoring);
+    }
+
     // Cleanup network monitoring
     function cleanupNetworkMonitoring() {
         if (networkCheckInterval) {
@@ -250,11 +368,85 @@
         }
     }
 
+    // Cleanup rate limit monitoring
+    function cleanupRateLimitMonitoring() {
+        if (rateLimitCheckInterval) {
+            clearInterval(rateLimitCheckInterval);
+            rateLimitCheckInterval = null;
+        }
+        
+        if (rateLimitCountdownInterval) {
+            clearInterval(rateLimitCountdownInterval);
+            rateLimitCountdownInterval = null;
+        }
+    }
+
+    // Start countdown timer for rate limit
+    function startRateLimitCountdown() {
+        // Clear any existing countdown
+        if (rateLimitCountdownInterval) {
+            clearInterval(rateLimitCountdownInterval);
+        }
+        
+        console.log('Starting rate limit countdown timer');
+        
+        // Start countdown that updates every second
+        rateLimitCountdownInterval = setInterval(() => {
+            const remainingTime = bot.getRateLimitRemainingTime();
+            console.log('Countdown timer tick - remaining time:', remainingTime);
+            
+            if (remainingTime <= 0) {
+                // Rate limit expired, stop countdown
+                console.log('Rate limit countdown finished - resetting');
+                clearInterval(rateLimitCountdownInterval);
+                rateLimitCountdownInterval = null;
+                
+                // Reset rate limit
+                resetRateLimit();
+                return;
+            }
+            
+            // Update the status indicator with current countdown
+            if (networkStatus) {
+                networkStatus.style.display = 'flex'; // Ensure it's visible
+                networkStatus.innerHTML = `<span class="material-symbols-outlined">timer</span><span class="status-text">${remainingTime}s</span>`;
+                networkStatus.className = 'network-status rate-limited';
+                console.log('Updated countdown display:', remainingTime + 's');
+            }
+        }, 1000); // Update every second
+    }
+
+    // Stop countdown timer
+    function stopRateLimitCountdown() {
+        if (rateLimitCountdownInterval) {
+            console.log('Stopping rate limit countdown timer');
+            clearInterval(rateLimitCountdownInterval);
+            rateLimitCountdownInterval = null;
+        }
+    }
+
+    // Ensure rate limit status is visible and not overridden
+    function ensureRateLimitStatusVisible() {
+        if (bot.rateLimitActive && networkStatus) {
+            const remainingTime = bot.getRateLimitRemainingTime();
+            const timeText = remainingTime > 0 ? `${remainingTime}s` : 'Rate Limited';
+            networkStatus.style.display = 'flex';
+            networkStatus.innerHTML = `<span class="material-symbols-outlined">timer</span><span class="status-text">${timeText}</span>`;
+            networkStatus.className = 'network-status rate-limited';
+        }
+    }
+
     // Check network status and update UI accordingly
     async function checkNetworkStatus() {
         try {
-            // Show checking indicator briefly
-            if (networkStatus && !bot.networkError) {
+            // If rate limit is active, ensure it stays visible and skip network status updates
+            if (bot.rateLimitActive) {
+                ensureRateLimitStatusVisible();
+                return;
+            }
+            
+            // Show checking indicator briefly (but not if rate limit is active)
+            if (networkStatus && !bot.networkError && !bot.rateLimitActive) {
                 networkStatus.style.display = 'flex';
                 networkStatus.innerHTML = '<span class="material-symbols-outlined">sync</span><span class="status-text">Checking...</span>';
                 networkStatus.className = 'network-status checking';
@@ -273,8 +465,8 @@
                     addMessage('Network connection restored. You can now send messages.', 'bot');
                 }
                 
-                // Hide network status indicator
-                if (networkStatus) {
+                // Hide network status indicator only if rate limit is not active
+                if (networkStatus && !bot.rateLimitActive) {
                     networkStatus.style.display = 'none';
                 }
             } else {
@@ -284,6 +476,43 @@
         } catch (error) {
             console.error('Network check failed:', error);
             handleNetworkError();
+        }
+    }
+
+    // Check rate limit status and update UI accordingly
+    async function checkRateLimitStatus() {
+        try {
+            // Don't check if we have an active countdown timer running
+            if (rateLimitCountdownInterval) {
+                console.log('Skipping rate limit check - countdown timer is active');
+                return;
+            }
+            
+            const isNotRateLimited = await bot.checkRateLimitStatus();
+            
+            if (isNotRateLimited) {
+                // Rate limit is cleared
+                if (bot.rateLimitActive) {
+                    bot.rateLimitActive = false;
+                    stopRateLimitCountdown(); // Stop countdown
+                    enableInput();
+                    console.log('Rate limit cleared');
+                    
+                    // Show brief success message
+                    addMessage('Rate limit cleared. You can now send messages.', 'bot');
+                }
+                
+                // Hide rate limit status indicator
+                if (networkStatus && networkStatus.className.includes('rate-limited')) {
+                    networkStatus.style.display = 'none';
+                }
+            } else {
+                // Rate limit detected
+                handleRateLimit();
+            }
+        } catch (error) {
+            console.error('Rate limit check failed:', error);
+            // Don't treat rate limit check failure as rate limiting
         }
     }
 
@@ -304,6 +533,46 @@
             addMessage('Network connection lost. Please check your internet connection and try again.', 'error');
             networkErrorShown = true;
         }
+    }
+
+    // Handle rate limiting
+    function handleRateLimit() {
+        console.log('Handling rate limit - current state:', bot.rateLimitActive, 'countdown:', rateLimitCountdownInterval);
+        
+        bot.rateLimitActive = true;
+        disableInputForRateLimit();
+        
+        // Show rate limit status indicator with initial countdown
+        if (networkStatus) {
+            const remainingTime = bot.getRateLimitRemainingTime();
+            const timeText = remainingTime > 0 ? `${remainingTime}s` : 'Rate Limited';
+            networkStatus.style.display = 'flex';
+            networkStatus.innerHTML = `<span class="material-symbols-outlined">timer</span><span class="status-text">${timeText}</span>`;
+            networkStatus.className = 'network-status rate-limited';
+            console.log('Set initial rate limit display:', timeText);
+        }
+        
+        // Start countdown timer
+        startRateLimitCountdown();
+        
+        // Show rate limit message only once
+        if (!rateLimitShown) {
+            const remainingTime = bot.getRateLimitRemainingTime();
+            const message = remainingTime > 0 
+                ? `Too many requests. Please wait ${remainingTime} seconds and try again.`
+                : 'Too many requests. Please wait a moment and try again.';
+            addMessage(message, 'error');
+            rateLimitShown = true;
+            console.log('Showed rate limit message:', message);
+        }
+        
+        // Auto-reset after the retry time (backup in case countdown fails)
+        const retryTime = bot.rateLimitRetryAfter || 30;
+        console.log('Setting backup timeout for rate limit reset in', retryTime, 'seconds');
+        rateLimitTimeout = setTimeout(() => {
+            console.log('Backup timeout triggered - resetting rate limit');
+            resetRateLimit();
+        }, retryTime * 1000);
     }
 
     // Disable input when network is down
@@ -333,8 +602,8 @@
             editBtn.disabled = false;
         }
         
-        // Hide network status indicator
-        if (networkStatus) {
+        // Hide network status indicator only if rate limit is not active
+        if (networkStatus && !bot.rateLimitActive) {
             networkStatus.style.display = 'none';
         }
         
@@ -352,6 +621,60 @@
         rateLimitShown = false;
     }
 
+    // Disable input for rate limiting
+    function disableInputForRateLimit() {
+        if (messageInput) {
+            messageInput.disabled = true;
+            messageInput.placeholder = 'Rate limited...';
+        }
+        if (sendButton) {
+            sendButton.disabled = true;
+        }
+        if (editBtn) {
+            editBtn.disabled = true;
+        }
+    }
+
+    // Reset rate limiting
+    function resetRateLimit() {
+        console.log('Resetting rate limit - active:', bot.rateLimitActive, 'countdown:', rateLimitCountdownInterval);
+        
+        bot.rateLimitActive = false;
+        rateLimitShown = false;
+        
+        // Stop countdown timer
+        stopRateLimitCountdown();
+        
+        if (messageInput) {
+            messageInput.disabled = false;
+            messageInput.placeholder = 'Message...';
+        }
+        if (sendButton) {
+            sendButton.disabled = false;
+        }
+        if (editBtn) {
+            editBtn.disabled = false;
+        }
+        
+        // Hide rate limit status indicator
+        if (networkStatus) {
+            networkStatus.style.display = 'none';
+        }
+        
+        // Clear any existing rate limit error messages
+        const errorMessages = messagesContainer.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMsg => {
+            if (errorMsg.textContent.includes('Too many requests')) {
+                const messageDiv = errorMsg.closest('.message');
+                if (messageDiv) {
+                    messageDiv.remove();
+                }
+            }
+        });
+        
+        console.log('Rate limit reset - input enabled');
+    }
+
     // Handle send message
     async function handleSend() {
         const message = messageInput.value.trim();
@@ -364,8 +687,12 @@
         }
 
         // Check rate limiting before sending
-        if (rateLimitActive) {
-            addMessage('Too many requests. Please wait a moment and try again.', 'error');
+        if (bot.rateLimitActive) {
+            const remainingTime = bot.getRateLimitRemainingTime();
+            const message = remainingTime > 0 
+                ? `Too many requests. Please wait ${remainingTime} seconds and try again.`
+                : 'Too many requests. Please wait a moment and try again.';
+            addMessage(message, 'error');
             return;
         }
 
@@ -412,7 +739,7 @@
             }
             
             // Handle rate limiting separately from network errors
-            if (error.message.includes('Too many requests')) {
+            if (error.message === 'RATE_LIMIT_ERROR') {
                 handleRateLimit();
                 return;
             }
@@ -645,80 +972,6 @@
         const feedbackMsg = isPositive ? 'Thanks for the feedback!' : 'We\'ll work on improving that.';
         console.log(feedbackMsg);
     }
-
-    // Handle rate limiting
-    function handleRateLimit() {
-        rateLimitActive = true;
-        disableInputForRateLimit();
-        
-        // Show rate limit status indicator
-        if (networkStatus) {
-            networkStatus.style.display = 'flex';
-            networkStatus.innerHTML = '<span class="material-symbols-outlined">timer</span><span class="status-text">Rate Limited</span>';
-            networkStatus.className = 'network-status rate-limited';
-        }
-        
-        // Show rate limit message only once
-        if (!rateLimitShown) {
-            addMessage('Too many requests. Please wait a moment and try again.', 'error');
-            rateLimitShown = true;
-        }
-        
-        // Auto-reset after 30 seconds
-        rateLimitTimeout = setTimeout(() => {
-            resetRateLimit();
-        }, 30000);
-    }
-
-    // Disable input for rate limiting
-    function disableInputForRateLimit() {
-        if (messageInput) {
-            messageInput.disabled = true;
-            messageInput.placeholder = 'Rate limited...';
-        }
-        if (sendButton) {
-            sendButton.disabled = true;
-        }
-        if (editBtn) {
-            editBtn.disabled = true;
-        }
-    }
-
-    // Reset rate limiting
-    function resetRateLimit() {
-        rateLimitActive = false;
-        rateLimitShown = false;
-        
-        if (messageInput) {
-            messageInput.disabled = false;
-            messageInput.placeholder = 'Message...';
-        }
-        if (sendButton) {
-            sendButton.disabled = false;
-        }
-        if (editBtn) {
-            editBtn.disabled = false;
-        }
-        
-        // Hide rate limit status indicator
-        if (networkStatus) {
-            networkStatus.style.display = 'none';
-        }
-        
-        // Clear any existing rate limit error messages
-        const errorMessages = messagesContainer.querySelectorAll('.error-message');
-        errorMessages.forEach(errorMsg => {
-            if (errorMsg.textContent.includes('Too many requests')) {
-                const messageDiv = errorMsg.closest('.message');
-                if (messageDiv) {
-                    messageDiv.remove();
-                }
-            }
-        });
-        
-        console.log('Rate limit reset - input enabled');
-    }
-
 
     // Handle new chat
     function handleNewChat() {
