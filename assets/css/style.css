@@ -370,6 +370,75 @@ md-filter-chip:focus {
   outline-offset: 2px;
 }
 
+/* Skeleton placeholders for images */
+.image-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Skeleton for different image types */
+img[src*=".jpg"], img[src*=".jpeg"], img[src*=".png"] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img[src*=".jpg"].loaded, img[src*=".jpeg"].loaded, img[src*=".png"].loaded {
+  opacity: 1;
+}
+
+/* Container for skeleton + image */
+.image-container-skeleton {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container-skeleton .image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.image-container-skeleton img {
+  position: relative;
+  z-index: 2;
+}
+
 /* Loading state for filters */
 .filter-loading {
   opacity: 0.6;

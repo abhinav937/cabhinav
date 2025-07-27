@@ -760,7 +760,7 @@ document.querySelectorAll(".date-duration").forEach((element) => {
 // PUBLICATIONS FETCHING
 // ========================================
 
-async function fetchPublications(delayMs = 1500) {
+async function fetchPublications(delayMs = 100) {
   console.log('fetchPublications function called with delay:', delayMs);
   const API_URL = "https://api.cabhinav.com/api/server.js";
   const container = document.getElementById("publications-container");
@@ -1055,3 +1055,48 @@ function initializeCarouselEnhancements() {
 
 // Initialize carousel enhancements
 initializeCarouselEnhancements();
+
+// Setup skeleton placeholders for images
+function setupImageSkeletons() {
+  const images = document.querySelectorAll('img[src*=".jpg"], img[src*=".jpeg"], img[src*=".png"]');
+  
+  images.forEach(img => {
+    // Create skeleton container
+    const container = document.createElement('div');
+    container.className = 'image-container-skeleton';
+    container.style.width = img.offsetWidth || '100%';
+    container.style.height = img.offsetHeight || 'auto';
+    
+    // Create skeleton placeholder
+    const skeleton = document.createElement('div');
+    skeleton.className = 'image-skeleton';
+    skeleton.style.width = '100%';
+    skeleton.style.height = '100%';
+    
+    // Insert skeleton before image
+    img.parentNode.insertBefore(container, img);
+    container.appendChild(skeleton);
+    container.appendChild(img);
+    
+    // Handle image load
+    if (img.complete) {
+      img.classList.add('loaded');
+      skeleton.style.display = 'none';
+    } else {
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+        skeleton.style.display = 'none';
+      });
+      
+      img.addEventListener('error', () => {
+        skeleton.style.display = 'none';
+        img.style.display = 'none';
+      });
+    }
+  });
+}
+
+// Initialize image skeletons
+document.addEventListener('DOMContentLoaded', () => {
+  setupImageSkeletons();
+});
