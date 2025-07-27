@@ -32,7 +32,15 @@
     <!-- CSS -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+      <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-size: 1.1rem;
+    }
+  </style>
 
 </head>
 
@@ -60,8 +68,8 @@
             const container = document.getElementById('publications-container');
             const errorMessage = document.getElementById('error-message');
 
-            // Show skeleton loader first
-            showSkeletonLoader(container);
+                                // Show loading state
+            showLoadingMessage(container);
 
             // Add configurable delay to show loading animation
             await new Promise(resolve => setTimeout(resolve, delayMs));
@@ -129,41 +137,9 @@
             }
         }
 
-        // Function to show skeleton loader
-        function showSkeletonLoader(container) {
-            container.innerHTML = `
-                <div class="publications-skeleton">
-                    <div class="skeleton-item">
-                        <div class="skeleton-title"></div>
-                        <div class="skeleton-authors"></div>
-                        <div class="skeleton-publication"></div>
-                        <div class="skeleton-year"></div>
-                        <div class="skeleton-links">
-                            <div class="skeleton-link"></div>
-                            <div class="skeleton-link"></div>
-                        </div>
-                    </div>
-                    <div class="skeleton-item">
-                        <div class="skeleton-title"></div>
-                        <div class="skeleton-authors"></div>
-                        <div class="skeleton-publication"></div>
-                        <div class="skeleton-year"></div>
-                        <div class="skeleton-links">
-                            <div class="skeleton-link"></div>
-                            <div class="skeleton-link"></div>
-                        </div>
-                    </div>
-                    <div class="skeleton-item">
-                        <div class="skeleton-title"></div>
-                        <div class="skeleton-authors"></div>
-                        <div class="skeleton-publication"></div>
-                        <div class="skeleton-year"></div>
-                        <div class="skeleton-links">
-                            <div class="skeleton-link"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Function to show loading message
+        function showLoadingMessage(container) {
+            container.innerHTML = '<div class="loading">Loading publications...</div>';
         }
 
         // Fetch publications on page load

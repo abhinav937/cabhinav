@@ -776,47 +776,103 @@ function initializeCarouselEnhancements() {
 // Initialize carousel enhancements
 initializeCarouselEnhancements();
 
-// Setup skeleton placeholders for images
-function setupImageSkeletons() {
-  const images = document.querySelectorAll('img[src*=".jpg"], img[src*=".jpeg"], img[src*=".png"]');
-  
-  images.forEach(img => {
-    // Create skeleton container
-    const container = document.createElement('div');
-    container.className = 'image-container-skeleton';
-    container.style.width = img.offsetWidth || '100%';
-    container.style.height = img.offsetHeight || 'auto';
-    
-    // Create skeleton placeholder
-    const skeleton = document.createElement('div');
-    skeleton.className = 'image-skeleton';
-    skeleton.style.width = '100%';
-    skeleton.style.height = '100%';
-    
-    // Insert skeleton before image
-    img.parentNode.insertBefore(container, img);
-    container.appendChild(skeleton);
-    container.appendChild(img);
-    
-    // Handle image load
-    if (img.complete) {
-      img.classList.add('loaded');
-      skeleton.style.display = 'none';
-    } else {
-      img.addEventListener('load', () => {
-        img.classList.add('loaded');
-        skeleton.style.display = 'none';
-      });
-      
-      img.addEventListener('error', () => {
-        skeleton.style.display = 'none';
-        img.style.display = 'none';
-      });
+// Simple Manual Lazy Loading System
+class ManualLazyLoader {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.setupLazyLoading();
+    this.setupIntersectionObserver();
+    this.handleAlreadyLoadedImages();
+  }
+
+  setupLazyLoading() {
+    // Add loading="lazy" to all images that don't have it
+    const images = document.querySelectorAll('img:not([loading])');
+    images.forEach(img => {
+      if (!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'lazy');
+      }
+    });
+  }
+
+  setupIntersectionObserver() {
+    if (!('IntersectionObserver' in window)) {
+      // Fallback for older browsers - load all images immediately
+      this.loadAllImages();
+      return;
     }
-  });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          this.loadImage(img);
+          observer.unobserve(img);
+        }
+      });
+    }, {
+      rootMargin: '50px 0px', // Start loading 50px before entering viewport
+      threshold: 0.01
+    });
+
+    // Observe all images
+    const images = document.querySelectorAll('img');
+    images.forEach(img => observer.observe(img));
+  }
+
+  loadImage(img) {
+    // If image is already loaded, do nothing
+    if (img.complete && img.naturalHeight !== 0) {
+      this.handleImageLoad(img);
+      return;
+    }
+
+    // Add loading event listeners
+    img.addEventListener('load', () => {
+      this.handleImageLoad(img);
+    });
+
+    img.addEventListener('error', () => {
+      this.handleImageError(img);
+    });
+  }
+
+  handleImageLoad(img) {
+    img.classList.add('loaded');
+    // Add loaded class to container to stop shimmer
+    const container = img.closest('.image-container');
+    if (container) {
+      container.classList.add('image-loaded');
+    }
+  }
+
+  handleImageError(img) {
+    img.classList.add('error');
+    console.warn('Failed to load image:', img.src);
+  }
+
+  loadAllImages() {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => this.loadImage(img));
+  }
+
+  handleAlreadyLoadedImages() {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+      if (img.complete && img.naturalHeight !== 0) {
+        this.handleImageLoad(img);
+      }
+    });
+  }
 }
 
-// Initialize image skeletons
-document.addEventListener('DOMContentLoaded', () => {
-  setupImageSkeletons();
+// Initialize Manual Lazy Loader
+const manualLazyLoader = new ManualLazyLoader();
+
+// DOM Content Loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Manual Lazy Loader initialized');
 });
