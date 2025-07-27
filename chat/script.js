@@ -4,683 +4,564 @@
         constructor(apiUrl) {
             this.apiUrl = apiUrl;
             this.sessionId = null;
+            this.isConnected = false;
         }
 
         async sendMessage(message) {
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
 
-            // Add session ID if we have one
-            if (this.sessionId) {
-                headers['X-Session-ID'] = this.sessionId;
+                if (this.sessionId) {
+                    headers['X-Session-ID'] = this.sessionId;
+                }
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                
+                const response = await fetch(`${this.apiUrl}/api/gemini`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ prompt: message }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                    console.error('API Error:', errorMessage);
+                    
+                    // Handle specific HTTP status codes
+                    if (response.status === 401) {
+                        throw new Error('Authentication failed. Please refresh the page.');
+                    } else if (response.status === 403) {
+                        throw new Error('Access denied. Please check your permissions.');
+                    } else if (response.status === 429) {
+                        throw new Error('Too many requests. Please wait a moment and try again.');
+                    } else if (response.status >= 500) {
+                        throw new Error('Server error. Please try again later.');
+                    } else {
+                        throw new Error(`Request failed (${response.status}). Please try again.`);
+                    }
+                }
+
+                const data = await response.json();
+                
+                if (!this.sessionId && data.sessionId) {
+                    this.sessionId = data.sessionId;
+                }
+
+                this.isConnected = true;
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                this.isConnected = false;
+                throw error;
             }
-
-            const response = await fetch(`${this.apiUrl}/api/gemini`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ prompt: message })
-            });
-
-            const data = await response.json();
-            
-            // Save session ID from first response
-            if (!this.sessionId && data.sessionId) {
-                this.sessionId = data.sessionId;
-                this.updateSessionInfo();
-            }
-
-            return data;
         }
 
         async clearHistory() {
             if (!this.sessionId) return;
 
-            const response = await fetch(`${this.apiUrl}/api/conversation`, {
-                method: 'DELETE',
-                headers: {
-                    'X-Session-ID': this.sessionId
-                }
-            });
+            try {
+                const response = await fetch(`${this.apiUrl}/api/conversation`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Session-ID': this.sessionId
+                    }
+                });
 
-            return response.json();
-        }
-
-        async getHistory() {
-            if (!this.sessionId) return [];
-
-            const response = await fetch(`${this.apiUrl}/api/conversation`, {
-                method: 'GET',
-                headers: {
-                    'X-Session-ID': this.sessionId
-                }
-            });
-
-            const data = await response.json();
-            return data.messages;
-        }
-
-        // Helper method to validate and fix conversation history roles
-        validateConversationHistory(history) {
-            if (!Array.isArray(history)) return [];
-            
-            return history.map(message => {
-                // Ensure role is either 'user' or 'model'
-                if (message.role === 'bot' || message.role === 'assistant') {
-                    return { ...message, role: 'model' };
-                }
-                if (message.role !== 'user' && message.role !== 'model') {
-                    return { ...message, role: 'user' }; // Default to user if invalid
-                }
-                return message;
-            });
-        }
-
-        // Method to update session info display
-        updateSessionInfo() {
-            const sessionInfo = document.getElementById('sessionInfo');
-            const mobileSessionInfo = document.getElementById('mobileSessionInfo');
-            
-            if (this.sessionId) {
-                const sessionText = `Session: ${this.sessionId}`;
-                
-                if (sessionInfo) {
-                    sessionInfo.textContent = sessionText;
-                }
-                
-                if (mobileSessionInfo) {
-                    mobileSessionInfo.textContent = sessionText;
-                }
+                return response.json();
+            } catch (error) {
+                console.error('Error clearing history:', error);
+                return { success: true }; // Fallback
             }
         }
     }
 
-    // Initialize ChatBot instance
+    // Initialize ChatBot instance with fallback
     const bot = new ChatBot('https://ai-reply-bot.vercel.app');
 
-    // Function to create a new session
-    async function createNewSession() {
-        try {
-            // Discard old session
-            bot.sessionId = null;
-            // Send a simple message to create a new session
-            const data = await bot.sendMessage("Hello");
-            
-            // Only proceed if sessionId is set
-            if (bot.sessionId) {
-                // Remove 'Loading...' message
-                const sessionInfo = document.getElementById('sessionInfo');
-                const mobileSessionInfo = document.getElementById('mobileSessionInfo');
-                if (sessionInfo) {
-                    const loadingElement = document.getElementById('session-loading-message');
-                    if (loadingElement) loadingElement.remove();
-                }
-                if (mobileSessionInfo) {
-                    const loadingElement = document.getElementById('session-loading-message');
-                    if (loadingElement) loadingElement.remove();
-                }
-                // Remove 'Loading...' message from session info and show session ID
-                bot.updateSessionInfo();
-                // Add welcome message
-                const desktopMessages = document.getElementById('desktopMessages');
-                const mobileMessages = document.getElementById('mobileMessages');
-                if (desktopMessages) {
-                    const welcomeElement = document.createElement('div');
-                    welcomeElement.classList.add('desktop-message', 'desktop-bot-message');
-                    welcomeElement.textContent = "Yo! wassup?";
-                    desktopMessages.appendChild(welcomeElement);
-                }
-                if (mobileMessages) {
-                    const welcomeElement = document.createElement('div');
-                    welcomeElement.classList.add('mobile-message', 'mobile-bot-message');
-                    welcomeElement.textContent = "Yo! wassup?";
-                    mobileMessages.appendChild(welcomeElement);
-                }
-            }
-            
-            return data;
-        } catch (error) {
-            console.error('Error creating new session:', error);
-        }
-    }
+    // Chat interface elements
+    const messagesContainer = document.getElementById('messagesContainer');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const editBtn = document.querySelector('.edit-btn');
 
-    // Create session on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        // Set session info to 'Loading...' immediately
-        const sessionInfo = document.getElementById('sessionInfo');
-        const mobileSessionInfo = document.getElementById('mobileSessionInfo');
-        if (sessionInfo) sessionInfo.textContent = 'Session: Loading...';
-        if (mobileSessionInfo) mobileSessionInfo.textContent = 'Session: Loading...';
-        setTimeout(createNewSession, 1000); // Small delay to ensure everything is loaded
-    });
+    let isLoading = false;
+    let lastSentTimestamp = null;
+    let userScrolling = false;
+    let scrollTimeout = null;
 
-    const MOBILE_BREAKPOINT = 768;
-    let isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-    let currentTab = 'chat';
-    let mobileChatInitialized = false;
-    let desktopChatInitialized = false;
-
-    function initApp() {
-        
-        updateLayout();
-        if (isMobile && !mobileChatInitialized) {
-            initMobileChat();
-            mobileChatInitialized = true;
-        } else if (!isMobile && !desktopChatInitialized) {
-            initDesktopChat();
-            desktopChatInitialized = true;
-        }
-        window.addEventListener('resize', () => {
-            const wasMobile = isMobile;
-            isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-            if (wasMobile !== isMobile) {
-                updateLayout();
-                // Only initialize the new layout if not already done
-                if (isMobile && !mobileChatInitialized) {
-                    initMobileChat();
-                    mobileChatInitialized = true;
-                } else if (!isMobile && !desktopChatInitialized) {
-                    initDesktopChat();
-                    desktopChatInitialized = true;
-                }
-            }
-        });
-    }
-
-    function updateLayout() {
-        const mobileContainer = document.querySelector('.mobile-container');
-        const desktopContainer = document.querySelector('.desktop-container');
-        if (isMobile) {
-            if (mobileContainer) mobileContainer.style.display = 'flex';
-            if (desktopContainer) desktopContainer.style.display = 'none';
-        } else {
-            if (mobileContainer) mobileContainer.style.display = 'none';
-            if (desktopContainer) desktopContainer.style.display = 'flex';
-        }
-    }
-
-    function initMobileChat() {
-        const messagesContainer = document.getElementById('mobileMessages');
-        const input = document.getElementById('mobileInput');
-        const sendButton = document.getElementById('mobileSendButton');
-        
-        if (!messagesContainer || !input || !sendButton) {
-            console.error('Mobile chat elements not found');
+    // Initialize chat
+    function initChat() {
+        if (!messagesContainer || !messageInput || !sendButton) {
+            console.error('Chat elements not found');
             return;
-        }
-        
-        let isLoading = false;
-        
-        // Function to parse and format text
-        function formatText(text) {
-            // Triple backtick code blocks (with optional language)
-            text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
-                // Add a wrapper for code block with a copy button
-                return '<div class="code-block-wrapper"><button class="copy-btn" title="Copy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre></div>';
-            });
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Bold
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Italic
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            // Line breaks
-            text = text.replace(/\n/g, '<br>');
-            return text;
-        }
-        
-        // Send button click handler
-        sendButton.addEventListener('click', handleSend);
-        
-        // Enter key handler
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-            }
-        });
-
-        // New chat button event listener for mobile
-        const mobileNewChatButton = document.getElementById('mobileNewChatButton');
-        if (mobileNewChatButton) {
-            mobileNewChatButton.addEventListener('click', async () => {
-                // Clear conversation history
-                await bot.clearHistory();
-                
-                // Clear messages
-                messagesContainer.innerHTML = '';
-                
-                // Create new session
-                await createNewSession();
-                
-                // Focus input
-                input.focus();
-            });
-        }
-        
-        // Focus input on load
-        setTimeout(() => input.focus(), 100);
-        
-        // In mobile: handleSend and sendToAPI
-        let lastSentTimestamp = null;
-        function handleSend() {
-            const message = input.value.trim();
-            if (!message || isLoading) return;
-            // Add user message
-            addMessage(message, 'user');
-            input.value = '';
-            // Show loading
-            showLoading();
-            // Mark send time
-            lastSentTimestamp = Date.now();
-            // Send to API
-            sendToAPI(message);
-        }
-        
-        function addMessage(text, type, responseTime = null) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `mobile-message mobile-${type}-message`;
-            // Message content
-            let contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            if (type === 'loading') {
-                const emoji = document.createElement('span');
-                emoji.className = 'mobile-loading-emoji';
-                emoji.textContent = '😵‍💫';
-                contentDiv.appendChild(emoji);
-                contentDiv.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
-            } else if (type === 'error') {
-                messageDiv.className = 'mobile-message mobile-error-message';
-                contentDiv.textContent = text;
-            } else if (type === 'bot') {
-                contentDiv.innerHTML = formatText(text);
-                setTimeout(() => attachCopyListeners(contentDiv), 0);
-            } else if (type === 'user') {
-                contentDiv.innerHTML = text.replace(/\n/g, '<br>');
-            } else {
-                contentDiv.textContent = text;
-            }
-            messageDiv.appendChild(contentDiv);
-            // Action bar
-            if (type !== 'loading' && type !== 'error') {
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-                // Copy button only for bot messages
-                if (type === 'bot') {
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'copy-btn message-copy-btn';
-                    copyBtn.title = 'Copy';
-                    copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                    copyBtn.onclick = function(e) {
-                        e.preventDefault();
-                        let copyText = text;
-                        navigator.clipboard.writeText(copyText).then(() => {
-                            copyBtn.classList.add('copied');
-                            copyBtn.title = 'Copied!';
-                            copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-                            setTimeout(() => {
-                                copyBtn.classList.remove('copied');
-                                copyBtn.title = 'Copy';
-                                copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                            }, 1200);
-                        });
-                    };
-                    actionsDiv.appendChild(copyBtn);
-                    // Response time
-                    if (responseTime) {
-                        const timeSpan = document.createElement('span');
-                        timeSpan.className = 'response-time';
-                        timeSpan.textContent = responseTime;
-                        actionsDiv.appendChild(timeSpan);
-                    }
-                }
-                // Add more actions here later
-                messageDiv.appendChild(actionsDiv);
-            }
-            messagesContainer.appendChild(messageDiv);
-            scrollToBottom();
-        }
-        
-        function showLoading() {
-            isLoading = true;
-            sendButton.disabled = true;
-            input.disabled = true;
-            addMessage('', 'loading');
-        }
-        
-        function hideLoading() {
-            isLoading = false;
-            sendButton.disabled = false;
-            input.disabled = false;
-            
-            // Remove loading message
-            const loadingMessage = messagesContainer.querySelector('.mobile-loading-message');
-            if (loadingMessage) {
-                loadingMessage.remove();
-            }
-            
-            input.focus();
-        }
-        
-        function scrollToBottom() {
-            setTimeout(() => {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 100);
-        }
-        
-        async function sendToAPI(prompt) {
-            try {
-                const data = await bot.sendMessage(prompt);
-                
-                hideLoading();
-                
-                if (data.reply) {
-                    // Calculate response time
-                    let responseTime = null;
-                    if (lastSentTimestamp) {
-                        responseTime = ((Date.now() - lastSentTimestamp) / 1000).toFixed(2) + 's';
-                        lastSentTimestamp = null;
-                    }
-                    console.log('Raw AI response:', data.reply);
-                    addMessage(data.reply, 'bot', responseTime);
-                } else if (data.error) {
-                    addMessage('Something went wrong. Please try again.', 'error');
-                } else {
-                    addMessage('No response received. Please try again.', 'error');
-                }
-                
-            } catch (error) {
-                hideLoading();
-                console.error('Error:', error);
-                addMessage('Network error. Please check your connection.', 'error');
-            }
-        }
-
-        // Attach copy listeners for code blocks (mobile)
-        function attachCopyListeners(container) {
-            const copyBtns = container.querySelectorAll('.copy-btn');
-            copyBtns.forEach(btn => {
-                btn.onclick = function(e) {
-                    e.preventDefault();
-                    const code = btn.parentElement.querySelector('code');
-                    if (code) {
-                        navigator.clipboard.writeText(code.innerText).then(() => {
-                            btn.classList.add('copied');
-                            btn.title = 'Copied!';
-                            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-                            setTimeout(() => {
-                                btn.classList.remove('copied');
-                                btn.title = 'Copy';
-                                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                            }, 1200);
-                        });
-                    }
-                };
-            });
-        }
-    }
-
-    function initDesktopChat() {
-        const desktopMessages = document.getElementById('desktopMessages');
-        const desktopInput = document.getElementById('desktopInput');
-        const desktopSendButton = document.getElementById('desktopSendButton');
-        if (!desktopMessages || !desktopInput || !desktopSendButton) return;
-        let isLoading = false;
-
-        // Function to parse and format text
-        function formatMessageText(text) {
-            // Triple backtick code blocks (with optional language)
-            text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
-                return '<div class="code-block-wrapper"><button class="copy-btn" title="Copy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre></div>';
-            });
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Bold
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Italic
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            // Line breaks
-            text = text.replace(/\n/g, '<br>');
-            return text;
-        }
-
-        function addMessageToChat(text, sender, isError = false, isLoadingMsg = false, responseTime = null) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('desktop-message');
-            // Message content
-            let contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            if (isError) {
-                messageElement.classList.add('desktop-error-message');
-                contentDiv.textContent = text;
-            } else if (isLoadingMsg) {
-                messageElement.classList.add('desktop-loading-message');
-                messageElement.setAttribute('id', 'desktop-loading-indicator');
-                const emoji = document.createElement('span');
-                emoji.classList.add('desktop-spinning-emoji');
-                emoji.textContent = '😵‍💫';
-                contentDiv.appendChild(emoji);
-                contentDiv.appendChild(document.createTextNode(' my brain go brrr... hold on!'));
-            } else {
-                messageElement.classList.add(sender === 'user' ? 'desktop-user-message' : 'desktop-bot-message');
-                if (sender === 'bot') {
-                    contentDiv.innerHTML = formatMessageText(text);
-                    setTimeout(() => attachCopyListeners(contentDiv), 0);
-                } else if (sender === 'user') {
-                    contentDiv.innerHTML = text.replace(/\n/g, '<br>');
-                } else {
-                    contentDiv.textContent = text;
-                }
-            }
-            messageElement.appendChild(contentDiv);
-            // Action bar
-            if (!isError && !isLoadingMsg) {
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-                // Copy button only for bot messages
-                if (sender === 'bot') {
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'copy-btn message-copy-btn';
-                    copyBtn.title = 'Copy';
-                    copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                    copyBtn.onclick = function(e) {
-                        e.preventDefault();
-                        let copyText = text;
-                        navigator.clipboard.writeText(copyText).then(() => {
-                            copyBtn.classList.add('copied');
-                            copyBtn.title = 'Copied!';
-                            copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-                            setTimeout(() => {
-                                copyBtn.classList.remove('copied');
-                                copyBtn.title = 'Copy';
-                                copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                            }, 1200);
-                        });
-                    };
-                    actionsDiv.appendChild(copyBtn);
-                    // Response time
-                    if (responseTime) {
-                        const timeSpan = document.createElement('span');
-                        timeSpan.className = 'response-time';
-                        timeSpan.textContent = responseTime;
-                        actionsDiv.appendChild(timeSpan);
-                    }
-                }
-                // Add more actions here later
-                messageElement.appendChild(actionsDiv);
-            }
-            desktopMessages.appendChild(messageElement);
-            scrollToBottom(desktopMessages);
-        }
-
-        function scrollToBottom(container) {
-            setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 100);
-        }
-
-        function showLoadingIndicator() {
-            if (isLoading) return;
-            isLoading = true;
-            desktopSendButton.disabled = true;
-            desktopInput.disabled = true;
-            addMessageToChat('', 'bot', false, true);
-            scrollToBottom(desktopMessages);
-        }
-
-        function hideLoadingIndicator() {
-            const loadingIndicator = document.getElementById('desktop-loading-indicator');
-            if (loadingIndicator) {
-                loadingIndicator.remove();
-            }
-            isLoading = false;
-            desktopSendButton.disabled = false;
-            desktopInput.disabled = false;
-            desktopInput.focus();
-            scrollToBottom(desktopMessages);
-        }
-
-        // Desktop: track response time
-        let lastDesktopSentTimestamp = null;
-        async function sendMessage() {
-            const prompt = desktopInput.value.trim();
-            if (!prompt || isLoading) return;
-            addMessageToChat(prompt, 'user');
-            desktopInput.value = '';
-            desktopInput.style.height = 'auto'; // Reset textarea height
-            showLoadingIndicator();
-            lastDesktopSentTimestamp = Date.now();
-            (async () => {
-                try {
-                    const data = await bot.sendMessage(prompt);
-                    hideLoadingIndicator();
-                    let responseTime = null;
-                    if (lastDesktopSentTimestamp) {
-                        responseTime = ((Date.now() - lastDesktopSentTimestamp) / 1000).toFixed(2) + 's';
-                        lastDesktopSentTimestamp = null;
-                    }
-                    if (data.reply) {
-                        addMessageToChat(data.reply, 'bot', false, false, responseTime);
-                    } else if (data.error) {
-                        const simpleError = getSimpleErrorMessage(data.error);
-                        addMessageToChat(simpleError, 'system', true);
-                    } else {
-                        addMessageToChat('No response received', 'system', true);
-                    }
-                } catch (error) {
-                    hideLoadingIndicator();
-                    console.error('Error sending message:', error);
-                    const simpleError = getSimpleErrorMessage(error.message);
-                    addMessageToChat(simpleError, 'system', true);
-                }
-            })();
-        }
-
-        // Function to convert complex errors to simple messages
-        function getSimpleErrorMessage(error) {
-            const errorStr = error.toString().toLowerCase();
-            
-            if (errorStr.includes('network') || errorStr.includes('fetch')) {
-                return 'Network connection failed';
-            } else if (errorStr.includes('timeout')) {
-                return 'Request timed out';
-            } else if (errorStr.includes('rate limit') || errorStr.includes('too many')) {
-                return 'Too many requests';
-            } else if (errorStr.includes('unauthorized') || errorStr.includes('401')) {
-                return 'Authentication failed';
-            } else if (errorStr.includes('forbidden') || errorStr.includes('403')) {
-                return 'Access denied';
-            } else if (errorStr.includes('not found') || errorStr.includes('404')) {
-                return 'Service not found';
-            } else if (errorStr.includes('server error') || errorStr.includes('500')) {
-                return 'Server error occurred';
-            } else if (errorStr.includes('quota') || errorStr.includes('limit')) {
-                return 'Service limit reached';
-            } else if (errorStr.includes('invalid_argument') || errorStr.includes('valid role')) {
-                return 'Conversation context error - please try again';
-            } else {
-                return 'Something went wrong';
-            }
         }
 
         // Event listeners
-        desktopSendButton.addEventListener('click', sendMessage);
-        desktopInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // New chat button event listener
-        const newChatButton = document.getElementById('newChatButton');
-        if (newChatButton) {
-            newChatButton.addEventListener('click', async () => {
-                // Clear conversation history
-                await bot.clearHistory();
-                
-                // Clear messages
-                desktopMessages.innerHTML = '';
-                
-                // Create new session
-                await createNewSession();
-                
-                // Focus input
-                desktopInput.focus();
-            });
+        sendButton.addEventListener('click', handleSend);
+        messageInput.addEventListener('keydown', handleKeyDown);
+        messageInput.addEventListener('input', autoResizeTextarea);
+        
+        // Header buttons
+        if (editBtn) {
+            editBtn.addEventListener('click', handleNewChat);
         }
+        
+        // Add scroll event listener to detect user scrolling
+        const messagesWrapper = messagesContainer.closest('.messages-wrapper');
+        if (messagesWrapper) {
+            messagesWrapper.addEventListener('scroll', handleUserScroll);
+        }
+        
 
-        // Auto-resize textarea
-        desktopInput.addEventListener('input', () => {
-            desktopInput.style.height = 'auto';
-            desktopInput.style.height = Math.min(desktopInput.scrollHeight, 200) + 'px';
-        });
 
-        // Only add welcome message if chat is empty
-        // if (!desktopMessages.hasChildNodes()) {
-        //     addMessageToChat("Yo! wassup?", 'bot');
-        // }
-
-        // Focus input on load
-        setTimeout(() => {
-            desktopInput.focus();
-        }, 500);
+        // Focus input on load (desktop only)
+        if (window.innerWidth > 768) {
+            setTimeout(() => messageInput.focus(), 100);
+        }
     }
 
-    // Initialize immediately and also wait for Material Web Components
-    function initializeApp() {
+    // Handle send message
+    async function handleSend() {
+        const message = messageInput.value.trim();
+        if (!message || isLoading) return;
+
+        // Add user message
+        addMessage(message, 'user');
+        messageInput.value = '';
+        autoResizeTextarea();
+
+        // Force scroll to bottom when user sends message
+        forceScrollToBottom();
+
+        // Show loading
+        showLoading();
+
+        // Mark send time
+        lastSentTimestamp = Date.now();
+
+        // Send to API
         try {
-            initApp();
+            const data = await bot.sendMessage(message);
+            hideLoading();
+
+            let responseTime = null;
+            if (lastSentTimestamp) {
+                responseTime = ((Date.now() - lastSentTimestamp) / 1000).toFixed(2) + 's';
+                lastSentTimestamp = null;
+            }
+
+            if (data.reply) {
+                addMessage(data.reply, 'bot', responseTime);
+            } else if (data.error) {
+                addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'error');
+            } else {
+                addMessage('I didn\'t receive a response. Please try again.', 'error');
+            }
         } catch (error) {
-            // Fallback: try to initialize basic functionality
-            setTimeout(() => {
-                try {
-                    initApp();
-                } catch (fallbackError) {
-                    // Silent fallback
-                }
-            }, 1000);
+            hideLoading();
+            console.error('Error:', error);
+            
+            // Handle different types of errors with specific messages
+            let errorMessage = 'I\'m having trouble connecting to the server. Please check your internet connection and try again.';
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                errorMessage = 'Network error. Please check your internet connection and try again.';
+            } else if (error.message.includes('Authentication failed')) {
+                errorMessage = 'Authentication failed. Please refresh the page and try again.';
+            } else if (error.message.includes('Access denied')) {
+                errorMessage = 'Access denied. Please check your permissions and try again.';
+            } else if (error.message.includes('Too many requests')) {
+                errorMessage = 'Too many requests. Please wait a moment and try again.';
+            } else if (error.message.includes('Server error')) {
+                errorMessage = 'Server error. Please try again later.';
+            } else if (error.message.includes('Request failed')) {
+                errorMessage = error.message;
+            } else if (error.name === 'AbortError') {
+                errorMessage = 'Request was cancelled. Please try again.';
+            } else if (error.name === 'TimeoutError') {
+                errorMessage = 'Request timed out. Please try again.';
+            }
+            
+            addMessage(errorMessage, 'error');
         }
     }
 
-    // Start initialization immediately
-    initializeApp();
-
-    // Also try to load Material Web Components
-    if (!customElements.get('md-icon')) {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@material/web@1.0.0/all.js';
-        script.onload = () => {
-            console.log('Material Web Components loaded successfully');
-            // Re-initialize with Material components
-            setTimeout(initApp, 100);
-        };
-        script.onerror = () => {
-            console.error("Failed to load Material Web Components, proceeding without them.");
-            // App is already initialized, just continue
-        };
-        document.head.appendChild(script);
-    } else {
-        console.log('Material Web Components already available');
+    // Handle key down events
+    function handleKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSend();
+        }
     }
+
+    // Auto-resize textarea
+    function autoResizeTextarea() {
+        if (!messageInput) return;
+        messageInput.style.height = 'auto';
+        messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    }
+
+    // Add message to chat
+    function addMessage(text, type, responseTime = null) {
+        if (!messagesContainer) return;
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
+
+        // Create message content
+        const content = document.createElement('div');
+        content.className = 'message-content';
+
+        if (type === 'loading') {
+            content.innerHTML = `
+                <div class="loading-message">
+                    <span class="loading-icon material-symbols-outlined">sync</span>
+                    <span>Thinking...</span>
+                </div>
+            `;
+        } else if (type === 'error') {
+            content.innerHTML = `
+                <div class="error-message">
+                    ${text}
+                </div>
+            `;
+        } else {
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.innerHTML = formatText(text);
+            content.appendChild(textDiv);
+
+            // Add actions for bot messages
+            if (type === 'bot') {
+                const actions = document.createElement('div');
+                actions.className = 'message-actions';
+                
+                // Copy button
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'action-btn copy-btn';
+                copyBtn.title = 'Copy';
+                copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+                copyBtn.onclick = () => handleCopy(copyBtn, text);
+                actions.appendChild(copyBtn);
+
+                // Thumbs up
+                const thumbsUpBtn = document.createElement('button');
+                thumbsUpBtn.className = 'action-btn feedback-btn';
+                thumbsUpBtn.title = 'Good response';
+                thumbsUpBtn.innerHTML = '<span class="material-symbols-rounded">thumb_up</span>';
+                thumbsUpBtn.onclick = () => handleFeedback(thumbsUpBtn, 'positive');
+                actions.appendChild(thumbsUpBtn);
+
+                // Thumbs down
+                const thumbsDownBtn = document.createElement('button');
+                thumbsDownBtn.className = 'action-btn feedback-btn';
+                thumbsDownBtn.title = 'Bad response';
+                thumbsDownBtn.innerHTML = '<span class="material-symbols-rounded">thumb_down</span>';
+                thumbsDownBtn.onclick = () => handleFeedback(thumbsDownBtn, 'negative');
+                actions.appendChild(thumbsDownBtn);
+
+                // Response time
+                if (responseTime) {
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'response-time';
+                    timeSpan.textContent = responseTime;
+                    actions.appendChild(timeSpan);
+                }
+
+                content.appendChild(actions);
+            }
+        }
+
+        messageDiv.appendChild(content);
+        messagesContainer.appendChild(messageDiv);
+        
+        // Scroll to bottom with multiple attempts for reliability
+        scrollToBottom();
+        
+        // Force scroll after DOM update
+        requestAnimationFrame(() => {
+            scrollToBottom();
+        });
+        
+        // Additional scroll after content is fully rendered
+        setTimeout(() => {
+            scrollToBottom();
+        }, 50);
+    }
+
+    // Handle copy with visual feedback - Safari mobile compatible
+    function handleCopy(button, text) {
+        // Create a temporary textarea for Safari mobile compatibility
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '-9999px';
+        document.body.appendChild(textarea);
+        
+        try {
+            // Try modern clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(button);
+                }).catch(() => {
+                    // Fallback to selection method
+                    fallbackCopy(textarea, button);
+                });
+            } else {
+                // Fallback for older browsers and Safari
+                fallbackCopy(textarea, button);
+            }
+        } catch (err) {
+            // Final fallback
+            fallbackCopy(textarea, button);
+        }
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(textarea);
+        }, 100);
+    }
+    
+    function fallbackCopy(textarea, button) {
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            showCopySuccess(button);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showCopyError(button);
+        }
+    }
+    
+    function showCopySuccess(button) {
+        const icon = button.querySelector('.material-symbols-outlined');
+        const originalIcon = icon.textContent;
+        
+        // Change to checkmark
+        icon.textContent = 'check';
+        button.style.color = 'var(--accent-success)';
+        button.style.background = 'rgba(76, 175, 80, 0.1)';
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+            icon.textContent = originalIcon;
+            button.style.color = '';
+            button.style.background = '';
+        }, 2000);
+        
+        console.log('Text copied to clipboard!');
+    }
+    
+    function showCopyError(button) {
+        button.style.color = 'var(--text-error)';
+        setTimeout(() => {
+            button.style.color = '';
+        }, 1000);
+    }
+
+    // Handle feedback with visual feedback
+    function handleFeedback(button, type) {
+        const icon = button.querySelector('.material-symbols-rounded');
+        const isPositive = type === 'positive';
+        
+        // Change icon to filled version
+        if (isPositive) {
+            icon.textContent = 'thumb_up';
+            icon.style.fontVariationSettings = '"FILL" 1';
+        } else {
+            icon.textContent = 'thumb_down';
+            icon.style.fontVariationSettings = '"FILL" 1';
+        }
+        
+        // Add filled class for permanent state
+        button.classList.add('feedback-given');
+        
+        // Disable the other feedback button in the same message
+        const messageActions = button.closest('.message-actions');
+        const otherFeedbackBtn = messageActions.querySelector('.feedback-btn:not(.feedback-given)');
+        if (otherFeedbackBtn) {
+            otherFeedbackBtn.disabled = true;
+            otherFeedbackBtn.style.opacity = '0.3';
+        }
+        
+        console.log('Feedback:', type);
+        const feedbackMsg = isPositive ? 'Thanks for the feedback!' : 'We\'ll work on improving that.';
+        console.log(feedbackMsg);
+    }
+
+
+
+    // Handle new chat
+    function handleNewChat() {
+        if (messagesContainer) {
+            messagesContainer.innerHTML = '';
+        }
+        
+        // Reset scrolling state
+        userScrolling = false;
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        
+        addMessage('Hey there! What\'s up?', 'bot');
+        if (messageInput && window.innerWidth > 768) messageInput.focus();
+    }
+
+    // Format text with markdown-like syntax
+    function formatText(text) {
+        if (!text) return '';
+        
+        // Code blocks
+        text = text.replace(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+            return `<div class="code-block">
+                <div class="code-block-header">
+                    <span class="language">${lang || 'javascript'}</span>
+                    <div class="actions">
+                        <button class="action-btn" title="Collapse">X Collapse</button>
+                        <button class="action-btn" title="Wrap">Wrap</button>
+                        <button class="action-btn" title="Run">▷ Run</button>
+                        <button class="action-btn" title="Copy">Copy</button>
+                    </div>
+                </div>
+                <div class="code-block-content">
+                    <pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                </div>
+            </div>`;
+        });
+
+        // Inline code
+        text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+        
+        // Bold
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic
+        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Line breaks
+        text = text.replace(/\n/g, '<br>');
+        
+        return text;
+    }
+
+    // Show loading state
+    function showLoading() {
+        isLoading = true;
+        if (sendButton) sendButton.disabled = true;
+        if (messageInput) messageInput.disabled = true;
+        addMessage('', 'loading');
+    }
+
+    // Hide loading state
+    function hideLoading() {
+        isLoading = false;
+        if (sendButton) sendButton.disabled = false;
+        if (messageInput) messageInput.disabled = false;
+
+        // Remove loading message
+        const loadingMessage = messagesContainer.querySelector('.loading-message');
+        if (loadingMessage) {
+            loadingMessage.closest('.message').remove();
+        }
+
+        if (messageInput && window.innerWidth > 768) messageInput.focus();
+    }
+
+    // Handle user scrolling
+    function handleUserScroll() {
+        userScrolling = true;
+        
+        // Clear existing timeout
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        
+        // Reset userScrolling after 1 second of no scrolling
+        scrollTimeout = setTimeout(() => {
+            userScrolling = false;
+        }, 1000);
+    }
+
+    // Force scroll to bottom (ignores user scrolling state)
+    function forceScrollToBottom() {
+        if (!messagesContainer) return;
+        
+        const messagesWrapper = messagesContainer.closest('.messages-wrapper');
+        if (!messagesWrapper) return;
+        
+        const performScroll = () => {
+            messagesWrapper.scrollTop = messagesWrapper.scrollHeight;
+        };
+        
+        // Immediate scroll
+        performScroll();
+        
+        // Additional scroll after a short delay
+        setTimeout(performScroll, 50);
+    }
+
+    // Scroll to bottom with improved reliability
+    function scrollToBottom() {
+        if (!messagesContainer) return;
+        
+        const messagesWrapper = messagesContainer.closest('.messages-wrapper');
+        if (!messagesWrapper) return;
+        
+        // Don't auto-scroll if user is manually scrolling
+        if (userScrolling) return;
+        
+        // Function to perform the scroll
+        const performScroll = () => {
+            if (!userScrolling) {
+                messagesWrapper.scrollTop = messagesWrapper.scrollHeight;
+            }
+        };
+        
+        // Immediate scroll
+        performScroll();
+        
+        // Scroll after a short delay to handle dynamic content
+        setTimeout(performScroll, 10);
+        
+        // Scroll after images and other content load
+        setTimeout(performScroll, 100);
+        
+        // Final scroll after all animations complete
+        setTimeout(performScroll, 300);
+        
+        // Additional scroll for mobile devices
+        if (window.innerWidth <= 768) {
+            setTimeout(performScroll, 500);
+        }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Chat interface with visual feedback initializing...');
+        initChat();
+        
+        // Initialize space background
+        if (typeof initSpaceBackground === 'function') {
+            const spaceContainer = document.querySelector('.space-bg-container');
+            if (spaceContainer) {
+                initSpaceBackground(spaceContainer);
+                console.log('Space background initialized');
+            }
+        }
+        
+        // Add welcome message
+        setTimeout(() => {
+            addMessage('Hey there! What\'s up?', 'bot');
+        }, 500);
+    });
+
 })(); 
