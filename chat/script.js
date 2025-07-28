@@ -790,9 +790,17 @@
                     addMessage('Network connection restored. You can now send messages.', 'bot');
                 }
                 
-                // Hide network status indicator only if rate limit is not active
+                // Show "Connected" status briefly before hiding
                 if (networkStatus && !bot.rateLimited) {
-                    networkStatus.style.display = 'none';
+                    networkStatus.innerHTML = '<span class="material-symbols-outlined">wifi</span><span class="status-text">Connected</span>';
+                    networkStatus.className = 'network-status connected';
+                    
+                    // Hide network status indicator after 2.5 seconds
+                    setTimeout(() => {
+                        if (networkStatus && !bot.rateLimited && !bot.networkError) {
+                            networkStatus.style.display = 'none';
+                        }
+                    }, 2500);
                 }
             } else {
                 // Network error detected
