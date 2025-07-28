@@ -1376,7 +1376,12 @@
     // Show loading state
     function showLoading() {
         isLoading = true;
-        if (sendButton) sendButton.disabled = true;
+        if (sendButton) {
+            sendButton.disabled = true;
+            // Change to stop icon during generation
+            const icon = sendButton.querySelector('.material-symbols-outlined');
+            if (icon) icon.textContent = 'stop';
+        }
         if (messageInput) messageInput.disabled = true;
         addMessage('', 'loading');
     }
@@ -1384,7 +1389,12 @@
     // Hide loading state
     function hideLoading() {
         isLoading = false;
-        if (sendButton) sendButton.disabled = false;
+        if (sendButton) {
+            sendButton.disabled = false;
+            // Change back to arrow icon after generation
+            const icon = sendButton.querySelector('.material-symbols-outlined');
+            if (icon) icon.textContent = 'arrow_upward';
+        }
         if (messageInput) messageInput.disabled = false;
 
         // Remove loading message
