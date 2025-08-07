@@ -1,13 +1,60 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://cabhinav.com/</loc><image:image><image:loc>https://cabhinav.com/assets/Projects/yeswegan1.JPEG</image:loc></image:image><image:image><image:loc>https://cabhinav.com/assets/Projects/gan.webp</image:loc></image:image><image:image><image:loc>https://cabhinav.com/assets/Projects/opav2.webp</image:loc></image:image>
-    <lastmod>2025-06-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://cabhinav.com/</loc>
+    <image:image><image:loc>https://cabhinav.com/assets/images/projects/yeswegan1.JPEG</image:loc></image:image>
+    <image:image><image:loc>https://cabhinav.com/assets/images/projects/gan.webp</image:loc></image:image>
+    <image:image><image:loc>https://cabhinav.com/assets/images/projects/opav2.webp</image:loc></image:image>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cabhinav.com/</loc>
-    <lastmod>2025-06-27</lastmod>
+    <loc>https://cabhinav.com/projects/</loc>
+    <lastmod>2025-01-15</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/projects/gan-half-bridge/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/projects/rp2040/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/publications/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/space/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/chat/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/latex/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://cabhinav.com/assets/documents/abhinav-chinnusamy-resume.pdf</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

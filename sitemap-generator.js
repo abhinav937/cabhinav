@@ -42,15 +42,19 @@ async function getLastModified(url) {
   return new Date().toISOString().split('T')[0]; // Fallback to current date
 }
 
-// Manually add important pages with dynamic lastmod
-crawler.on('crawlstart', async () => {
-  const sitemap = generator.getSitemap();
-  const importantPages = [
-    { url: 'https://cabhinav.com/', changefreq: 'monthly', priority: 1.0 },
-    // Add future pages here, e.g.:
-    // { url: 'https://cabhinav.com/projects', changefreq: 'weekly', priority: 0.9 },
-    // { url: 'https://cabhinav.com/blog', changefreq: 'weekly', priority: 0.8 },
-  ];
+  // Manually add important pages with dynamic lastmod
+  crawler.on('crawlstart', async () => {
+    const sitemap = generator.getSitemap();
+    const importantPages = [
+      { url: 'https://cabhinav.com/', changefreq: 'weekly', priority: 1.0 },
+      { url: 'https://cabhinav.com/projects/', changefreq: 'monthly', priority: 0.9 },
+      { url: 'https://cabhinav.com/projects/gan-half-bridge/', changefreq: 'monthly', priority: 0.8 },
+      { url: 'https://cabhinav.com/projects/rp2040/', changefreq: 'monthly', priority: 0.8 },
+      { url: 'https://cabhinav.com/publications/', changefreq: 'monthly', priority: 0.9 },
+      { url: 'https://cabhinav.com/space/', changefreq: 'monthly', priority: 0.7 },
+      { url: 'https://cabhinav.com/chat/', changefreq: 'monthly', priority: 0.6 },
+      { url: 'https://cabhinav.com/latex/', changefreq: 'monthly', priority: 0.5 },
+    ];
 
   for (const page of importantPages) {
     const lastmod = await getLastModified(page.url);
