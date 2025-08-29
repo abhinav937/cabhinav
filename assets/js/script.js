@@ -516,7 +516,14 @@ async function fetchPublications(delayMs = 100) {
 
     console.log(`Found ${articles.length} publications`);
 
-    articles.forEach((article, index) => {
+    // Sort articles by year in descending order (newest first)
+    const sortedArticles = articles.sort((a, b) => {
+      const yearA = parseInt(a.year) || 0;
+      const yearB = parseInt(b.year) || 0;
+      return yearB - yearA;
+    });
+
+    sortedArticles.forEach((article, index) => {
       const authors = (article.authors || "Unknown Authors").replace(
         "A Chinnusamy",
         "<b>Abhinav Chinnusamy</b>"
