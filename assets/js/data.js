@@ -8,7 +8,7 @@ const workData = {
     role: "Hardware Engineering Intern",
     duration: "May 2025 - August 2025",
     location: "Austin, TX",
-    description: "Working on ML accelerator cards"
+    description: "Worked on ML Accelerators and Vertical Power Delivery"
   },
   wempec: {
     title: "WEMPEC",
