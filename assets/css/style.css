@@ -4671,6 +4671,53 @@ body.page-transitioning {
   transform: scale(1.05);
 }
 
+/* Simple list styling for Scripts & Projects section */
+.work-history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.work-history li {
+  margin-bottom: 8px;
+}
+
+.work-history a {
+  color: var(--white-2);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 20px;
+}
+
+.work-history a::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--orange-yellow-crayola);
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.work-history a:hover {
+  color: var(--orange-yellow-crayola);
+  text-decoration: underline;
+}
+
+.work-history a:hover::before {
+  transform: translateX(4px);
+  color: var(--white-2);
+}
+
+/* Remove arrows from publication links */
+.publication a {
+  padding-left: 0 !important;
+}
+
+.publication a::before {
+  display: none !important;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .dialog-content {
