@@ -33,14 +33,7 @@
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
       <link rel="stylesheet" href="../assets/css/style.css">
-  <style>
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-size: 1.1rem;
-    }
-  </style>
+      <link rel="stylesheet" href="../assets/css/simple-skeleton.css">
 
 </head>
 
@@ -62,7 +55,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script>
-        async function fetchPublications(delayMs = 1500) {
+        async function fetchPublications(delayMs = 0) {
             const API_URL = 'https://api.cabhinav.com/api/server.js'; // Custom domain endpoint
 
             const container = document.getElementById('publications-container');
@@ -144,9 +137,40 @@
             }
         }
 
-        // Function to show loading message
+        // Function to show skeleton loading
         function showLoadingMessage(container) {
-            container.innerHTML = '<div class="loading">Loading publications...</div>';
+            container.innerHTML = `
+                <div class="publications-skeleton">
+                    <div class="publication publication-skeleton-item">
+                        <h3><span class="skeleton skeleton-text" style="height: 22px; width: 100%; display: block;"></span></h3>
+                        <p class="authors"><span class="skeleton skeleton-text" style="height: 22px; width: 35%; display: block;"></span></p>
+                        <p><span class="skeleton skeleton-text" style="height: 22px; width: 80%; display: block;"></span></p>
+                        <p class="year"><span class="skeleton skeleton-text" style="height: 16px; width: 80px; display: inline-block;"></span></p>
+                        <div class="links">
+                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
+                            <span class="skeleton skeleton-button" style="width: 80px; height: 32px;"></span>
+                        </div>
+                    </div>
+                    <div class="publication publication-skeleton-item">
+                        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
+                        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 55%; display: block;"></span></p>
+                        <p><span class="skeleton skeleton-text" style="height: 19px; width: 75%; display: block;"></span></p>
+                        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
+                        <div class="links">
+                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
+                        </div>
+                    </div>
+                    <div class="publication publication-skeleton-item">
+                        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
+                        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 30%; display: block;"></span></p>
+                        <p><span class="skeleton skeleton-text" style="height: 19px; width: 85%; display: block;"></span></p>
+                        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
+                        <div class="links">
+                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Fetch publications on page load

@@ -390,7 +390,8 @@ function toggleContent(id, button) {
   if (id === 'resume' && typeof window.publicationsFetched === 'undefined') {
     console.log('Resume section shown, fetching publications...');
     window.publicationsFetched = true;
-    fetchPublications();
+    // Fetch publications immediately
+    fetchPublications(0);
   }
 }
 
@@ -480,7 +481,7 @@ document.querySelectorAll(".date-duration").forEach((element) => {
 // PUBLICATIONS FETCHING
 // ========================================
 
-async function fetchPublications(delayMs = 100) {
+async function fetchPublications(delayMs = 0) {
   console.log('fetchPublications function called with delay:', delayMs);
   const API_URL = "https://api.cabhinav.com/api/server.js";
   const container = document.getElementById("publications-container");
@@ -498,17 +499,15 @@ async function fetchPublications(delayMs = 100) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
     const data = await response.json();
-    
-    console.log('API fetch successful:', data);
 
-    // Clear skeleton loader
-    container.innerHTML = "";
+    console.log('API fetch successful:', data);
 
     // Check if the response has the expected structure
     const articles = data.data?.articles || data.articles;
-    
+
     if (!articles || articles.length === 0) {
       console.log('No articles found in API response');
+      container.innerHTML = "";
       errorMessage.textContent = "No publications found.";
       errorMessage.style.display = "block";
       return;
@@ -523,45 +522,47 @@ async function fetchPublications(delayMs = 100) {
       return yearB - yearA;
     });
 
-    sortedArticles.forEach((article, index) => {
-      const authors = (article.authors || "Unknown Authors").replace(
-        "A Chinnusamy",
-        "<b>Abhinav Chinnusamy</b>"
-      );
-      
-      const pubDiv = document.createElement("div");
-      pubDiv.className = "publication";
-      pubDiv.innerHTML = `
-        <h3>${article.title}</h3>
-        <p class="authors">${authors}</p>
-        <p>${article.publication || "N/A"}</p>
-        <p class="year">Year: ${article.year || "N/A"}</p>
-        <div class="links">
-          ${article.link ? `<a href="${article.link}" target="_blank">View</a>` : ""}
-          ${article.cited_by?.link ? `<a href="${article.cited_by.link}" target="_blank">Cited by ${article.cited_by.value}</a>` : ""}
-        </div>
-      `;
-      
-      container.appendChild(pubDiv);
+    // Simple fade out of skeleton and replace with content
+    const skeletonContainer = container.querySelector('.publications-skeleton');
+    if (skeletonContainer) {
+      skeletonContainer.style.transition = 'opacity 0.5s ease-out';
+      skeletonContainer.style.opacity = '0';
 
-      if (typeof gsap !== 'undefined') {
-        gsap.to(pubDiv, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          delay: index * 0.2,
-          ease: "power2.out",
-          onComplete: () => pubDiv.classList.add("show"),
+      setTimeout(() => {
+        container.innerHTML = "";
+
+        // Add real content
+        sortedArticles.forEach((article, index) => {
+          const authors = (article.authors || "Unknown Authors").replace(
+            "A Chinnusamy",
+            "<b>Abhinav Chinnusamy</b>"
+          );
+
+          const pubDiv = document.createElement("div");
+          pubDiv.className = "publication";
+          pubDiv.innerHTML = `
+            <h3>${article.title}</h3>
+            <p class="authors">${authors}</p>
+            <p>${article.publication || "N/A"}</p>
+            <p class="year">Year: ${article.year || "N/A"}</p>
+            <div class="links">
+              ${article.link ? `<a href="${article.link}" target="_blank">View</a>` : ""}
+              ${article.cited_by?.link ? `<a href="${article.cited_by.link}" target="_blank">Cited by ${article.cited_by.value}</a>` : ""}
+            </div>
+          `;
+
+          container.appendChild(pubDiv);
         });
-      }
-    });
-    
-    console.log('Publications loaded and displayed successfully');
+
+        console.log('Publications loaded and displayed successfully');
+      }, 500);
+    }
+
   } catch (error) {
     console.error("Error fetching publications:", error);
+    container.innerHTML = "";
     errorMessage.textContent = "Failed to load publications. Please try again later.";
     errorMessage.style.display = "block";
-    container.innerHTML = ''; // Clear skeleton loader
   }
 }
 
@@ -569,33 +570,32 @@ async function fetchPublications(delayMs = 100) {
 function showSkeletonLoader(container) {
   container.innerHTML = `
     <div class="publications-skeleton">
-      <div class="skeleton-item">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-authors"></div>
-        <div class="skeleton-publication"></div>
-        <div class="skeleton-year"></div>
-        <div class="skeleton-links">
-          <div class="skeleton-link"></div>
-          <div class="skeleton-link"></div>
+      <div class="publication publication-skeleton-item">
+        <h3><span class="skeleton skeleton-text" style="height: 22px; width: 100%; display: block;"></span></h3>
+        <p class="authors"><span class="skeleton skeleton-text" style="height: 22px; width: 35%; display: block;"></span></p>
+        <p><span class="skeleton skeleton-text" style="height: 22px; width: 80%; display: block;"></span></p>
+        <p class="year"><span class="skeleton skeleton-text" style="height: 16px; width: 80px; display: inline-block;"></span></p>
+        <div class="links">
+          <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
+          <span class="skeleton skeleton-button" style="width: 80px; height: 32px;"></span>
         </div>
       </div>
-      <div class="skeleton-item">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-authors"></div>
-        <div class="skeleton-publication"></div>
-        <div class="skeleton-year"></div>
-        <div class="skeleton-links">
-          <div class="skeleton-link"></div>
-          <div class="skeleton-link"></div>
+      <div class="publication publication-skeleton-item">
+        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
+        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 55%; display: block;"></span></p>
+        <p><span class="skeleton skeleton-text" style="height: 19px; width: 75%; display: block;"></span></p>
+        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
+        <div class="links">
+          <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
         </div>
       </div>
-      <div class="skeleton-item">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-authors"></div>
-        <div class="skeleton-publication"></div>
-        <div class="skeleton-year"></div>
-        <div class="skeleton-links">
-          <div class="skeleton-link"></div>
+      <div class="publication publication-skeleton-item">
+        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
+        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 30%; display: block;"></span></p>
+        <p><span class="skeleton skeleton-text" style="height: 19px; width: 85%; display: block;"></span></p>
+        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
+        <div class="links">
+          <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
         </div>
       </div>
     </div>
