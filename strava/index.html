@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strava Activities | Abhinav Chinnusamy</title>
+
+    <!-- Meta Tags -->
+    <meta name="keywords"
+        content="Abhinav Chinnusamy, Strava, Running, Fitness, YouTube, Videos, Running Activities">
+    <meta name="description"
+        content="Explore Abhinav Chinnusamy's best Strava running activities with YouTube video highlights.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
+    <meta name="twitter:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
+    <meta name="twitter:creator" content="@abhinav_937">
+    <meta name="twitter:site" content="@abhinav_937">
+    <meta name="twitter:url" content="https://cabhinav.com/strava">
+    <meta name="twitter:title" content="Strava Activities - Abhinav Chinnusamy">
+    <meta name="twitter:description" content="Running activities and YouTube highlights">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/simple-skeleton.css">
+
+    <style>
+        .strava-embed-placeholder {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Ensure Strava embeds are fully responsive */
+        .strava-embed-placeholder iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Make iframe responsive */
+        #strava-container iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: 454px;
+        }
+
+        /* Make Strava embeds responsive with proper sizing */
+        @media (max-width: 768px) {
+            .strava-embed-placeholder {
+                min-height: 320px;
+            }
+            #strava-container iframe {
+                min-height: 400px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .strava-embed-placeholder {
+                min-height: 420px;
+            }
+            #strava-container iframe {
+                min-height: 454px;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #cce8e7;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="main-content">
+            <article class="about active">
+                <header>
+                    <h2 class="article-title">Strava Activities</h2>
+                </header>
+
+                <div id="strava-container">
+                    <!-- Latest Rides Widget -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <iframe height='454' width='300' frameborder='0' allowtransparency='true' scrolling='no' src='https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c' style="max-width: 100%; height: auto;"></iframe>
+                    </div>
+
+                    <script>try{let e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},t=(new e.Error).stack;t&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[t]="22673c6b-7e79-4369-9239-62dd3ccff6a7",e._sentryDebugIdIdentifier="sentry-dbid-22673c6b-7e79-4369-9239-62dd3ccff6a7")}catch(e){}("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{}).SENTRY_RELEASE={id:"6b733e4fbc1bacc3ce87035f21f3a10699dcf585"},(()=>{"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}var t=function(t){var n=t.prefix,r=t.inbox,o=t.outbox,a=function(){try{return new EventTarget}catch(e){return document.createDocumentFragment()}}();return r.addEventListener("message",function(t){if(function(e){var t;return(null===(t=e.data)||void 0===t?void 0:t[0])===n}(t)){var r=(c=t.data,d=3,function(e){if(Array.isArray(e))return e}(c)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null!=n){var r,o,a=[],i=!0,l=!1;try{for(n=n.call(e);!(i=(r=n.next()).done)&&(a.push(r.value),!t||a.length!==t);i=!0);}catch(e){l=!0,o=e}finally{try{i||null==n.return||n.return()}finally{if(l)throw o}}return a}}(c,d)||function(t,n){if(t){if("string"==typeof t)return e(t,n);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(r):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?e(t,n):void 0}}(c,d)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()),o=r[1],i=r[2],l=new Event(o);l.args=i,a.dispatchEvent(l)}var c,d}),{addMessageListener:a.addEventListener.bind(a),removeMessageListener:a.removeEventListener.bind(a),sendMessage:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};o.postMessage([n,e,t],"*")}}};function n(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}var r=function(e){var t,r=(t=e,Object.fromEntries(Object.entries(t).filter(function(e){return null!=(t=e,r=2,function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null!=n){var r,o,a=[],i=!0,l=!1;try{for(n=n.call(e);!(i=(r=n.next()).done)&&(a.push(r.value),!t||a.length!==t);i=!0);}catch(e){l=!0,o=e}finally{try{i||null==n.return||n.return()}finally{if(l)throw o}}return a}}(t,r)||function(e,t){if(e){if("string"==typeof t)return n(e,t);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(r):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?n(e,t):void 0}}(t,r)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}())[1];var t,r})));return r&&Object.keys(r).length>=1?"?".concat(new URLSearchParams(r)):""};window.__STRAVA_EMBED_BOOTSTRAP__||(window.__STRAVA_EMBED_BOOTSTRAP__=function(){var e=["route"];document.querySelectorAll(".strava-embed-placeholder").forEach(function(n){var o,a,i=n.dataset,l=i.embedType,c=i.embedId,d=i.mapHash,u=function(e,t){if(null==e)return{};var n,r,o=function(e,t){if(null==e)return{};var n,r,o={},a=Object.keys(e);for(r=0;r<a.length;r++)n=a[r],t.indexOf(n)>=0||(o[n]=e[n]);return o}(e,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(r=0;r<a.length;r++)n=a[r],t.indexOf(n)>=0||Object.prototype.propertyIsEnumerable.call(e,n)&&(o[n]=e[n])}return o}(i,["embedType","embedId","mapHash"]),s=document.createElement("iframe");s.setAttribute("frameborder","0");var f="true"===u.fullWidth&&e.includes(null!=l?l:""),b="\n        ".concat(f?"width: 100%;":"width: 554px;","\n        min-width: 250px;\n        max-width: 100%;\n        height: 650px;\n        display: block;\n      ");s.setAttribute("style",b);var y=r(u),v=(null===(a=window.crypto)||void 0===a||null===(o=a.randomUUID)||void 0===o?void 0:o.call(a))||(Math.random()+1).toString(36).substring(2),h=new URLSearchParams({ns:v,hostOrigin:window.location.origin,hostPath:window.location.pathname,hostTitle:document.title}),m=d?"&mapHash=".concat(d):"",p="".concat("https://strava-embeds.com","/").concat(l,"/").concat(c).concat(y,"#").concat(h).concat(m);if(s.setAttribute("src",p),n.replaceWith(s),s.contentWindow){var g=t({prefix:v,inbox:window,outbox:s.contentWindow});g.addMessageListener("BROADCAST_IFRAME_HEIGHT",function(e){var t=e.args;s.style.height="".concat(t,"px")}),window.__STRAVA_EMBED_SETTINGS_CHANGE_LISTENER__&&g.addMessageListener("BROADCAST_SETTINGS_CHANGE",function(e){var t,n,r=e.args;null===(n=window)||void 0===n||null===(t=n.__STRAVA_EMBED_SETTINGS_CHANGE_LISTENER__)||void 0===t||t.call(n,r)}),window.addEventListener("focus",function(){g.sendMessage("BROADCAST_HOST_FOCUS")})}})}),window.__STRAVA_EMBED_BOOTSTRAP__()})();</script>
+                </div>
+
+                <a href="/" class="back-link">← Back to Home</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html></contents>
+</xai:function_call">
