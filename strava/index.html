@@ -1,120 +1,661 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="strava-page">
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strava Activities | Abhinav Chinnusamy</title>
 
-    <!-- Meta Tags -->
-    <meta name="keywords"
-        content="Abhinav Chinnusamy, Strava, Running, Fitness, YouTube, Videos, Running Activities">
-    <meta name="description"
-        content="Explore Abhinav Chinnusamy's best Strava running activities with YouTube video highlights.">
-    <meta name="twitter:card" content="summary_large_image">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Explore Abhinav Chinnusamy's Strava running activities and performance metrics.">
+    <meta name="keywords" content="Abhinav Chinnusamy, Strava, Running, Fitness, Activity Summary">
+    <meta name="author" content="Abhinav Chinnusamy">
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Strava Activities - Abhinav Chinnusamy">
+    <meta property="og:description" content="Explore my running journey with activity summaries, latest rides, and upcoming races">
     <meta property="og:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
+    <meta property="og:url" content="https://cabhinav.com/strava">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Strava Activities - Abhinav Chinnusamy">
+    <meta name="twitter:description" content="Running activities, performance metrics, and race tracking">
     <meta name="twitter:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
     <meta name="twitter:creator" content="@abhinav_937">
-    <meta name="twitter:site" content="@abhinav_937">
-    <meta name="twitter:url" content="https://cabhinav.com/strava">
-    <meta name="twitter:title" content="Strava Activities - Abhinav Chinnusamy">
-    <meta name="twitter:description" content="Running activities and YouTube highlights">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Base Styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/simple-skeleton.css">
 
+    <!-- Page Specific Styles -->
     <style>
-        .strava-embed-placeholder {
-            width: 100% !important;
-            max-width: 100% !important;
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #fc4c02;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-radius: 12px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --max-width: 1200px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .strava-page {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .strava-container {
+            max-width: var(--max-width);
             margin: 0 auto;
-            display: block;
+            padding: var(--spacing-lg);
         }
 
-        /* Ensure Strava embeds are fully responsive */
-        .strava-embed-placeholder iframe {
-            width: 100% !important;
-            max-width: 100% !important;
+        .strava-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
         }
 
-        /* Make iframe responsive */
-        #strava-container iframe {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
+        .strava-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(45deg, var(--accent-color), #ff6b4a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .strava-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .strava-widgets {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .widget-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(252, 76, 2, 0.3);
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .widget-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-sm);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .widget-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .widget-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .strava-iframe {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .strava-iframe.activity-summary {
+            min-height: 160px;
+        }
+
+        .strava-iframe.latest-rides {
             min-height: 454px;
         }
 
-        /* Make Strava embeds responsive with proper sizing */
+        .navigation-section {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateX(-4px);
+        }
+
+        .nav-link i {
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: translateX(-2px);
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .strava-embed-placeholder {
-                min-height: 320px;
+            .strava-container {
+                padding: var(--spacing-md);
             }
-            #strava-container iframe {
+
+            .strava-title {
+                font-size: 2rem;
+            }
+
+            .strava-widgets {
+                gap: var(--spacing-sm);
+            }
+
+            .widget-card {
+                padding: var(--spacing-md);
+            }
+
+            .strava-iframe.activity-summary {
+                min-height: 140px;
+            }
+
+            .strava-iframe.latest-rides {
                 min-height: 400px;
             }
         }
 
-        @media (min-width: 769px) {
-            .strava-embed-placeholder {
-                min-height: 420px;
+        /* Loading Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            #strava-container iframe {
-                min-height: 454px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #cce8e7;
+        .widget-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .widget-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .widget-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        /* Upcoming Events Styles */
+        .upcoming-events {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-delay: 0.5s;
+            animation-fill-mode: both;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(252, 76, 2, 0.3);
+        }
+
+        .event-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .event-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            color: white;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .event-type {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .event-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .event-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .event-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .event-details {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 20px;
+        }
+
+        .detail-item i {
+            color: var(--accent-color);
+        }
+
+        .event-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
 
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e53e00;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(252, 76, 2, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .upcoming-placeholder {
+            border-style: dashed;
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .upcoming-placeholder:hover {
+            transform: none;
+            border-color: rgba(252, 76, 2, 0.2);
+        }
+
+        .event-placeholder-content {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--text-secondary);
+        }
+
+        .event-placeholder-content i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        .event-placeholder-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        /* Responsive adjustments for events */
+        @media (max-width: 768px) {
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .event-details {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+
+            .event-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 
-<body>
-    <main>
-        <div class="main-content">
-            <article class="about active">
-                <header>
-                    <h2 class="article-title">Strava Activities</h2>
-                </header>
+<body class="strava-page">
+    <div class="strava-container">
+        <!-- Header Section -->
+        <header class="strava-header">
+            <h1 class="strava-title">Strava Activities</h1>
+            <p class="strava-subtitle">Track my running journey and performance metrics</p>
+        </header>
 
-                <div id="strava-container">
-                    <!-- Latest Rides Widget -->
-                    <div style="text-align: center; margin-bottom: 2rem;">
-                        <iframe height='454' width='300' frameborder='0' allowtransparency='true' scrolling='no' src='https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c' style="max-width: 100%; height: auto;"></iframe>
+        <!-- Widgets Section -->
+        <section class="strava-widgets">
+            <!-- Activity Summary Widget -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h2 class="widget-title">Activity Summary</h2>
+                </div>
+                <div class="widget-content">
+                    <iframe
+                        class="strava-iframe activity-summary"
+                        height="160"
+                        width="300"
+                        frameborder="0"
+                        allowtransparency="true"
+                        scrolling="no"
+                        src="https://www.strava.com/athletes/99464226/activity-summary/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
+                        title="Strava Activity Summary">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Latest Rides Widget -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h2 class="widget-title">Latest Activities</h2>
+                </div>
+                <div class="widget-content">
+                    <iframe
+                        class="strava-iframe latest-rides"
+                        height="454"
+                        width="300"
+                        frameborder="0"
+                        allowtransparency="true"
+                        scrolling="no"
+                        src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
+                        title="Strava Latest Activities">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upcoming Events Section -->
+        <section class="upcoming-events">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Upcoming Events
+                </h2>
+                <p class="section-subtitle">Races and challenges on the horizon</p>
+            </div>
+
+            <div class="events-grid">
+                <!-- Half Marathon Event -->
+                <div class="event-card">
+                    <div class="event-header">
+                        <div class="event-icon">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="event-meta">
+                            <span class="event-type">Half Marathon</span>
+                            <span class="event-date">
+                                <i class="far fa-calendar"></i>
+                                Sunday, November 9th
+                            </span>
+                        </div>
                     </div>
 
-                    <script>try{let e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},t=(new e.Error).stack;t&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[t]="22673c6b-7e79-4369-9239-62dd3ccff6a7",e._sentryDebugIdIdentifier="sentry-dbid-22673c6b-7e79-4369-9239-62dd3ccff6a7")}catch(e){}("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{}).SENTRY_RELEASE={id:"6b733e4fbc1bacc3ce87035f21f3a10699dcf585"},(()=>{"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}var t=function(t){var n=t.prefix,r=t.inbox,o=t.outbox,a=function(){try{return new EventTarget}catch(e){return document.createDocumentFragment()}}();return r.addEventListener("message",function(t){if(function(e){var t;return(null===(t=e.data)||void 0===t?void 0:t[0])===n}(t)){var r=(c=t.data,d=3,function(e){if(Array.isArray(e))return e}(c)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null!=n){var r,o,a=[],i=!0,l=!1;try{for(n=n.call(e);!(i=(r=n.next()).done)&&(a.push(r.value),!t||a.length!==t);i=!0);}catch(e){l=!0,o=e}finally{try{i||null==n.return||n.return()}finally{if(l)throw o}}return a}}(c,d)||function(t,n){if(t){if("string"==typeof t)return e(t,n);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(r):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?e(t,n):void 0}}(c,d)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()),o=r[1],i=r[2],l=new Event(o);l.args=i,a.dispatchEvent(l)}var c,d}),{addMessageListener:a.addEventListener.bind(a),removeMessageListener:a.removeEventListener.bind(a),sendMessage:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};o.postMessage([n,e,t],"*")}}};function n(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}var r=function(e){var t,r=(t=e,Object.fromEntries(Object.entries(t).filter(function(e){return null!=(t=e,r=2,function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null!=n){var r,o,a=[],i=!0,l=!1;try{for(n=n.call(e);!(i=(r=n.next()).done)&&(a.push(r.value),!t||a.length!==t);i=!0);}catch(e){l=!0,o=e}finally{try{i||null==n.return||n.return()}finally{if(l)throw o}}return a}}(t,r)||function(e,t){if(e){if("string"==typeof t)return n(e,t);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(r):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?n(e,t):void 0}}(t,r)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}())[1];var t,r})));return r&&Object.keys(r).length>=1?"?".concat(new URLSearchParams(r)):""};window.__STRAVA_EMBED_BOOTSTRAP__||(window.__STRAVA_EMBED_BOOTSTRAP__=function(){var e=["route"];document.querySelectorAll(".strava-embed-placeholder").forEach(function(n){var o,a,i=n.dataset,l=i.embedType,c=i.embedId,d=i.mapHash,u=function(e,t){if(null==e)return{};var n,r,o=function(e,t){if(null==e)return{};var n,r,o={},a=Object.keys(e);for(r=0;r<a.length;r++)n=a[r],t.indexOf(n)>=0||(o[n]=e[n]);return o}(e,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(r=0;r<a.length;r++)n=a[r],t.indexOf(n)>=0||Object.prototype.propertyIsEnumerable.call(e,n)&&(o[n]=e[n])}return o}(i,["embedType","embedId","mapHash"]),s=document.createElement("iframe");s.setAttribute("frameborder","0");var f="true"===u.fullWidth&&e.includes(null!=l?l:""),b="\n        ".concat(f?"width: 100%;":"width: 554px;","\n        min-width: 250px;\n        max-width: 100%;\n        height: 650px;\n        display: block;\n      ");s.setAttribute("style",b);var y=r(u),v=(null===(a=window.crypto)||void 0===a||null===(o=a.randomUUID)||void 0===o?void 0:o.call(a))||(Math.random()+1).toString(36).substring(2),h=new URLSearchParams({ns:v,hostOrigin:window.location.origin,hostPath:window.location.pathname,hostTitle:document.title}),m=d?"&mapHash=".concat(d):"",p="".concat("https://strava-embeds.com","/").concat(l,"/").concat(c).concat(y,"#").concat(h).concat(m);if(s.setAttribute("src",p),n.replaceWith(s),s.contentWindow){var g=t({prefix:v,inbox:window,outbox:s.contentWindow});g.addMessageListener("BROADCAST_IFRAME_HEIGHT",function(e){var t=e.args;s.style.height="".concat(t,"px")}),window.__STRAVA_EMBED_SETTINGS_CHANGE_LISTENER__&&g.addMessageListener("BROADCAST_SETTINGS_CHANGE",function(e){var t,n,r=e.args;null===(n=window)||void 0===n||null===(t=n.__STRAVA_EMBED_SETTINGS_CHANGE_LISTENER__)||void 0===t||t.call(n,r)}),window.addEventListener("focus",function(){g.sendMessage("BROADCAST_HOST_FOCUS")})}})}),window.__STRAVA_EMBED_BOOTSTRAP__()})();</script>
+                    <div class="event-content">
+                        <h3 class="event-title">Madison Marathon by SSM Health - Half Marathon</h3>
+                        <p class="event-description">
+                            Excited to run the Madison Marathon by SSM Health! After intense training and preparation,
+                            I'm ready to tackle these 13.1 miles. Follow my progress with live tracking during the race.
+                        </p>
+
+                        <div class="event-details">
+                            <div class="detail-item">
+                                <i class="fas fa-route"></i>
+                                <span>13.1 miles</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span>7:20 AM</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Madison</span>
+                            </div>
+                        </div>
+
+                        <div class="event-actions">
+                            <a href="#" class="btn btn-primary tracker-btn" id="tracker-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Live Tracker
+                            </a>
+                            <button class="btn btn-secondary cheer-btn">
+                                <i class="fas fa-heart"></i>
+                                Send Cheers
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <a href="/" class="back-link">← Back to Home</a>
-            </article>
-        </div>
-    </main>
+                <!-- Placeholder for future events -->
+                <div class="event-card upcoming-placeholder">
+                    <div class="event-placeholder-content">
+                        <i class="fas fa-plus-circle"></i>
+                        <h4>More Events Coming Soon</h4>
+                        <p>Stay tuned for upcoming races and challenges</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Scripts -->
+        <!-- Navigation Section -->
+        <nav class="navigation-section">
+            <a href="/" class="nav-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+        </nav>
+    </div>
+
+    <!-- Strava Embed Script -->
+    <script>
+        (function() {
+            const script = document.createElement('script');
+            script.src = 'https://strava-embeds.com/embed.js';
+            script.async = true;
+            document.head.appendChild(script);
+        })();
+
+        // Event Tracker Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set your race tracker URL here
+            const trackerUrl = 'https://rtrt.me/ulink/_RT/LAS-MADISON-MARATHON-2025/tracker/RRVCUPLW/focus';
+
+            const trackerLink = document.getElementById('tracker-link');
+            if (trackerUrl !== 'https://your-race-tracker-link.com') {
+                trackerLink.href = trackerUrl;
+                trackerLink.target = '_blank';
+            } else {
+                // If no tracker URL is set, disable the button
+                trackerLink.style.opacity = '0.5';
+                trackerLink.style.cursor = 'not-allowed';
+                trackerLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Live tracker link will be available soon!');
+                });
+            }
+
+            // Cheer button functionality
+            const cheerBtn = document.querySelector('.cheer-btn');
+            cheerBtn.addEventListener('click', function() {
+                const cheers = ['🚀', '💪', '🔥', '⚡', '🏃‍♂️', '🎯'];
+                const randomCheer = cheers[Math.floor(Math.random() * cheers.length)];
+                alert(`${randomCheer} You've got this! Good luck on your half marathon! ${randomCheer}`);
+            });
+        });
+    </script>
+
+    <!-- Bootstrap Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
