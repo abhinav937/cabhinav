@@ -66,8 +66,8 @@ const smoothScrollToTop = () => {
 
 function setupFilterLogic() {
   const elements = document.querySelectorAll("md-filter-chip");
-  const projectItems = document.querySelectorAll(".project-item");
-  
+  const projectItems = document.querySelectorAll(".project-card");
+
   // Add project count to filter chips
   function updateFilterCounts() {
     const counts = {
@@ -76,24 +76,24 @@ function setupFilterLogic() {
       embedded: 0,
       analog: 0
     };
-    
+
     projectItems.forEach(item => {
       const category = item.dataset.category;
       if (category && counts.hasOwnProperty(category)) {
         counts[category]++;
       }
     });
-    
+
     // Update chip labels with counts
     elements.forEach(element => {
       const category = element.id;
       const count = counts[category] || 0;
       const originalLabel = element.getAttribute('data-original-label') || element.label;
-      
+
       if (!element.getAttribute('data-original-label')) {
         element.setAttribute('data-original-label', originalLabel);
       }
-      
+
       element.label = `${originalLabel} (${count})`;
     });
   }
@@ -103,7 +103,7 @@ function setupFilterLogic() {
   }
   
   function filterProjects(category) {
-  const items = document.querySelectorAll(".project-item");
+  const items = document.querySelectorAll(".project-card");
   
   items.forEach((item, index) => {
     const shouldShow = category === "all" || item.dataset.category === category;
@@ -882,4 +882,17 @@ const manualLazyLoader = new ManualLazyLoader();
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Manual Lazy Loader initialized');
+});
+
+// Wait for all resources (CSS, JS, images) to load before showing images
+window.addEventListener('load', function() {
+  console.log('All resources loaded, showing images');
+  const images = document.querySelectorAll('img');
+
+  // Add loaded class to all images with a small stagger for smooth reveal
+  images.forEach((img, index) => {
+    setTimeout(() => {
+      img.classList.add('loaded');
+    }, index * 50); // 50ms stagger between each image
+  });
 });

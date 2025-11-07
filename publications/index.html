@@ -2,180 +2,92 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publications | Abhinav Chinnusamy</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publications - Abhinav Chinnusamy</title>
 
-    <!-- Meta Tags -->
-    <meta name="keywords"
-        content="Abhinav Chinnusamy, Power Electronics, IIT Dharwad, Electrical Engineering, Publications">
-    <meta name="description"
-        content="Explore Abhinav Chinnusamy's academic publications in Power Electronics and related fields.">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="og:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
-    <meta name="twitter:image" content="https://cabhinav.com/assets/images/social/share_preview_img.jpg">
-    <meta name="twitter:creator" content="@abhinav_937">
-    <meta name="twitter:site" content="@abhinav_937">
-    <meta name="twitter:url" content="https://cabhinav.com">
-    <meta name="twitter:title" content="Abhinav Chinnusamy">
-    <meta name="twitter:description" content="Academic Publications">
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="Abhinav Chinnusamy, Publications, Research Papers, Power Electronics, IEEE, Academic Publications, GaN, Solid State Circuit Breakers" />
+  <meta name="description" content="Academic publications and research papers by Abhinav Chinnusamy - Graduate Researcher in Power Electronics at UW-Madison." />
 
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Publications - Abhinav Chinnusamy" />
+  <meta property="og:url" content="https://cabhinav.com/publications/" />
+  <meta property="og:description" content="Academic publications and research papers by Abhinav Chinnusamy - Graduate Researcher in Power Electronics at UW-Madison." />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Publications - Abhinav Chinnusamy" />
+  <meta name="twitter:description" content="Academic publications and research papers by Abhinav Chinnusamy - Graduate Researcher in Power Electronics at UW-Madison." />
 
-    <!-- CSS -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="../assets/css/style.css">
-      <link rel="stylesheet" href="../assets/css/simple-skeleton.css">
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../assets/css/grok-style.css">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-FDSLDZ5EWW');
+  </script>
 </head>
 
 <body>
-    <main>
-        <div class="main-content">
-            <article class="about active">
-                <header>
-                    <h2 class="article-title">Publications</h2>
-                </header>
-                <div id="publications-container"></div>
-                <div id="error-message" class="error-message" style="display: none;">Unable to load publications. Please
-                    try again later.</div>
-            </article>
+  <main>
+    <!-- Publications Section -->
+    <section class="section" id="publications">
+      <div class="container">
+        <div class="publications-header">
+          <h1>Publications</h1>
         </div>
-    </main>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script>
-        async function fetchPublications(delayMs = 0) {
-            const API_URL = 'https://api.cabhinav.com/api/server.js'; // Custom domain endpoint
+        <div class="publications-content">
+          <div id="publications-container"></div>
+          <div id="error-message" class="publications-error">Unable to load publications. Please try again later.</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-            const container = document.getElementById('publications-container');
-            const errorMessage = document.getElementById('error-message');
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="https://x.com/abhinav_937" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">link</span>
+          </a>
+          <a href="https://github.com/abhinav937" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">code</span>
+          </a>
+          <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">school</span>
+          </a>
+          <a href="https://www.strava.com/athletes/99464226" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">directions_run</span>
+          </a>
+        </div>
 
-                                // Show loading state
-            showLoadingMessage(container);
+        <p class="footer-text">© 2025 Abhinav Chinnusamy. Built with passion for power electronics.</p>
+      </div>
+    </div>
+  </footer>
 
-            // Add configurable delay to show loading animation
-            await new Promise(resolve => setTimeout(resolve, delayMs));
+  <!-- Scripts -->
+  <script src="../assets/js/grok-script.js"></script>
 
-            try {
-                // Fetch from API
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
-                const data = await response.json();
-                
-                console.log('API fetch successful:', data);
-
-                // Handle the nested data structure from your API
-                const articles = data.data?.articles || data.articles || [];
-                
-                if (!articles || articles.length === 0) {
-                    console.log('No articles found in API response');
-                    errorMessage.textContent = 'No publications found.';
-                    errorMessage.style.display = 'block';
-                    container.innerHTML = ''; // Clear skeleton loader
-                    return;
-                }
-
-                console.log(`Found ${articles.length} publications`);
-
-                // Sort articles by year in descending order (newest first)
-                const sortedArticles = articles.sort((a, b) => {
-                    const yearA = parseInt(a.year) || 0;
-                    const yearB = parseInt(b.year) || 0;
-                    return yearB - yearA;
-                });
-
-                // Clear container
-                container.innerHTML = '';
-
-                sortedArticles.forEach((article, index) => {
-                    const authors = (article.authors || 'Unknown Authors').replace(
-                        'A Chinnusamy',
-                        '<b>Abhinav Chinnusamy</b>'
-                    );
-                    const pubDiv = document.createElement('div');
-                    pubDiv.className = 'publication';
-                    pubDiv.innerHTML = `
-                        <h3>${article.title}</h3>
-                        <p class="authors">${authors}</p>
-                        <p>${article.publication || 'N/A'}</p>
-                        <p class="year">Year: ${article.year || 'N/A'}</p>
-                        <div class="links">
-                            ${article.link ? `<a href="${article.link}" target="_blank">View</a>` : ''}
-                            ${article.cited_by?.link ? `<a href="${article.cited_by.link}" target="_blank">Cited by ${article.cited_by.value}</a>` : ''}
-                        </div>
-                    `;
-                    container.appendChild(pubDiv);
-
-                    // GSAP Animation
-                    gsap.to(pubDiv, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.6,
-                        delay: index * 0.2,
-                        ease: 'power2.out',
-                        onComplete: () => pubDiv.classList.add('show')
-                    });
-                });
-                
-                console.log('Publications loaded and displayed successfully');
-            } catch (error) {
-                console.error('Error fetching publications:', error);
-                errorMessage.textContent = 'Failed to load publications. Please try again later.';
-                errorMessage.style.display = 'block';
-                container.innerHTML = ''; // Clear skeleton loader
-            }
-        }
-
-        // Function to show skeleton loading
-        function showLoadingMessage(container) {
-            container.innerHTML = `
-                <div class="publications-skeleton">
-                    <div class="publication publication-skeleton-item">
-                        <h3><span class="skeleton skeleton-text" style="height: 22px; width: 100%; display: block;"></span></h3>
-                        <p class="authors"><span class="skeleton skeleton-text" style="height: 22px; width: 35%; display: block;"></span></p>
-                        <p><span class="skeleton skeleton-text" style="height: 22px; width: 80%; display: block;"></span></p>
-                        <p class="year"><span class="skeleton skeleton-text" style="height: 16px; width: 80px; display: inline-block;"></span></p>
-                        <div class="links">
-                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
-                            <span class="skeleton skeleton-button" style="width: 80px; height: 32px;"></span>
-                        </div>
-                    </div>
-                    <div class="publication publication-skeleton-item">
-                        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
-                        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 55%; display: block;"></span></p>
-                        <p><span class="skeleton skeleton-text" style="height: 19px; width: 75%; display: block;"></span></p>
-                        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
-                        <div class="links">
-                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
-                        </div>
-                    </div>
-                    <div class="publication publication-skeleton-item">
-                        <h3><span class="skeleton skeleton-text" style="height: 24px; width: 100%; display: block;"></span></h3>
-                        <p class="authors"><span class="skeleton skeleton-text" style="height: 19px; width: 30%; display: block;"></span></p>
-                        <p><span class="skeleton skeleton-text" style="height: 19px; width: 85%; display: block;"></span></p>
-                        <p class="year"><span class="skeleton skeleton-text" style="height: 17px; width: 80px; display: inline-block;"></span></p>
-                        <div class="links">
-                            <span class="skeleton skeleton-button" style="width: 50px; height: 32px;"></span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Fetch publications on page load
-        document.addEventListener('DOMContentLoaded', fetchPublications);
-    </script>
 </body>
-
 </html>
