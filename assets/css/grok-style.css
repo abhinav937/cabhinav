@@ -875,12 +875,12 @@ p {
 .footer-icon-svg {
   width: 20px !important;
   height: 20px !important;
-  filter: brightness(0.7) !important;
-  transition: filter 0.3s ease !important;
+  opacity: 0.7 !important;
+  transition: opacity 0.3s ease !important;
 }
 
 .footer-link:hover .footer-icon-svg {
-  filter: brightness(1) !important;
+  opacity: 1 !important;
 }
 
 .footer-text {
