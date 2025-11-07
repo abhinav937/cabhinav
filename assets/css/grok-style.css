@@ -875,12 +875,12 @@ p {
 .footer-icon-svg {
   width: 20px !important;
   height: 20px !important;
-  opacity: 0.7 !important;
+  opacity: 1 !important;
   transition: opacity 0.3s ease !important;
 }
 
 .footer-link:hover .footer-icon-svg {
-  opacity: 1 !important;
+  opacity: 0.3 !important;
 }
 
 .footer-text {
