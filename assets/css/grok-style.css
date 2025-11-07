@@ -873,14 +873,14 @@ p {
 }
 
 .footer-icon-svg {
-  width: 20px;
-  height: 20px;
-  filter: invert(1) brightness(0.7);
-  transition: filter 0.3s ease;
+  width: 20px !important;
+  height: 20px !important;
+  filter: brightness(0.7) !important;
+  transition: filter 0.3s ease !important;
 }
 
 .footer-link:hover .footer-icon-svg {
-  filter: brightness(0.9);
+  filter: brightness(1) !important;
 }
 
 .footer-text {
