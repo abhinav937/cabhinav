@@ -872,6 +872,17 @@ p {
   opacity: 1;
 }
 
+.footer-icon-svg {
+  width: 20px;
+  height: 20px;
+  filter: invert(1) brightness(0.7);
+  transition: filter 0.3s ease;
+}
+
+.footer-link:hover .footer-icon-svg {
+  filter: brightness(0.9);
+}
+
 .footer-text {
   color: var(--grok-text-muted);
   font-size: 0.85rem;
