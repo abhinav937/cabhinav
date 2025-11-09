@@ -877,10 +877,11 @@ p {
   height: 20px !important;
   opacity: 1 !important;
   transition: opacity 0.3s ease !important;
+  filter: brightness(0) invert(1);
 }
 
 .footer-link:hover .footer-icon-svg {
-  opacity: 0.3 !important;
+  filter: brightness(0) invert(0);
 }
 
 .footer-text {
@@ -894,39 +895,9 @@ p {
    ANIMATIONS & EFFECTS
    ======================================== */
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
-.fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
 
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.fade-in-up:nth-child(1) { animation-delay: 0.1s; }
-.fade-in-up:nth-child(2) { animation-delay: 0.2s; }
-.fade-in-up:nth-child(3) { animation-delay: 0.3s; }
-.fade-in-up:nth-child(4) { animation-delay: 0.4s; }
-.fade-in-up:nth-child(5) { animation-delay: 0.5s; }
 
 /* Animation trigger class */
 .animate-in {

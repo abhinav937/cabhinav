@@ -43,17 +43,20 @@
     <style>
         .strava-page {
             min-height: 100vh;
+            background: var(--grok-bg-primary);
         }
 
         .strava-container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: var(--spacing-2xl) var(--spacing-lg);
         }
 
-        .strava-header {
+        /* Hero Section */
+        .strava-hero {
             text-align: center;
             margin-bottom: var(--spacing-3xl);
+            padding: var(--spacing-3xl) 0;
         }
 
         .strava-title {
@@ -62,6 +65,7 @@
             color: var(--grok-text-primary);
             margin: 0 0 var(--spacing-lg) 0;
             letter-spacing: -0.02em;
+            line-height: 1.2;
         }
 
         .strava-subtitle {
@@ -69,8 +73,11 @@
             color: var(--grok-text-secondary);
             font-weight: 400;
             margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
+        /* Widgets Grid */
         .strava-widgets {
             display: grid;
             grid-template-columns: 1fr;
@@ -80,13 +87,12 @@
 
         .widget-card {
             background: var(--grok-bg-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
+            border: 1px solid var(--grok-border);
+            border-radius: var(--radius-xl);
             padding: var(--spacing-xl);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all var(--transition-slow) cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
         }
@@ -100,14 +106,14 @@
             bottom: 0;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent);
             opacity: 0;
-            transition: opacity 0.4s ease;
-            border-radius: 24px;
+            transition: opacity var(--transition-slow) ease;
+            border-radius: var(--radius-xl);
         }
 
         .widget-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+            border-color: var(--grok-border-light);
+            box-shadow: var(--shadow-xl);
         }
 
         .widget-card:hover::before {
@@ -119,28 +125,28 @@
             align-items: center;
             margin-bottom: var(--spacing-lg);
             padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid var(--grok-border);
         }
 
         .widget-icon {
             width: 52px;
             height: 52px;
-            background: linear-gradient(135deg, var(--grok-accent), rgba(255, 255, 255, 0.9));
-            border-radius: 20px;
+            background: var(--grok-bg-tertiary);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: var(--spacing-md);
-            color: var(--grok-bg-primary);
+            color: var(--grok-text-primary);
             font-size: 1.4rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all var(--transition-normal) ease;
+            border: 1px solid var(--grok-border-light);
         }
 
         .widget-card:hover .widget-icon {
-            transform: rotate(5deg) scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            transform: rotate(5deg) scale(1.05);
+            background: var(--grok-bg-accent);
         }
 
         .widget-title {
@@ -152,11 +158,10 @@
         }
 
         .widget-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
         }
 
+        /* Strava Iframes */
         .strava-iframe {
             width: 100%;
             max-width: 100%;
@@ -174,7 +179,12 @@
             min-height: 454px;
         }
 
-        /* Upcoming Events - Grok Style */
+        .strava-iframe.race-tracker {
+            min-height: 600px;
+            border-radius: var(--radius-lg);
+        }
+
+        /* Events Section */
         .upcoming-events {
             margin-bottom: var(--spacing-3xl);
         }
@@ -188,14 +198,14 @@
             font-size: clamp(2rem, 6vw, 2.5rem);
             font-weight: 600;
             margin-bottom: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-sm);
             background: linear-gradient(135deg, var(--grok-text-primary), var(--grok-text-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
         }
 
         .section-title i {
@@ -216,13 +226,12 @@
 
         .event-card {
             background: var(--grok-bg-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
+            border: 1px solid var(--grok-border);
+            border-radius: var(--radius-xl);
             padding: var(--spacing-xl);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all var(--transition-slow) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
         }
@@ -236,35 +245,17 @@
             bottom: 0;
             background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.03), transparent 50%);
             opacity: 0;
-            transition: opacity 0.5s ease;
-            border-radius: 28px;
-        }
-
-        .event-card::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            border-radius: 30px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            z-index: -1;
+            transition: opacity var(--transition-slow) ease;
+            border-radius: var(--radius-xl);
         }
 
         .event-card:hover {
-            transform: translateY(-8px) rotateX(2deg);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            transform: translateY(-6px);
+            border-color: var(--grok-border-light);
+            box-shadow: var(--shadow-xl);
         }
 
         .event-card:hover::before {
-            opacity: 1;
-        }
-
-        .event-card:hover::after {
             opacity: 1;
         }
 
@@ -273,28 +264,28 @@
             align-items: center;
             margin-bottom: var(--spacing-lg);
             padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid var(--grok-border);
         }
 
         .event-icon {
             width: 54px;
             height: 54px;
-            background: linear-gradient(135deg, var(--grok-accent), rgba(255, 255, 255, 0.9));
-            border-radius: 22px;
+            background: var(--grok-bg-tertiary);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: var(--spacing-md);
-            color: var(--grok-bg-primary);
+            color: var(--grok-text-primary);
             font-size: 1.5rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all var(--transition-normal) ease;
+            border: 1px solid var(--grok-border-light);
         }
 
         .event-card:hover .event-icon {
-            transform: rotate(-3deg) scale(1.08);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            transform: rotate(-3deg) scale(1.05);
+            background: var(--grok-bg-accent);
         }
 
         .event-meta {
@@ -348,18 +339,18 @@
             gap: var(--spacing-xs);
             font-size: 0.85rem;
             color: var(--grok-text-muted);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--grok-bg-tertiary);
             padding: var(--spacing-xs) var(--spacing-sm);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--grok-border);
             backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all var(--transition-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .detail-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.12);
-            transform: scale(1.05);
+            background: var(--grok-bg-accent);
+            border-color: var(--grok-border-light);
+            transform: scale(1.02);
         }
 
         .detail-item i {
@@ -382,7 +373,7 @@
             font-weight: 500;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all var(--transition-slow) cubic-bezier(0.68, -0.55, 0.265, 1.55);
             font-size: 0.9rem;
             font-family: inherit;
             position: relative;
@@ -410,59 +401,30 @@
         .btn-primary {
             background: var(--grok-accent);
             color: var(--grok-bg-primary);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-primary:hover {
             background: var(--grok-accent-hover);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--grok-bg-tertiary);
             color: var(--grok-text-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--grok-border);
             backdrop-filter: blur(10px);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--grok-bg-accent);
             color: var(--grok-text-primary);
-            transform: translateY(-3px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            border-color: var(--grok-border-light);
+            box-shadow: var(--shadow-md);
         }
 
-        .upcoming-placeholder {
-            border-style: dashed;
-            border-color: rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.01);
-        }
-
-        .upcoming-placeholder:hover {
-            transform: none;
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .event-placeholder-content {
-            text-align: center;
-            padding: var(--spacing-xl);
-            color: var(--grok-text-muted);
-        }
-
-        .event-placeholder-content i {
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.15);
-            margin-bottom: var(--spacing-lg);
-            display: block;
-        }
-
-        .event-placeholder-content h4 {
-            font-size: 1.2rem;
-            margin-bottom: var(--spacing-sm);
-            color: var(--grok-text-primary);
-        }
 
 
         /* Responsive Design */
@@ -491,6 +453,10 @@
                 min-height: 400px;
             }
 
+            .strava-iframe.race-tracker {
+                min-height: 500px;
+            }
+
             .events-grid {
                 grid-template-columns: 1fr;
                 gap: var(--spacing-lg);
@@ -512,60 +478,17 @@
             .btn {
                 justify-content: center;
             }
+
         }
 
-        /* Jumping bounce animations */
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: translateY(60px);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(-30px);
-            }
-            70% {
-                transform: translateY(-15px);
-            }
-            80% {
-                transform: translateY(-7px);
-            }
-            90% {
-                transform: translateY(-3px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0px);
-            }
-        }
-
-        /* Animation will be triggered via JavaScript after Strava content loads */
-
-        .widget-card:hover {
-            transform: translateY(-6px) scale(1.01);
-        }
-
-        /* Event card animation triggered via JavaScript */
-
-        .event-card:hover {
-            transform: translateY(-8px) rotateX(2deg);
-        }
-
-        @keyframes floatPulse {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-3px);
-            }
-        }
+        /* Utility Classes */
     </style>
 </head>
 
 <body class="strava-page">
     <div class="strava-container">
         <!-- Header Section -->
-        <header class="strava-header">
+        <header class="strava-hero">
             <h1 class="strava-title">Strava Activities</h1>
             <p class="strava-subtitle">Track my running journey and performance metrics</p>
         </header>
@@ -588,8 +511,7 @@
                         frameborder="0"
                         allowtransparency="true"
                         scrolling="no"
-                        src="https://www.strava.com/athletes/99464226/activity-summary/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
-                        title="Strava Activity Summary">
+                        src="https://www.strava.com/athletes/99464226/activity-summary/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c">
                     </iframe>
                 </div>
             </div>
@@ -610,8 +532,30 @@
                         frameborder="0"
                         allowtransparency="true"
                         scrolling="no"
-                        src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
-                        title="Strava Latest Activities">
+                        src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Race Tracker Widget -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h2 class="widget-title">Live Race Tracker</h2>
+                </div>
+                <div class="widget-content">
+                    <iframe
+                        class="strava-iframe race-tracker"
+                        height="600"
+                        width="100%"
+                        frameborder="0"
+                        allowtransparency="true"
+                        scrolling="auto"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads allow-presentation"
+                        src="https://track.rtrt.me/e/LAS-MADISON-MARATHON-2025#/tracker/list">
                     </iframe>
                 </div>
             </div>
@@ -661,16 +605,16 @@
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <span>Madison</span>
+                                <span>Madison, WI</span>
                             </div>
                         </div>
 
                         <div class="event-actions">
-                            <a href="#" class="btn btn-primary tracker-btn" id="tracker-link">
+                            <a href="https://rtrt.me/ulink/_RT/LAS-MADISON-MARATHON-2025/tracker/RRVCUPLW/focus" target="_blank" class="btn btn-primary" id="tracker-link">
                                 <i class="fas fa-external-link-alt"></i>
                                 Live Tracker
                             </a>
-                            <a href="https://www.strava.com/athletes/99464226" target="_blank" class="btn btn-secondary kudos-btn">
+                            <a href="https://www.strava.com/athletes/99464226" target="_blank" class="btn btn-secondary">
                                 <i class="fas fa-thumbs-up"></i>
                                 Give Kudos
                             </a>
@@ -679,35 +623,35 @@
                 </div>
             </div>
         </section>
-
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="container">
-        <div class="footer-content fade-in">
-          <div class="footer-links">
-            <a href="https://x.com/abhinav_937" target="_blank" class="footer-link">
-              <img src="../assets/images/social/x-svg.svg" alt="X (Twitter)" class="footer-icon-svg">
-            </a>
-            <a href="https://github.com/abhinav937" target="_blank" class="footer-link">
-              <span class="material-symbols-outlined">code</span>
-            </a>
-            <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" class="footer-link">
-              <span class="material-symbols-outlined">school</span>
-            </a>
-            <a href="https://www.strava.com/athletes/99464226" target="_blank" class="footer-link">
-              <span class="material-symbols-outlined">directions_run</span>
-            </a>
-          </div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://x.com/abhinav_937" target="_blank" class="footer-link">
+                        <img src="../assets/images/social/x-svg.svg" alt="X (Twitter)" class="footer-icon-svg">
+                    </a>
+                    <a href="https://github.com/abhinav937" target="_blank" class="footer-link">
+                        <span class="material-symbols-outlined">code</span>
+                    </a>
+                    <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" class="footer-link">
+                        <span class="material-symbols-outlined">school</span>
+                    </a>
+                    <a href="https://www.strava.com/athletes/99464226" target="_blank" class="footer-link">
+                        <span class="material-symbols-outlined">directions_run</span>
+                    </a>
+                </div>
 
-          <p class="footer-text">© 2025 Abhinav Chinnusamy. Built with passion for power electronics.</p>
+                <p class="footer-text">© 2025 Abhinav Chinnusamy. Built with passion for power electronics.</p>
+            </div>
         </div>
-      </div>
     </footer>
 
-    <!-- Strava Embed Script -->
+    <!-- Scripts -->
     <script>
+        // Strava Embed Script
         (function() {
             const script = document.createElement('script');
             script.src = 'https://strava-embeds.com/embed.js';
@@ -715,7 +659,7 @@
             document.head.appendChild(script);
         })();
 
-        // Event Tracker Functionality and Strava Animation Trigger
+        // Page Initialization
         document.addEventListener('DOMContentLoaded', function() {
             // Set your race tracker URL here
             const trackerUrl = 'https://rtrt.me/ulink/_RT/LAS-MADISON-MARATHON-2025/tracker/RRVCUPLW/focus';
@@ -725,7 +669,6 @@
                 trackerLink.href = trackerUrl;
                 trackerLink.target = '_blank';
             } else {
-                // If no tracker URL is set, disable the button
                 trackerLink.style.opacity = '0.5';
                 trackerLink.style.cursor = 'not-allowed';
                 trackerLink.addEventListener('click', function(e) {
@@ -734,64 +677,9 @@
                 });
             }
 
-            // Trigger bounce animation when Strava embeds are loaded
-            function triggerStravaAnimations() {
-                const widgetCards = document.querySelectorAll('.widget-card');
-                const eventCards = document.querySelectorAll('.event-card');
-
-                widgetCards.forEach((card, index) => {
-                    // Reset animation
-                    card.style.animation = 'none';
-                    card.offsetHeight; // Trigger reflow
-                    // Apply bounce animation with delay
-                    card.style.animation = `bounceIn 1.2s ease-out ${index * 0.2}s both`;
-                });
-
-                eventCards.forEach((card, index) => {
-                    // Reset animation
-                    card.style.animation = 'none';
-                    card.offsetHeight; // Trigger reflow
-                    // Apply bounce animation with delay
-                    card.style.animation = `bounceIn 1.2s ease-out ${0.6 + index * 0.2}s both`;
-                });
-            }
-
-            // Check for Strava embed content loading
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                        // Check if Strava content has been added
-                        const hasStravaContent = Array.from(mutation.addedNodes).some(node => {
-                            return node.nodeType === Node.ELEMENT_NODE &&
-                                   (node.querySelector('[data-ember-view]') ||
-                                    node.classList?.contains('strava-embed') ||
-                                    node.innerHTML?.includes('strava'));
-                        });
-
-                        if (hasStravaContent || document.querySelector('[data-ember-view]')) {
-                            // Small delay to ensure content is fully rendered
-                            setTimeout(triggerStravaAnimations, 500);
-                            observer.disconnect();
-                        }
-                    }
-                });
-            });
-
-            // Observe the strava-widgets container
-            const stravaContainer = document.querySelector('.strava-widgets');
-            if (stravaContainer) {
-                observer.observe(stravaContainer, { childList: true, subtree: true });
-            }
-
-            // Fallback: trigger animation after 3 seconds if observer doesn't catch it
-            setTimeout(triggerStravaAnimations, 3000);
+            // Strava embed content loading observer (simplified - no animations)
         });
     </script>
-
-    <!-- Bootstrap Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html></contents>
-</xai:function_call">
-
+</html>
