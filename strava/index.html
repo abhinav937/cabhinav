@@ -179,10 +179,6 @@
             min-height: 454px;
         }
 
-        .strava-iframe.race-tracker {
-            min-height: 600px;
-            border-radius: var(--radius-lg);
-        }
 
         /* Events Section */
         .upcoming-events {
@@ -453,9 +449,6 @@
                 min-height: 400px;
             }
 
-            .strava-iframe.race-tracker {
-                min-height: 500px;
-            }
 
             .events-grid {
                 grid-template-columns: 1fr;
@@ -537,90 +530,21 @@
                 </div>
             </div>
 
-            <!-- Race Tracker Widget -->
-            <div class="widget-card">
-                <div class="widget-header">
-                    <div class="widget-icon">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </div>
-                    <h2 class="widget-title">Live Race Tracker</h2>
-                </div>
-                <div class="widget-content">
-                    <iframe
-                        class="strava-iframe race-tracker"
-                        height="600"
-                        width="100%"
-                        frameborder="0"
-                        allowtransparency="true"
-                        scrolling="auto"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads allow-presentation"
-                        src="https://track.rtrt.me/e/LAS-MADISON-MARATHON-2025#/tracker/list">
-                    </iframe>
-                </div>
-            </div>
         </section>
 
-        <!-- Upcoming Events Section -->
-        <section class="upcoming-events">
+        <!-- Recent Activity -->
+        <section class="recent-activity">
             <div class="section-header">
                 <h2 class="section-title">
-                    <i class="fas fa-calendar-alt"></i>
-                    Upcoming Events
+                    <i class="fas fa-chart-line"></i>
+                    Recent Activity
                 </h2>
-                <p class="section-subtitle">Races and challenges on the horizon</p>
+                <p class="section-subtitle">Latest running performance and training updates</p>
             </div>
 
-            <div class="events-grid">
-                <!-- Half Marathon Event -->
-                <div class="event-card">
-                    <div class="event-header">
-                        <div class="event-icon">
-                            <i class="fas fa-running"></i>
-                        </div>
-                        <div class="event-meta">
-                            <span class="event-type">Half Marathon</span>
-                            <span class="event-date">
-                                <i class="far fa-calendar"></i>
-                                Sunday, November 9th
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="event-content">
-                        <h3 class="event-title">Madison Marathon by SSM Health - Half Marathon</h3>
-                        <p class="event-description">
-                            Looking forward to running the Madison Marathon by SSM Health. After months of training,
-                            I'm prepared for these 13.1 miles. Follow along with live tracking during the race.
-                        </p>
-
-                        <div class="event-details">
-                            <div class="detail-item">
-                                <i class="fas fa-route"></i>
-                                <span>13.1 miles</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock"></i>
-                                <span>7:20 AM</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Madison, WI</span>
-                            </div>
-                        </div>
-
-                        <div class="event-actions">
-                            <a href="https://rtrt.me/ulink/_RT/LAS-MADISON-MARATHON-2025/tracker/RRVCUPLW/focus" target="_blank" class="btn btn-primary" id="tracker-link">
-                                <i class="fas fa-external-link-alt"></i>
-                                Live Tracker
-                            </a>
-                            <a href="https://www.strava.com/athletes/99464226" target="_blank" class="btn btn-secondary">
-                                <i class="fas fa-thumbs-up"></i>
-                                Give Kudos
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div class="activity-embed">
+                <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16406693132" data-style="standard" data-from-embed="false"></div>
+                <script src="https://strava-embeds.com/embed.js"></script>
             </div>
         </section>
     </div>
@@ -660,24 +584,9 @@
         })();
 
         // Page Initialization
+        // Strava embeds initialization
         document.addEventListener('DOMContentLoaded', function() {
-            // Set your race tracker URL here
-            const trackerUrl = 'https://rtrt.me/ulink/_RT/LAS-MADISON-MARATHON-2025/tracker/RRVCUPLW/focus';
-
-            const trackerLink = document.getElementById('tracker-link');
-            if (trackerUrl !== 'https://your-race-tracker-link.com') {
-                trackerLink.href = trackerUrl;
-                trackerLink.target = '_blank';
-            } else {
-                trackerLink.style.opacity = '0.5';
-                trackerLink.style.cursor = 'not-allowed';
-                trackerLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('Live tracker link will be available soon!');
-                });
-            }
-
-            // Strava embed content loading observer (simplified - no animations)
+            // Strava embed content loading observer
         });
     </script>
 </body>
