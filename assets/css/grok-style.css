@@ -83,6 +83,10 @@ body {
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Only apply flex layout to single-page design (index page) */
+body.no-scroll-mobile {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -965,18 +969,25 @@ p {
     font-family: var(--font-primary);
     font-size: 14px;
     line-height: 1.5;
-    height: 100vh;
-    overflow: hidden;
     background: var(--grok-bg-primary);
     color: var(--grok-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  html {
+  /* Only apply no-scroll behavior to pages with the no-scroll-mobile class */
+  body.no-scroll-mobile {
     height: 100vh;
     overflow: hidden;
+  }
+
+  html {
     background: var(--grok-bg-primary);
+  }
+
+  body.no-scroll-mobile html {
+    height: 100vh;
+    overflow: hidden;
   }
 
   .container {
