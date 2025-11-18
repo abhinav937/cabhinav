@@ -40,442 +40,7 @@
     <link rel="stylesheet" href="../assets/css/grok-style.css">
 
     <!-- Page Specific Styles -->
-    <style>
-        .strava-page {
-            min-height: 100vh;
-            background: var(--grok-bg-primary);
-        }
-
-        .strava-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-2xl) var(--spacing-lg);
-        }
-
-        /* Hero Section */
-        .strava-hero {
-            text-align: center;
-            margin-bottom: var(--spacing-3xl);
-            padding: var(--spacing-3xl) 0;
-        }
-
-        .strava-title {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 700;
-            color: var(--grok-text-primary);
-            margin: 0 0 var(--spacing-lg) 0;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-
-        .strava-subtitle {
-            font-size: 1.1rem;
-            color: var(--grok-text-secondary);
-            font-weight: 400;
-            margin: 0;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Widgets Grid */
-        .strava-widgets {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--spacing-xl);
-            margin-bottom: var(--spacing-3xl);
-        }
-
-        .widget-card {
-            background: var(--grok-bg-secondary);
-            border: 1px solid var(--grok-border);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all var(--transition-slow) cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .widget-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent);
-            opacity: 0;
-            transition: opacity var(--transition-slow) ease;
-            border-radius: var(--radius-xl);
-        }
-
-        .widget-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--grok-border-light);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .widget-card:hover::before {
-            opacity: 1;
-        }
-
-        .widget-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--grok-border);
-        }
-
-        .widget-icon {
-            width: 52px;
-            height: 52px;
-            background: var(--grok-bg-tertiary);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: var(--spacing-md);
-            color: var(--grok-text-primary);
-            font-size: 1.4rem;
-            flex-shrink: 0;
-            transition: all var(--transition-normal) ease;
-            border: 1px solid var(--grok-border-light);
-        }
-
-        .widget-card:hover .widget-icon {
-            transform: rotate(5deg) scale(1.05);
-            background: var(--grok-bg-accent);
-        }
-
-        .widget-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin: 0;
-            color: var(--grok-text-primary);
-            letter-spacing: -0.01em;
-        }
-
-        .widget-content {
-            position: relative;
-        }
-
-        /* Strava Iframes */
-        .strava-iframe {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-            border: none;
-            border-radius: var(--radius-md);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .strava-iframe.activity-summary {
-            min-height: 160px;
-        }
-
-        .strava-iframe.latest-rides {
-            min-height: 454px;
-        }
-
-
-        /* Events Section */
-        .upcoming-events {
-            margin-bottom: var(--spacing-3xl);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: var(--spacing-2xl);
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 6vw, 2.5rem);
-            font-weight: 600;
-            margin-bottom: var(--spacing-md);
-            background: linear-gradient(135deg, var(--grok-text-primary), var(--grok-text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-sm);
-        }
-
-        .section-title i {
-            color: var(--grok-accent);
-        }
-
-        .section-subtitle {
-            font-size: 1rem;
-            color: var(--grok-text-muted);
-            font-weight: 400;
-        }
-
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: var(--spacing-xl);
-        }
-
-        .event-card {
-            background: var(--grok-bg-secondary);
-            border: 1px solid var(--grok-border);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all var(--transition-slow) cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .event-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.03), transparent 50%);
-            opacity: 0;
-            transition: opacity var(--transition-slow) ease;
-            border-radius: var(--radius-xl);
-        }
-
-        .event-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--grok-border-light);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .event-card:hover::before {
-            opacity: 1;
-        }
-
-        .event-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--grok-border);
-        }
-
-        .event-icon {
-            width: 54px;
-            height: 54px;
-            background: var(--grok-bg-tertiary);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: var(--spacing-md);
-            color: var(--grok-text-primary);
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            transition: all var(--transition-normal) ease;
-            border: 1px solid var(--grok-border-light);
-        }
-
-        .event-card:hover .event-icon {
-            transform: rotate(-3deg) scale(1.05);
-            background: var(--grok-bg-accent);
-        }
-
-        .event-meta {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-        }
-
-        .event-type {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--grok-accent);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .event-date {
-            font-size: 0.9rem;
-            color: var(--grok-text-muted);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .event-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: var(--spacing-sm);
-            color: var(--grok-text-primary);
-            line-height: 1.3;
-            letter-spacing: -0.01em;
-        }
-
-        .event-description {
-            color: var(--grok-text-secondary);
-            line-height: 1.6;
-            margin-bottom: var(--spacing-lg);
-            font-size: 0.95rem;
-        }
-
-        .event-details {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-            flex-wrap: wrap;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            font-size: 0.85rem;
-            color: var(--grok-text-muted);
-            background: var(--grok-bg-tertiary);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 16px;
-            border: 1px solid var(--grok-border);
-            backdrop-filter: blur(5px);
-            transition: all var(--transition-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .detail-item:hover {
-            background: var(--grok-bg-accent);
-            border-color: var(--grok-border-light);
-            transform: scale(1.02);
-        }
-
-        .detail-item i {
-            color: var(--grok-accent);
-        }
-
-        .event-actions {
-            display: flex;
-            gap: var(--spacing-sm);
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            padding: var(--spacing-sm) var(--spacing-lg);
-            border: none;
-            border-radius: 20px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all var(--transition-slow) cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            font-size: 0.9rem;
-            font-family: inherit;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-primary {
-            background: var(--grok-accent);
-            color: var(--grok-bg-primary);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:hover {
-            background: var(--grok-accent-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-secondary {
-            background: var(--grok-bg-tertiary);
-            color: var(--grok-text-secondary);
-            border: 1px solid var(--grok-border);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: var(--grok-bg-accent);
-            color: var(--grok-text-primary);
-            transform: translateY(-2px);
-            border-color: var(--grok-border-light);
-            box-shadow: var(--shadow-md);
-        }
-
-
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .strava-container {
-                padding: var(--spacing-lg) var(--spacing-md);
-            }
-
-            .strava-title {
-                font-size: clamp(2rem, 9vw, 3rem);
-            }
-
-            .strava-widgets {
-                gap: var(--spacing-lg);
-            }
-
-            .widget-card {
-                padding: var(--spacing-lg);
-            }
-
-            .strava-iframe.activity-summary {
-                min-height: 140px;
-            }
-
-            .strava-iframe.latest-rides {
-                min-height: 400px;
-            }
-
-
-            .events-grid {
-                grid-template-columns: 1fr;
-                gap: var(--spacing-lg);
-            }
-
-            .section-title {
-                font-size: clamp(1.5rem, 7vw, 2rem);
-            }
-
-            .event-details {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-
-            .event-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-
-        }
-
-        /* Utility Classes */
-    </style>
+    <link rel="stylesheet" href="../assets/css/strava.css">
 </head>
 
 <body class="strava-page">
@@ -487,65 +52,50 @@
         </header>
 
         <!-- Widgets Section -->
-        <section class="strava-widgets">
-            <!-- Activity Summary Widget -->
-            <div class="widget-card">
-                <div class="widget-header">
-                    <div class="widget-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h2 class="widget-title">Activity Summary</h2>
-                </div>
-                <div class="widget-content">
-                    <iframe
-                        class="strava-iframe activity-summary"
-                        height="160"
-                        width="300"
-                        frameborder="0"
-                        allowtransparency="true"
-                        scrolling="no"
-                        src="https://www.strava.com/athletes/99464226/activity-summary/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c">
-                    </iframe>
-                </div>
-            </div>
-
-            <!-- Latest Rides Widget -->
-            <div class="widget-card">
-                <div class="widget-header">
-                    <div class="widget-icon">
+        <section class="strava-widgets" aria-label="Strava Activity Widgets">
+            <!-- Latest Activities Widget -->
+            <article class="widget-card">
+                <header class="widget-header">
+                    <div class="widget-icon" aria-hidden="true">
                         <i class="fas fa-route"></i>
                     </div>
                     <h2 class="widget-title">Latest Activities</h2>
-                </div>
+                </header>
                 <div class="widget-content">
                     <iframe
                         class="strava-iframe latest-rides"
-                        height="454"
+                        height="400"
                         width="300"
-                        frameborder="0"
-                        allowtransparency="true"
-                        scrolling="no"
-                        src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c">
+                        style="border: none;"
+                        allow="fullscreen"
+                        loading="lazy"
+                        title="Latest Strava Activities"
+                        src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
+                        aria-label="Latest Strava running activities">
                     </iframe>
                 </div>
-            </div>
+            </article>
 
-        </section>
+            <!-- My Half Marathon Widget -->
+            <article class="widget-card">
+                <header class="widget-header">
+                    <div class="widget-icon" aria-hidden="true">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h2 class="widget-title">My Half Marathon</h2>
+                </header>
+                <div class="widget-content">
+                    <div 
+                        class="strava-embed-placeholder" 
+                        data-embed-type="activity" 
+                        data-embed-id="16406693132" 
+                        data-style="standard" 
+                        data-from-embed="false"
+                        aria-label="Half Marathon Activity">
+                    </div>
+                </div>
+            </article>
 
-        <!-- Recent Activity -->
-        <section class="recent-activity">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-chart-line"></i>
-                    Recent Activity
-                </h2>
-                <p class="section-subtitle">Latest running performance and training updates</p>
-            </div>
-
-            <div class="activity-embed">
-                <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16406693132" data-style="standard" data-from-embed="false"></div>
-                <script src="https://strava-embeds.com/embed.js"></script>
-            </div>
         </section>
     </div>
 
@@ -568,27 +118,23 @@
                     </a>
                 </div>
 
-                <p class="footer-text">© 2025 Abhinav Chinnusamy. Built with passion for power electronics.</p>
+                <p class="footer-text">© 2025 Abhinav Chinnusamy. Power Electronics Engineer.</p>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        // Strava Embed Script
+        // Strava Embed Script - Load once
         (function() {
-            const script = document.createElement('script');
-            script.src = 'https://strava-embeds.com/embed.js';
-            script.async = true;
-            document.head.appendChild(script);
+            if (!document.querySelector('script[src="https://strava-embeds.com/embed.js"]')) {
+                const script = document.createElement('script');
+                script.src = 'https://strava-embeds.com/embed.js';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
         })();
-
-        // Page Initialization
-        // Strava embeds initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            // Strava embed content loading observer
-        });
     </script>
 </body>
-
 </html> 
