@@ -20,18 +20,11 @@
         container.appendChild(canvas);
         const ctx = canvas.getContext('2d');
 
-        function resize() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
-            createStars();
-        }
-        window.addEventListener('resize', resize);
-
         // Star layers
         const STAR_LAYERS = [
             { count: 1000, speed: 0.03, size: [0.3, 0.8], color: 'white' },
-            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'white' },
-            { count: 200, speed: 0.005, size: [1.3, 2], color: 'white' }
+            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'rgba(180,200,255,0.7)' },
+            { count: 200, speed: 0.005, size: [1.3, 2], color: 'rgba(255,220,200,0.6)' }
         ];
         let stars = [];
         function createStars() {
@@ -52,11 +45,24 @@
                 }
             });
         }
-        createStars();
+        
+        function resize() {
+            // For fixed containers, use window dimensions directly
+            const isFixed = window.getComputedStyle(container).position === 'fixed';
+            if (isFixed) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            } else {
+                canvas.width = container.clientWidth || window.innerWidth;
+                canvas.height = container.clientHeight || window.innerHeight;
+            }
+            createStars();
+        }
+        window.addEventListener('resize', resize);
 
         function drawBackground() {
             ctx.globalAlpha = 1;
-            ctx.fillStyle = '#0B0B0C'; // pitch black
+            ctx.fillStyle = '#161618'; // Match space site background
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
