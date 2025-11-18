@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Directory - Abhinav Chinnusamy</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="Abhinav Chinnusamy, Site Directory, Pages, Links" />
+  <meta name="description" content="Directory of all pages and domains on cabhinav.com" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="Abhinav Chinnusamy" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Site Directory - Abhinav Chinnusamy" />
+  <meta property="og:url" content="https://cabhinav.com/ls/" />
+  <meta property="og:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta property="og:image:alt" content="Site Directory" />
+  <meta property="og:description" content="Directory of all pages and domains on cabhinav.com" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Site Directory - Abhinav Chinnusamy" />
+  <meta name="twitter:description" content="Directory of all pages and domains on cabhinav.com" />
+  <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta name="twitter:creator" content="@abhinav_937" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://cabhinav.com/ls/">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#161618">
+
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="../assets/images/icons/favicon.ico">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="../assets/images/icons/favicon.ico">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../assets/css/grok-style.css">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-FDSLDZ5EWW');
+  </script>
+
+  <style>
+    .directory-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      padding-top: calc(3rem + 4rem);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .directory-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .directory-header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+      color: var(--grok-text-primary, #ffffff);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .directory-header p {
+      color: var(--grok-text-muted, #a3a3a3);
+      font-size: 1.25rem;
+      font-weight: 400;
+    }
+
+    .domain-section {
+      margin-bottom: 4rem;
+    }
+
+    .domain-title {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--grok-text-primary, #ffffff);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+    }
+
+    .domain-title .material-symbols-outlined {
+      font-size: 1.75rem;
+    }
+
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .page-card {
+      background: var(--grok-bg-tertiary, rgba(26, 26, 26, 0.8));
+      border: 1px solid var(--grok-border, rgba(51, 51, 51, 0.5));
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: block;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--grok-accent, #ffffff);
+      transform: scaleX(0);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .page-card:hover {
+      background: var(--grok-bg-accent, rgba(38, 38, 38, 0.9));
+      border-color: var(--grok-border-light, rgba(68, 68, 68, 0.8));
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .page-card:active {
+      transform: translateY(-2px);
+    }
+
+    .page-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--grok-text-primary, #ffffff);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .page-card-title .material-symbols-outlined {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .page-card-url {
+      font-size: 0.875rem;
+      color: var(--grok-text-muted, #a3a3a3);
+      font-family: var(--font-mono, 'SF Mono', 'Monaco', 'Inconsolata', monospace);
+      word-break: break-all;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-card-description {
+      font-size: 0.875rem;
+      color: var(--grok-text-muted, #a3a3a3);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* Tablet and smaller desktop */
+    @media (max-width: 1024px) {
+      .directory-container {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .pages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .directory-header h1 {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Mobile - 768px and below */
+    @media (max-width: 768px) {
+      .directory-container {
+        padding: 2rem 1rem;
+        padding-top: calc(2rem + 3rem);
+        max-width: 100%;
+      }
+
+      .directory-header {
+        margin-bottom: 2.5rem;
+        text-align: left;
+      }
+
+      .directory-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+
+      .directory-header p {
+        font-size: 1rem;
+        color: var(--grok-text-muted, #a3a3a3);
+      }
+
+      .domain-section {
+        margin-bottom: 2.5rem;
+      }
+
+      .domain-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        gap: 0.5rem;
+      }
+
+      .domain-title .material-symbols-outlined {
+        font-size: 1.5rem;
+      }
+
+      .pages-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .page-card {
+        padding: 1.5rem;
+        border-radius: 10px;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .page-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .page-card-title {
+        font-size: 1.125rem;
+        margin-bottom: 0.625rem;
+        gap: 0.625rem;
+      }
+
+      .page-card-title .material-symbols-outlined {
+        font-size: 1.375rem;
+      }
+
+      .page-card-url {
+        font-size: 0.8125rem;
+        margin-bottom: 0.375rem;
+      }
+
+      .page-card-description {
+        font-size: 0.8125rem;
+        margin-top: 0.375rem;
+      }
+    }
+
+    /* Small mobile - 480px and below */
+    @media (max-width: 480px) {
+      .directory-container {
+        padding: 1.5rem 1rem;
+        padding-top: calc(1.5rem + 2.5rem);
+      }
+
+      .directory-header {
+        margin-bottom: 2rem;
+      }
+
+      .directory-header h1 {
+        font-size: 1.75rem;
+      }
+
+      .directory-header p {
+        font-size: 0.9375rem;
+      }
+
+      .domain-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .domain-title .material-symbols-outlined {
+        font-size: 1.25rem;
+      }
+
+      .pages-grid {
+        gap: 0.875rem;
+      }
+
+      .page-card {
+        padding: 1.25rem;
+        min-height: 110px;
+      }
+
+      .page-card-title {
+        font-size: 1rem;
+      }
+
+      .page-card-title .material-symbols-outlined {
+        font-size: 1.25rem;
+      }
+
+      .page-card-url {
+        font-size: 0.75rem;
+      }
+
+      .page-card-description {
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Large desktop - 1440px and above */
+    @media (min-width: 1440px) {
+      .directory-container {
+        max-width: 1400px;
+        padding: 4rem 3rem;
+      }
+
+      .pages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+      }
+
+      .directory-header h1 {
+        font-size: 3.5rem;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .page-card {
+        min-height: 120px;
+      }
+
+      .page-card:active {
+        background: var(--grok-bg-accent, rgba(38, 38, 38, 0.9));
+        transform: scale(0.98);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Back Navigation -->
+  <a href="../" class="back-button" aria-label="Back to home">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Back
+  </a>
+
+  <main>
+    <div class="directory-container">
+      <div class="directory-header">
+        <h1>Site Directory</h1>
+        <p>All pages and domains on cabhinav.com</p>
+      </div>
+
+      <!-- Main Domain Section -->
+      <div class="domain-section">
+        <h2 class="domain-title">
+          <span class="material-symbols-outlined">language</span>
+          cabhinav.com
+        </h2>
+        <div class="pages-grid">
+          <a href="../" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">home</span>
+              Home
+            </div>
+            <div class="page-card-url">cabhinav.com/</div>
+            <div class="page-card-description">Main homepage and portfolio</div>
+          </a>
+
+          <a href="../projects/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">work</span>
+              Projects
+            </div>
+            <div class="page-card-url">cabhinav.com/projects/</div>
+            <div class="page-card-description">Featured power electronics projects</div>
+          </a>
+
+          <a href="../publications/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">article</span>
+              Publications
+            </div>
+            <div class="page-card-url">cabhinav.com/publications/</div>
+            <div class="page-card-description">Academic publications and research papers</div>
+          </a>
+
+          <a href="../strava/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">directions_run</span>
+              Strava
+            </div>
+            <div class="page-card-url">cabhinav.com/strava/</div>
+            <div class="page-card-description">Running activities and performance metrics</div>
+          </a>
+
+          <a href="../chat/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">chat</span>
+              Chat
+            </div>
+            <div class="page-card-url">cabhinav.com/chat/</div>
+            <div class="page-card-description">Interactive chat interface</div>
+          </a>
+
+          <a href="../space/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">stars</span>
+              Space
+            </div>
+            <div class="page-card-url">cabhinav.com/space/</div>
+            <div class="page-card-description">Interactive space background animation</div>
+          </a>
+
+          <a href="../latex/" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">functions</span>
+              LaTeX
+            </div>
+            <div class="page-card-url">cabhinav.com/latex/</div>
+            <div class="page-card-description">LaTeX tools and utilities</div>
+          </a>
+
+          <a href="./" class="page-card">
+            <div class="page-card-title">
+              <span class="material-symbols-outlined">list</span>
+              Site Directory
+            </div>
+            <div class="page-card-url">cabhinav.com/ls/</div>
+            <div class="page-card-description">This page - directory of all pages</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="https://x.com/abhinav_937" target="_blank" class="footer-link">
+            <img src="../assets/images/social/x-svg.svg" alt="X (Twitter)" class="footer-icon-svg">
+          </a>
+          <a href="https://github.com/abhinav937" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">code</span>
+          </a>
+          <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">school</span>
+          </a>
+          <a href="https://www.strava.com/athletes/99464226" target="_blank" class="footer-link">
+            <span class="material-symbols-outlined">directions_run</span>
+          </a>
+        </div>
+
+        <p class="footer-text">© 2025 Abhinav Chinnusamy. Power Electronics Engineer.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../assets/js/grok-script.js"></script>
+
+</body>
+</html>
+

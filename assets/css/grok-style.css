@@ -83,6 +83,7 @@ body {
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
 
 /* Only apply flex layout to single-page design (index page) */
@@ -115,6 +116,7 @@ main {
 
 .section {
   padding: var(--spacing-3xl) 0;
+  padding-top: calc(var(--spacing-3xl) + 4rem);
 }
 
 .section-header {
@@ -680,6 +682,7 @@ p {
 .publications-header {
   text-align: center;
   margin-bottom: var(--spacing-2xl);
+  padding-top: 4rem;
 }
 
 .publications-header h1 {
@@ -1198,6 +1201,7 @@ p {
   /* Modern section design */
   .section {
     padding: var(--spacing-3xl) 0;
+    padding-top: calc(var(--spacing-3xl) + 3.5rem);
     position: relative;
   }
 
@@ -1743,23 +1747,27 @@ p {
    ======================================== */
 
 .back-button {
-  color: var(--grok-text-secondary);
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 100;
+  color: var(--grok-text-primary);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  background: var(--grok-bg-tertiary);
+  border: 1px solid var(--grok-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  min-width: 100px;
+  justify-content: center;
 }
 
 .back-button::before {
@@ -1771,16 +1779,17 @@ p {
   bottom: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
+  border-radius: 12px;
   z-index: -1;
 }
 
 .back-button:hover {
   color: var(--grok-text-primary);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: var(--grok-bg-accent);
+  border-color: var(--grok-border-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .back-button:hover::before {
@@ -1788,15 +1797,134 @@ p {
 }
 
 .back-button:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0);
   transition: all 0.1s ease;
 }
 
 .back-button .material-symbols-outlined {
-  font-size: 1.1rem;
-  transition: transform 0.3s ease;
+  font-size: 1.25rem;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 
 .back-button:hover .material-symbols-outlined {
-  transform: translateX(-2px);
+  transform: translateX(-3px);
+}
+
+/* Mobile responsive back button */
+@media (max-width: 768px) {
+  .back-button {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-width: auto;
+    width: auto;
+    border-radius: 12px;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+  }
+
+  .back-button .material-symbols-outlined {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    top: 0.875rem;
+    left: 0.875rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+    min-width: auto;
+    width: auto;
+    border-radius: 10px;
+    gap: 0.375rem;
+  }
+
+  .back-button .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+}
+
+/* Very small mobile devices - icon only, circular button */
+@media (max-width: 360px) {
+  .back-button {
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0;
+    font-size: 0;
+    line-height: 0;
+    gap: 0;
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    overflow: hidden;
+    text-indent: -9999px;
+    white-space: nowrap;
+  }
+
+  .back-button .material-symbols-outlined {
+    font-size: 1.25rem;
+    margin: 0;
+    flex-shrink: 0;
+    text-indent: 0;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .back-button {
+    /* Ensure minimum touch target size (44x44px recommended) */
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+    /* Better visual feedback */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .back-button:active {
+    transform: scale(0.96);
+    background: var(--grok-bg-accent);
+    transition: all 0.1s ease;
+  }
+
+  /* Remove hover effects on touch devices */
+  .back-button:hover {
+    transform: none;
+  }
+
+  .back-button:hover .material-symbols-outlined {
+    transform: none;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .back-button {
+    top: 0.75rem;
+    padding: 0.625rem 0.875rem;
+  }
+}
+
+/* Ensure back button doesn't overlap with content */
+@media (max-width: 768px) {
+  main {
+    padding-top: 0;
+  }
+
+  /* Adjust top padding for mobile to account for smaller back button */
+  .section {
+    padding-top: calc(var(--spacing-3xl) + 3rem);
+  }
+
+  .publications-header {
+    padding-top: 3rem;
+  }
 }

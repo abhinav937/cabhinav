@@ -13,6 +13,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-xl) var(--spacing-lg);
+    padding-top: calc(var(--spacing-xl) + 4rem);
     width: 100%;
     flex: 1;
 }
@@ -21,7 +22,7 @@
 .strava-hero {
     text-align: center;
     margin-bottom: var(--spacing-2xl);
-    padding-top: var(--spacing-lg);
+    padding-top: 0;
 }
 
 .strava-title {
@@ -177,11 +178,12 @@
 @media (max-width: 768px) {
     .strava-container {
         padding: var(--spacing-lg) var(--spacing-md);
+        padding-top: calc(var(--spacing-lg) + 3.5rem);
     }
 
     .strava-hero {
         margin-bottom: var(--spacing-xl);
-        padding-top: var(--spacing-md);
+        padding-top: 0;
     }
 
     .strava-widgets {
@@ -221,6 +223,7 @@
 @media (max-width: 480px) {
     .strava-container {
         padding: var(--spacing-md) var(--spacing-sm);
+        padding-top: calc(var(--spacing-md) + 3rem);
     }
 
     .strava-hero {
