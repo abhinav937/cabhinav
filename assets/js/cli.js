@@ -20,26 +20,29 @@ const statusText = document.getElementById("statusText");
 const notSupported = document.getElementById("notSupported");
 const baudRateSelect = document.getElementById("baudRate");
 
-document.addEventListener("DOMContentLoaded", () => {
-  buttonCon.addEventListener("click", clickConnect);
-  buttonDis.addEventListener("click", clickDisconnect);
-  sendBtn.addEventListener("click", () => sendCommand());
-  clearLogBtn.addEventListener("click", clearLog);
-  cmdBox.addEventListener("keyup", processCommand);
+    document.addEventListener("DOMContentLoaded", () => {
+      buttonCon.addEventListener("click", clickConnect);
+      buttonDis.addEventListener("click", clickDisconnect);
+      sendBtn.addEventListener("click", handleSend);
+      clearLogBtn.addEventListener("click", clearLog);
+      cmdBox.addEventListener("keydown", handleKeyDown);
+      cmdBox.addEventListener("input", autoResizeTextarea);
 
-  // Enable send button when there's text in the input
-  cmdBox.addEventListener("input", () => {
-    sendBtn.disabled = !cmdBox.value.trim();
-  });
+      // Enable send button when there's text in the input
+      cmdBox.addEventListener("input", () => {
+        sendBtn.disabled = !cmdBox.value.trim();
+      });
 
-  // Feature detection
-  if ("serial" in navigator) {
-    notSupported.classList.add("hidden");
-  }
+      // Feature detection
+      if ("serial" in navigator) {
+        notSupported.classList.add("hidden");
+      } else {
+        notSupported.classList.remove("hidden");
+      }
 
-  setUIDisconnected();
-  updateStatus("Disconnected", false);
-});
+      setUIDisconnected();
+      updateStatus("Disconnected", false);
+    });
 
 function updateStatus(text, connected) {
   statusText.textContent = text;
@@ -63,25 +66,48 @@ function setUIDisconnected() {
   updateStatus("Disconnected", false);
 }
 
-function sendCommand() {
-  const command = cmdBox.value.trim();
-  if (command && port) {
-    writeToStream(command);
-    cmdBox.value = "";
-    sendBtn.disabled = true;
-  }
-}
+    function sendCommand() {
+      const command = cmdBox.value.trim();
+      if (command && port) {
+        writeToStream(command);
+        cmdBox.value = "";
+        cmdBox.style.height = 'auto'; // Reset height
+        sendBtn.disabled = true;
+      }
+    }
 
-function clearLog() {
-  log.textContent = "";
-  log.classList.add("empty");
-}
+    function clearLog() {
+      log.textContent = "";
+      log.classList.add("empty");
+    }
 
-async function processCommand(event) {
-  if (event.key == "Enter") {
-    sendCommand();
-  }
-}
+    // Scroll to bottom with multiple attempts for reliability
+    function scrollToBottom() {
+      if (!log) return;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSend();
+      }
+    }
+
+    // Auto-resize textarea
+    function autoResizeTextarea() {
+      if (!cmdBox) return;
+      cmdBox.style.height = 'auto';
+      cmdBox.style.height = Math.min(cmdBox.scrollHeight, 120) + 'px';
+    }
+
+    async function handleSend() {
+      const message = cmdBox.value.trim();
+      if (!message || port) {
+        // Only send if we have a message and a serial connection
+        sendCommand();
+      }
+    }
 
 /**
  * @name connect
@@ -194,44 +220,60 @@ async function clickDisconnect() {
  * @name readLoop
  * Reads data from the input stream and displays it on screen.
  */
-async function readLoop() {
-  while (true) {
-    const { value, done } = await reader.read();
-    if (value) {
-      // Remove empty state styling when first data arrives
-      log.classList.remove("empty");
-      // Add timestamp for received data
-      const timestamp = new Date().toLocaleTimeString();
-      log.textContent += `[${timestamp}] ${value}\n`;
-      // Auto-scroll to bottom
-      log.scrollTop = log.scrollHeight;
+    async function readLoop() {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (value) {
+          // Remove empty state styling when first data arrives
+          log.classList.remove("empty");
+          // Add timestamp for received data
+          const timestamp = new Date().toLocaleTimeString();
+          log.textContent += `[${timestamp}] ${value}\n`;
+
+          // Scroll to bottom with multiple attempts for reliability
+          scrollToBottom();
+          requestAnimationFrame(() => {
+            scrollToBottom();
+          });
+          setTimeout(() => {
+            scrollToBottom();
+          }, 50);
+        }
+        if (done) {
+          console.log("[readLoop] DONE", done);
+          reader.releaseLock();
+          break;
+        }
+      }
     }
-    if (done) {
-      console.log("[readLoop] DONE", done);
-      reader.releaseLock();
-      break;
-    }
-  }
-}
 
 /**
  * @name writeToStream
  * Gets a writer from the output stream and send the lines.
  * @param  {...string} lines lines to send
  */
-function writeToStream(...lines) {
-  const writer = outputStream.getWriter();
-  lines.forEach((line) => {
-    console.log("[SEND]", line);
-    // Display sent command in log with timestamp
-    const timestamp = new Date().toLocaleTimeString();
-    log.classList.remove("empty");
-    log.textContent += `[${timestamp}] > ${line}\n`;
-    log.scrollTop = log.scrollHeight;
-    writer.write(line + "\n");
-  });
-  writer.releaseLock();
-}
+    function writeToStream(...lines) {
+      const writer = outputStream.getWriter();
+      lines.forEach((line) => {
+        console.log("[SEND]", line);
+        // Display sent command in log with timestamp
+        const timestamp = new Date().toLocaleTimeString();
+        log.classList.remove("empty");
+        log.textContent += `[${timestamp}] > ${line}\n`;
+
+        // Scroll to bottom with multiple attempts for reliability
+        scrollToBottom();
+        requestAnimationFrame(() => {
+          scrollToBottom();
+        });
+        setTimeout(() => {
+          scrollToBottom();
+        }, 50);
+
+        writer.write(line + "\n");
+      });
+      writer.releaseLock();
+    }
 
 /**
  * @name LineBreakTransformer
