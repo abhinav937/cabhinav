@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Serial Terminal - Abhinav Chinnusamy</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="Web Serial Terminal, CLI, Serial Communication, Hardware Interface, Abhinav Chinnusamy" />
+  <meta name="description" content="Web Serial Terminal interface for hardware communication and debugging. Connect to serial devices directly from your browser." />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Abhinav Chinnusamy" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+  <meta property="og:url" content="https://cabhinav.com/cli/" />
+  <meta property="og:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta property="og:description" content="Web Serial Terminal interface for hardware communication and debugging." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta name="twitter:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+  <meta name="twitter:description" content="Web Serial Terminal interface for hardware communication and debugging." />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://cabhinav.com/cli/">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#161618">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./assets/images/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="./assets/images/icons/favicon.ico">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../assets/css/grok-style.css">
+  <link rel="stylesheet" href="../assets/css/space-background.css">
+  <link rel="stylesheet" href="../assets/css/cli.css">
+
+  </style>
+</head>
+
+<body>
+  <!-- Space Background Canvas -->
+  <canvas id="space-canvas"></canvas>
+
+  <!-- Back to Home Link -->
+  <a href="../" class="back-link">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Home
+  </a>
+
+  <main>
+    <!-- CLI Header -->
+    <section class="cli-header">
+      <div class="container">
+        <h1>Web Serial Terminal</h1>
+      </div>
+    </section>
+
+    <!-- CLI Container -->
+    <div class="cli-container">
+      <!-- Browser Support Warning -->
+      <div id="notSupported" class="hidden">
+        <strong>Web Serial API Not Supported</strong><br>
+        This browser doesn't support the Web Serial API. Please use one of the following options:<br><br>
+        <strong>Option 1: Chrome (Recommended)</strong><br>
+        • Open Chrome and go to <code>chrome://flags/#enable-experimental-web-platform-features</code><br>
+        • Set the flag to "Enabled"<br>
+        • Restart Chrome<br><br>
+        <strong>Option 2: Microsoft Edge</strong><br>
+        • Edge has Web Serial API enabled by default (version 89+)<br><br>
+        <strong>Option 3: Firefox</strong><br>
+        • Web Serial API is not yet supported in Firefox<br><br>
+        <strong>Option 4: Safari</strong><br>
+        • Web Serial API is not yet supported in Safari
+      </div>
+
+      <!-- Controls -->
+      <div class="cli-controls">
+        <div class="control-group">
+          <span class="control-label">Baud Rate:</span>
+          <select id="baudRate">
+            <option value="9600">9600</option>
+            <option value="19200">19200</option>
+            <option value="38400">38400</option>
+            <option value="57600">57600</option>
+            <option value="115200" selected>115200</option>
+            <option value="230400">230400</option>
+            <option value="460800">460800</option>
+            <option value="921600">921600</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Data Bits:</span>
+          <select id="dataBits">
+            <option value="7">7</option>
+            <option value="8" selected>8</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Parity:</span>
+          <select id="parity">
+            <option value="none" selected>none</option>
+            <option value="even">even</option>
+            <option value="odd">odd</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Stop Bits:</span>
+          <select id="stopBits">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+
+        <div style="flex: 1;"></div>
+
+        <div class="control-group">
+          <button id="buttonCon" type="button">Connect</button>
+          <button id="buttonDis" type="button" class="secondary">Disconnect</button>
+          <button id="clearLog" type="button" class="secondary">Clear</button>
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="cli-terminal">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+          </div>
+          <div class="terminal-title">Serial Terminal</div>
+          <div class="status-indicator">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText">Disconnected</span>
+          </div>
+        </div>
+
+        <div class="terminal-content">
+          <pre id="log" class="empty"></pre>
+
+          <div class="input-area">
+            <input id="cmdBox" type="text" placeholder="Type your command and press Enter or click Send..." autocomplete="off" />
+            <button id="sendBtn" class="send-btn" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="instructions">
+        <h2>Getting Started</h2>
+        <ol>
+          <li>Connect your serial device to your computer</li>
+          <li>Click <strong>Connect</strong> and select your device</li>
+          <li>Configure baud rate if needed (default: 115200)</li>
+          <li>Type commands in the terminal below and press Enter or click Send</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../assets/js/homepage-space-background.js"></script>
+  <script src="../assets/js/cli.js"></script>
+</body>
+</html>
