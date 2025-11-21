@@ -385,9 +385,12 @@ function toggleTestMode() {
 // Position terminal header below ASCII banner
 function positionTerminalHeader() {
   const terminalHeader = document.querySelector('.terminal-header');
+  const terminalContent = document.querySelector('.terminal-content');
 
-  if (terminalHeader) {
+  if (terminalHeader && terminalContent) {
+    const headerHeight = terminalHeader.offsetHeight;
     terminalHeader.style.top = '0px';
+    terminalContent.style.paddingTop = headerHeight + 'px';
   }
 }
 
