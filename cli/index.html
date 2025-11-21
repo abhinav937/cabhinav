@@ -5,16 +5,15 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Serial Terminal - Abhinav Chinnusamy</title>
+  <title>Web Serial Terminal</title>
 
   <!-- SEO Meta Tags -->
-  <meta name="keywords" content="Web Serial Terminal, CLI, Serial Communication, Hardware Interface, Abhinav Chinnusamy" />
+  <meta name="keywords" content="Web Serial Terminal, CLI, Serial Communication, Hardware Interface" />
   <meta name="description" content="Web Serial Terminal interface for hardware communication and debugging. Connect to serial devices directly from your browser." />
   <meta name="robots" content="index, follow" />
-  <meta name="author" content="Abhinav Chinnusamy" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+  <meta property="og:title" content="Web Serial Terminal" />
   <meta property="og:url" content="https://cabhinav.com/cli/" />
   <meta property="og:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
   <meta property="og:description" content="Web Serial Terminal interface for hardware communication and debugging." />
@@ -22,7 +21,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
-  <meta name="twitter:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+  <meta name="twitter:title" content="Web Serial Terminal" />
   <meta name="twitter:description" content="Web Serial Terminal interface for hardware communication and debugging." />
 
   <!-- Canonical URL -->
@@ -45,15 +44,19 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="../assets/css/grok-style.css">
-  <link rel="stylesheet" href="../assets/css/space-background.css">
   <link rel="stylesheet" href="../assets/css/cli.css">
 
+  <style>
+    body {
+      background: #000000;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+    }
   </style>
 </head>
 
 <body>
-  <!-- Space Background Canvas -->
-  <canvas id="space-canvas"></canvas>
 
   <main>
     <!-- CLI Container -->
@@ -77,14 +80,10 @@
       <!-- Terminal -->
       <div class="cli-terminal">
         <div class="terminal-header">
-          <div class="terminal-dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-          </div>
           <div class="terminal-title">Serial Terminal</div>
           <div class="header-controls">
             <div class="status-indicator">
+              <span>Status:</span>
               <div id="statusDot" class="status-dot"></div>
               <span id="statusText">Disconnected</span>
             </div>
@@ -92,6 +91,7 @@
               <button id="buttonCon" type="button">Connect</button>
               <button id="buttonDis" type="button" class="secondary">Disconnect</button>
               <button id="clearLog" type="button" class="secondary">Clear</button>
+              <button id="settingsBtn" type="button" class="secondary">⚙ Settings</button>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@
 
           <div class="input-area">
             <div class="input-container">
-              <input id="cmdBox" type="text" placeholder="Type your command and press Enter or click Send..." autocomplete="off" />
+              <input id="cmdBox" type="text" placeholder="Type your command and press Enter..." autocomplete="off" />
               <button id="sendBtn" class="send-btn" disabled>
                 <span class="material-symbols-outlined">send</span>
               </button>
@@ -110,52 +110,69 @@
         </div>
       </div>
 
-      <!-- Bottom Settings -->
-      <div class="bottom-settings">
-        <div class="control-group">
-          <span class="control-label">Baud Rate:</span>
-          <select id="baudRate">
-            <option value="9600">9600</option>
-            <option value="19200">19200</option>
-            <option value="38400">38400</option>
-            <option value="57600">57600</option>
-            <option value="115200" selected>115200</option>
-            <option value="230400">230400</option>
-            <option value="460800">460800</option>
-            <option value="921600">921600</option>
-          </select>
-        </div>
+      <!-- Settings Modal -->
+      <div id="settingsModal" class="settings-modal hidden">
+        <div class="settings-overlay" id="settingsOverlay"></div>
+        <div class="settings-content">
+          <div class="settings-header">
+            <h3>Connection Settings</h3>
+            <button id="closeSettings" class="close-btn">×</button>
+          </div>
+          <div class="settings-body">
+            <div class="control-group">
+              <span class="control-label">Test Mode:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="testModeToggle">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
 
-        <div class="control-group">
-          <span class="control-label">Data Bits:</span>
-          <select id="dataBits">
-            <option value="7">7</option>
-            <option value="8" selected>8</option>
-          </select>
-        </div>
+            <div class="control-group">
+              <span class="control-label">Baud Rate:</span>
+              <select id="baudRate">
+                <option value="9600">9600</option>
+                <option value="19200">19200</option>
+                <option value="38400">38400</option>
+                <option value="57600">57600</option>
+                <option value="115200" selected>115200</option>
+                <option value="230400">230400</option>
+                <option value="460800">460800</option>
+                <option value="921600">921600</option>
+              </select>
+            </div>
 
-        <div class="control-group">
-          <span class="control-label">Parity:</span>
-          <select id="parity">
-            <option value="none" selected>none</option>
-            <option value="even">even</option>
-            <option value="odd">odd</option>
-          </select>
-        </div>
+            <div class="control-group">
+              <span class="control-label">Data Bits:</span>
+              <select id="dataBits">
+                <option value="7">7</option>
+                <option value="8" selected>8</option>
+              </select>
+            </div>
 
-        <div class="control-group">
-          <span class="control-label">Stop Bits:</span>
-          <select id="stopBits">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-          </select>
+            <div class="control-group">
+              <span class="control-label">Parity:</span>
+              <select id="parity">
+                <option value="none" selected>none</option>
+                <option value="even">even</option>
+                <option value="odd">odd</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Stop Bits:</span>
+              <select id="stopBits">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </main>
 
   <!-- Scripts -->
-  <script src="../assets/js/homepage-space-background.js"></script>
   <script src="../assets/js/cli.js"></script>
 </body>
 </html>
