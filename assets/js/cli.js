@@ -26,7 +26,9 @@ const closeSettings = document.getElementById("closeSettings");
 const testModeToggle = document.getElementById("testModeToggle");
 
 // Test mode variables (hidden in production)
-let isTestMode = false;
+// Enable test mode via URL parameter: ?test=true
+const urlParams = new URLSearchParams(window.location.search);
+let isTestMode = urlParams.get('test') === 'true' || false;
 let testInterval = null;
 let testCommands = {
   "help": "Available commands: help, info, status, echo [text], ping, time, version",
@@ -51,9 +53,12 @@ let testCommands = {
       closeSettings.addEventListener("click", hideSettings);
       settingsOverlay.addEventListener("click", hideSettings);
       // Test mode toggle only available in development (hidden in production)
+      // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
         testModeToggle.addEventListener("change", toggleTestMode);
       }
+      // Initialize test mode from URL parameter if present
+      toggleTestMode();
 
       // Enable send button when there's text in the input
       cmdBox.addEventListener("input", () => {
@@ -380,11 +385,15 @@ function hideSettings() {
 
 function toggleTestMode() {
   // Test mode toggle only available in development (hidden in production)
+  // Can also be enabled via URL parameter: ?test=true
   if (!testModeToggle) {
-    isTestMode = false;
-    return;
+    // If no toggle exists, check URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    isTestMode = urlParams.get('test') === 'true' || false;
+  } else {
+    isTestMode = testModeToggle.checked;
   }
-  isTestMode = testModeToggle.checked;
+  
   if (isTestMode) {
     // Hide the browser support warning in test mode
     notSupported.classList.add("hidden");

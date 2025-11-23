@@ -488,7 +488,7 @@ button.secondary:hover:not(:disabled) {
   padding: 0;
   padding-bottom: 16px; /* Extra padding at bottom for last lines */
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  line-height: 1.4;
+  line-height: 1;
   word-wrap: break-word;
   color: #00ff00;
   font-size: 12px;
@@ -534,7 +534,7 @@ button.secondary:hover:not(:disabled) {
   border-radius: 16px;
   word-wrap: break-word;
   word-break: break-word;
-  line-height: 1.4;
+  line-height: 1;
 }
 
 #log .sent-message .message-content {
