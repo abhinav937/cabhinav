@@ -171,7 +171,8 @@ async function connect() {
     port = await navigator.serial.requestPort();
   } catch (err) {
     console.log("No port selected...");
-    updateStatus("Disconnected", false);
+    // Show user-friendly message when port selection is cancelled
+    updateStatus("Connection cancelled", false);
     return;
   }
 
@@ -191,7 +192,18 @@ async function connect() {
     });
   } catch (err) {
     console.error("Failed to open port:", err);
-    updateStatus("Failed to connect", false);
+    // Show the actual error message to the user
+    const errorMessage = err.message || err.toString();
+    updateStatus("Failed to connect: " + errorMessage, false);
+
+    // Also log the error to the terminal for better visibility
+    if (log.classList.contains("empty")) {
+      log.textContent = "";
+      log.classList.remove("empty");
+    }
+    log.textContent += "Connection failed: " + errorMessage + "\n";
+    scrollToBottom();
+
     port = null;
     return;
   }
