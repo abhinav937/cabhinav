@@ -96,6 +96,9 @@ function setUIDisconnected() {
     function sendCommand() {
       const command = cmdBox.value.trim();
       if (command && port) {
+        // Display sent message in chat format
+        writeSentMessage(command);
+        
         if (isTestMode && port === "test") {
           // Handle test mode commands
           handleTestCommand(command);
@@ -110,14 +113,18 @@ function setUIDisconnected() {
     }
 
     function clearLog() {
-      log.textContent = "";
+      log.innerHTML = "";
       log.classList.add("empty");
     }
 
     // Scroll to bottom with multiple attempts for reliability
     function scrollToBottom() {
       if (!log) return;
-      log.scrollTop = log.scrollHeight;
+      const terminalContent = log.closest('.terminal-content');
+      if (terminalContent) {
+        // Scroll the terminal-content container to bottom
+        terminalContent.scrollTop = terminalContent.scrollHeight;
+      }
     }
 
     function handleKeyDown(event) {
@@ -197,12 +204,7 @@ async function connect() {
     updateStatus("Failed to connect: " + errorMessage, false);
 
     // Also log the error to the terminal for better visibility
-    if (log.classList.contains("empty")) {
-      log.textContent = "";
-      log.classList.remove("empty");
-    }
-    log.textContent += "Connection failed: " + errorMessage + "\n";
-    scrollToBottom();
+    writeReceivedMessage("Connection failed: " + errorMessage);
 
     port = null;
     return;
@@ -303,16 +305,8 @@ async function clickDisconnect() {
         if (value) {
           // Remove empty state styling when first data arrives
           log.classList.remove("empty");
-          log.textContent += `${value}\n`;
-
-          // Scroll to bottom with multiple attempts for reliability
-          scrollToBottom();
-          requestAnimationFrame(() => {
-            scrollToBottom();
-          });
-          setTimeout(() => {
-            scrollToBottom();
-          }, 50);
+          // Display received message in chat format (this already handles scrolling)
+          writeReceivedMessage(value);
         }
         if (done) {
           console.log("[readLoop] DONE", done);
@@ -402,7 +396,8 @@ function positionTerminalHeader() {
   if (terminalHeader && terminalContent) {
     const headerHeight = terminalHeader.offsetHeight;
     terminalHeader.style.top = '0px';
-    terminalContent.style.paddingTop = headerHeight + 'px';
+    // Padding is now handled in CSS, but we can ensure it's correct
+    terminalContent.style.paddingTop = headerHeight + 16 + 'px';
   }
 }
 
@@ -445,15 +440,71 @@ function handleTestCommand(command) {
       response = "Unknown command: '" + command + "'. Type 'help' for available commands.";
     }
 
-    writeToLog(response);
+    writeReceivedMessage(response);
   }, 100 + Math.random() * 300); // Simulate response delay
 }
 
 function writeToLog(text) {
+  // Legacy function - now uses received message format for backward compatibility
+  writeReceivedMessage(text);
+}
+
+// Write sent message with chat-style formatting
+function writeSentMessage(message) {
   if (log.classList.contains("empty")) {
-    log.textContent = "";
+    log.innerHTML = "";
     log.classList.remove("empty");
   }
-  log.textContent += text + "\n";
+  // Use HTML to style sent messages differently - compact chat style
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message sent-message';
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+  contentDiv.textContent = message;
+  messageDiv.appendChild(contentDiv);
+  log.appendChild(messageDiv);
+  
+  // Auto-scroll to bottom with multiple attempts
   scrollToBottom();
+  requestAnimationFrame(() => {
+    scrollToBottom();
+  });
+  setTimeout(() => {
+    scrollToBottom();
+  }, 50);
+}
+
+// Write received message with chat-style formatting
+function writeReceivedMessage(message) {
+  if (log.classList.contains("empty")) {
+    log.innerHTML = "";
+    log.classList.remove("empty");
+  }
+  // Use HTML to style received messages differently - compact chat style
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message received-message';
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+  contentDiv.textContent = message;
+  messageDiv.appendChild(contentDiv);
+  log.appendChild(messageDiv);
+  
+  // Always auto-scroll to bottom for received messages with multiple attempts
+  scrollToBottom();
+  requestAnimationFrame(() => {
+    scrollToBottom();
+  });
+  setTimeout(() => {
+    scrollToBottom();
+  }, 50);
+  setTimeout(() => {
+    scrollToBottom();
+  }, 100);
+}
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }

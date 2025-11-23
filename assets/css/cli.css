@@ -194,9 +194,10 @@
   padding: var(--spacing-xl);
   position: relative;
   z-index: 10;
-  min-height: calc(100vh - 100px); /* Fill viewport height with less padding */
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* Header Controls */
@@ -293,6 +294,7 @@ button.secondary:hover:not(:disabled) {
   min-height: 400px; /* Minimum height */
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   position: relative;
+  height: 100vh;
 }
 
 .cli-terminal::before {
@@ -325,7 +327,7 @@ button.secondary:hover:not(:disabled) {
 
 .terminal-header {
   background: #111111;
-  padding: 8px 16px;
+  padding: 12px 16px;
   font-size: 12px;
   color: #00ff00;
   display: flex;
@@ -337,6 +339,9 @@ button.secondary:hover:not(:disabled) {
   left: 0;
   right: 0;
   z-index: 40;
+  height: 50px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #333333;
 }
 
 
@@ -375,8 +380,17 @@ button.secondary:hover:not(:disabled) {
   scroll-behavior: smooth;
   position: relative;
   min-height: 300px;
-  padding: 16px;
-  margin-bottom: 80px; /* Account for fixed input area height */
+  padding: 12px 20px;
+  padding-top: 66px; /* Account for fixed header (50px) + spacing */
+  padding-bottom: 120px; /* Account for fixed input area (~80px) + extra spacing */
+  box-sizing: border-box;
+  /* Hide scrollbar but keep scrolling functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.terminal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 
@@ -384,13 +398,72 @@ button.secondary:hover:not(:disabled) {
   min-height: 0;
   width: 100%;
   margin: 0;
-  padding: 12px 16px;
+  padding: 0;
+  padding-bottom: 16px; /* Extra padding at bottom for last lines */
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   line-height: 1.4;
-  white-space: pre-wrap;
   word-wrap: break-word;
   color: #00ff00;
   font-size: 12px;
+  box-sizing: border-box;
+}
+
+/* Chat-style message formatting - Compact version */
+#log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#log .message {
+  display: flex;
+  align-items: flex-start;
+  animation: messageSlideIn 0.2s ease-out;
+  max-width: 100%;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#log .sent-message {
+  justify-content: flex-end;
+}
+
+#log .received-message {
+  justify-content: flex-start;
+}
+
+#log .message-content {
+  max-width: 75%;
+  padding: 6px 12px;
+  border-radius: 16px;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+#log .sent-message .message-content {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+#log .received-message .message-content {
+  background: transparent;
+  border: none;
+  color: #00ff00;
+}
+
+#log .message-prefix {
+  display: none; /* Hide prefix for compact look */
 }
 
 #log.empty::before {
@@ -398,7 +471,7 @@ button.secondary:hover:not(:disabled) {
 }
 
 .input-area {
-  padding: 12px 16px;
+  padding: 16px;
   background: #000000;
   flex-shrink: 0;
   position: fixed;
@@ -408,6 +481,8 @@ button.secondary:hover:not(:disabled) {
   z-index: 100;
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
+  border-top: 1px solid #333333;
 }
 
 .input-container {
