@@ -25,7 +25,7 @@ const settingsOverlay = document.getElementById("settingsOverlay");
 const closeSettings = document.getElementById("closeSettings");
 const testModeToggle = document.getElementById("testModeToggle");
 
-// Test mode variables
+// Test mode variables (hidden in production)
 let isTestMode = false;
 let testInterval = null;
 let testCommands = {
@@ -50,7 +50,10 @@ let testCommands = {
       settingsBtn.addEventListener("click", showSettings);
       closeSettings.addEventListener("click", hideSettings);
       settingsOverlay.addEventListener("click", hideSettings);
-      testModeToggle.addEventListener("change", toggleTestMode);
+      // Test mode toggle only available in development (hidden in production)
+      if (testModeToggle) {
+        testModeToggle.addEventListener("change", toggleTestMode);
+      }
 
       // Enable send button when there's text in the input
       cmdBox.addEventListener("input", () => {
@@ -376,6 +379,11 @@ function hideSettings() {
 }
 
 function toggleTestMode() {
+  // Test mode toggle only available in development (hidden in production)
+  if (!testModeToggle) {
+    isTestMode = false;
+    return;
+  }
   isTestMode = testModeToggle.checked;
   if (isTestMode) {
     // Hide the browser support warning in test mode
