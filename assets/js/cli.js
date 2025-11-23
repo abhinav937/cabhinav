@@ -27,8 +27,9 @@ const testModeToggle = document.getElementById("testModeToggle");
 
 // Test mode variables (hidden in production)
 // Enable test mode via URL parameter: ?test=true
+// Default: OFF (set to false)
 const urlParams = new URLSearchParams(window.location.search);
-let isTestMode = urlParams.get('test') === 'true' || false;
+let isTestMode = urlParams.get('test') === 'true' ? true : false;
 let testInterval = null;
 let testCommands = {
   "help": "Available commands: help, info, status, echo [text], ping, time, version",
@@ -55,6 +56,8 @@ let testCommands = {
       // Test mode toggle only available in development (hidden in production)
       // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
+        // Sync toggle state with URL parameter or current state
+        testModeToggle.checked = isTestMode;
         testModeToggle.addEventListener("change", toggleTestMode);
       }
       // Initialize test mode from URL parameter if present
@@ -386,10 +389,11 @@ function hideSettings() {
 function toggleTestMode() {
   // Test mode toggle only available in development (hidden in production)
   // Can also be enabled via URL parameter: ?test=true
+  // Default: OFF
   if (!testModeToggle) {
-    // If no toggle exists, check URL parameter
+    // If no toggle exists, check URL parameter (defaults to false)
     const urlParams = new URLSearchParams(window.location.search);
-    isTestMode = urlParams.get('test') === 'true' || false;
+    isTestMode = urlParams.get('test') === 'true' ? true : false;
   } else {
     isTestMode = testModeToggle.checked;
   }
