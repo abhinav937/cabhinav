@@ -191,7 +191,7 @@
 .cli-container {
   width: 100%;
   margin: 0;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   position: relative;
   z-index: 10;
   min-height: calc(100vh - 100px); /* Fill viewport height with less padding */
@@ -375,6 +375,7 @@ button.secondary:hover:not(:disabled) {
   scroll-behavior: smooth;
   position: relative;
   min-height: 300px;
+  padding: 16px;
 }
 
 
@@ -382,7 +383,7 @@ button.secondary:hover:not(:disabled) {
   min-height: 0;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 12px 16px;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   line-height: 1.4;
   white-space: pre-wrap;
