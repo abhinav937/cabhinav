@@ -376,6 +376,7 @@ button.secondary:hover:not(:disabled) {
   position: relative;
   min-height: 300px;
   padding: 16px;
+  margin-bottom: 80px; /* Account for fixed input area height */
 }
 
 
