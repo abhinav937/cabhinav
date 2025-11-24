@@ -31,8 +31,15 @@ const autoReconnectToggle = document.getElementById("autoReconnect");
 const reconnectIntervalInput = document.getElementById("reconnectInterval");
 const reconnectIntervalGroup = document.getElementById("reconnectIntervalGroup");
 const presetSelect = document.getElementById("presetSelect");
+const presetNameInput = document.getElementById("presetNameInput");
 const savePresetBtn = document.getElementById("savePreset");
 const deletePresetBtn = document.getElementById("deletePreset");
+const presetModal = document.getElementById("presetModal");
+const presetOverlay = document.getElementById("presetOverlay");
+const closePresetModal = document.getElementById("closePresetModal");
+const presetSelectModal = document.getElementById("presetSelectModal");
+const connectWithPresetBtn = document.getElementById("connectWithPreset");
+const cancelPresetBtn = document.getElementById("cancelPreset");
 
 // Test mode variables (hidden in production)
 // Enable test mode via URL parameter: ?test=true
@@ -77,6 +84,30 @@ let testCommands = {
       settingsBtn.addEventListener("click", showSettings);
       closeSettings.addEventListener("click", hideSettings);
       settingsOverlay.addEventListener("click", hideSettings);
+      
+      // Preset modal functionality
+      if (closePresetModal) {
+        closePresetModal.addEventListener("click", hidePresetModal);
+      }
+      if (presetOverlay) {
+        presetOverlay.addEventListener("click", hidePresetModal);
+      }
+      if (connectWithPresetBtn) {
+        connectWithPresetBtn.addEventListener("click", connectWithPreset);
+      }
+      if (cancelPresetBtn) {
+        cancelPresetBtn.addEventListener("click", hidePresetModal);
+      }
+      // Allow Enter key to connect with preset
+      if (presetSelectModal) {
+        presetSelectModal.addEventListener("keydown", (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            connectWithPreset();
+          }
+        });
+      }
+      
       // Test mode toggle only available in development (hidden in production)
       // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
@@ -144,6 +175,15 @@ let testCommands = {
       }
       if (deletePresetBtn) {
         deletePresetBtn.addEventListener("click", deletePreset);
+      }
+      // Allow Enter key to save preset
+      if (presetNameInput) {
+        presetNameInput.addEventListener("keydown", (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            savePreset();
+          }
+        });
       }
       
       // Show/hide reconnect interval based on auto-reconnect toggle
@@ -455,6 +495,68 @@ async function clickConnect() {
     await disconnect();
     return;
   }
+  
+  // Show preset selection dialog
+  showPresetModal();
+}
+
+/**
+ * Show preset selection modal
+ */
+function showPresetModal() {
+  if (!presetModal) {
+    // If modal doesn't exist, connect directly
+    connect();
+    return;
+  }
+  
+  // Load presets into modal dropdown
+  if (presetSelectModal) {
+    presetSelectModal.innerHTML = '<option value="">-- No Preset (Use Current Settings) --</option>';
+    Object.keys(connectionPresets).forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      presetSelectModal.appendChild(option);
+    });
+  }
+  
+  presetModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+/**
+ * Hide preset selection modal
+ */
+function hidePresetModal() {
+  if (presetModal) {
+    presetModal.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+}
+
+/**
+ * Connect with selected preset
+ */
+async function connectWithPreset() {
+  const presetName = presetSelectModal?.value;
+  
+  if (presetName && connectionPresets[presetName]) {
+    // Load preset settings
+    const preset = connectionPresets[presetName];
+    if (baudRateSelect) baudRateSelect.value = preset.baudRate || '115200';
+    const dataBits = document.getElementById("dataBits");
+    if (dataBits) dataBits.value = preset.dataBits || '8';
+    const parity = document.getElementById("parity");
+    if (parity) parity.value = preset.parity || 'none';
+    const stopBits = document.getElementById("stopBits");
+    if (stopBits) stopBits.value = preset.stopBits || '1';
+    if (lineEndingSelect) lineEndingSelect.value = preset.lineEnding || 'CRLF';
+    lineEnding = preset.lineEnding || 'CRLF';
+  }
+  
+  // Hide modal and connect
+  hidePresetModal();
   await connect();
 }
 
@@ -599,7 +701,10 @@ function loadPresets() {
 
 function loadPreset() {
   const presetName = presetSelect.value;
-  if (!presetName || !connectionPresets[presetName]) return;
+  if (!presetName || !connectionPresets[presetName]) {
+    if (presetNameInput) presetNameInput.value = '';
+    return;
+  }
   
   const preset = connectionPresets[presetName];
   if (baudRateSelect) baudRateSelect.value = preset.baudRate || '115200';
@@ -611,11 +716,17 @@ function loadPreset() {
   if (stopBits) stopBits.value = preset.stopBits || '1';
   if (lineEndingSelect) lineEndingSelect.value = preset.lineEnding || 'CRLF';
   lineEnding = preset.lineEnding || 'CRLF';
+  
+  // Update preset name input with selected preset name
+  if (presetNameInput) presetNameInput.value = presetName;
 }
 
 function savePreset() {
-  const name = prompt("Enter preset name:");
-  if (!name) return;
+  const name = presetNameInput?.value.trim();
+  if (!name) {
+    alert('Please enter a preset name');
+    return;
+  }
   
   connectionPresets[name] = {
     baudRate: baudRateSelect?.value || '115200',
@@ -628,6 +739,7 @@ function savePreset() {
   localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
   loadPresets();
   presetSelect.value = name;
+  presetNameInput.value = ''; // Clear input after saving
 }
 
 function deletePreset() {
@@ -637,6 +749,7 @@ function deletePreset() {
   delete connectionPresets[presetName];
   localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
   loadPresets();
+  if (presetNameInput) presetNameInput.value = ''; // Clear input after deletion
 }
 
 // Export log functionality

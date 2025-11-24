@@ -111,6 +111,29 @@
         </div>
       </div>
 
+      <!-- Preset Selection Modal -->
+      <div id="presetModal" class="settings-modal hidden">
+        <div class="settings-overlay" id="presetOverlay"></div>
+        <div class="settings-content" style="max-width: 400px;">
+          <div class="settings-header">
+            <h3>Select Connection Preset</h3>
+            <button id="closePresetModal" class="close-btn">×</button>
+          </div>
+          <div class="settings-body">
+            <div class="control-group">
+              <span class="control-label">Preset:</span>
+              <select id="presetSelectModal" style="flex: 1;">
+                <option value="">-- No Preset (Use Current Settings) --</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 16px;">
+              <button id="connectWithPreset" type="button" style="flex: 1; padding: 8px 16px;">Connect</button>
+              <button id="cancelPreset" type="button" class="secondary" style="padding: 8px 16px;">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Settings Modal -->
       <div id="settingsModal" class="settings-modal hidden">
         <div class="settings-overlay" id="settingsOverlay"></div>
@@ -199,12 +222,17 @@
 
             <div class="control-group" style="border-top: 1px solid rgba(255, 255, 255, 0.15); margin-top: 8px; padding-top: 16px;">
               <span class="control-label">Connection Presets:</span>
-              <div style="display: flex; gap: 8px; flex: 1;">
-                <select id="presetSelect" style="flex: 1;">
-                  <option value="">-- Select Preset --</option>
-                </select>
-                <button id="savePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Save</button>
-                <button id="deletePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Delete</button>
+              <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                <div style="display: flex; gap: 8px;">
+                  <select id="presetSelect" style="flex: 1;">
+                    <option value="">-- Select Preset --</option>
+                  </select>
+                  <button id="deletePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Delete</button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="presetNameInput" placeholder="Enter preset name..." style="flex: 1; padding: 6px 8px; font-size: 11px; background: #000000; border: 1px solid #333333; border-radius: 4px; color: #00ff00; font-family: 'Courier New', 'Monaco', 'Menlo', monospace;" />
+                  <button id="savePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Save</button>
+                </div>
               </div>
             </div>
           </div>
