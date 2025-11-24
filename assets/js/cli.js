@@ -15,6 +15,7 @@ const buttonCon = document.getElementById("buttonCon");
 const buttonDis = document.getElementById("buttonDis");
 const sendBtn = document.getElementById("sendBtn");
 const clearLogBtn = document.getElementById("clearLog");
+const exportLogBtn = document.getElementById("exportLog");
 const statusDot = document.getElementById("statusDot");
 const statusText = document.getElementById("statusText");
 const notSupported = document.getElementById("notSupported");
@@ -24,6 +25,14 @@ const settingsModal = document.getElementById("settingsModal");
 const settingsOverlay = document.getElementById("settingsOverlay");
 const closeSettings = document.getElementById("closeSettings");
 const testModeToggle = document.getElementById("testModeToggle");
+const lineEndingSelect = document.getElementById("lineEnding");
+const showTimestampsToggle = document.getElementById("showTimestamps");
+const autoReconnectToggle = document.getElementById("autoReconnect");
+const reconnectIntervalInput = document.getElementById("reconnectInterval");
+const reconnectIntervalGroup = document.getElementById("reconnectIntervalGroup");
+const presetSelect = document.getElementById("presetSelect");
+const savePresetBtn = document.getElementById("savePreset");
+const deletePresetBtn = document.getElementById("deletePreset");
 
 // Test mode variables (hidden in production)
 // Enable test mode via URL parameter: ?test=true
@@ -31,6 +40,21 @@ const testModeToggle = document.getElementById("testModeToggle");
 const urlParams = new URLSearchParams(window.location.search);
 let isTestMode = urlParams.get('test') === 'true' ? true : false;
 let testInterval = null;
+
+// Command history for terminal-like behavior
+let commandHistory = [];
+let historyIndex = -1;
+let currentInputBeforeHistory = '';
+
+// Feature flags and settings
+let showTimestamps = false;
+let autoReconnect = false;
+let reconnectInterval = 5; // seconds
+let reconnectTimeout = null;
+let lineEnding = 'CRLF'; // CRLF, LF, or CR
+
+// Connection presets storage
+let connectionPresets = JSON.parse(localStorage.getItem('cliPresets') || '{}');
 let testCommands = {
   "help": "Available commands: help, info, status, echo [text], ping, time, version",
   "info": "Web Serial Terminal Test Mode\nDevice: Virtual Serial Emulator v1.0\nBaud Rate: " + (document.getElementById("baudRate")?.value || "115200"),
@@ -62,6 +86,70 @@ let testCommands = {
       }
       // Initialize test mode from URL parameter if present
       toggleTestMode();
+
+      // Load saved settings
+      loadSettings();
+      
+      // Initialize UI elements
+      if (showTimestampsToggle) {
+        showTimestampsToggle.checked = showTimestamps;
+        showTimestampsToggle.addEventListener("change", (e) => {
+          showTimestamps = e.target.checked;
+          saveSettings();
+        });
+      }
+      
+      if (autoReconnectToggle) {
+        autoReconnectToggle.checked = autoReconnect;
+        autoReconnectToggle.addEventListener("change", (e) => {
+          autoReconnect = e.target.checked;
+          if (reconnectIntervalGroup) {
+            reconnectIntervalGroup.style.display = autoReconnect ? 'flex' : 'none';
+          }
+          saveSettings();
+          if (!autoReconnect) {
+            clearReconnectTimeout();
+          }
+        });
+      }
+      
+      if (reconnectIntervalInput) {
+        reconnectIntervalInput.value = reconnectInterval;
+        reconnectIntervalInput.addEventListener("change", (e) => {
+          reconnectInterval = parseInt(e.target.value) || 5;
+          saveSettings();
+        });
+      }
+      
+      if (lineEndingSelect) {
+        lineEndingSelect.value = lineEnding;
+        lineEndingSelect.addEventListener("change", (e) => {
+          lineEnding = e.target.value;
+          saveSettings();
+        });
+      }
+      
+      // Export log functionality
+      if (exportLogBtn) {
+        exportLogBtn.addEventListener("click", exportLog);
+      }
+      
+      // Connection presets
+      if (presetSelect) {
+        loadPresets();
+        presetSelect.addEventListener("change", loadPreset);
+      }
+      if (savePresetBtn) {
+        savePresetBtn.addEventListener("click", savePreset);
+      }
+      if (deletePresetBtn) {
+        deletePresetBtn.addEventListener("click", deletePreset);
+      }
+      
+      // Show/hide reconnect interval based on auto-reconnect toggle
+      if (reconnectIntervalGroup && autoReconnectToggle) {
+        reconnectIntervalGroup.style.display = autoReconnectToggle.checked ? 'flex' : 'none';
+      }
 
       // Enable send button when there's text in the input
       cmdBox.addEventListener("input", () => {
@@ -107,6 +195,18 @@ function setUIDisconnected() {
     function sendCommand() {
       const command = cmdBox.value.trim();
       if (command && port) {
+        // Add command to history (avoid duplicates if same as last command)
+        if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
+          commandHistory.push(command);
+          // Limit history to last 100 commands
+          if (commandHistory.length > 100) {
+            commandHistory.shift();
+          }
+        }
+        // Reset history index
+        historyIndex = -1;
+        currentInputBeforeHistory = '';
+        
         // Display sent message in chat format
         writeSentMessage(command);
         
@@ -142,7 +242,48 @@ function setUIDisconnected() {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         handleSend();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        navigateHistory('up');
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        navigateHistory('down');
       }
+    }
+
+    // Navigate through command history
+    function navigateHistory(direction) {
+      if (commandHistory.length === 0) return;
+      
+      // Save current input if we're starting to navigate history
+      if (historyIndex === -1 && cmdBox.value.trim() !== '') {
+        currentInputBeforeHistory = cmdBox.value;
+      }
+      
+      if (direction === 'up') {
+        // Move up in history
+        if (historyIndex < commandHistory.length - 1) {
+          historyIndex++;
+          cmdBox.value = commandHistory[commandHistory.length - 1 - historyIndex];
+          sendBtn.disabled = !cmdBox.value.trim();
+        }
+      } else if (direction === 'down') {
+        // Move down in history
+        if (historyIndex > 0) {
+          historyIndex--;
+          cmdBox.value = commandHistory[commandHistory.length - 1 - historyIndex];
+          sendBtn.disabled = !cmdBox.value.trim();
+        } else if (historyIndex === 0) {
+          // Reached the bottom, restore original input
+          historyIndex = -1;
+          cmdBox.value = currentInputBeforeHistory;
+          sendBtn.disabled = !cmdBox.value.trim();
+          currentInputBeforeHistory = '';
+        }
+      }
+      
+      // Auto-resize after changing value
+      autoResizeTextarea();
     }
 
     // Auto-resize textarea
@@ -218,11 +359,20 @@ async function connect() {
     writeReceivedMessage("Connection failed: " + errorMessage);
 
     port = null;
+    
+    // Schedule auto-reconnect if enabled
+    if (autoReconnect) {
+      scheduleReconnect();
+    }
+    
     return;
   }
 
   // Update UI
   setUIConnected();
+  
+  // Clear any pending reconnect timeout since we're connected
+  clearReconnectTimeout();
 
   // Setup the output stream.
   const encoder = new TextEncoderStream();
@@ -277,11 +427,23 @@ async function disconnect() {
 
   // Close the port.
   if (port) {
-    await port.close();
+    try {
+      await port.close();
+    } catch (err) {
+      console.error("Error closing port:", err);
+    }
     port = null;
   }
 
   setUIDisconnected();
+  
+  // Clear any auto-reconnect timeout
+  clearReconnectTimeout();
+  
+  // Schedule auto-reconnect if enabled
+  if (autoReconnect) {
+    scheduleReconnect();
+  }
 }
 
 /**
@@ -322,6 +484,12 @@ async function clickDisconnect() {
         if (done) {
           console.log("[readLoop] DONE", done);
           reader.releaseLock();
+          
+          // If auto-reconnect is enabled and we're disconnected, try to reconnect
+          if (autoReconnect && !port) {
+            scheduleReconnect();
+          }
+          
           break;
         }
       }
@@ -334,6 +502,11 @@ async function clickDisconnect() {
  */
     function writeToStream(...lines) {
       const writer = outputStream.getWriter();
+      // Get line ending based on setting
+      let ending = "\r\n"; // Default CRLF
+      if (lineEnding === "LF") ending = "\n";
+      else if (lineEnding === "CR") ending = "\r";
+      
       lines.forEach((line) => {
         console.log("[SEND]", line);
 
@@ -346,7 +519,7 @@ async function clickDisconnect() {
           scrollToBottom();
         }, 50);
 
-        writer.write(line + "\n");
+        writer.write(line + ending);
       });
       writer.releaseLock();
     }
@@ -384,6 +557,127 @@ function showSettings() {
 function hideSettings() {
   settingsModal.classList.add("hidden");
   document.body.style.overflow = ""; // Restore scrolling
+}
+
+// Settings management
+function saveSettings() {
+  const settings = {
+    showTimestamps: showTimestamps,
+    autoReconnect: autoReconnect,
+    reconnectInterval: reconnectInterval,
+    lineEnding: lineEnding
+  };
+  localStorage.setItem('cliSettings', JSON.stringify(settings));
+}
+
+function loadSettings() {
+  const saved = JSON.parse(localStorage.getItem('cliSettings') || '{}');
+  showTimestamps = saved.showTimestamps || false;
+  autoReconnect = saved.autoReconnect || false;
+  reconnectInterval = saved.reconnectInterval || 5;
+  lineEnding = saved.lineEnding || 'CRLF';
+  
+  // Update UI
+  if (showTimestampsToggle) showTimestampsToggle.checked = showTimestamps;
+  if (autoReconnectToggle) autoReconnectToggle.checked = autoReconnect;
+  if (reconnectIntervalInput) reconnectIntervalInput.value = reconnectInterval;
+  if (lineEndingSelect) lineEndingSelect.value = lineEnding;
+}
+
+// Connection presets
+function loadPresets() {
+  if (!presetSelect) return;
+  
+  presetSelect.innerHTML = '<option value="">-- Select Preset --</option>';
+  Object.keys(connectionPresets).forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    presetSelect.appendChild(option);
+  });
+}
+
+function loadPreset() {
+  const presetName = presetSelect.value;
+  if (!presetName || !connectionPresets[presetName]) return;
+  
+  const preset = connectionPresets[presetName];
+  if (baudRateSelect) baudRateSelect.value = preset.baudRate || '115200';
+  const dataBits = document.getElementById("dataBits");
+  if (dataBits) dataBits.value = preset.dataBits || '8';
+  const parity = document.getElementById("parity");
+  if (parity) parity.value = preset.parity || 'none';
+  const stopBits = document.getElementById("stopBits");
+  if (stopBits) stopBits.value = preset.stopBits || '1';
+  if (lineEndingSelect) lineEndingSelect.value = preset.lineEnding || 'CRLF';
+  lineEnding = preset.lineEnding || 'CRLF';
+}
+
+function savePreset() {
+  const name = prompt("Enter preset name:");
+  if (!name) return;
+  
+  connectionPresets[name] = {
+    baudRate: baudRateSelect?.value || '115200',
+    dataBits: document.getElementById("dataBits")?.value || '8',
+    parity: document.getElementById("parity")?.value || 'none',
+    stopBits: document.getElementById("stopBits")?.value || '1',
+    lineEnding: lineEndingSelect?.value || 'CRLF'
+  };
+  
+  localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
+  loadPresets();
+  presetSelect.value = name;
+}
+
+function deletePreset() {
+  const presetName = presetSelect.value;
+  if (!presetName || !confirm(`Delete preset "${presetName}"?`)) return;
+  
+  delete connectionPresets[presetName];
+  localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
+  loadPresets();
+}
+
+// Export log functionality
+function exportLog() {
+  if (!log) return;
+  
+  // Get all text content from log
+  const messages = log.querySelectorAll('.message-content');
+  let logText = '';
+  
+  messages.forEach(msg => {
+    logText += msg.textContent + '\n';
+  });
+  
+  if (!logText.trim()) {
+    alert('Log is empty');
+    return;
+  }
+  
+  // Create download link
+  const blob = new Blob([logText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cli-log-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  // Also copy to clipboard
+  navigator.clipboard.writeText(logText).then(() => {
+    // Visual feedback
+    const originalText = exportLogBtn.textContent;
+    exportLogBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      exportLogBtn.textContent = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy to clipboard:', err);
+  });
 }
 
 function toggleTestMode() {
@@ -506,7 +800,15 @@ function writeReceivedMessage(message) {
   messageDiv.className = 'message received-message';
   const contentDiv = document.createElement('div');
   contentDiv.className = 'message-content';
-  contentDiv.textContent = message;
+  
+  // Add timestamp if enabled
+  let displayText = message;
+  if (showTimestamps) {
+    const timestamp = new Date().toLocaleTimeString();
+    displayText = `[${timestamp}] ${message}`;
+  }
+  
+  contentDiv.textContent = displayText;
   messageDiv.appendChild(contentDiv);
   log.appendChild(messageDiv);
   

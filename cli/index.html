@@ -91,7 +91,8 @@
               <button id="buttonCon" type="button">Connect</button>
               <button id="buttonDis" type="button" class="secondary">Disconnect</button>
               <button id="clearLog" type="button" class="secondary">Clear</button>
-              <button id="settingsBtn" type="button" class="secondary">⚙ Settings</button>
+              <button id="exportLog" type="button" class="secondary" title="Export Log">Export</button>
+              <button id="settingsBtn" type="button" class="secondary">Settings</button>
             </div>
           </div>
         </div>
@@ -164,6 +165,47 @@
                 <option value="1" selected>1</option>
                 <option value="2">2</option>
               </select>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Line Ending:</span>
+              <select id="lineEnding">
+                <option value="CRLF" selected>CRLF (\r\n)</option>
+                <option value="LF">LF (\n)</option>
+                <option value="CR">CR (\r)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Show Timestamps:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="showTimestamps">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label">Auto-Reconnect:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="autoReconnect">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="control-group" id="reconnectIntervalGroup" style="display: none;">
+              <span class="control-label">Retry Interval (s):</span>
+              <input type="number" id="reconnectInterval" value="5" min="1" max="60" style="min-width: 80px;">
+            </div>
+
+            <div class="control-group" style="border-top: 1px solid rgba(255, 255, 255, 0.15); margin-top: 8px; padding-top: 16px;">
+              <span class="control-label">Connection Presets:</span>
+              <div style="display: flex; gap: 8px; flex: 1;">
+                <select id="presetSelect" style="flex: 1;">
+                  <option value="">-- Select Preset --</option>
+                </select>
+                <button id="savePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Save</button>
+                <button id="deletePreset" type="button" class="secondary" style="padding: 6px 12px; font-size: 11px;">Delete</button>
+              </div>
             </div>
           </div>
         </div>
