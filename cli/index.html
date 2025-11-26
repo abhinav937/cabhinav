@@ -5,34 +5,79 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Serial Terminal</title>
+  <title>Web Serial Terminal - Browser-Based Serial Communication Tool</title>
 
   <!-- SEO Meta Tags -->
-  <meta name="keywords" content="Web Serial Terminal, CLI, Serial Communication, Hardware Interface" />
-  <meta name="description" content="Web Serial Terminal interface for hardware communication and debugging. Connect to serial devices directly from your browser." />
-  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Connect to serial devices directly from your browser. Web Serial Terminal supports real hardware connections and test mode for development. Free, open-source serial communication tool." />
+  <meta name="keywords" content="web serial terminal, serial communication, CLI terminal, hardware debugging, IoT devices, embedded systems, Web Serial API, browser serial, Arduino, ESP32, Raspberry Pi, serial port, UART communication" />
+  <meta name="author" content="Abhinav Chinnusamy" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="language" content="English" />
+  <meta name="revisit-after" content="7 days" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Web Serial Terminal" />
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cabhinav.com/cli/" />
+  <meta property="og:title" content="Web Serial Terminal - Browser-Based Serial Communication Tool" />
+  <meta property="og:description" content="Connect to serial devices directly from your browser. Supports real hardware connections and test mode. Free serial communication tool for Arduino, ESP32, and more." />
   <meta property="og:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
-  <meta property="og:description" content="Web Serial Terminal interface for hardware communication and debugging." />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Web Serial Terminal Interface" />
+  <meta property="og:site_name" content="cabhinav.com" />
+  <meta property="og:locale" content="en_US" />
 
-  <!-- Twitter -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://cabhinav.com/cli/" />
+  <meta name="twitter:title" content="Web Serial Terminal - Browser-Based Serial Communication Tool" />
+  <meta name="twitter:description" content="Connect to serial devices directly from your browser. Supports real hardware connections and test mode. Free serial communication tool." />
   <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
-  <meta name="twitter:title" content="Web Serial Terminal" />
-  <meta name="twitter:description" content="Web Serial Terminal interface for hardware communication and debugging." />
+  <meta name="twitter:image:alt" content="Web Serial Terminal Interface" />
+  <meta name="twitter:creator" content="@cabhinav" />
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="https://cabhinav.com/cli/">
+  <link rel="canonical" href="https://cabhinav.com/cli/" />
+
+  <!-- Additional SEO -->
+  <meta name="application-name" content="Web Serial Terminal" />
+  <meta name="apple-mobile-web-app-title" content="Serial Terminal" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Web Serial Terminal",
+    "description": "Browser-based serial communication tool for connecting to hardware devices. Supports real hardware connections and test mode for development.",
+    "url": "https://cabhinav.com/cli/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Serial device communication",
+      "Test mode simulation",
+      "Real-time terminal interface",
+      "Command history",
+      "Multiple baud rates support"
+    ],
+    "browserRequirements": "Requires Chrome, Edge, or Opera browser with Web Serial API support"
+  }
+  </script>
 
   <!-- Theme Color -->
   <meta name="theme-color" content="#161618">
 
   <!-- Favicon -->
-  <link rel="shortcut icon" href="./assets/images/icons/favicon.ico" type="image/x-icon">
-  <link rel="icon" type="image/x-icon" href="./assets/images/icons/favicon.ico">
+  <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="../assets/images/icons/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/images/icons/favicon.ico">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +136,8 @@
               <button id="buttonCon" type="button">Connect</button>
               <button id="buttonDis" type="button" class="secondary">Disconnect</button>
               <button id="clearLog" type="button" class="secondary">Clear</button>
-              <button id="settingsBtn" type="button" class="secondary">⚙ Settings</button>
+              <button id="settingsBtn" type="button" class="secondary">Settings</button>
+              <a href="docs.html" class="docs-link-btn secondary">Docs</a>
             </div>
           </div>
         </div>

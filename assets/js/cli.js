@@ -26,12 +26,20 @@ const closeSettings = document.getElementById("closeSettings");
 const testModeToggle = document.getElementById("testModeToggle");
 const timestampToggle = document.getElementById("timestampToggle");
 
-// Test mode variables (hidden in production)
+// Test mode variables
 // Enable test mode via URL parameter: ?test=true
 // Default: OFF (set to false)
 const urlParams = new URLSearchParams(window.location.search);
 let isTestMode = urlParams.get('test') === 'true' ? true : false;
 let testInterval = null;
+let connectionStartTime = null;
+
+// Simulated device state
+let deviceState = {
+  uptime: 0,
+  ledState: false,
+  gpioPins: {}
+};
 
 // Command history for terminal-like behavior
 let commandHistory = [];
@@ -40,15 +48,6 @@ let currentInputBeforeHistory = '';
 
 // Timestamp display settings
 let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || false;
-let testCommands = {
-  "help": "Available commands: help, info, status, echo [text], ping, time, version",
-  "info": "Web Serial Terminal Test Mode\nDevice: Virtual Serial Emulator v1.0\nBaud Rate: " + (document.getElementById("baudRate")?.value || "115200"),
-  "status": "Status: Connected (Test Mode)\nUptime: Simulating connection\nData integrity: 100%",
-  "ping": "PONG! Response time: <1ms (simulated)",
-  "time": function() { return "Current time: " + new Date().toLocaleTimeString(); },
-  "version": "Serial Terminal Emulator v1.0.0\nBuilt for testing purposes",
-  "echo": function(args) { return args ? "Echo: " + args : "Echo: (no arguments)"; }
-};
 
     document.addEventListener("DOMContentLoaded", () => {
       buttonCon.addEventListener("click", clickConnect);
@@ -62,7 +61,7 @@ let testCommands = {
       settingsBtn.addEventListener("click", showSettings);
       closeSettings.addEventListener("click", hideSettings);
       settingsOverlay.addEventListener("click", hideSettings);
-      // Test mode toggle only available in development (hidden in production)
+      // Test mode toggle
       // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
         // Sync toggle state with URL parameter or current state
@@ -240,7 +239,15 @@ async function connect() {
     updateStatus("Connecting (Test Mode)...", false);
 
     // Simulate connection delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
+    writeReceivedMessage("Connecting to virtual device...");
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    writeReceivedMessage(`Baud rate: ${document.getElementById("baudRate")?.value || "115200"}`);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    writeReceivedMessage("Connection established!");
+    writeReceivedMessage("Device ready. Type 'help' for available commands.");
 
     // Set up test mode
     port = "test"; // Mock port
@@ -457,7 +464,7 @@ function hideSettings() {
 }
 
 function toggleTestMode() {
-  // Test mode toggle only available in development (hidden in production)
+  // Test mode toggle
   // Can also be enabled via URL parameter: ?test=true
   // Default: OFF
   if (!testModeToggle) {
@@ -502,19 +509,17 @@ function positionTerminalHeader() {
 
 // Test mode functions
 function startTestSimulation() {
-  // Simulate periodic data reception
-  testInterval = setInterval(() => {
-    if (port === "test" && Math.random() < 0.1) { // 10% chance every 2 seconds
-      const testData = [
-        "System heartbeat",
-        "Memory usage: " + Math.floor(Math.random() * 100) + "%",
-        "Sensor reading: " + (Math.random() * 5).toFixed(2) + "V",
-        "Timestamp: " + new Date().toLocaleTimeString()
-      ];
-      const randomData = testData[Math.floor(Math.random() * testData.length)];
-      writeToLog(randomData);
+  connectionStartTime = Date.now();
+  deviceState.uptime = 0;
+  
+  // Update uptime counter
+  const uptimeInterval = setInterval(() => {
+    if (port === "test") {
+      deviceState.uptime = Math.floor((Date.now() - connectionStartTime) / 1000);
+    } else {
+      clearInterval(uptimeInterval);
     }
-  }, 2000);
+  }, 1000);
 }
 
 function stopTestSimulation() {
@@ -522,6 +527,8 @@ function stopTestSimulation() {
     clearInterval(testInterval);
     testInterval = null;
   }
+  connectionStartTime = null;
+  deviceState.uptime = 0;
 }
 
 function handleTestCommand(command) {
@@ -529,18 +536,139 @@ function handleTestCommand(command) {
     const cmd = command.toLowerCase().trim();
     let response = "";
 
-    if (cmd.startsWith("echo ")) {
-      const args = command.substring(5);
-      response = testCommands.echo(args);
-    } else if (testCommands[cmd]) {
-      response = typeof testCommands[cmd] === 'function' ? testCommands[cmd]() : testCommands[cmd];
-    } else {
-      // Echo back unknown commands with a response
-      response = "Unknown command: '" + command + "'. Type 'help' for available commands.";
+    // Parse command and arguments
+    const parts = cmd.split(/\s+/);
+    const commandName = parts[0];
+    const args = parts.slice(1).join(' ');
+
+    switch(commandName) {
+      case "help":
+        response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio`;
+        break;
+      
+      case "info":
+        response = `Web Serial Terminal Test Mode\nDevice: Virtual Serial Emulator v2.0\nBaud Rate: ${document.getElementById("baudRate")?.value || "115200"}\nTest Mode: Enabled`;
+        break;
+      
+      case "status":
+        const uptime = deviceState.uptime;
+        const hours = Math.floor(uptime / 3600);
+        const minutes = Math.floor((uptime % 3600) / 60);
+        const seconds = uptime % 60;
+        response = `Status: Connected (Test Mode)\nUptime: ${hours}h ${minutes}m ${seconds}s\nSystem: Operational`;
+        break;
+      
+      case "ping":
+        const pingTime = (Math.random() * 5 + 1).toFixed(2);
+        response = `PONG! Response time: ${pingTime}ms (simulated)`;
+        break;
+      
+      case "time":
+        response = `Current time: ${new Date().toLocaleString()}\nUTC: ${new Date().toUTCString()}\nTimestamp: ${Date.now()}`;
+        break;
+      
+      case "date":
+        const now = new Date();
+        response = `Date: ${now.toDateString()}\nTime: ${now.toTimeString()}\nISO: ${now.toISOString()}`;
+        break;
+      
+      case "version":
+        response = `Serial Terminal Emulator v2.0.0\nTest Mode Enabled\nBuilt for testing purposes`;
+        break;
+      
+      case "echo":
+        response = args ? args : "(no arguments provided)";
+        break;
+      
+      case "led":
+        if (args === "on" || args === "1") {
+          deviceState.ledState = true;
+          response = "LED: ON";
+        } else if (args === "off" || args === "0") {
+          deviceState.ledState = false;
+          response = "LED: OFF";
+        } else if (args === "toggle") {
+          deviceState.ledState = !deviceState.ledState;
+          response = `LED: ${deviceState.ledState ? "ON" : "OFF"}`;
+        } else {
+          response = `LED Status: ${deviceState.ledState ? "ON" : "OFF"}\nUsage: led [on|off|toggle]`;
+        }
+        break;
+      
+      case "sensors":
+        response = `Sensor Readings:\nTemperature: ${(Math.random() * 30 + 20).toFixed(2)}°C\nHumidity: ${(Math.random() * 40 + 40).toFixed(1)}%\nPressure: ${(Math.random() * 100 + 980).toFixed(1)} hPa\nLight: ${Math.floor(Math.random() * 1000)} lux\nMotion: ${Math.random() > 0.7 ? "Detected" : "None"}`;
+        break;
+      
+      case "read":
+        if (!args) {
+          response = "Usage: read <sensor_name>\nAvailable: temperature, humidity, pressure, light, motion";
+        } else {
+          const sensorName = args.toLowerCase();
+          switch(sensorName) {
+            case "temperature":
+              response = `Temperature: ${(Math.random() * 30 + 20).toFixed(2)}°C`;
+              break;
+            case "humidity":
+              response = `Humidity: ${(Math.random() * 40 + 40).toFixed(1)}%`;
+              break;
+            case "pressure":
+              response = `Pressure: ${(Math.random() * 100 + 980).toFixed(1)} hPa`;
+              break;
+            case "light":
+              response = `Light Level: ${Math.floor(Math.random() * 1000)} lux`;
+              break;
+            case "motion":
+              response = `Motion: ${Math.random() > 0.7 ? "Detected" : "None"}`;
+              break;
+            default:
+              response = `ERROR: Unknown sensor '${args}'\nAvailable: temperature, humidity, pressure, light, motion`;
+          }
+        }
+        break;
+      
+      case "gpio":
+        if (args) {
+          const pinParts = args.split(/\s+/);
+          const pin = parseInt(pinParts[0]);
+          if (!isNaN(pin) && pin >= 0 && pin <= 40) {
+            if (pinParts.length > 1) {
+              const value = pinParts[1].toUpperCase();
+              if (value === "HIGH" || value === "1") {
+                deviceState.gpioPins[pin] = "HIGH";
+                response = `GPIO Pin ${pin}: Set to HIGH`;
+              } else if (value === "LOW" || value === "0") {
+                deviceState.gpioPins[pin] = "LOW";
+                response = `GPIO Pin ${pin}: Set to LOW`;
+              } else {
+                response = `ERROR: Invalid value. Use HIGH/LOW or 1/0`;
+              }
+            } else {
+              const value = deviceState.gpioPins[pin] || (Math.random() > 0.5 ? "HIGH" : "LOW");
+              response = `GPIO Pin ${pin}: ${value}`;
+            }
+          } else {
+            response = `ERROR: Invalid pin number. Use 0-40.`;
+          }
+        } else {
+          response = "Usage: gpio <pin> [value]\nExample: gpio 13 HIGH";
+        }
+        break;
+      
+      case "reset":
+        deviceState.uptime = 0;
+        deviceState.ledState = false;
+        deviceState.gpioPins = {};
+        response = "Device reset complete. All state cleared.";
+        break;
+      
+      default:
+        response = `ERROR: Unknown command '${command}'\nType 'help' for available commands.`;
     }
 
-    writeReceivedMessage(response);
-  }, 100 + Math.random() * 300); // Simulate response delay
+    if (response && commandName !== "clear") {
+      writeReceivedMessage(response);
+    }
+  }, 100 + Math.random() * 200); // Simulate response delay
 }
 
 function writeToLog(text) {

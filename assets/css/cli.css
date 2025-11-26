@@ -229,6 +229,7 @@
 }
 
 
+
 /* Utility classes */
 .hidden {
   display: none !important;
@@ -370,6 +371,29 @@ button.secondary:hover:not(:disabled) {
   color: #ffffff;
 }
 
+.docs-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+  border-radius: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.docs-link-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
 .cli-terminal {
   background: #000000;
   padding: 0;
@@ -464,6 +488,7 @@ button.secondary:hover:not(:disabled) {
 .terminal-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto;
   scroll-behavior: smooth;
   position: relative;
   min-height: 300px;
@@ -471,25 +496,22 @@ button.secondary:hover:not(:disabled) {
   padding-top: 66px; /* Account for fixed header (50px) + spacing */
   padding-bottom: 120px; /* Account for fixed input area (~80px) + extra spacing */
   box-sizing: border-box;
-  /* Hide scrollbar but keep scrolling functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-.terminal-content::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
 }
 
 
 #log {
   min-height: 0;
   width: 100%;
+  min-width: fit-content;
   margin: 0;
   padding: 0;
   padding-bottom: 16px; /* Extra padding at bottom for last lines */
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   line-height: 1;
   word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
   color: #00ff00;
   font-size: 12px;
   box-sizing: border-box;
@@ -530,10 +552,13 @@ button.secondary:hover:not(:disabled) {
 
 #log .message-content {
   max-width: 75%;
+  min-width: fit-content;
   padding: 6px 12px;
   border-radius: 16px;
   word-wrap: break-word;
   word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
   line-height: 1;
 }
 

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Serial Terminal Documentation - User Guide & Commands</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Complete documentation for Web Serial Terminal. Learn how to connect to serial devices, use test mode, and available commands. Quick reference guide for hardware communication." />
+  <meta name="keywords" content="web serial terminal documentation, serial communication guide, CLI commands, hardware debugging guide, Web Serial API tutorial, Arduino serial, ESP32 serial, test mode guide" />
+  <meta name="author" content="Abhinav Chinnusamy" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="language" content="English" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://cabhinav.com/cli/docs.html" />
+  <meta property="og:title" content="Web Serial Terminal Documentation - User Guide & Commands" />
+  <meta property="og:description" content="Complete documentation for Web Serial Terminal. Learn how to connect to serial devices, use test mode, and available commands." />
+  <meta property="og:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Web Serial Terminal Documentation" />
+  <meta property="og:site_name" content="cabhinav.com" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://cabhinav.com/cli/docs.html" />
+  <meta name="twitter:title" content="Web Serial Terminal Documentation - User Guide & Commands" />
+  <meta name="twitter:description" content="Complete documentation for Web Serial Terminal. Learn how to connect to serial devices, use test mode, and available commands." />
+  <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/profile_new.jpeg" />
+  <meta name="twitter:image:alt" content="Web Serial Terminal Documentation" />
+  <meta name="twitter:creator" content="@cabhinav" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://cabhinav.com/cli/docs.html" />
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#000000">
+
+  <!-- Additional SEO -->
+  <meta name="application-name" content="Web Serial Terminal" />
+  <meta name="apple-mobile-web-app-title" content="Serial Terminal Docs" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Web Serial Terminal Documentation",
+    "description": "Complete documentation and user guide for Web Serial Terminal. Learn how to connect to serial devices, use test mode, and available commands.",
+    "url": "https://cabhinav.com/cli/docs.html",
+    "author": {
+      "@type": "Person",
+      "name": "Abhinav Chinnusamy"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "cabhinav.com"
+    },
+    "datePublished": "2024-01-01",
+    "dateModified": "2024-01-01",
+    "inLanguage": "en-US",
+    "about": {
+      "@type": "Thing",
+      "name": "Serial Communication"
+    }
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="../assets/images/icons/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/images/icons/favicon.ico">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../assets/css/cli.css">
+
+  <style>
+    body {
+      background: #000000;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+      color: #00ff00;
+    }
+
+    .docs-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      color: #00ff00;
+      font-size: 18px;
+      margin: 0 0 30px 0;
+      font-weight: normal;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    h2 {
+      color: #00ff00;
+      font-size: 14px;
+      margin: 30px 0 15px 0;
+      font-weight: normal;
+    }
+
+    p {
+      color: #cccccc;
+      margin: 10px 0;
+    }
+
+    ul {
+      color: #cccccc;
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .code-block {
+      background: #0a0a0a;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      padding: 12px;
+      margin: 15px 0;
+      font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+      font-size: 11px;
+      color: #00ff00;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .inline-code {
+      background: rgba(0, 255, 0, 0.1);
+      padding: 2px 4px;
+      border-radius: 2px;
+      font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+      color: #00ff00;
+    }
+
+    .command-list {
+      background: #0a0a0a;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      padding: 12px;
+      margin: 15px 0;
+      font-size: 11px;
+    }
+
+    .command-list code {
+      color: #00ff00;
+      display: block;
+      margin: 5px 0;
+    }
+
+    @media (max-width: 768px) {
+      .docs-container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main>
+    <div class="docs-container">
+      <h1>Web Serial Terminal - Documentation</h1>
+
+      <h2>Getting Started</h2>
+      <p>1. Click Connect button</p>
+      <p>2. Select your serial device</p>
+      <p>3. Configure baud rate in Settings if needed</p>
+      <p>4. Start sending commands</p>
+
+      <h2>Browser Support</h2>
+      <p>Chrome, Edge, or Opera (version 89+)</p>
+      <p>Firefox/Safari: Use Test Mode</p>
+
+      <h2>Test Mode</h2>
+      <p>Enable in Settings or add <span class="inline-code">?test=true</span> to URL</p>
+      <p>Simulates serial communication without hardware</p>
+
+      <h2>Commands</h2>
+      
+      <div class="command-list">
+        <strong style="color: #00ff00;">Basic:</strong>
+        <code>help</code>
+        <code>info</code>
+        <code>status</code>
+        <code>ping</code>
+        <code>time</code>
+        <code>date</code>
+        <code>version</code>
+        <code>echo [text]</code>
+        <code>uptime</code>
+        <code>reset</code>
+      </div>
+
+      <div class="command-list">
+        <strong style="color: #00ff00;">Hardware:</strong>
+        <code>led [on|off|toggle]</code>
+        <code>sensors</code>
+        <code>read [sensor_name]</code>
+        <code>gpio [pin] [value]</code>
+      </div>
+
+      <h2>Keyboard Shortcuts</h2>
+      <p><span class="inline-code">Enter</span> - Send command</p>
+      <p><span class="inline-code">↑/↓</span> - Command history</p>
+
+      <h2>Settings</h2>
+      <p>Baud Rate: 9600, 115200, etc.</p>
+      <p>Data Bits: 7 or 8</p>
+      <p>Parity: none, even, odd</p>
+      <p>Stop Bits: 1 or 2</p>
+      <p>Show Timestamps: Toggle timestamps</p>
+
+    </div>
+  </main>
+
+</body>
+
+</html>
