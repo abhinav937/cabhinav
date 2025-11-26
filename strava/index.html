@@ -12,6 +12,16 @@
     <meta name="author" content="Abhinav Chinnusamy">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
+    <!-- Geo-location Tags -->
+    <meta name="geo.region" content="US-WI" />
+    <meta name="geo.placename" content="Madison, Wisconsin" />
+    <meta name="geo.position" content="43.0731;-89.4012" />
+    <meta name="ICBM" content="43.0731, -89.4012" />
+
+    <!-- Language Targeting -->
+    <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/strava/" />
+    <link rel="alternate" hreflang="x-default" href="https://cabhinav.com/strava/" />
+
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="Strava Activities - Abhinav Chinnusamy">
     <meta property="og:description" content="Explore my running journey with activity summaries, latest rides, and upcoming races">
@@ -52,6 +62,28 @@
 
     <!-- Page Specific Styles -->
     <link rel="stylesheet" href="../assets/css/strava.css">
+
+    <!-- Breadcrumb Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cabhinav.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Strava Activities",
+          "item": "https://cabhinav.com/strava/"
+        }
+      ]
+    }
+    </script>
 </head>
 
 <body class="strava-page">

@@ -13,6 +13,16 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="author" content="Abhinav Chinnusamy" />
 
+  <!-- Geo-location Tags -->
+  <meta name="geo.region" content="US-WI" />
+  <meta name="geo.placename" content="Madison, Wisconsin" />
+  <meta name="geo.position" content="43.0731;-89.4012" />
+  <meta name="ICBM" content="43.0731, -89.4012" />
+
+  <!-- Language Targeting -->
+  <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/projects/" />
+  <link rel="alternate" hreflang="x-default" href="https://cabhinav.com/projects/" />
+
   <!-- Open Graph -->
   <meta property="og:title" content="Projects - Abhinav Chinnusamy" />
   <meta property="og:url" content="https://cabhinav.com/projects/" />
@@ -94,6 +104,28 @@
         "name": "Abhinav Chinnusamy",
         "url": "https://cabhinav.com"
       }
+    }
+  </script>
+
+  <!-- Breadcrumb Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cabhinav.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects",
+          "item": "https://cabhinav.com/projects/"
+        }
+      ]
     }
   </script>
 </head>
