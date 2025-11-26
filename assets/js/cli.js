@@ -543,7 +543,7 @@ function handleTestCommand(command) {
 
     switch(commandName) {
       case "help":
-        response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio`;
+        response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime, abhinav\nHardware: led, sensors, read, gpio`;
         break;
       
       case "info":
@@ -654,6 +654,10 @@ function handleTestCommand(command) {
         }
         break;
       
+      case "abhinav":
+        response = `Good ${getTimeOfDayGreeting()}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: Stable\n\nHow may I assist you today?`;
+        break;
+      
       case "reset":
         deviceState.uptime = 0;
         deviceState.ledState = false;
@@ -669,6 +673,13 @@ function handleTestCommand(command) {
       writeReceivedMessage(response);
     }
   }, 100 + Math.random() * 200); // Simulate response delay
+}
+
+function getTimeOfDayGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "morning";
+  if (hour < 18) return "afternoon";
+  return "evening";
 }
 
 function writeToLog(text) {
