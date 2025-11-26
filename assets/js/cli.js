@@ -15,7 +15,6 @@ const buttonCon = document.getElementById("buttonCon");
 const buttonDis = document.getElementById("buttonDis");
 const sendBtn = document.getElementById("sendBtn");
 const clearLogBtn = document.getElementById("clearLog");
-const exportLogBtn = document.getElementById("exportLog");
 const statusDot = document.getElementById("statusDot");
 const statusText = document.getElementById("statusText");
 const notSupported = document.getElementById("notSupported");
@@ -25,21 +24,7 @@ const settingsModal = document.getElementById("settingsModal");
 const settingsOverlay = document.getElementById("settingsOverlay");
 const closeSettings = document.getElementById("closeSettings");
 const testModeToggle = document.getElementById("testModeToggle");
-const lineEndingSelect = document.getElementById("lineEnding");
-const showTimestampsToggle = document.getElementById("showTimestamps");
-const autoReconnectToggle = document.getElementById("autoReconnect");
-const reconnectIntervalInput = document.getElementById("reconnectInterval");
-const reconnectIntervalGroup = document.getElementById("reconnectIntervalGroup");
-const presetSelect = document.getElementById("presetSelect");
-const presetNameInput = document.getElementById("presetNameInput");
-const savePresetBtn = document.getElementById("savePreset");
-const deletePresetBtn = document.getElementById("deletePreset");
-const presetModal = document.getElementById("presetModal");
-const presetOverlay = document.getElementById("presetOverlay");
-const closePresetModal = document.getElementById("closePresetModal");
-const presetSelectModal = document.getElementById("presetSelectModal");
-const connectWithPresetBtn = document.getElementById("connectWithPreset");
-const cancelPresetBtn = document.getElementById("cancelPreset");
+const timestampToggle = document.getElementById("timestampToggle");
 
 // Test mode variables (hidden in production)
 // Enable test mode via URL parameter: ?test=true
@@ -53,15 +38,8 @@ let commandHistory = [];
 let historyIndex = -1;
 let currentInputBeforeHistory = '';
 
-// Feature flags and settings
-let showTimestamps = false;
-let autoReconnect = false;
-let reconnectInterval = 5; // seconds
-let reconnectTimeout = null;
-let lineEnding = 'CRLF'; // CRLF, LF, or CR
-
-// Connection presets storage
-let connectionPresets = JSON.parse(localStorage.getItem('cliPresets') || '{}');
+// Timestamp display settings
+let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || false;
 let testCommands = {
   "help": "Available commands: help, info, status, echo [text], ping, time, version",
   "info": "Web Serial Terminal Test Mode\nDevice: Virtual Serial Emulator v1.0\nBaud Rate: " + (document.getElementById("baudRate")?.value || "115200"),
@@ -84,30 +62,6 @@ let testCommands = {
       settingsBtn.addEventListener("click", showSettings);
       closeSettings.addEventListener("click", hideSettings);
       settingsOverlay.addEventListener("click", hideSettings);
-      
-      // Preset modal functionality
-      if (closePresetModal) {
-        closePresetModal.addEventListener("click", hidePresetModal);
-      }
-      if (presetOverlay) {
-        presetOverlay.addEventListener("click", hidePresetModal);
-      }
-      if (connectWithPresetBtn) {
-        connectWithPresetBtn.addEventListener("click", connectWithPreset);
-      }
-      if (cancelPresetBtn) {
-        cancelPresetBtn.addEventListener("click", hidePresetModal);
-      }
-      // Allow Enter key to connect with preset
-      if (presetSelectModal) {
-        presetSelectModal.addEventListener("keydown", (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            connectWithPreset();
-          }
-        });
-      }
-      
       // Test mode toggle only available in development (hidden in production)
       // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
@@ -118,77 +72,10 @@ let testCommands = {
       // Initialize test mode from URL parameter if present
       toggleTestMode();
 
-      // Load saved settings
-      loadSettings();
-      
-      // Initialize UI elements
-      if (showTimestampsToggle) {
-        showTimestampsToggle.checked = showTimestamps;
-        showTimestampsToggle.addEventListener("change", (e) => {
-          showTimestamps = e.target.checked;
-          saveSettings();
-        });
-      }
-      
-      if (autoReconnectToggle) {
-        autoReconnectToggle.checked = autoReconnect;
-        autoReconnectToggle.addEventListener("change", (e) => {
-          autoReconnect = e.target.checked;
-          if (reconnectIntervalGroup) {
-            reconnectIntervalGroup.style.display = autoReconnect ? 'flex' : 'none';
-          }
-          saveSettings();
-          if (!autoReconnect) {
-            clearReconnectTimeout();
-          }
-        });
-      }
-      
-      if (reconnectIntervalInput) {
-        reconnectIntervalInput.value = reconnectInterval;
-        reconnectIntervalInput.addEventListener("change", (e) => {
-          reconnectInterval = parseInt(e.target.value) || 5;
-          saveSettings();
-        });
-      }
-      
-      if (lineEndingSelect) {
-        lineEndingSelect.value = lineEnding;
-        lineEndingSelect.addEventListener("change", (e) => {
-          lineEnding = e.target.value;
-          saveSettings();
-        });
-      }
-      
-      // Export log functionality
-      if (exportLogBtn) {
-        exportLogBtn.addEventListener("click", exportLog);
-      }
-      
-      // Connection presets
-      if (presetSelect) {
-        loadPresets();
-        presetSelect.addEventListener("change", loadPreset);
-      }
-      if (savePresetBtn) {
-        savePresetBtn.addEventListener("click", savePreset);
-      }
-      if (deletePresetBtn) {
-        deletePresetBtn.addEventListener("click", deletePreset);
-      }
-      // Allow Enter key to save preset
-      if (presetNameInput) {
-        presetNameInput.addEventListener("keydown", (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            savePreset();
-          }
-        });
-      }
-      
-      // Show/hide reconnect interval based on auto-reconnect toggle
-      if (reconnectIntervalGroup && autoReconnectToggle) {
-        reconnectIntervalGroup.style.display = autoReconnectToggle.checked ? 'flex' : 'none';
+      // Timestamp toggle
+      if (timestampToggle) {
+        timestampToggle.checked = showTimestamps;
+        timestampToggle.addEventListener("change", toggleTimestamps);
       }
 
       // Enable send button when there's text in the input
@@ -238,8 +125,8 @@ function setUIDisconnected() {
         // Add command to history (avoid duplicates if same as last command)
         if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
           commandHistory.push(command);
-          // Limit history to last 100 commands
-          if (commandHistory.length > 100) {
+          // Limit history to last 10 commands
+          if (commandHistory.length > 10) {
             commandHistory.shift();
           }
         }
@@ -291,7 +178,7 @@ function setUIDisconnected() {
       }
     }
 
-    // Navigate through command history
+    // Navigate through command history (last 10 commands)
     function navigateHistory(direction) {
       if (commandHistory.length === 0) return;
       
@@ -301,20 +188,22 @@ function setUIDisconnected() {
       }
       
       if (direction === 'up') {
-        // Move up in history
+        // Move up in history (older commands)
+        // historyIndex: -1 = current/new input, 0 = most recent, 9 = oldest
         if (historyIndex < commandHistory.length - 1) {
           historyIndex++;
+          // Get command from history (most recent is at the end)
           cmdBox.value = commandHistory[commandHistory.length - 1 - historyIndex];
           sendBtn.disabled = !cmdBox.value.trim();
         }
       } else if (direction === 'down') {
-        // Move down in history
+        // Move down in history (newer commands)
         if (historyIndex > 0) {
           historyIndex--;
           cmdBox.value = commandHistory[commandHistory.length - 1 - historyIndex];
           sendBtn.disabled = !cmdBox.value.trim();
         } else if (historyIndex === 0) {
-          // Reached the bottom, restore original input
+          // Reached the bottom (most recent), go back to new input
           historyIndex = -1;
           cmdBox.value = currentInputBeforeHistory;
           sendBtn.disabled = !cmdBox.value.trim();
@@ -399,20 +288,11 @@ async function connect() {
     writeReceivedMessage("Connection failed: " + errorMessage);
 
     port = null;
-    
-    // Schedule auto-reconnect if enabled
-    if (autoReconnect) {
-      scheduleReconnect();
-    }
-    
     return;
   }
 
   // Update UI
   setUIConnected();
-  
-  // Clear any pending reconnect timeout since we're connected
-  clearReconnectTimeout();
 
   // Setup the output stream.
   const encoder = new TextEncoderStream();
@@ -467,23 +347,11 @@ async function disconnect() {
 
   // Close the port.
   if (port) {
-    try {
-      await port.close();
-    } catch (err) {
-      console.error("Error closing port:", err);
-    }
+    await port.close();
     port = null;
   }
 
   setUIDisconnected();
-  
-  // Clear any auto-reconnect timeout
-  clearReconnectTimeout();
-  
-  // Schedule auto-reconnect if enabled
-  if (autoReconnect) {
-    scheduleReconnect();
-  }
 }
 
 /**
@@ -495,68 +363,6 @@ async function clickConnect() {
     await disconnect();
     return;
   }
-  
-  // Show preset selection dialog
-  showPresetModal();
-}
-
-/**
- * Show preset selection modal
- */
-function showPresetModal() {
-  if (!presetModal) {
-    // If modal doesn't exist, connect directly
-    connect();
-    return;
-  }
-  
-  // Load presets into modal dropdown
-  if (presetSelectModal) {
-    presetSelectModal.innerHTML = '<option value="">-- No Preset (Use Current Settings) --</option>';
-    Object.keys(connectionPresets).forEach(name => {
-      const option = document.createElement('option');
-      option.value = name;
-      option.textContent = name;
-      presetSelectModal.appendChild(option);
-    });
-  }
-  
-  presetModal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-}
-
-/**
- * Hide preset selection modal
- */
-function hidePresetModal() {
-  if (presetModal) {
-    presetModal.classList.add("hidden");
-    document.body.style.overflow = "";
-  }
-}
-
-/**
- * Connect with selected preset
- */
-async function connectWithPreset() {
-  const presetName = presetSelectModal?.value;
-  
-  if (presetName && connectionPresets[presetName]) {
-    // Load preset settings
-    const preset = connectionPresets[presetName];
-    if (baudRateSelect) baudRateSelect.value = preset.baudRate || '115200';
-    const dataBits = document.getElementById("dataBits");
-    if (dataBits) dataBits.value = preset.dataBits || '8';
-    const parity = document.getElementById("parity");
-    if (parity) parity.value = preset.parity || 'none';
-    const stopBits = document.getElementById("stopBits");
-    if (stopBits) stopBits.value = preset.stopBits || '1';
-    if (lineEndingSelect) lineEndingSelect.value = preset.lineEnding || 'CRLF';
-    lineEnding = preset.lineEnding || 'CRLF';
-  }
-  
-  // Hide modal and connect
-  hidePresetModal();
   await connect();
 }
 
@@ -586,12 +392,6 @@ async function clickDisconnect() {
         if (done) {
           console.log("[readLoop] DONE", done);
           reader.releaseLock();
-          
-          // If auto-reconnect is enabled and we're disconnected, try to reconnect
-          if (autoReconnect && !port) {
-            scheduleReconnect();
-          }
-          
           break;
         }
       }
@@ -604,11 +404,6 @@ async function clickDisconnect() {
  */
     function writeToStream(...lines) {
       const writer = outputStream.getWriter();
-      // Get line ending based on setting
-      let ending = "\r\n"; // Default CRLF
-      if (lineEnding === "LF") ending = "\n";
-      else if (lineEnding === "CR") ending = "\r";
-      
       lines.forEach((line) => {
         console.log("[SEND]", line);
 
@@ -621,7 +416,7 @@ async function clickDisconnect() {
           scrollToBottom();
         }, 50);
 
-        writer.write(line + ending);
+        writer.write(line + "\n");
       });
       writer.releaseLock();
     }
@@ -661,138 +456,6 @@ function hideSettings() {
   document.body.style.overflow = ""; // Restore scrolling
 }
 
-// Settings management
-function saveSettings() {
-  const settings = {
-    showTimestamps: showTimestamps,
-    autoReconnect: autoReconnect,
-    reconnectInterval: reconnectInterval,
-    lineEnding: lineEnding
-  };
-  localStorage.setItem('cliSettings', JSON.stringify(settings));
-}
-
-function loadSettings() {
-  const saved = JSON.parse(localStorage.getItem('cliSettings') || '{}');
-  showTimestamps = saved.showTimestamps || false;
-  autoReconnect = saved.autoReconnect || false;
-  reconnectInterval = saved.reconnectInterval || 5;
-  lineEnding = saved.lineEnding || 'CRLF';
-  
-  // Update UI
-  if (showTimestampsToggle) showTimestampsToggle.checked = showTimestamps;
-  if (autoReconnectToggle) autoReconnectToggle.checked = autoReconnect;
-  if (reconnectIntervalInput) reconnectIntervalInput.value = reconnectInterval;
-  if (lineEndingSelect) lineEndingSelect.value = lineEnding;
-}
-
-// Connection presets
-function loadPresets() {
-  if (!presetSelect) return;
-  
-  presetSelect.innerHTML = '<option value="">-- Select Preset --</option>';
-  Object.keys(connectionPresets).forEach(name => {
-    const option = document.createElement('option');
-    option.value = name;
-    option.textContent = name;
-    presetSelect.appendChild(option);
-  });
-}
-
-function loadPreset() {
-  const presetName = presetSelect.value;
-  if (!presetName || !connectionPresets[presetName]) {
-    if (presetNameInput) presetNameInput.value = '';
-    return;
-  }
-  
-  const preset = connectionPresets[presetName];
-  if (baudRateSelect) baudRateSelect.value = preset.baudRate || '115200';
-  const dataBits = document.getElementById("dataBits");
-  if (dataBits) dataBits.value = preset.dataBits || '8';
-  const parity = document.getElementById("parity");
-  if (parity) parity.value = preset.parity || 'none';
-  const stopBits = document.getElementById("stopBits");
-  if (stopBits) stopBits.value = preset.stopBits || '1';
-  if (lineEndingSelect) lineEndingSelect.value = preset.lineEnding || 'CRLF';
-  lineEnding = preset.lineEnding || 'CRLF';
-  
-  // Update preset name input with selected preset name
-  if (presetNameInput) presetNameInput.value = presetName;
-}
-
-function savePreset() {
-  const name = presetNameInput?.value.trim();
-  if (!name) {
-    alert('Please enter a preset name');
-    return;
-  }
-  
-  connectionPresets[name] = {
-    baudRate: baudRateSelect?.value || '115200',
-    dataBits: document.getElementById("dataBits")?.value || '8',
-    parity: document.getElementById("parity")?.value || 'none',
-    stopBits: document.getElementById("stopBits")?.value || '1',
-    lineEnding: lineEndingSelect?.value || 'CRLF'
-  };
-  
-  localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
-  loadPresets();
-  presetSelect.value = name;
-  presetNameInput.value = ''; // Clear input after saving
-}
-
-function deletePreset() {
-  const presetName = presetSelect.value;
-  if (!presetName || !confirm(`Delete preset "${presetName}"?`)) return;
-  
-  delete connectionPresets[presetName];
-  localStorage.setItem('cliPresets', JSON.stringify(connectionPresets));
-  loadPresets();
-  if (presetNameInput) presetNameInput.value = ''; // Clear input after deletion
-}
-
-// Export log functionality
-function exportLog() {
-  if (!log) return;
-  
-  // Get all text content from log
-  const messages = log.querySelectorAll('.message-content');
-  let logText = '';
-  
-  messages.forEach(msg => {
-    logText += msg.textContent + '\n';
-  });
-  
-  if (!logText.trim()) {
-    alert('Log is empty');
-    return;
-  }
-  
-  // Create download link
-  const blob = new Blob([logText], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `cli-log-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  
-  // Also copy to clipboard
-  navigator.clipboard.writeText(logText).then(() => {
-    // Visual feedback
-    const originalText = exportLogBtn.textContent;
-    exportLogBtn.textContent = 'Copied!';
-    setTimeout(() => {
-      exportLogBtn.textContent = originalText;
-    }, 2000);
-  }).catch(err => {
-    console.error('Failed to copy to clipboard:', err);
-  });
-}
-
 function toggleTestMode() {
   // Test mode toggle only available in development (hidden in production)
   // Can also be enabled via URL parameter: ?test=true
@@ -813,6 +476,14 @@ function toggleTestMode() {
     if (!("serial" in navigator)) {
       notSupported.classList.remove("hidden");
     }
+  }
+}
+
+function toggleTimestamps() {
+  if (timestampToggle) {
+    showTimestamps = timestampToggle.checked;
+    // Save preference to localStorage
+    localStorage.setItem('cliShowTimestamps', showTimestamps);
   }
 }
 
@@ -915,13 +586,21 @@ function writeReceivedMessage(message) {
   contentDiv.className = 'message-content';
   
   // Add timestamp if enabled
-  let displayText = message;
   if (showTimestamps) {
-    const timestamp = new Date().toLocaleTimeString();
-    displayText = `[${timestamp}] ${message}`;
+    const timestamp = new Date();
+    const hours = String(timestamp.getHours()).padStart(2, '0');
+    const minutes = String(timestamp.getMinutes()).padStart(2, '0');
+    const seconds = String(timestamp.getSeconds()).padStart(2, '0');
+    const milliseconds = String(timestamp.getMilliseconds()).padStart(3, '0');
+    const timeStr = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    const timestampSpan = document.createElement('span');
+    timestampSpan.className = 'message-timestamp';
+    timestampSpan.textContent = `[${timeStr}] `;
+    contentDiv.appendChild(timestampSpan);
   }
   
-  contentDiv.textContent = displayText;
+  const messageText = document.createTextNode(message);
+  contentDiv.appendChild(messageText);
   messageDiv.appendChild(contentDiv);
   log.appendChild(messageDiv);
   
