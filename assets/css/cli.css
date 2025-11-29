@@ -911,9 +911,25 @@ button.secondary:hover:not(:disabled) {
     transform: rotate(180deg);
   }
 
-  /* Collapse button - hidden on desktop, shown on mobile */
+  /* Collapse button - shown only on mobile */
   .header-collapse-btn {
-    display: none; /* Hidden by default */
+    display: flex !important; /* Show on mobile */
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #999999;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    margin-left: auto;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
   }
 
   .header-collapse-btn:hover {
@@ -1127,6 +1143,13 @@ button.secondary:hover:not(:disabled) {
   .btn-toggle {
     padding: 10px 14px;
     font-size: 10px;
+  }
+}
+
+/* Desktop - Hide collapse button */
+@media (min-width: 769px) {
+  .header-collapse-btn {
+    display: none !important;
   }
 }
 
