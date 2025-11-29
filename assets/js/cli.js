@@ -528,6 +528,16 @@ function toggleTestMode() {
     isTestMode = urlParams.get('test') === 'true' ? true : false;
   } else {
     isTestMode = testModeToggle.checked;
+    
+    // Update URL parameter when toggle changes
+    const url = new URL(window.location);
+    if (isTestMode) {
+      url.searchParams.set('test', 'true');
+    } else {
+      url.searchParams.delete('test');
+    }
+    // Update URL without reloading page
+    window.history.replaceState({}, '', url);
   }
   
   if (isTestMode) {
