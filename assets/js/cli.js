@@ -654,7 +654,18 @@ function handleTestCommand(command) {
         break;
       
       case "time":
-        response = `Current time: ${new Date().toLocaleString()}\nUTC: ${new Date().toUTCString()}\nTimestamp: ${Date.now()}`;
+        const now = new Date();
+        const localTime = now.toLocaleString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric',
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit',
+          hour12: true 
+        });
+        const utcTime = now.toUTCString();
+        response = `Local: ${localTime}\nUTC: ${utcTime}`;
         break;
       
       case "date":
