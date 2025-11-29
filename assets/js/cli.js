@@ -78,8 +78,12 @@ let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || fal
       }
 
       // Enable send button when there's text in the input
+      // Also enable for abhinav command even when disconnected
       cmdBox.addEventListener("input", () => {
-        sendBtn.disabled = !cmdBox.value.trim();
+        const command = cmdBox.value.trim().toLowerCase();
+        const isAbhinav = command === "abhinav";
+        // Enable send button if there's text AND (connected OR it's abhinav command)
+        sendBtn.disabled = !cmdBox.value.trim() || (!port && !isAbhinav);
       });
 
       // Feature detection
@@ -94,6 +98,9 @@ let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || fal
 
       // Position terminal header after elements are rendered
       setTimeout(positionTerminalHeader, 100);
+
+      // Initialize button groups for settings
+      initializeButtonGroups();
     });
 
 function updateStatus(text, connected) {
@@ -120,6 +127,52 @@ function setUIDisconnected() {
 
     function sendCommand() {
       const command = cmdBox.value.trim();
+      if (!command) return;
+      
+      const cmd = command.toLowerCase().trim();
+      const parts = cmd.split(/\s+/);
+      const commandName = parts[0];
+      
+      // Handle abhinav command even when not connected
+      if (commandName === "abhinav") {
+        // Add command to history
+        if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
+          commandHistory.push(command);
+          if (commandHistory.length > 10) {
+            commandHistory.shift();
+          }
+        }
+        historyIndex = -1;
+        currentInputBeforeHistory = '';
+        
+        // Display sent message
+        writeSentMessage(command);
+        
+        // Handle abhinav command
+        const greeting = getTimeOfDayGreeting();
+        getUserLocation().then(location => {
+          const locationInfo = location ? 
+            `\nConnection Location: ${location.city || 'Unknown'}, ${location.region || 'Unknown'}, ${location.country_name || 'Unknown'}` : 
+            `\nConnection Location: Unable to determine`;
+          const finalResponse = `Good ${greeting}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: ${port ? 'Connected' : 'Disconnected'}${locationInfo}\n\nHow may I assist you today?`;
+          writeReceivedMessage(finalResponse);
+        }).catch(() => {
+          const fallbackResponse = `Good ${greeting}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: ${port ? 'Connected' : 'Disconnected'}\n\nHow may I assist you today?`;
+          writeReceivedMessage(fallbackResponse);
+        });
+        
+        cmdBox.value = "";
+        cmdBox.style.height = 'auto';
+        // Disable send button only if connected, otherwise let input listener handle it
+        if (port) {
+          sendBtn.disabled = true;
+        } else {
+          sendBtn.disabled = true; // Will be re-enabled by input listener when typing
+        }
+        return;
+      }
+      
+      // For other commands, require a connection
       if (command && port) {
         // Add command to history (avoid duplicates if same as last command)
         if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
@@ -223,8 +276,14 @@ function setUIDisconnected() {
 
     async function handleSend() {
       const message = cmdBox.value.trim();
-      if (!message || port) {
-        // Only send if we have a message and a serial connection
+      if (!message) return;
+      
+      const cmd = message.toLowerCase().trim();
+      const parts = cmd.split(/\s+/);
+      const commandName = parts[0];
+      
+      // Allow abhinav command even when not connected
+      if (commandName === "abhinav" || port) {
         sendCommand();
       }
     }
@@ -243,11 +302,7 @@ async function connect() {
     writeReceivedMessage("Connecting to virtual device...");
     
     await new Promise(resolve => setTimeout(resolve, 500));
-    writeReceivedMessage(`Baud rate: ${document.getElementById("baudRate")?.value || "115200"}`);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-    writeReceivedMessage("Connection established!");
-    writeReceivedMessage("Device ready. Type 'help' for available commands.");
+    writeReceivedMessage(`Baud rate: ${document.getElementById("baudRate")?.value || "115200"}\nConnection established!\nDevice ready. Type 'help' for available commands.`);
 
     // Set up test mode
     port = "test"; // Mock port
@@ -543,7 +598,7 @@ function handleTestCommand(command) {
 
     switch(commandName) {
       case "help":
-        response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime, abhinav\nHardware: led, sensors, read, gpio`;
+        response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio`;
         break;
       
       case "info":
@@ -578,6 +633,25 @@ function handleTestCommand(command) {
       
       case "echo":
         response = args ? args : "(no arguments provided)";
+        break;
+      
+      case "uptime":
+        const uptimeSeconds = deviceState.uptime;
+        const uptimeHours = Math.floor(uptimeSeconds / 3600);
+        const uptimeMinutes = Math.floor((uptimeSeconds % 3600) / 60);
+        const uptimeSecs = uptimeSeconds % 60;
+        const uptimeDays = Math.floor(uptimeHours / 24);
+        const displayHours = uptimeHours % 24;
+        
+        if (uptimeDays > 0) {
+          response = `Uptime: ${uptimeDays}d ${displayHours}h ${uptimeMinutes}m ${uptimeSecs}s`;
+        } else if (uptimeHours > 0) {
+          response = `Uptime: ${uptimeHours}h ${uptimeMinutes}m ${uptimeSecs}s`;
+        } else if (uptimeMinutes > 0) {
+          response = `Uptime: ${uptimeMinutes}m ${uptimeSecs}s`;
+        } else {
+          response = `Uptime: ${uptimeSecs}s`;
+        }
         break;
       
       case "led":
@@ -655,8 +729,22 @@ function handleTestCommand(command) {
         break;
       
       case "abhinav":
-        response = `Good ${getTimeOfDayGreeting()}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: Stable\n\nHow may I assist you today?`;
-        break;
+        // Get greeting time when command is issued
+        const greeting = getTimeOfDayGreeting();
+        // Fetch location asynchronously
+        getUserLocation().then(location => {
+          const locationInfo = location ? 
+            `\nConnection Location: ${location.city || 'Unknown'}, ${location.region || 'Unknown'}, ${location.country_name || 'Unknown'}` : 
+            `\nConnection Location: Unable to determine`;
+          const finalResponse = `Good ${greeting}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: Stable${locationInfo}\n\nHow may I assist you today?`;
+          writeReceivedMessage(finalResponse);
+        }).catch(() => {
+          // Fallback if location fetch fails
+          const fallbackResponse = `Good ${greeting}, sir.\n\nSystem Status: All systems operational\nTerminal Interface: Active\nConnection: Stable\n\nHow may I assist you today?`;
+          writeReceivedMessage(fallbackResponse);
+        });
+        // Return early to prevent default response handling
+        return;
       
       case "reset":
         deviceState.uptime = 0;
@@ -680,6 +768,50 @@ function getTimeOfDayGreeting() {
   if (hour < 12) return "morning";
   if (hour < 18) return "afternoon";
   return "evening";
+}
+
+// Fetch user location based on IP address
+async function getUserLocation() {
+  try {
+    // Using ipapi.co free API (no API key required for basic usage)
+    const response = await fetch('https://ipapi.co/json/');
+    if (!response.ok) {
+      throw new Error('Location API request failed');
+    }
+    const data = await response.json();
+    return {
+      ip: data.ip,
+      city: data.city,
+      region: data.region,
+      country_name: data.country_name,
+      country_code: data.country_code,
+      timezone: data.timezone,
+      latitude: data.latitude,
+      longitude: data.longitude
+    };
+  } catch (error) {
+    console.error('Error fetching location:', error);
+    // Try fallback API (ip-api.com)
+    try {
+      const fallbackResponse = await fetch('https://ip-api.com/json/');
+      if (fallbackResponse.ok) {
+        const fallbackData = await fallbackResponse.json();
+        return {
+          ip: fallbackData.query,
+          city: fallbackData.city,
+          region: fallbackData.regionName,
+          country_name: fallbackData.country,
+          country_code: fallbackData.countryCode,
+          timezone: fallbackData.timezone,
+          latitude: fallbackData.lat,
+          longitude: fallbackData.lon
+        };
+      }
+    } catch (fallbackError) {
+      console.error('Fallback location API also failed:', fallbackError);
+    }
+    return null;
+  }
 }
 
 function writeToLog(text) {
@@ -761,4 +893,56 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Initialize button groups for settings
+function initializeButtonGroups() {
+  // Handle button group clicks
+  document.querySelectorAll('.btn-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const value = this.getAttribute('data-value');
+      const targetSelect = document.getElementById(targetId);
+      
+      if (targetSelect) {
+        // Update select value
+        targetSelect.value = value;
+        
+        // Update button states
+        const buttonGroup = this.closest('.button-group');
+        if (buttonGroup) {
+          buttonGroup.querySelectorAll('.btn-toggle').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      }
+    });
+  });
+
+  // Sync button states with select values on load
+  syncButtonGroupsWithSelects();
+  
+  // Sync button states when selects change
+  document.querySelectorAll('.modern-select, #dataBits, #parity, #stopBits').forEach(select => {
+    select.addEventListener('change', syncButtonGroupsWithSelects);
+  });
+}
+
+// Sync button group states with select values
+function syncButtonGroupsWithSelects() {
+  ['dataBits', 'parity', 'stopBits'].forEach(selectId => {
+    const select = document.getElementById(selectId);
+    if (select) {
+      const value = select.value;
+      const buttons = document.querySelectorAll(`.btn-toggle[data-target="${selectId}"]`);
+      buttons.forEach(button => {
+        if (button.getAttribute('data-value') === value) {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
+    }
+  });
 }

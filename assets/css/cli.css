@@ -28,7 +28,7 @@
   position: relative;
   background: #0a0a0a;
   padding: 0;
-  max-width: 520px;
+  max-width: 420px;
   width: 90%;
   max-height: 85vh;
   overflow: hidden;
@@ -41,6 +41,7 @@
   display: flex;
   flex-direction: column;
   animation: settingsModalSlideIn 0.2s ease-out;
+  border-radius: 8px;
 }
 
 @keyframes settingsModalSlideIn {
@@ -56,7 +57,7 @@
 
 .settings-header {
   background: #000000;
-  padding: 18px 24px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -67,7 +68,7 @@
 .settings-header h3 {
   margin: 0;
   color: #00ff00;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: normal;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   letter-spacing: 0.5px;
@@ -77,11 +78,11 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #999999;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   padding: 0;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,10 +99,10 @@
 }
 
 .settings-body {
-  padding: 24px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 16px;
   overflow-y: auto;
   flex: 1;
 }
@@ -123,69 +124,124 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-.settings-body .control-group {
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 10px;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background-color 0.2s ease;
+  padding: 8px 0;
 }
 
-.settings-body .control-group:last-child {
-  border-bottom: none;
-}
-
-.settings-body .control-group:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-  margin: 0 -24px;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.settings-body .control-label {
-  font-size: 12px;
+.setting-label {
+  font-size: 11px;
   font-weight: normal;
   color: #cccccc;
   white-space: nowrap;
-  flex: 0 0 120px;
   letter-spacing: 0.3px;
 }
 
-.settings-body select {
-  padding: 8px 12px;
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modern-select {
+  padding: 6px 10px;
   border: 1px solid #333333;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11px;
   background: #000000;
   color: #00ff00;
-  min-width: 140px;
-  flex: 1;
-  max-width: 200px;
+  width: 100%;
   transition: all 0.2s ease;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2300ff00' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
 }
 
-.settings-body select:hover {
+.modern-select:hover {
   border-color: #444444;
-  background: #0a0a0a;
+  background-color: #0a0a0a;
 }
 
-.settings-body select:focus {
+.modern-select:focus {
   border-color: #00ff00;
   outline: none;
-  background: #0a0a0a;
+  background-color: #0a0a0a;
   box-shadow: 0 0 0 2px rgba(0, 255, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 4px;
+  background: #000000;
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid #333333;
+  width: 100%;
+}
+
+.btn-toggle {
+  flex: 1;
+  padding: 5px 10px;
+  font-size: 10px;
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  border-radius: 4px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.btn-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cccccc;
+}
+
+.btn-toggle.active {
+  background: rgba(0, 255, 0, 0.15);
+  color: #00ff00;
+  border-color: rgba(0, 255, 0, 0.3);
+}
+
+.btn-toggle:active {
+  transform: scale(0.98);
 }
 
 /* Toggle Switch */
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 24px;
+  width: 44px;
+  height: 22px;
 }
 
 .toggle-switch input {
@@ -202,8 +258,9 @@
   right: 0;
   bottom: 0;
   background-color: #333333;
-  transition: 0.3s;
-  border-radius: 0;
+  transition: 0.25s ease;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .toggle-slider:before {
@@ -211,21 +268,23 @@
   content: "";
   height: 16px;
   width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: #666666;
-  transition: 0.3s;
-  border-radius: 0;
+  left: 2px;
+  bottom: 2px;
+  background-color: #888888;
+  transition: 0.25s ease;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: #004400;
-  border-color: #00aa00;
+  background-color: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.4);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(24px);
+  transform: translateX(22px);
   background-color: #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
 }
 
 
@@ -521,7 +580,7 @@ button.secondary:hover:not(:disabled) {
 #log {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1px;
 }
 
 #log .message {
@@ -644,7 +703,7 @@ button.secondary:hover:not(:disabled) {
   outline: none;
   color: #00ff00;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1;
   resize: none;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   min-height: 24px;
