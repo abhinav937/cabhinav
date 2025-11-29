@@ -8,23 +8,10 @@ let outputDone;
 let inputStream;
 let outputStream;
 
-// DOM elements
-const log = document.getElementById("log");
-const cmdBox = document.getElementById("cmdBox");
-const buttonCon = document.getElementById("buttonCon");
-const buttonDis = document.getElementById("buttonDis");
-const sendBtn = document.getElementById("sendBtn");
-const clearLogBtn = document.getElementById("clearLog");
-const statusDot = document.getElementById("statusDot");
-const statusText = document.getElementById("statusText");
-const notSupported = document.getElementById("notSupported");
-const baudRateSelect = document.getElementById("baudRate");
-const settingsBtn = document.getElementById("settingsBtn");
-const settingsModal = document.getElementById("settingsModal");
-const settingsOverlay = document.getElementById("settingsOverlay");
-const closeSettings = document.getElementById("closeSettings");
-const testModeToggle = document.getElementById("testModeToggle");
-const timestampToggle = document.getElementById("timestampToggle");
+// DOM elements - will be initialized in DOMContentLoaded
+let log, cmdBox, buttonCon, buttonDis, sendBtn, clearLogBtn, statusDot, statusText;
+let notSupported, baudRateSelect, settingsBtn, settingsModal, settingsOverlay;
+let closeSettings, testModeToggle, timestampToggle;
 
 // Test mode variables
 // Enable test mode via URL parameter: ?test=true
@@ -50,17 +37,86 @@ let currentInputBeforeHistory = '';
 let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || false;
 
     document.addEventListener("DOMContentLoaded", () => {
-      buttonCon.addEventListener("click", clickConnect);
-      buttonDis.addEventListener("click", clickDisconnect);
-      sendBtn.addEventListener("click", handleSend);
-      clearLogBtn.addEventListener("click", clearLog);
-      cmdBox.addEventListener("keydown", handleKeyDown);
-      cmdBox.addEventListener("input", autoResizeTextarea);
+      // Get DOM elements
+      log = document.getElementById("log");
+      cmdBox = document.getElementById("cmdBox");
+      buttonCon = document.getElementById("buttonCon");
+      buttonDis = document.getElementById("buttonDis");
+      sendBtn = document.getElementById("sendBtn");
+      clearLogBtn = document.getElementById("clearLog");
+      statusDot = document.getElementById("statusDot");
+      statusText = document.getElementById("statusText");
+      notSupported = document.getElementById("notSupported");
+      baudRateSelect = document.getElementById("baudRate");
+      settingsBtn = document.getElementById("settingsBtn");
+      settingsModal = document.getElementById("settingsModal");
+      settingsOverlay = document.getElementById("settingsOverlay");
+      closeSettings = document.getElementById("closeSettings");
+      testModeToggle = document.getElementById("testModeToggle");
+      timestampToggle = document.getElementById("timestampToggle");
+
+      // Verify elements exist before adding listeners
+      if (buttonCon) {
+        buttonCon.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            if (port) {
+              await disconnect();
+              return;
+            }
+            await connect();
+          } catch (error) {
+            console.error("Connect error:", error);
+          }
+        });
+      }
+      if (buttonDis) {
+        buttonDis.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            if (port) {
+              await disconnect();
+            }
+          } catch (error) {
+            console.error("Disconnect error:", error);
+          }
+        });
+      }
+      if (sendBtn) {
+        sendBtn.addEventListener("click", handleSend);
+      }
+      if (clearLogBtn) {
+        clearLogBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (log) {
+            log.innerHTML = "";
+            log.classList.add("empty");
+          }
+        });
+      }
+      if (cmdBox) {
+        cmdBox.addEventListener("keydown", handleKeyDown);
+        cmdBox.addEventListener("input", autoResizeTextarea);
+      }
 
       // Settings modal functionality
-      settingsBtn.addEventListener("click", showSettings);
-      closeSettings.addEventListener("click", hideSettings);
-      settingsOverlay.addEventListener("click", hideSettings);
+      if (settingsBtn && settingsModal) {
+        settingsBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          settingsModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+        });
+      }
+      if (closeSettings) {
+        closeSettings.addEventListener("click", hideSettings);
+      }
+      if (settingsOverlay) {
+        settingsOverlay.addEventListener("click", hideSettings);
+      }
       // Test mode toggle
       // Can also be enabled via URL parameter: ?test=true
       if (testModeToggle) {
@@ -341,7 +397,6 @@ async function connect() {
     updateStatus("Connecting...", false);
     port = await navigator.serial.requestPort();
   } catch (err) {
-    console.log("No port selected...");
     // Show user-friendly message when port selection is cancelled
     updateStatus("Connection cancelled", false);
     return;
@@ -473,7 +528,6 @@ async function clickDisconnect() {
           writeReceivedMessage(value);
         }
         if (done) {
-          console.log("[readLoop] DONE", done);
           reader.releaseLock();
           break;
         }
@@ -488,8 +542,6 @@ async function clickDisconnect() {
     function writeToStream(...lines) {
       const writer = outputStream.getWriter();
       lines.forEach((line) => {
-        console.log("[SEND]", line);
-
         // Scroll to bottom with multiple attempts for reliability
         scrollToBottom();
         requestAnimationFrame(() => {
@@ -654,8 +706,8 @@ function handleTestCommand(command) {
         break;
       
       case "time":
-        const now = new Date();
-        const localTime = now.toLocaleString('en-US', { 
+        const timeNow = new Date();
+        const localTime = timeNow.toLocaleString('en-US', { 
           month: 'short', 
           day: 'numeric', 
           year: 'numeric',
@@ -664,13 +716,13 @@ function handleTestCommand(command) {
           second: '2-digit',
           hour12: true 
         });
-        const utcTime = now.toUTCString();
+        const utcTime = timeNow.toUTCString();
         response = `Local: ${localTime}\nUTC: ${utcTime}`;
         break;
       
       case "date":
-        const now = new Date();
-        response = `Date: ${now.toDateString()}\nTime: ${now.toTimeString()}\nISO: ${now.toISOString()}`;
+        const dateNow = new Date();
+        response = `Date: ${dateNow.toDateString()}\nTime: ${dateNow.toTimeString()}\nISO: ${dateNow.toISOString()}`;
         break;
       
       case "version":

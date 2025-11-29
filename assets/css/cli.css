@@ -485,10 +485,33 @@ button.secondary:hover:not(:disabled) {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: 1000;
   height: 50px;
   box-sizing: border-box;
   border-bottom: 1px solid #333333;
+}
+
+.terminal-header button,
+.terminal-header a {
+  position: relative;
+  z-index: 1001;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.terminal-buttons {
+  pointer-events: auto !important;
+}
+
+.terminal-buttons button,
+.terminal-buttons a {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 1002;
 }
 
 
