@@ -728,6 +728,14 @@ button.secondary:hover:not(:disabled) {
   box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
 }
 
+/* Subtle highlighted state when input has text */
+.send-btn:not(:disabled).highlighted {
+  background: rgba(0, 255, 0, 0.25);
+  border-color: rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.15),
+              0 2px 4px rgba(0, 255, 0, 0.2);
+}
+
 .send-btn:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

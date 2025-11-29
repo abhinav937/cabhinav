@@ -82,8 +82,18 @@ let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || fal
       cmdBox.addEventListener("input", () => {
         const command = cmdBox.value.trim().toLowerCase();
         const isAbhinav = command === "abhinav";
-        // Enable send button if there's text AND (connected OR it's abhinav command)
-        sendBtn.disabled = !cmdBox.value.trim() || (!port && !isAbhinav);
+        const hasText = cmdBox.value.trim().length > 0;
+        const shouldEnable = hasText && (port || isAbhinav);
+        
+        // Enable/disable send button
+        sendBtn.disabled = !shouldEnable;
+        
+        // Add/remove highlighted class when input has text and button is enabled
+        if (hasText && shouldEnable) {
+          sendBtn.classList.add('highlighted');
+        } else {
+          sendBtn.classList.remove('highlighted');
+        }
       });
 
       // Feature detection
@@ -172,6 +182,7 @@ function setUIDisconnected() {
         
         cmdBox.value = "";
         cmdBox.style.height = 'auto';
+        sendBtn.classList.remove('highlighted');
         // Disable send button only if connected, otherwise let input listener handle it
         if (port) {
           sendBtn.disabled = true;
@@ -208,6 +219,7 @@ function setUIDisconnected() {
         cmdBox.value = "";
         cmdBox.style.height = 'auto'; // Reset height
         sendBtn.disabled = true;
+        sendBtn.classList.remove('highlighted');
       }
     }
 
