@@ -152,15 +152,27 @@ let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || fal
         }
       });
 
-      // Feature detection
-      if ("serial" in navigator) {
-        notSupported.classList.add("hidden");
+      // Feature detection - update status instead of showing message box
+      if (!("serial" in navigator)) {
+        notSupported.classList.add("hidden"); // Always hide the message box
+        setUIDisconnected();
+        updateStatus("Unsupported", false);
+        // Update Connect button text on mobile when unsupported (but allow test mode)
+        if (buttonCon && window.innerWidth <= 768 && !isTestMode) {
+          buttonCon.textContent = "Unsupported";
+          buttonCon.disabled = true;
+        } else if (buttonCon) {
+          buttonCon.textContent = "Connect";
+        }
       } else {
-        notSupported.classList.remove("hidden");
+        notSupported.classList.add("hidden");
+        setUIDisconnected();
+        updateStatus("Disconnected", false);
+        // Ensure Connect button shows normal text
+        if (buttonCon) {
+          buttonCon.textContent = "Connect";
+        }
       }
-
-      setUIDisconnected();
-      updateStatus("Disconnected", false);
 
       // Position terminal header after elements are rendered
       setTimeout(() => {
@@ -198,6 +210,20 @@ function setUIDisconnected() {
   sendBtn.disabled = true;
   cmdBox.value = "";
   updateStatus("Disconnected", false);
+  
+  // Update Connect button text based on browser support, screen size, and test mode
+  if (buttonCon) {
+    const isUnsupported = !("serial" in navigator);
+    const isMobile = window.innerWidth <= 768;
+    
+    // Only show "Unsupported" on mobile if Web Serial is not supported AND test mode is disabled
+    if (isUnsupported && isMobile && !isTestMode) {
+      buttonCon.textContent = "Unsupported";
+      buttonCon.disabled = true;
+    } else {
+      buttonCon.textContent = "Connect";
+    }
+  }
 }
 
     function sendCommand() {
@@ -613,13 +639,26 @@ function toggleTestMode() {
     window.history.replaceState({}, '', url);
   }
   
-  if (isTestMode) {
-    // Hide the browser support warning in test mode
-    notSupported.classList.add("hidden");
+  // Always hide the message box, update status instead
+  notSupported.classList.add("hidden");
+  
+  if (!isTestMode && !("serial" in navigator)) {
+    updateStatus("Unsupported", false);
+    // Update Connect button text on mobile when unsupported (but allow test mode)
+    if (buttonCon && window.innerWidth <= 768 && !isTestMode) {
+      buttonCon.textContent = "Unsupported";
+      buttonCon.disabled = true;
+    } else if (buttonCon) {
+      buttonCon.textContent = "Connect";
+    }
   } else {
-    // Show warning if browser doesn't support Web Serial
-    if (!("serial" in navigator)) {
-      notSupported.classList.remove("hidden");
+    // Test mode is enabled or Web Serial is supported - show normal Connect button
+    if (buttonCon) {
+      buttonCon.textContent = "Connect";
+      buttonCon.disabled = false;
+    }
+    if (isTestMode) {
+      updateStatus("Disconnected", false);
     }
   }
 }
