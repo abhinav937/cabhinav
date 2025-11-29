@@ -97,10 +97,19 @@ let showTimestamps = localStorage.getItem('cliShowTimestamps') === 'true' || fal
       updateStatus("Disconnected", false);
 
       // Position terminal header after elements are rendered
-      setTimeout(positionTerminalHeader, 100);
+      setTimeout(() => {
+        positionTerminalHeader();
+        // Also update padding for mobile on initial load
+        if (window.innerWidth <= 768) {
+          updateTerminalContentPadding();
+        }
+      }, 100);
 
       // Initialize button groups for settings
       initializeButtonGroups();
+
+      // Initialize header collapse functionality for mobile
+      initializeHeaderCollapse();
     });
 
 function updateStatus(text, connected) {
@@ -567,8 +576,12 @@ function positionTerminalHeader() {
   if (terminalHeader && terminalContent) {
     const headerHeight = terminalHeader.offsetHeight;
     terminalHeader.style.top = '0px';
-    // Padding is now handled in CSS, but we can ensure it's correct
-    terminalContent.style.paddingTop = headerHeight + 16 + 'px';
+    // On mobile, use updateTerminalContentPadding function
+    if (window.innerWidth <= 768) {
+      updateTerminalContentPadding();
+    } else {
+      terminalContent.style.paddingTop = headerHeight + 16 + 'px';
+    }
   }
 }
 
@@ -844,14 +857,22 @@ function writeSentMessage(message) {
   messageDiv.appendChild(contentDiv);
   log.appendChild(messageDiv);
   
-  // Auto-scroll to bottom with multiple attempts
+  // Ensure message is visible - scroll to bottom with multiple attempts
   scrollToBottom();
   requestAnimationFrame(() => {
     scrollToBottom();
   });
   setTimeout(() => {
     scrollToBottom();
+    // Force scroll to ensure message is visible
+    const terminalContent = document.querySelector('.terminal-content');
+    if (terminalContent) {
+      terminalContent.scrollTop = terminalContent.scrollHeight;
+    }
   }, 50);
+  setTimeout(() => {
+    scrollToBottom();
+  }, 100);
 }
 
 // Write received message with chat-style formatting
@@ -955,4 +976,52 @@ function syncButtonGroupsWithSelects() {
       });
     }
   });
+}
+
+// Update terminal content padding based on header state
+function updateTerminalContentPadding() {
+  const terminalHeader = document.getElementById('terminalHeader');
+  const terminalContent = document.querySelector('.terminal-content');
+
+  if (terminalHeader && terminalContent && window.innerWidth <= 768) {
+    const isCollapsed = terminalHeader.classList.contains('collapsed');
+    if (isCollapsed) {
+      terminalContent.style.paddingTop = '80px';
+    } else {
+      // Wait for header to fully expand, then calculate height with extra margin
+      setTimeout(() => {
+        const headerHeight = terminalHeader.offsetHeight;
+        terminalContent.style.paddingTop = Math.max(headerHeight + 40, 180) + 'px';
+      }, 100);
+    }
+  }
+}
+
+// Initialize header collapse functionality for mobile
+function initializeHeaderCollapse() {
+  const headerCollapseBtn = document.getElementById('headerCollapseBtn');
+  const terminalHeader = document.getElementById('terminalHeader');
+  const terminalContent = document.querySelector('.terminal-content');
+
+  if (headerCollapseBtn && terminalHeader) {
+    // Set initial padding on load
+    updateTerminalContentPadding();
+
+    headerCollapseBtn.addEventListener('click', function() {
+      terminalHeader.classList.toggle('collapsed');
+      updateTerminalContentPadding();
+    });
+
+    // Handle window resize - remove collapsed state on desktop
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 768) {
+        terminalHeader.classList.remove('collapsed');
+        if (terminalContent) {
+          terminalContent.style.paddingTop = '';
+        }
+      } else {
+        updateTerminalContentPadding();
+      }
+    });
+  }
 }

@@ -294,30 +294,7 @@
   display: none !important;
 }
 
-/* Mobile Access Disabled */
-@media (max-width: 768px) {
-  .cli-container {
-    display: none;
-  }
-
-  body::after {
-    content: "CLI Terminal is not available on mobile devices. Please use a desktop browser.";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 1.1rem;
-    max-width: 80%;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-  }
-}
+/* Mobile optimizations are handled in the responsive section below */
 .cli-container {
   width: 100%;
   margin: 0;
@@ -552,7 +529,7 @@ button.secondary:hover:not(:disabled) {
   position: relative;
   min-height: 300px;
   padding: 12px 20px;
-  padding-top: 66px; /* Account for fixed header (50px) + spacing */
+  padding-top: 80px; /* Account for fixed header (50px) + spacing - increased for better visibility */
   padding-bottom: 120px; /* Account for fixed input area (~80px) + extra spacing */
   box-sizing: border-box;
 }
@@ -877,6 +854,129 @@ button.secondary:hover:not(:disabled) {
     gap: var(--spacing-sm);
   }
 
+  /* Terminal header mobile optimizations */
+  .terminal-header {
+    padding: 10px 12px;
+    height: auto;
+    min-height: 50px;
+    flex-wrap: wrap;
+    gap: 8px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  /* Show collapse button on mobile */
+  .header-collapse-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #999999;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    margin-left: auto;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .header-collapse-btn:hover {
+    color: #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    border-color: rgba(0, 255, 0, 0.3);
+  }
+
+  .header-collapse-btn .material-symbols-outlined {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  /* Collapsed header state */
+  .terminal-header.collapsed {
+    min-height: 50px;
+    max-height: 50px;
+  }
+
+  .terminal-header.collapsed .header-controls {
+    display: none;
+  }
+
+  .terminal-header.collapsed .header-collapse-btn .material-symbols-outlined {
+    transform: rotate(180deg);
+  }
+
+  /* Collapse button - hidden on desktop, shown on mobile */
+  .header-collapse-btn {
+    display: none; /* Hidden by default */
+  }
+
+  .header-collapse-btn:hover {
+    color: #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    border-color: rgba(0, 255, 0, 0.3);
+  }
+
+  .header-collapse-btn .material-symbols-outlined {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .terminal-header.collapsed .header-collapse-btn .material-symbols-outlined {
+    transform: rotate(180deg);
+  }
+
+  .terminal-title {
+    order: 1;
+    flex: 1 1 auto;
+    text-align: left;
+    margin: 0;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-controls {
+    order: 2;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+  }
+
+  .status-indicator {
+    font-size: 10px;
+    gap: 6px;
+  }
+
+  .status-indicator span {
+    font-size: 10px;
+  }
+
+  .terminal-buttons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .terminal-buttons button,
+  .terminal-buttons .docs-link-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+    min-height: 36px;
+    min-width: auto;
+    flex: 1 1 auto;
+  }
+
+  .terminal-buttons button:first-child {
+    flex: 1 1 100%;
+  }
 
   .cli-terminal {
     min-height: 300px;
@@ -884,6 +984,13 @@ button.secondary:hover:not(:disabled) {
 
   .terminal-content {
     min-height: 200px;
+    padding-top: 180px !important; /* Increased padding to ensure messages appear below expanded header */
+  }
+
+  /* When header is collapsed, reduce padding */
+  .terminal-header.collapsed ~ .terminal-content,
+  .terminal-header.collapsed + .terminal-content {
+    padding-top: 80px !important;
   }
 
   .input-area {
@@ -908,5 +1015,137 @@ button.secondary:hover:not(:disabled) {
 
   .send-btn .material-symbols-outlined {
     font-size: 16px;
+  }
+
+  /* Settings Modal Mobile Optimizations */
+  .settings-content {
+    max-width: 95%;
+    width: 95%;
+    max-height: 90vh;
+    margin: 1rem;
+  }
+
+  .settings-header {
+    padding: 10px 12px;
+  }
+
+  .settings-header h3 {
+    font-size: 12px;
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 20px;
+  }
+
+  .settings-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .setting-item {
+    gap: 8px;
+  }
+
+  .setting-label {
+    font-size: 10px;
+  }
+
+  .modern-select {
+    font-size: 14px; /* Prevents zoom on iOS */
+    padding: 8px 12px;
+    padding-right: 32px;
+    min-height: 44px;
+  }
+
+  .button-group {
+    min-height: 44px;
+  }
+
+  .btn-toggle {
+    padding: 8px 12px;
+    font-size: 11px;
+    min-height: 44px;
+  }
+
+  .toggle-switch {
+    width: 48px;
+    height: 26px;
+    min-width: 48px;
+  }
+
+  .toggle-slider:before {
+    height: 18px;
+    width: 18px;
+  }
+
+  .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+  }
+
+  .settings-row {
+    padding: 10px 0;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .settings-content {
+    max-width: 98%;
+    width: 98%;
+    max-height: 95vh;
+    margin: 0.5rem;
+  }
+
+  .settings-header {
+    padding: 8px 10px;
+  }
+
+  .settings-body {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .settings-grid {
+    gap: 8px;
+  }
+
+  .modern-select {
+    font-size: 14px;
+    padding: 10px 14px;
+    padding-right: 36px;
+  }
+
+  .btn-toggle {
+    padding: 10px 14px;
+    font-size: 10px;
+  }
+}
+
+/* Touch device optimizations for settings */
+@media (hover: none) and (pointer: coarse) {
+  .close-btn,
+  .btn-toggle,
+  .modern-select,
+  .toggle-switch {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .close-btn:active,
+  .btn-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .close-btn:hover {
+    transform: none;
   }
 }
