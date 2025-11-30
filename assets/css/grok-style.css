@@ -963,10 +963,33 @@ p {
 
 /* ========================================
    MOBILE DESIGN REDESIGN - MODERN APPROACH
+   Consistent Grok-inspired theming for mobile
+   
+   THEME CONSISTENCY:
+   - Background: Pure black (#000000) with transparent overlays for space canvas
+   - Text: White (#ffffff) primary, light gray (#f5f5f5) secondary, muted (#a3a3a3)
+   - Accents: Pure white (#ffffff) for highlights and buttons
+   - Borders: Subtle white borders (rgba(255,255,255,0.08))
+   - Cards: Dark semi-transparent backgrounds with glass morphism
+   - Space Background: Visible through transparent backgrounds
+   - Typography: Inter font family, clean and minimalist
    ======================================== */
 
 @media (max-width: 768px) {
   /* COMPLETE MOBILE REDESIGN - Modern Card-Based Layout */
+  /* Ensuring consistent Grok theme: black background, white text, minimalist design */
+
+  /* Root mobile theme enforcement */
+  :root {
+    --grok-bg-primary: #000000;
+    --grok-bg-secondary: #0f0f0f;
+    --grok-bg-tertiary: #1a1a1a;
+    --grok-text-primary: #ffffff;
+    --grok-text-secondary: #f5f5f5;
+    --grok-text-muted: #a3a3a3;
+    --grok-accent: #ffffff;
+    --grok-border: rgba(255, 255, 255, 0.08);
+  }
 
   body {
     font-family: var(--font-primary);
@@ -976,6 +999,8 @@ p {
     color: var(--grok-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Ensure space background shows through */
+    background-color: transparent;
   }
 
   /* Only apply no-scroll behavior to pages with the no-scroll-mobile class */
@@ -986,6 +1011,8 @@ p {
 
   html {
     background: var(--grok-bg-primary);
+    /* Ensure space background is visible */
+    background-color: #161618;
   }
 
   body.no-scroll-mobile html {
@@ -1001,6 +1028,7 @@ p {
   }
 
   /* Hero Section - Card-Based Approach */
+  /* Maintains Grok theme: transparent background to show space canvas */
   .hero {
     min-height: 0;
     flex: 1;
@@ -1011,7 +1039,8 @@ p {
     position: relative;
     overflow: hidden;
     width: 100%;
-    background: var(--grok-bg-primary);
+    background: transparent;
+    /* Allow space background to show through */
   }
 
   .hero::before {
@@ -1042,7 +1071,7 @@ p {
     margin: 0 auto;
   }
 
-  /* Main Content Card */
+  /* Main Content Card - Grok-themed glass morphism */
   .hero-content::before {
     content: '';
     position: absolute;
@@ -1053,6 +1082,9 @@ p {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     z-index: -1;
+    /* Subtle glow effect matching Grok aesthetic */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
   /* Name Section */
@@ -1093,7 +1125,7 @@ p {
     margin-bottom: 0;
   }
 
-  /* Link Styling */
+  /* Link Styling - Grok theme consistency */
   .hero-description .text-accent {
     color: var(--grok-text-primary);
     font-weight: 500;
@@ -1110,6 +1142,10 @@ p {
   .hero-description .text-accent:hover {
     opacity: 0.8;
     text-decoration-color: rgba(255, 255, 255, 1);
+  }
+
+  .hero-description .text-accent:active {
+    opacity: 0.6;
   }
 
   /* Action Buttons - Pill Design */
@@ -1165,12 +1201,24 @@ p {
   .hero-links .btn-primary {
     background: var(--grok-accent);
     color: var(--grok-bg-primary);
+    /* Grok theme: pure white button on black */
+  }
+
+  .hero-links .btn-primary:active {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(0.98);
   }
 
   .hero-links .btn-secondary {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.1);
     color: var(--grok-text-muted);
+    /* Grok theme: subtle secondary button */
+  }
+
+  .hero-links .btn-secondary:active {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(0.98);
   }
 
   .hero-links .btn .material-symbols-outlined {
@@ -1182,11 +1230,13 @@ p {
     transform: scale(1.1);
   }
 
-  /* Modern section design */
+  /* Modern section design - Grok theme consistency */
   .section {
     padding: var(--spacing-3xl) 0;
     padding-top: calc(var(--spacing-3xl) + 3.5rem);
     position: relative;
+    background: transparent;
+    /* Allow space background to show through */
   }
 
   .section-header {
@@ -1202,6 +1252,11 @@ p {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Grok theme: white gradient text */
+  }
+
+  .section-header p {
+    color: var(--grok-text-muted);
   }
 
   .section-header p {
@@ -1211,17 +1266,20 @@ p {
     margin: 0 auto;
   }
 
-  /* Modern card design for mobile */
+  /* Modern card design for mobile - Grok theme consistency */
   .card {
-    background: var(--grok-bg-secondary);
+    background: rgba(15, 15, 15, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
     position: relative;
     overflow: hidden;
+    /* Ensure consistent Grok theming */
+    color: var(--grok-text-primary);
   }
 
   .card::before {
@@ -1235,6 +1293,11 @@ p {
     opacity: 0.3;
   }
 
+  .card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(15, 15, 15, 0.9);
+  }
+
   /* Modern projects grid */
   .projects-grid {
     display: flex;
@@ -1245,18 +1308,22 @@ p {
   .project-card {
     border-radius: var(--radius-xl);
     overflow: hidden;
-    background: var(--grok-bg-secondary);
+    background: rgba(15, 15, 15, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Consistent Grok theming */
   }
 
   .project-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 15, 15, 0.9);
   }
 
   .project-image-container {
@@ -1326,6 +1393,11 @@ p {
     font-weight: 600;
     margin: 0;
     color: var(--grok-text-primary);
+    /* Grok theme: white text */
+  }
+
+  .project-description {
+    color: var(--grok-text-secondary);
   }
 
   /* Modern experience cards */
@@ -1342,16 +1414,19 @@ p {
   }
 
   .experience-card {
-    background: var(--grok-bg-secondary);
+    background: rgba(15, 15, 15, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    /* Consistent Grok theming */
+    color: var(--grok-text-primary);
   }
 
   .experience-card::before {
@@ -1425,6 +1500,7 @@ p {
     font-weight: 600;
     margin-bottom: var(--spacing-xs);
     color: var(--grok-text-primary);
+    /* Grok theme: white primary text */
   }
 
   .experience-role {
@@ -1432,29 +1508,34 @@ p {
     font-weight: 500;
     margin-bottom: var(--spacing-xs);
     font-size: 0.95rem;
+    /* Grok theme: white accent for roles */
   }
 
   .experience-period {
     color: var(--grok-text-muted);
     font-size: 0.85rem;
     margin-bottom: var(--spacing-md);
+    /* Grok theme: muted gray for dates */
   }
 
   .experience-description {
     color: var(--grok-text-secondary);
     font-size: 0.9rem;
     line-height: 1.6;
+    /* Grok theme: light gray for descriptions */
   }
 
-  /* Modern footer - refined mobile design */
+  /* Modern footer - refined mobile design with Grok theme */
   .footer {
-    background: var(--grok-bg-primary);
+    background: rgba(0, 0, 0, 0.85);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding: var(--spacing-sm) var(--spacing-md);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     position: relative;
     flex-shrink: 0;
+    /* Ensure space background shows through footer */
+    z-index: 11;
   }
 
   .footer::before {

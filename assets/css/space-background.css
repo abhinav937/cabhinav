@@ -21,14 +21,27 @@ body {
 }
 
 /* Override mobile CSS that might hide the canvas */
+/* Ensuring Grok theme consistency on mobile */
 @media (max-width: 768px) {
   html {
     background: #161618 !important;
   }
   body {
     background: transparent !important;
+    /* Ensure Grok theme colors are maintained */
+    color: #ffffff !important;
   }
   .hero {
+    background: transparent !important;
+  }
+  
+  /* Ensure all sections allow space background through */
+  main {
+    background: transparent !important;
+  }
+  
+  /* Sections should be transparent to show space */
+  .section {
     background: transparent !important;
   }
 }
