@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - Page Not Found | Abhinav Chinnusamy</title>
+  <title>404 - Page Not Found</title>
 
   <!-- SEO Meta Tags -->
   <meta name="description" content="Page not found - The page you're looking for doesn't exist on cabhinav.com" />
@@ -48,11 +48,37 @@
   </script>
 
   <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+
     body {
       margin: 0;
       padding: 0;
       background: var(--grok-bg-primary, #000000);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
     }
 
     .error-header-image {
@@ -63,6 +89,19 @@
       padding: 0;
       object-fit: contain;
       max-width: 100%;
+      animation: fadeIn 0.8s ease-out;
+      filter: brightness(0.95);
+      transition: filter 0.3s ease;
+    }
+
+    .error-header-image:hover {
+      filter: brightness(1);
+    }
+
+    .error-content {
+      width: 100%;
+      max-width: 800px;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
     }
 
     .error-message {
@@ -74,11 +113,19 @@
       font-family: var(--font-primary, 'Inter', sans-serif);
       line-height: 1.4;
       word-wrap: break-word;
+      letter-spacing: -0.02em;
+      opacity: 0.95;
+      transition: opacity 0.3s ease;
+    }
+
+    .error-message:hover {
+      opacity: 1;
     }
 
     .error-link {
       text-align: center;
       padding: 0 1.5rem 2rem;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
     }
 
     .error-link a {
@@ -86,22 +133,40 @@
       text-decoration: none;
       font-size: clamp(0.9rem, 3vw, 1.25rem);
       font-family: var(--font-primary, 'Inter', sans-serif);
-      transition: color var(--transition-normal, 0.25s ease);
-      display: inline-block;
-      padding: 0.5rem 0;
-      min-height: 44px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      padding: 0.75rem 1.5rem;
+      min-height: 44px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .error-link a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      transition: left 0.3s ease;
+    }
+
+    .error-link a:hover::before {
+      left: 0;
     }
 
     .error-link a:hover {
       color: var(--grok-text-primary, #ffffff);
-      text-decoration: underline;
+      transform: translateX(2px);
     }
 
     .error-link a:active {
-      opacity: 0.7;
+      transform: translateX(1px);
+      opacity: 0.8;
     }
 
     @media (max-width: 768px) {
@@ -117,6 +182,10 @@
         max-height: 60vh;
         object-fit: contain;
       }
+
+      .error-link a {
+        padding: 0.65rem 1.25rem;
+      }
     }
 
     @media (max-width: 480px) {
@@ -131,6 +200,7 @@
 
       .error-link a {
         font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+        padding: 0.6rem 1rem;
       }
     }
 
@@ -139,9 +209,11 @@
 
 <body>
   <img src="/assets/images/404.jpg" alt="404 Error" class="error-header-image">
-  <div class="error-message">you are not supposed to be here</div>
-  <div class="error-link">
-    <a href="https://cabhinav.com">Go back to cabhinav.com →</a>
+  <div class="error-content">
+    <div class="error-message">you are not supposed to be here</div>
+    <div class="error-link">
+      <a href="https://cabhinav.com">Go back to cabhinav.com</a>
+    </div>
   </div>
 </body>
 
