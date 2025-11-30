@@ -1097,29 +1097,19 @@ p {
   .hero-description .text-accent {
     color: var(--grok-text-primary);
     font-weight: 500;
-    text-decoration: none;
-    position: relative;
-    transition: opacity 0.2s ease;
-  }
-
-  .hero-description .text-accent::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: var(--grok-text-primary);
-    opacity: 0.4;
-    transition: opacity 0.2s ease;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.4);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: opacity 0.2s ease, text-decoration-color 0.2s ease;
+    display: inline;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 
   .hero-description .text-accent:hover {
     opacity: 0.8;
-  }
-
-  .hero-description .text-accent:hover::after {
-    opacity: 1;
+    text-decoration-color: rgba(255, 255, 255, 1);
   }
 
   /* Action Buttons - Pill Design */
@@ -1978,6 +1968,12 @@ p {
   a {
     padding: 0.25rem 0;
     display: inline-block;
+  }
+
+  /* Ensure text-accent links remain inline for proper underline behavior */
+  .hero-description .text-accent {
+    display: inline !important;
+    padding: 0;
   }
 
   /* Optimize images for mobile */
