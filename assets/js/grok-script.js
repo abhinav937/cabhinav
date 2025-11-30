@@ -257,7 +257,7 @@ function showSkeletonLoader(container) {
 // Preload critical images
 function preloadCriticalImages() {
     const criticalImages = [
-        './assets/images/profile/profile_new.jpeg',
+        './assets/images/profile/my_profile.jpg',
         './assets/images/projects/yeswegan1.JPEG',
         './assets/images/projects/gan.webp'
     ];
