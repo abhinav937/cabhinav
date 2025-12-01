@@ -1,6 +1,6 @@
 /* Space Background Styles for Homepage */
 html {
-  background: #161618;
+  background: transparent;
 }
 
 body {
@@ -24,7 +24,7 @@ body {
 /* Ensuring Grok theme consistency on mobile */
 @media (max-width: 768px) {
   html {
-    background: #161618 !important;
+    background: transparent !important;
   }
   body {
     background: transparent !important;

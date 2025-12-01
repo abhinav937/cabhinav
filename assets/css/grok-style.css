@@ -112,6 +112,7 @@ main {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
+  background: transparent;
 }
 
 .section {
@@ -197,9 +198,9 @@ p {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-             radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
-             linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+             radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.002) 0%, transparent 50%),
+             linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -995,7 +996,7 @@ p {
     font-family: var(--font-primary);
     font-size: 14px;
     line-height: 1.5;
-    background: var(--grok-bg-primary);
+    background: transparent;
     color: var(--grok-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -1010,9 +1011,9 @@ p {
   }
 
   html {
-    background: var(--grok-bg-primary);
+    background: transparent;
     /* Ensure space background is visible */
-    background-color: #161618;
+    background-color: transparent;
   }
 
   body.no-scroll-mobile html {
@@ -1025,6 +1026,7 @@ p {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
+    background: transparent;
   }
 
   /* Hero Section - Card-Based Approach */
@@ -1050,8 +1052,8 @@ p {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.002) 0%, transparent 50%);
     animation: float 20s ease-in-out infinite;
     z-index: 0;
   }
@@ -1066,9 +1068,14 @@ p {
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
     padding: 2rem 1.5rem;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
   }
 
   /* Main Content Card - Grok-themed glass morphism */
@@ -1076,36 +1083,37 @@ p {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    border: none;
     border-radius: 24px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     z-index: -1;
     /* Subtle glow effect matching Grok aesthetic */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: none;
   }
 
   /* Name Section */
   .hero-title {
-    font-size: 2.25rem;
+    font-size: clamp(2rem, 10vw, 3rem);
     font-weight: 700;
-    line-height: 1.1;
-    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
     letter-spacing: -0.02em;
     color: var(--grok-text-primary);
     text-align: center;
+    width: 100%;
   }
 
   /* Role Badge */
   .hero-subtitle {
-    font-size: 1rem;
+    font-size: clamp(0.95rem, 4vw, 1.1rem);
     font-weight: 500;
     color: var(--grok-text-secondary);
-    margin: 0 auto 1.5rem;
+    margin: 0;
     text-align: center;
-    max-width: 600px;
+    max-width: 100%;
+    line-height: 1.5;
   }
 
   /* Description Section */
@@ -1627,19 +1635,27 @@ p {
   }
 
   .hero-content {
-    padding: 1.75rem 1rem 1.25rem;
+    padding: 2rem 1rem;
     margin: 0 auto;
-    gap: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
   }
 
   .hero-title {
-    font-size: clamp(1.75rem, 8.5vw, 2.5rem);
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
     letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    text-align: center;
   }
 
   .hero-subtitle {
-    font-size: 0.9rem;
-    line-height: 1.45;
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    line-height: 1.5;
+    text-align: center;
+    margin: 0;
   }
 
   .hero-description {
@@ -2109,7 +2125,12 @@ p {
   }
 
   .hero-content {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
   }
 
   /* Smaller buttons but still touch-friendly */
