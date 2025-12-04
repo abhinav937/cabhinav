@@ -1,11 +1,18 @@
 /* Space Background Styles for Homepage */
+/* Default to black, transparent only when canvas is present */
 html {
-  background: transparent;
+  background: var(--grok-bg-primary, #000000);
 }
 
 body {
-  background: transparent;
+  background: var(--grok-bg-primary, #000000);
   position: relative;
+}
+
+/* Make transparent to show space canvas (only on homepage) */
+html:has(#space-canvas),
+body:has(#space-canvas) {
+  background: transparent;
 }
 
 /* Ensure canvas is visible on mobile */
@@ -22,26 +29,29 @@ body {
 
 /* Override mobile CSS that might hide the canvas */
 /* Ensuring Grok theme consistency on mobile */
+/* Only applies when space canvas is present (homepage) */
 @media (max-width: 768px) {
-  html {
+  html:has(#space-canvas),
+  body:has(#space-canvas) {
     background: transparent !important;
   }
-  body {
-    background: transparent !important;
-    /* Ensure Grok theme colors are maintained */
+  
+  body:has(#space-canvas) {
     color: #ffffff !important;
   }
-  .hero {
+  
+  .hero:has(~ #space-canvas),
+  body:has(#space-canvas) .hero {
     background: transparent !important;
   }
   
   /* Ensure all sections allow space background through */
-  main {
+  body:has(#space-canvas) main {
     background: transparent !important;
   }
   
   /* Sections should be transparent to show space */
-  .section {
+  body:has(#space-canvas) .section {
     background: transparent !important;
   }
 }

@@ -26,7 +26,7 @@
 
   --grok-accent: #ffffff; /* Pure white as accent */
   --grok-accent-hover: #f5f5f5;
-  --grok-accent-light: rgba(255, 255, 255, 0.05);
+  --grok-accent-light: rgba(0, 0, 0, 0.3);
 
   --grok-border: #333333;
   --grok-border-light: #444444;
@@ -979,29 +979,17 @@ p {
 @media (max-width: 768px) {
   /* COMPLETE MOBILE REDESIGN - Modern Card-Based Layout */
   /* Ensuring consistent Grok theme: black background, white text, minimalist design */
-
-  /* Root mobile theme enforcement */
-  :root {
-    --grok-bg-primary: #000000;
-    --grok-bg-secondary: #0f0f0f;
-    --grok-bg-tertiary: #1a1a1a;
-    --grok-text-primary: #ffffff;
-    --grok-text-secondary: #f5f5f5;
-    --grok-text-muted: #a3a3a3;
-    --grok-accent: #ffffff;
-    --grok-border: rgba(255, 255, 255, 0.08);
-  }
+  /* Note: All color variables are inherited from :root - no overrides needed for consistency */
 
   body {
     font-family: var(--font-primary);
     font-size: 14px;
     line-height: 1.5;
-    background: transparent;
+    background: var(--grok-bg-primary);
     color: var(--grok-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Ensure space background shows through */
-    background-color: transparent;
+    /* Use black background - space canvas will overlay if present */
   }
 
   /* Only apply no-scroll behavior to pages with the no-scroll-mobile class */
@@ -1011,9 +999,8 @@ p {
   }
 
   html {
-    background: transparent;
-    /* Ensure space background is visible */
-    background-color: transparent;
+    background: var(--grok-bg-primary);
+    /* Use black background - space canvas will overlay if present */
   }
 
   body.no-scroll-mobile html {

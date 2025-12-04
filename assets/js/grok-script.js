@@ -256,10 +256,17 @@ function showSkeletonLoader(container) {
 // Lazy loading for images (if needed in future)
 // Preload critical images
 function preloadCriticalImages() {
+    // Calculate relative path depth to assets folder
+    // Root page (/): depth 0 -> ./assets
+    // Subdirectory (/ls/): depth 1 -> ../assets
+    const pathSegments = window.location.pathname.split('/').filter(seg => seg.length > 0);
+    const depth = pathSegments.length;
+    const assetsBase = depth === 0 ? './assets' : '../assets';
+    
     const criticalImages = [
-        './assets/images/profile/my_profile.jpg',
-        './assets/images/projects/yeswegan1.JPEG',
-        './assets/images/projects/gan.webp'
+        `${assetsBase}/images/profile/my_profile.jpg`,
+        `${assetsBase}/images/projects/yeswegan1.JPEG`,
+        `${assetsBase}/images/projects/gan.webp`
     ];
 
     criticalImages.forEach(src => {
