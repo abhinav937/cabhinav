@@ -9,14 +9,14 @@ body {
   position: relative;
 }
 
-/* Make transparent to show space canvas (only on homepage) */
-html:has(#space-canvas),
-body:has(#space-canvas) {
+/* Make transparent to show enhanced space background (only on homepage) */
+html:has(#space-background-container),
+body:has(#space-background-container) {
   background: transparent;
 }
 
-/* Ensure canvas is visible on mobile */
-#space-canvas {
+/* Enhanced space background container styling */
+#space-background-container {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -24,34 +24,44 @@ body:has(#space-canvas) {
   height: 100vh !important;
   z-index: 0 !important;
   pointer-events: none !important;
-  display: block !important;
 }
 
-/* Override mobile CSS that might hide the canvas */
+/* Enhanced space background canvas styling */
+#space-background-container .enhanced-space-bg-canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* Override mobile CSS that might hide the space background */
 /* Ensuring Grok theme consistency on mobile */
-/* Only applies when space canvas is present (homepage) */
+/* Only applies when space background container is present (homepage) */
 @media (max-width: 768px) {
-  html:has(#space-canvas),
-  body:has(#space-canvas) {
+  html:has(#space-background-container),
+  body:has(#space-background-container) {
     background: transparent !important;
   }
-  
-  body:has(#space-canvas) {
+
+  body:has(#space-background-container) {
     color: #ffffff !important;
   }
-  
-  .hero:has(~ #space-canvas),
-  body:has(#space-canvas) .hero {
+
+  .hero:has(~ #space-background-container),
+  body:has(#space-background-container) .hero {
     background: transparent !important;
   }
-  
+
   /* Ensure all sections allow space background through */
-  body:has(#space-canvas) main {
+  body:has(#space-background-container) main {
     background: transparent !important;
   }
-  
+
   /* Sections should be transparent to show space */
-  body:has(#space-canvas) .section {
+  body:has(#space-background-container) .section {
     background: transparent !important;
   }
 }

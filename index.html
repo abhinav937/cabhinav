@@ -222,8 +222,8 @@
 </head>
 
 <body class="no-scroll-mobile">
-  <!-- Space Background Canvas -->
-  <canvas id="space-canvas"></canvas>
+  <!-- Enhanced Space Background Container -->
+  <div id="space-background-container"></div>
 
   <main>
     <!-- Hero Section -->
@@ -266,7 +266,22 @@
 
     <!-- Scripts -->
     <script src="./assets/js/grok-script.js"></script>
-    <script src="./assets/js/homepage-space-background.js"></script>
+    <script src="./assets/js/enhanced-space-background.js"></script>
+
+    <!-- Initialize enhanced space background for homepage -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const spaceContainer = document.getElementById('space-background-container');
+        if (spaceContainer) {
+          window.initEnhancedSpaceBackground(spaceContainer, {
+            enableControls: false,
+            mobileOptimizations: true,
+            targetFps: 30,
+            enableNebula: true
+          });
+        }
+      });
+    </script>
 
   </body>
 </html>

@@ -67,196 +67,175 @@
 
     <!-- Favicon -->
     <link rel="icon" href="../assets/images/icons/favicon.ico" type="image/x-icon">
+
+    <!-- Load the enhanced space background -->
+    <script src="../assets/js/enhanced-space-background.js"></script>
+
     <style>
         body {
             margin: 0;
             height: 100vh;
             overflow: hidden;
+            background: #161618;
         }
 
-        canvas {
+        .enhanced-space-bg-canvas {
             display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Control panel for the space background */
+        .space-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(22, 22, 24, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            z-index: 1000;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            display: none; /* Hidden by default, can be toggled */
+        }
+
+        .space-controls.show {
+            display: block;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .control-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(22, 22, 24, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .control-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
-    <canvas id="background"></canvas>
+    <!-- Control toggle button -->
+    <button class="control-toggle" id="controlToggle">⚙️ Controls</button>
+
+    <!-- Control panel -->
+    <div class="space-controls" id="spaceControls">
+        <div class="control-group">
+            <label for="speedControl">Animation Speed</label>
+            <input type="range" id="speedControl" min="0.1" max="3.0" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+            <label for="densityControl">Star Density</label>
+            <input type="range" id="densityControl" min="0.1" max="2.0" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+            <label for="nebulaToggle">Nebula Effect</label>
+            <input type="checkbox" id="nebulaToggle" checked>
+        </div>
+    </div>
+
     <script>
-        const canvas = document.getElementById('background');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Parameters for star layers - significantly increased counts
-        const STAR_LAYERS = [
-            { count: 1000, speed: 0.03, size: [0.3, 0.8], color: 'white' }, // Increased from 360 to 1000
-            { count: 500, speed: 0.01, size: [0.8, 1.3], color: 'rgba(180,200,255,0.7)' }, // Increased from 180 to 500
-            { count: 200, speed: 0.005, size: [1.3, 2], color: 'rgba(255,220,200,0.6)' } // Increased from 80 to 200
-        ];
-
-        // Helper to get random between min and max
-        function rand(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        // Generate stars for each layer
-        let stars = [];
-        function createStars() {
-            stars = [];
-            STAR_LAYERS.forEach((layer, i) => {
-                for (let j = 0; j < layer.count; j++) {
-                    // Each star gets a random radius and initial angle for orbit
-                    const angle = rand(0, Math.PI * 2);
-                    const radius = rand(
-                        0, // Start from center to ensure coverage near edges
-                        Math.max(canvas.width, canvas.height) * 1.5 // Extended range for full coverage
-                    );
-                    stars.push({
-                        baseSize: rand(layer.size[0], layer.size[1]),
-                        color: layer.color,
-                        twinkleSpeed: rand(0.001, 0.003),
-                        twinklePhase: rand(0, Math.PI * 2),
-                        layer: i,
-                        angle: angle,
-                        radius: radius
-                    });
-                }
+        // Initialize the enhanced space background
+        document.addEventListener('DOMContentLoaded', function() {
+            const spaceBg = window.initEnhancedSpaceBackground(document.body, {
+                enableControls: false, // We'll handle controls manually
+                enableNebula: true,
+                mobileOptimizations: true,
+                targetFps: 30
             });
-        }
-        createStars();
 
-        // Nebula/galaxy effect
-        function drawNebula() {
-            // Remove nebula effect for pure black background
-        }
+            // Set up control panel interactions
+            const controlToggle = document.getElementById('controlToggle');
+            const spaceControls = document.getElementById('spaceControls');
+            const speedControl = document.getElementById('speedControl');
+            const densityControl = document.getElementById('densityControl');
+            const nebulaToggle = document.getElementById('nebulaToggle');
 
-        function drawBackground() {
-            // Use #161618 as the background color
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = '#161618';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // No nebula
-        }
-
-        // Center of rotation far from the bottom right corner (unchanged)
-        function drawStars(globalAngle) {
-            const now = Date.now();
-            const cx = canvas.width * 1.5;
-            const cy = canvas.height * 1.5;
-            stars.forEach(star => {
-                // All stars rotate together
-                const angle = star.angle + globalAngle;
-                const x = cx + Math.cos(angle) * star.radius;
-                const y = cy + Math.sin(angle) * star.radius;
-
-                // Twinkle effect
-                const twinkle = 0.7 + 0.3 * Math.sin(now * star.twinkleSpeed + star.twinklePhase);
-                const size = star.baseSize * twinkle;
-
-                // Soft glow for larger stars
-                if (star.baseSize > 1.5) {
-                    ctx.save();
-                    ctx.globalAlpha = 0.3 * twinkle;
-                    ctx.shadowBlur = 16;
-                    ctx.shadowColor = star.color;
-                    ctx.beginPath();
-                    ctx.arc(x, y, size * 1.7, 0, Math.PI * 2);
-                    ctx.fillStyle = star.color;
-                    ctx.fill();
-                    ctx.restore();
-                }
-
-                // Main star
-                ctx.save();
-                ctx.globalAlpha = 0.85 * twinkle;
-                ctx.shadowBlur = star.baseSize > 2 ? 8 : 2;
-                ctx.shadowColor = star.color;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fillStyle = star.color;
-                ctx.fill();
-                ctx.restore();
+            // Toggle control panel visibility
+            controlToggle.addEventListener('click', function() {
+                spaceControls.classList.toggle('show');
+                controlToggle.textContent = spaceControls.classList.contains('show') ? '✕ Close' : '⚙️ Controls';
             });
-        }
 
-        let globalAngle = 0;
-        // --- Shooting Stars (Comets) ---
-        const SHOOTING_STAR_FREQ = 0.002;
-        const SHOOTING_STAR_LIFETIME = 1200;
-        let shootingStars = [];
-
-        function spawnShootingStar() {
-            const margin = 40;
-            const x = rand(margin, canvas.width - margin);
-            const y = margin;
-            // Angle: always from right to left, 15° to 45° from the horizontal
-            const angleBase = rand(Math.PI / 12, Math.PI / 4); // 15° to 45°
-            const angle = Math.PI - angleBase; // always leftward
-            const dx = Math.cos(angle);
-            const dy = Math.sin(angle);
-            shootingStars.push({
-                x, y, dx, dy, start: Date.now(),
-                len: rand(320, 480),
-                size: rand(1.1, 1.7),
-                color: 'rgba(255,255,255,0.98)'
+            // Control event listeners
+            speedControl.addEventListener('input', function() {
+                spaceBg.setAnimationSpeed(parseFloat(this.value));
             });
-        }
 
-        function drawShootingStars() {
-            const now = Date.now();
-            shootingStars = shootingStars.filter(star => now - star.start < SHOOTING_STAR_LIFETIME);
-            shootingStars.forEach(star => {
-                const age = now - star.start;
-                const fade = 1 - age / SHOOTING_STAR_LIFETIME;
-                star.x += star.dx * star.len / SHOOTING_STAR_LIFETIME * 16;
-                star.y += star.dy * star.len / SHOOTING_STAR_LIFETIME * 16;
-                let tailLen = star.len * fade;
-                const tailX = star.x - star.dx * tailLen;
-                const tailY = star.y - star.dy * tailLen;
-                const grad = ctx.createLinearGradient(star.x, star.y, tailX, tailY);
-                grad.addColorStop(0, `rgba(255,255,255,${0.8 * fade})`);
-                grad.addColorStop(0.2, `rgba(255,255,255,${0.25 * fade})`);
-                grad.addColorStop(1, 'rgba(255,255,255,0)');
-                ctx.save();
-                ctx.globalAlpha = 1;
-                ctx.strokeStyle = grad;
-                ctx.beginPath();
-                ctx.moveTo(star.x, star.y);
-                ctx.lineTo(tailX, tailY);
-                ctx.lineWidth = star.size * (0.8 + 0.7 * fade);
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = 'white';
-                ctx.stroke();
-                ctx.restore();
-                ctx.save();
-                ctx.globalAlpha = 0.85 * fade;
-                ctx.shadowBlur = 18;
-                ctx.shadowColor = 'white';
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size * 1.3, 0, Math.PI * 2);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-                ctx.restore();
+            densityControl.addEventListener('input', function() {
+                spaceBg.setStarDensity(parseFloat(this.value));
             });
-        }
 
-        function animate() {
-            drawBackground();
-            drawStars(globalAngle);
-            drawShootingStars();
-            globalAngle += 0.00024;
-            if (Math.random() < SHOOTING_STAR_FREQ) {
-                spawnShootingStar();
+            nebulaToggle.addEventListener('change', function() {
+                spaceBg.toggleNebula();
+            });
+
+            // Update range inputs to show current values
+            function updateControlLabels() {
+                speedControl.title = `Speed: ${speedControl.value}x`;
+                densityControl.title = `Density: ${densityControl.value}x`;
             }
-            requestAnimationFrame(animate);
-        }
 
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            createStars();
+            speedControl.addEventListener('input', updateControlLabels);
+            densityControl.addEventListener('input', updateControlLabels);
+            updateControlLabels();
         });
     </script>
 </body>
