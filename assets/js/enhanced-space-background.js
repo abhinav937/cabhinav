@@ -27,7 +27,7 @@
         nebulaCount: 3,
 
         // Performance
-        targetFps: 30,
+        targetFps: 60,
         enableVisibilityCheck: true,
         enableOffscreenRendering: true,
 
@@ -66,13 +66,14 @@
         }
 
         optimizeForMobile() {
-            // Reduce star counts and effects on mobile
+            // Reduce star counts and effects on mobile, but keep 60fps
             this.config.starLayers = this.config.starLayers.map(layer => ({
                 ...layer,
                 count: Math.floor(layer.count * 0.4)
             }));
             this.config.nebulaCount = 1;
-            this.config.targetFps = 24;
+            // Always target 60fps or higher
+            this.config.targetFps = 60;
         }
 
         init() {
