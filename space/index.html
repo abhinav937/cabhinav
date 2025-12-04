@@ -189,6 +189,14 @@
             <label for="nebulaToggle">Nebula Effect</label>
             <input type="checkbox" id="nebulaToggle" checked>
         </div>
+        <div class="control-group">
+            <label for="starlinkToggle">Starlink Trains</label>
+            <input type="checkbox" id="starlinkToggle" checked>
+        </div>
+        <div class="control-group">
+            <label style="display: block; margin-bottom: 4px; font-size: 11px; opacity: 0.8;">Manual Starlink Spawn</label>
+            <button id="spawnStarlinkBtn" style="padding: 8px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">Spawn Train (S)</button>
+        </div>
     </div>
 
     <script>
@@ -207,6 +215,8 @@
             const speedControl = document.getElementById('speedControl');
             const densityControl = document.getElementById('densityControl');
             const nebulaToggle = document.getElementById('nebulaToggle');
+            const starlinkToggle = document.getElementById('starlinkToggle');
+            const spawnStarlinkBtn = document.getElementById('spawnStarlinkBtn');
 
             // Toggle control panel visibility
             controlToggle.addEventListener('click', function() {
@@ -225,6 +235,38 @@
 
             nebulaToggle.addEventListener('change', function() {
                 spaceBg.toggleNebula();
+            });
+
+            starlinkToggle.addEventListener('change', function() {
+                spaceBg.toggleStarlinkTrains();
+            });
+
+            spawnStarlinkBtn.addEventListener('click', function() {
+                spaceBg.spawnStarlinkTrainManual();
+                // Visual feedback
+                const originalText = spawnStarlinkBtn.textContent;
+                spawnStarlinkBtn.textContent = '🚀 Launched!';
+                spawnStarlinkBtn.style.background = 'rgba(0,255,0,0.2)';
+                setTimeout(() => {
+                    spawnStarlinkBtn.textContent = originalText;
+                    spawnStarlinkBtn.style.background = 'rgba(255,255,255,0.1)';
+                }, 1000);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                // Press 'S' to spawn Starlink train
+                if (event.key.toLowerCase() === 's') {
+                    spaceBg.spawnStarlinkTrainManual();
+                    // Visual feedback on button
+                    const originalText = spawnStarlinkBtn.textContent;
+                    spawnStarlinkBtn.textContent = '🚀 S Pressed!';
+                    spawnStarlinkBtn.style.background = 'rgba(0,255,0,0.2)';
+                    setTimeout(() => {
+                        spawnStarlinkBtn.textContent = originalText;
+                        spawnStarlinkBtn.style.background = 'rgba(255,255,255,0.1)';
+                    }, 1000);
+                }
             });
 
             // Update range inputs to show current values

@@ -22,6 +22,12 @@
         shootingStarFreq: 0.0015,
         shootingStarLifetime: 1400,
 
+        // Starlink trains
+        enableStarlinkTrains: true,
+        starlinkTrainFreq: 0.00067, // ~1 per 25 seconds
+        starlinkTrainLifetime: 8000, // Longer lifetime for trains
+        starlinkSatellitesPerTrain: 8, // Number of satellites in a train
+
         // Nebula
         enableNebula: true,
         nebulaCount: 3,
@@ -88,6 +94,7 @@
             this.lastFrameTime = 0;
             this.globalAngle = 0;
             this.shootingStars = [];
+            this.starlinkTrains = [];
             this.animationId = null;
             this.isVisible = true;
 
@@ -344,6 +351,82 @@
             });
         }
 
+        spawnStarlinkTrain() {
+            // Starlink trains appear as a line of satellites moving across the sky
+            const margin = 100;
+
+            // Choose spawn side - can come from any edge
+            const spawnSide = Math.floor(this.rand(0, 4)); // 0: top, 1: right, 2: bottom, 3: left
+            let startX, startY, endX, endY;
+
+            switch (spawnSide) {
+                case 0: // From top
+                    startX = this.rand(-margin, this.canvas.width + margin);
+                    startY = -margin;
+                    endX = startX + this.rand(-200, 200);
+                    endY = this.canvas.height + margin;
+                    break;
+                case 1: // From right
+                    startX = this.canvas.width + margin;
+                    startY = this.rand(-margin, this.canvas.height + margin);
+                    endX = -margin;
+                    endY = startY + this.rand(-200, 200);
+                    break;
+                case 2: // From bottom
+                    startX = this.rand(-margin, this.canvas.width + margin);
+                    startY = this.canvas.height + margin;
+                    endX = startX + this.rand(-200, 200);
+                    endY = -margin;
+                    break;
+                case 3: // From left
+                    startX = -margin;
+                    startY = this.rand(-margin, this.canvas.height + margin);
+                    endX = this.canvas.width + margin;
+                    endY = startY + this.rand(-200, 200);
+                    break;
+            }
+
+            // Calculate direction and distance
+            const dx = endX - startX;
+            const dy = endY - startY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const speed = this.rand(0.8, 1.5); // Slower than shooting stars
+
+            // Create satellite train - satellites close enough to be distinctly visible
+            const satellites = [];
+            // Space satellites so they're visibly separate but in formation (about 25-35px apart)
+            const satelliteSpacing = 25 + this.rand(0, 10); // 25-35px between satellites
+
+            // Position satellites along the travel path with proper spacing
+            const totalTrainLength = satelliteSpacing * (this.config.starlinkSatellitesPerTrain - 1);
+            const trainStartProgress = this.rand(0.1, 0.9 - (totalTrainLength / distance)); // Ensure train fits in view
+
+            for (let i = 0; i < this.config.starlinkSatellitesPerTrain; i++) {
+                // Position each satellite along the path with consistent spacing
+                const satelliteProgress = trainStartProgress + (i * satelliteSpacing / distance);
+                const satelliteX = startX + dx * satelliteProgress;
+                const satelliteY = startY + dy * satelliteProgress;
+
+                satellites.push({
+                    x: satelliteX,
+                    y: satelliteY,
+                    baseSize: this.rand(1.5, 2.5),
+                    brightness: this.rand(0.7, 1.0),
+                    twinkleSpeed: this.rand(0.002, 0.005),
+                    twinklePhase: this.rand(0, Math.PI * 2)
+                });
+            }
+
+            this.starlinkTrains.push({
+                satellites,
+                start: Date.now(),
+                dx: (dx / distance) * speed,
+                dy: (dy / distance) * speed,
+                speed: speed,
+                distance: distance
+            });
+        }
+
         getRandomShootingStarColor() {
             const colors = [
                 'rgba(255,255,255,0.95)',  // White
@@ -405,6 +488,58 @@
             });
         }
 
+        drawStarlinkTrains() {
+            const now = Date.now();
+
+            // Filter out expired trains
+            this.starlinkTrains = this.starlinkTrains.filter(train =>
+                now - train.start < this.config.starlinkTrainLifetime
+            );
+
+            this.starlinkTrains.forEach(train => {
+                const age = now - train.start;
+                const progress = age / this.config.starlinkTrainLifetime;
+                const fade = 1 - progress;
+
+                // Move entire train
+                train.satellites.forEach((satellite, index) => {
+                    satellite.x += train.dx;
+                    satellite.y += train.dy;
+
+                    // Only draw satellites that are visible on screen
+                    if (satellite.x < -50 || satellite.x > this.canvas.width + 50 ||
+                        satellite.y < -50 || satellite.y > this.canvas.height + 50) {
+                        return;
+                    }
+
+                    // Twinkle effect for each satellite
+                    const twinkle = satellite.brightness * (0.7 + 0.3 * Math.sin(now * satellite.twinkleSpeed + satellite.twinklePhase));
+
+                    // Draw satellite glow
+                    this.ctx.save();
+                    this.ctx.globalAlpha = 0.3 * fade * twinkle;
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = 'white';
+                    this.ctx.beginPath();
+                    this.ctx.arc(satellite.x, satellite.y, satellite.baseSize * 2, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.fill();
+                    this.ctx.restore();
+
+                    // Draw main satellite
+                    this.ctx.save();
+                    this.ctx.globalAlpha = 0.9 * fade * twinkle;
+                    this.ctx.shadowBlur = 8;
+                    this.ctx.shadowColor = 'white';
+                    this.ctx.beginPath();
+                    this.ctx.arc(satellite.x, satellite.y, satellite.baseSize, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+            });
+        }
+
         animate = (currentTime) => {
             // Frame rate limiting
             if (currentTime - this.lastFrameTime < (1000 / this.config.targetFps)) {
@@ -422,12 +557,18 @@
             this.drawBackground();
             this.drawStars(this.globalAngle);
             this.drawShootingStars();
+            this.drawStarlinkTrains();
 
             this.globalAngle += 0.0002 * this.config.animationSpeed;
 
             // Spawn shooting stars
             if (Math.random() < this.config.shootingStarFreq) {
                 this.spawnShootingStar();
+            }
+
+            // Spawn Starlink trains
+            if (this.config.enableStarlinkTrains && Math.random() < this.config.starlinkTrainFreq) {
+                this.spawnStarlinkTrain();
             }
 
             this.animationId = requestAnimationFrame(this.animate);
@@ -492,6 +633,19 @@
                 this.createNebula();
             } else {
                 this.nebula = [];
+            }
+        }
+
+        toggleStarlinkTrains() {
+            this.config.enableStarlinkTrains = !this.config.enableStarlinkTrains;
+            if (!this.config.enableStarlinkTrains) {
+                this.starlinkTrains = []; // Clear any active trains
+            }
+        }
+
+        spawnStarlinkTrainManual() {
+            if (this.config.enableStarlinkTrains) {
+                this.spawnStarlinkTrain();
             }
         }
     }
