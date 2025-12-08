@@ -273,12 +273,34 @@
       document.addEventListener('DOMContentLoaded', function() {
         const spaceContainer = document.getElementById('space-background-container');
         if (spaceContainer) {
-          window.initEnhancedSpaceBackground(spaceContainer, {
+          const config = {
             enableControls: false,
             mobileOptimizations: true,
             targetFps: 60,
-            enableNebula: true
-          });
+            enableNebula: true,
+            enableStarlinkTrains: false,
+
+            // Star density controls - adjust these values to change star counts
+            starDensity: 0.5,  // Overall multiplier (0.1 = 10% stars, 3.0 = 300% stars)
+
+            // Shooting star frequency (0.0001 = very rare, 0.01 = very frequent)
+            shootingStarFreq: 0.001,  // Default frequency
+
+            // Nebula settings
+            nebulaCount: 4,  // Number of nebula clouds (2-6 recommended)
+
+            // Animation settings
+            animationSpeed: 1.2,  // Overall animation speed (0.1 = slow, 2.0 = fast)
+
+            // Individual layer controls (uncomment to override defaults)
+            // starLayers: [
+            //   { count: 2000, speed: 0.008, size: [0.2, 0.6], color: 'white', parallax: 0.1 },
+            //   { count: 1200, speed: 0.008, size: [0.6, 1.1], color: 'rgba(180,200,255,0.7)', parallax: 0.3 },
+            //   { count: 600, speed: 0.003, size: [1.1, 1.8], color: 'rgba(255,220,200,0.6)', parallax: 0.5 },
+            //   { count: 200, speed: 0.001, size: [1.8, 3.0], color: 'rgba(255,240,180,0.5)', parallax: 0.8 }
+            // ]
+          };
+          window.initEnhancedSpaceBackground(spaceContainer, config);
         }
       });
     </script>

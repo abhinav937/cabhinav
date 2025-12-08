@@ -88,114 +88,344 @@
             height: 100vh;
         }
 
-        /* Control panel for the space background */
+        /* Enhanced Control Panel */
+    .space-controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(22, 22, 24, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 24px;
+        z-index: 1000;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 14px;
+        display: none;
+        min-width: 280px;
+        max-width: 320px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .space-controls.show {
+        display: block;
+    }
+
+    .controls-header {
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .controls-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        background: linear-gradient(135deg, #ffffff, #b8c5d6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .controls-subtitle {
+        font-size: 12px;
+        opacity: 0.7;
+        margin: 0;
+    }
+
+    .control-section {
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .control-group {
+        margin-bottom: 16px;
+    }
+
+    .control-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .control-group label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    .control-value {
+        font-size: 12px;
+        opacity: 0.8;
+        font-weight: 400;
+    }
+
+    .control-group input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        outline: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .control-group input[type="range"]:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffffff, #e0e7ff);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.2);
+    }
+
+    .control-group input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffffff, #e0e7ff);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+
+    .control-group input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .control-group input[type="checkbox"]:checked {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .spawn-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .spawn-btn {
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .spawn-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .spawn-btn:active {
+        transform: translateY(0);
+    }
+
+    .spawn-btn.starlink {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .spawn-btn.starlink:hover {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2));
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .spawn-btn.meteor {
+        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(220, 38, 38, 0.1));
+        border-color: rgba(245, 101, 101, 0.3);
+    }
+
+    .spawn-btn.meteor:hover {
+        background: linear-gradient(135deg, rgba(245, 101, 101, 0.2), rgba(220, 38, 38, 0.2));
+        border-color: rgba(245, 101, 101, 0.4);
+    }
+
+    .control-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(22, 22, 24, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: white;
+        cursor: pointer;
+        z-index: 1000;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .control-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .control-toggle:active {
+        transform: translateY(0);
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
         .space-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(22, 22, 24, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            min-width: auto;
+            max-width: none;
             padding: 16px;
-            z-index: 1000;
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            display: none; /* Hidden by default, can be toggled */
-        }
-
-        .space-controls.show {
-            display: block;
-        }
-
-        .control-group {
-            margin-bottom: 12px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-
-        .control-group input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-        }
-
-        .control-group input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
         }
 
         .control-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(22, 22, 24, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 8px 12px;
-            color: white;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 12px;
-            transition: all 0.3s ease;
+            top: 10px;
+            left: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
         }
 
-        .control-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .spawn-buttons {
+            grid-template-columns: 1fr;
+            gap: 6px;
         }
+    }
     </style>
 </head>
 <body>
     <!-- Control toggle button -->
-    <button class="control-toggle" id="controlToggle">⚙️ Controls</button>
+    <button class="control-toggle" id="controlToggle">
+        <span class="toggle-icon">⚙</span>
+        Controls
+    </button>
 
-    <!-- Control panel -->
+    <!-- Enhanced Control Panel -->
     <div class="space-controls" id="spaceControls">
-        <div class="control-group">
-            <label for="speedControl">Animation Speed</label>
-            <input type="range" id="speedControl" min="0.1" max="3.0" step="0.1" value="1.0">
+        <div class="controls-header">
+            <h3 class="controls-title">Space Controls</h3>
+            <p class="controls-subtitle">Customize your cosmic experience</p>
         </div>
-        <div class="control-group">
-            <label for="densityControl">Star Density</label>
-            <input type="range" id="densityControl" min="0.1" max="2.0" step="0.1" value="1.0">
+
+        <!-- Animation Controls -->
+        <div class="control-section">
+            <h4 class="section-title">Animation</h4>
+
+            <div class="control-group">
+                <label for="speedControl">
+                    <span>Animation Speed</span>
+                    <span class="control-value" id="speedValue">1.0x</span>
+                </label>
+                <input type="range" id="speedControl" min="0.1" max="3.0" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label for="densityControl">
+                    <span>Star Density</span>
+                    <span class="control-value" id="densityValue">100%</span>
+                </label>
+                <input type="range" id="densityControl" min="0.2" max="3.0" step="0.1" value="1.0">
+            </div>
         </div>
-        <div class="control-group">
-            <label for="nebulaToggle">Nebula Effect</label>
-            <input type="checkbox" id="nebulaToggle" checked>
+
+        <!-- Visual Effects -->
+        <div class="control-section">
+            <h4 class="section-title">Effects</h4>
+
+            <div class="control-group">
+                <label for="nebulaToggle">
+                    <span>Nebula Clouds</span>
+                    <input type="checkbox" id="nebulaToggle" checked>
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label for="starlinkToggle">
+                    <span>Starlink Trains</span>
+                    <input type="checkbox" id="starlinkToggle" checked>
+                </label>
+            </div>
         </div>
-        <div class="control-group">
-            <label for="starlinkToggle">Starlink Trains</label>
-            <input type="checkbox" id="starlinkToggle" checked>
+
+        <!-- Manual Controls -->
+        <div class="control-section">
+            <h4 class="section-title">Manual Spawn</h4>
+            <p style="font-size: 11px; opacity: 0.7; margin: 0 0 12px 0;">Trigger cosmic events instantly</p>
+
+            <div class="spawn-buttons">
+                <button class="spawn-btn starlink" id="spawnStarlinkBtn">
+                    Starlink<br><small>S</small>
+                </button>
+                <button class="spawn-btn meteor" id="spawnMeteorBtn">
+                    Meteor<br><small>M</small>
+                </button>
+            </div>
         </div>
-        <div class="control-group">
-            <label style="display: block; margin-bottom: 4px; font-size: 11px; opacity: 0.8;">Manual Starlink Spawn</label>
-            <button id="spawnStarlinkBtn" style="padding: 8px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">Spawn Train (S)</button>
+
+        <!-- Keyboard Shortcuts Info -->
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <p style="font-size: 11px; opacity: 0.6; margin: 0; text-align: center;">
+                Press <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px; font-size: 10px;">S</kbd> or <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px; font-size: 10px;">M</kbd> for quick spawn
+            </p>
         </div>
     </div>
 
@@ -217,6 +447,7 @@
             const nebulaToggle = document.getElementById('nebulaToggle');
             const starlinkToggle = document.getElementById('starlinkToggle');
             const spawnStarlinkBtn = document.getElementById('spawnStarlinkBtn');
+            const spawnMeteorBtn = document.getElementById('spawnMeteorBtn');
 
             // Toggle control panel visibility
             controlToggle.addEventListener('click', function() {
@@ -245,11 +476,23 @@
                 spaceBg.spawnStarlinkTrainManual();
                 // Visual feedback
                 const originalText = spawnStarlinkBtn.textContent;
-                spawnStarlinkBtn.textContent = '🚀 Launched!';
+                spawnStarlinkBtn.textContent = 'Launched!';
                 spawnStarlinkBtn.style.background = 'rgba(0,255,0,0.2)';
                 setTimeout(() => {
                     spawnStarlinkBtn.textContent = originalText;
                     spawnStarlinkBtn.style.background = 'rgba(255,255,255,0.1)';
+                }, 1000);
+            });
+
+            spawnMeteorBtn.addEventListener('click', function() {
+                spaceBg.spawnShootingStarManual();
+                // Visual feedback
+                const originalText = spawnMeteorBtn.textContent;
+                spawnMeteorBtn.textContent = 'Spawned!';
+                spawnMeteorBtn.style.background = 'rgba(255,165,0,0.2)';
+                setTimeout(() => {
+                    spawnMeteorBtn.textContent = originalText;
+                    spawnMeteorBtn.style.background = 'rgba(255,255,255,0.1)';
                 }, 1000);
             });
 
@@ -260,24 +503,44 @@
                     spaceBg.spawnStarlinkTrainManual();
                     // Visual feedback on button
                     const originalText = spawnStarlinkBtn.textContent;
-                    spawnStarlinkBtn.textContent = '🚀 S Pressed!';
+                    spawnStarlinkBtn.textContent = 'S Pressed!';
                     spawnStarlinkBtn.style.background = 'rgba(0,255,0,0.2)';
                     setTimeout(() => {
                         spawnStarlinkBtn.textContent = originalText;
                         spawnStarlinkBtn.style.background = 'rgba(255,255,255,0.1)';
                     }, 1000);
                 }
+                // Press 'M' to spawn meteor
+                if (event.key.toLowerCase() === 'm') {
+                    spaceBg.spawnShootingStarManual();
+                    // Visual feedback on button
+                    const originalText = spawnMeteorBtn.textContent;
+                    spawnMeteorBtn.textContent = 'M Pressed!';
+                    spawnMeteorBtn.style.background = 'rgba(255,165,0,0.2)';
+                    setTimeout(() => {
+                        spawnMeteorBtn.textContent = originalText;
+                        spawnMeteorBtn.style.background = 'rgba(255,255,255,0.1)';
+                    }, 1000);
+                }
             });
 
-            // Update range inputs to show current values
-            function updateControlLabels() {
-                speedControl.title = `Speed: ${speedControl.value}x`;
-                densityControl.title = `Density: ${densityControl.value}x`;
+            // Get value display elements
+            const speedValue = document.getElementById('speedValue');
+            const densityValue = document.getElementById('densityValue');
+
+            // Update control displays in real-time
+            function updateControlDisplays() {
+                speedValue.textContent = `${speedControl.value}x`;
+                densityValue.textContent = `${(densityControl.value * 100).toFixed(0)}%`;
+
+                // Update tooltips
+                speedControl.title = `Animation Speed: ${speedControl.value}x`;
+                densityControl.title = `Star Density: ${(densityControl.value * 100).toFixed(0)}%`;
             }
 
-            speedControl.addEventListener('input', updateControlLabels);
-            densityControl.addEventListener('input', updateControlLabels);
-            updateControlLabels();
+            speedControl.addEventListener('input', updateControlDisplays);
+            densityControl.addEventListener('input', updateControlDisplays);
+            updateControlDisplays();
         });
     </script>
 </body>

@@ -10,12 +10,12 @@
 
     // Configuration options
     const DEFAULT_CONFIG = {
-        // Star layers
+        // Star layers - increased counts for denser starfield
         starLayers: [
-            { count: 800, speed: 0.02, size: [0.2, 0.6], color: 'white', parallax: 0.1 },
-            { count: 400, speed: 0.008, size: [0.6, 1.1], color: 'rgba(180,200,255,0.7)', parallax: 0.3 },
-            { count: 150, speed: 0.003, size: [1.1, 1.8], color: 'rgba(255,220,200,0.6)', parallax: 0.5 },
-            { count: 50, speed: 0.001, size: [1.8, 3.0], color: 'rgba(255,240,180,0.5)', parallax: 0.8 }
+            { count: 2000, speed: 0.008, size: [0.2, 0.6], color: 'white', parallax: 0.1 }, // Increased from 800
+            { count: 1200, speed: 0.008, size: [0.6, 1.1], color: 'rgba(180,200,255,0.7)', parallax: 0.3 }, // Increased from 400
+            { count: 600, speed: 0.003, size: [1.1, 1.8], color: 'rgba(255,220,200,0.6)', parallax: 0.5 }, // Increased from 150
+            { count: 200, speed: 0.001, size: [1.8, 3.0], color: 'rgba(255,240,180,0.5)', parallax: 0.8 } // Increased from 50
         ],
 
         // Shooting stars
@@ -30,7 +30,7 @@
 
         // Nebula
         enableNebula: true,
-        nebulaCount: 3,
+        nebulaCount: 4, // Increased for better coverage
 
         // Performance
         targetFps: 60,
@@ -75,9 +75,9 @@
             // Reduce star counts and effects on mobile, but keep 60fps
             this.config.starLayers = this.config.starLayers.map(layer => ({
                 ...layer,
-                count: Math.floor(layer.count * 0.4)
+                count: Math.floor(layer.count * 0.3) // Reduced from 0.4 to 0.3 for denser mobile stars
             }));
-            this.config.nebulaCount = 1;
+            this.config.nebulaCount = 2; // Reduced but still visible on mobile
             // Always target 60fps or higher
             this.config.targetFps = 60;
         }
@@ -166,26 +166,60 @@
 
             this.nebula = [];
             for (let i = 0; i < this.config.nebulaCount; i++) {
+                // Create more complex nebula with multiple color layers
+                const nebulaColors = this.getRandomNebulaColors();
                 this.nebula.push({
                     x: this.rand(0, this.canvas.width || 1920),
                     y: this.rand(0, this.canvas.height || 1080),
-                    radius: this.rand(200, 400),
-                    color: this.getRandomNebulaColor(),
-                    opacity: this.rand(0.03, 0.08),
-                    pulsateSpeed: this.rand(0.001, 0.003),
-                    pulsatePhase: this.rand(0, Math.PI * 2)
+                    radius: this.rand(300, 600), // Larger for better visibility
+                    colors: nebulaColors,
+                    baseOpacity: this.rand(0.08, 0.15), // More visible
+                    pulsateSpeed: this.rand(0.0005, 0.001), // Slower, smoother pulsation
+                    pulsatePhase: this.rand(0, Math.PI * 2),
+                    secondaryRadius: this.rand(150, 300), // Secondary cloud layer
+                    secondaryOffset: {
+                        x: this.rand(-100, 100),
+                        y: this.rand(-100, 100)
+                    }
                 });
             }
         }
 
-        getRandomNebulaColor() {
-            const colors = [
-                'rgba(100, 150, 255, 0.1)',  // Blue
-                'rgba(255, 100, 150, 0.1)',  // Pink
-                'rgba(150, 255, 100, 0.1)',  // Green
-                'rgba(255, 150, 100, 0.1)'   // Orange
+        getRandomNebulaColors() {
+            // Return multiple colors for layered, more realistic nebula
+            const colorSchemes = [
+                // Blue nebula with purple accents
+                {
+                    primary: 'rgba(100, 150, 255, 0.08)',
+                    secondary: 'rgba(150, 100, 255, 0.05)',
+                    tertiary: 'rgba(80, 120, 200, 0.03)'
+                },
+                // Pink/Purple nebula
+                {
+                    primary: 'rgba(255, 120, 200, 0.08)',
+                    secondary: 'rgba(200, 100, 255, 0.05)',
+                    tertiary: 'rgba(255, 150, 180, 0.03)'
+                },
+                // Green nebula
+                {
+                    primary: 'rgba(120, 255, 150, 0.08)',
+                    secondary: 'rgba(100, 200, 120, 0.05)',
+                    tertiary: 'rgba(150, 255, 180, 0.03)'
+                },
+                // Orange nebula
+                {
+                    primary: 'rgba(255, 180, 100, 0.08)',
+                    secondary: 'rgba(255, 150, 80, 0.05)',
+                    tertiary: 'rgba(200, 120, 60, 0.03)'
+                },
+                // Mixed nebula (blue-pink)
+                {
+                    primary: 'rgba(150, 180, 255, 0.08)',
+                    secondary: 'rgba(255, 150, 220, 0.05)',
+                    tertiary: 'rgba(180, 200, 255, 0.03)'
+                }
             ];
-            return colors[Math.floor(this.rand(0, colors.length))];
+            return colorSchemes[Math.floor(this.rand(0, colorSchemes.length))];
         }
 
         createControls() {
@@ -219,21 +253,67 @@
             this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
 
             this.nebula.forEach(nebula => {
-                const pulsate = 0.8 + 0.4 * Math.sin(Date.now() * nebula.pulsateSpeed + nebula.pulsatePhase);
-                const radius = nebula.radius * pulsate;
+                const time = Date.now();
+                const pulsate = 0.7 + 0.3 * Math.sin(time * nebula.pulsateSpeed + nebula.pulsatePhase);
+                const slowPulsate = 0.8 + 0.2 * Math.sin(time * nebula.pulsateSpeed * 0.3 + nebula.pulsatePhase);
 
-                const gradient = this.offscreenCtx.createRadialGradient(
+                // Main nebula cloud
+                const mainRadius = nebula.radius * pulsate;
+                const mainGradient = this.offscreenCtx.createRadialGradient(
                     nebula.x, nebula.y, 0,
-                    nebula.x, nebula.y, radius
+                    nebula.x, nebula.y, mainRadius
                 );
-                gradient.addColorStop(0, nebula.color.replace('0.1', (nebula.opacity * pulsate).toString()));
-                gradient.addColorStop(1, 'transparent');
+                const mainOpacity = nebula.baseOpacity * pulsate;
+                mainGradient.addColorStop(0, nebula.colors.primary.replace('0.08', mainOpacity.toString()));
+                mainGradient.addColorStop(0.4, nebula.colors.secondary.replace('0.05', (mainOpacity * 0.6).toString()));
+                mainGradient.addColorStop(0.8, nebula.colors.tertiary.replace('0.03', (mainOpacity * 0.3).toString()));
+                mainGradient.addColorStop(1, 'transparent');
 
-                this.offscreenCtx.fillStyle = gradient;
+                this.offscreenCtx.fillStyle = mainGradient;
                 this.offscreenCtx.beginPath();
-                this.offscreenCtx.arc(nebula.x, nebula.y, radius, 0, Math.PI * 2);
+                this.offscreenCtx.arc(nebula.x, nebula.y, mainRadius, 0, Math.PI * 2);
                 this.offscreenCtx.fill();
+
+                // Secondary cloud layer for more depth
+                const secondaryRadius = nebula.secondaryRadius * slowPulsate;
+                const secondaryX = nebula.x + nebula.secondaryOffset.x * slowPulsate;
+                const secondaryY = nebula.y + nebula.secondaryOffset.y * slowPulsate;
+
+                const secondaryGradient = this.offscreenCtx.createRadialGradient(
+                    secondaryX, secondaryY, 0,
+                    secondaryX, secondaryY, secondaryRadius
+                );
+                const secondaryOpacity = nebula.baseOpacity * 0.4 * slowPulsate;
+                secondaryGradient.addColorStop(0, nebula.colors.secondary.replace('0.05', secondaryOpacity.toString()));
+                secondaryGradient.addColorStop(0.6, nebula.colors.tertiary.replace('0.03', (secondaryOpacity * 0.5).toString()));
+                secondaryGradient.addColorStop(1, 'transparent');
+
+                this.offscreenCtx.fillStyle = secondaryGradient;
+                this.offscreenCtx.beginPath();
+                this.offscreenCtx.arc(secondaryX, secondaryY, secondaryRadius, 0, Math.PI * 2);
+                this.offscreenCtx.fill();
+
+                // Add subtle noise/sparkle effect
+                this.addNebulaSparkles(nebula, time);
             });
+        }
+
+        addNebulaSparkles(nebula, time) {
+            // Add subtle sparkling effects within nebula regions
+            const sparkleCount = 3;
+            for (let i = 0; i < sparkleCount; i++) {
+                const angle = (time * 0.001 + i * Math.PI * 2 / sparkleCount) % (Math.PI * 2);
+                const distance = nebula.radius * 0.3 * (0.8 + 0.4 * Math.sin(time * 0.002 + nebula.pulsatePhase + i));
+                const sparkleX = nebula.x + Math.cos(angle) * distance;
+                const sparkleY = nebula.y + Math.sin(angle) * distance;
+
+                const sparkleOpacity = nebula.baseOpacity * 0.3 * (0.5 + 0.5 * Math.sin(time * 0.003 + i));
+
+                this.offscreenCtx.fillStyle = `rgba(255, 255, 255, ${sparkleOpacity})`;
+                this.offscreenCtx.beginPath();
+                this.offscreenCtx.arc(sparkleX, sparkleY, 1 + Math.sin(time * 0.004 + i) * 0.5, 0, Math.PI * 2);
+                this.offscreenCtx.fill();
+            }
         }
 
         drawBackground() {
@@ -313,29 +393,26 @@
             this.ctx.restore();
         }
 
-        spawnShootingStar() {
+        spawnShootingStar(groupOffset = 0, sharedAngle = null) {
             const margin = 60;
-            const spawnFromTop = this.rand(0, 1) > 0.3; // 70% from top
 
-            let x, y, angle;
-            if (spawnFromTop) {
-                x = this.rand(margin, this.canvas.width - margin);
-                y = margin;
-                // Various angles from top
-                const angleOptions = [
-                    this.rand(Math.PI / 6, Math.PI / 3),    // Right-down
-                    this.rand(Math.PI * 4/6, Math.PI * 5/6), // Left-down
-                    this.rand(Math.PI * 2/3, Math.PI * 5/6)  // More left-down
-                ];
-                angle = angleOptions[Math.floor(this.rand(0, angleOptions.length))];
+            // Always spawn in 1st quadrant (top-right) - from center-right to top-right
+            const centerX = this.canvas.width / 2;
+            const centerY = this.canvas.height / 2;
+            let x = this.rand(centerX, this.canvas.width - margin) + groupOffset * 60; // Wider spacing for parallel meteors
+            let y = this.rand(margin, centerY) + groupOffset * 30; // Consistent vertical offset for parallel meteors
+
+            // Always travel diagonally to 3rd quadrant (bottom-left)
+            // For parallel groups, ALL meteors use the SAME angle
+            let angle;
+            if (sharedAngle !== null) {
+                // Use the shared angle for parallel meteors
+                angle = sharedAngle;
             } else {
-                // Spawn from sides occasionally
-                const fromLeft = this.rand(0, 1) > 0.5;
-                x = fromLeft ? margin : this.canvas.width - margin;
-                y = this.rand(margin, this.canvas.height - margin);
-                angle = fromLeft ?
-                    this.rand(Math.PI / 4, Math.PI * 3/4) :  // Right-down from left
-                    this.rand(Math.PI * 5/4, Math.PI * 7/4); // Left-down from right
+                // Generate new angle for single meteors
+                const baseAngle = Math.PI * 3/4; // 135 degrees - diagonal to bottom-left
+                const angleVariation = Math.PI / 6; // ±30 degrees variation for single meteors
+                angle = baseAngle + this.rand(-angleVariation, angleVariation);
             }
 
             const dx = Math.cos(angle);
@@ -563,7 +640,23 @@
 
             // Spawn shooting stars
             if (Math.random() < this.config.shootingStarFreq) {
-                this.spawnShootingStar();
+                // Moderately spawn multiple meteors in parallel
+                const meteorCount = this.rand(0, 1) < 0.15 ? (this.rand(0, 1) < 0.7 ? 2 : 3) : 1;
+
+                // Generate ONE shared angle for ALL meteors (always use shared angle for consistency)
+                const sharedAngle = (() => {
+                    const baseAngle = Math.PI * 3/4; // 135 degrees - diagonal to bottom-left
+                    const angleVariation = Math.PI / 6; // ±30 degrees variation
+                    return baseAngle + this.rand(-angleVariation, angleVariation);
+                })();
+
+                for (let i = 0; i < meteorCount; i++) {
+                    setTimeout(() => {
+                        // Pass offset and shared angle to create truly parallel meteor groups
+                        const offset = meteorCount > 1 ? (i - (meteorCount - 1) / 2) : 0;
+                        this.spawnShootingStar(offset, sharedAngle);
+                    }, i * 200); // Moderate stagger
+                }
             }
 
             // Spawn Starlink trains
@@ -623,7 +716,7 @@
         }
 
         setStarDensity(density) {
-            this.config.starDensity = Math.max(0.1, Math.min(2.0, density));
+            this.config.starDensity = Math.max(0.1, Math.min(3.0, density));
             this.createStars();
         }
 
@@ -648,6 +741,26 @@
                 this.spawnStarlinkTrain();
             }
         }
+
+        spawnShootingStarManual() {
+            // Increased chance of multiple meteors in parallel
+            const meteorCount = this.rand(0, 1) < 0.4 ? (this.rand(0, 1) < 0.6 ? 2 : 3) : 1;
+
+            // Generate ONE shared angle for ALL meteors in the group (truly parallel)
+            const sharedAngle = (() => {
+                const baseAngle = Math.PI * 3/4; // 135 degrees - diagonal to bottom-left
+                const angleVariation = Math.PI / 6; // ±30 degrees variation
+                return baseAngle + this.rand(-angleVariation, angleVariation);
+            })();
+
+            for (let i = 0; i < meteorCount; i++) {
+                setTimeout(() => {
+                    // Pass offset and shared angle to create truly parallel meteor groups
+                    const offset = meteorCount > 1 ? (i - (meteorCount - 1) / 2) : 0;
+                    this.spawnShootingStar(offset, sharedAngle);
+                }, i * 300); // Longer stagger for dramatic effect
+            }
+        }
     }
 
     // Global initialization function
@@ -655,15 +768,15 @@
         return new EnhancedSpaceBackground(target, config);
     };
 
-    // Auto-initialize if container exists
-    document.addEventListener('DOMContentLoaded', function() {
-        const spaceContainer = document.getElementById('space-container') || document.body;
-        if (spaceContainer && !spaceContainer.querySelector('.enhanced-space-bg-canvas')) {
-            global.initEnhancedSpaceBackground(spaceContainer, {
-                enableControls: false,
-                mobileOptimizations: true
-            });
-        }
-    });
+    // Auto-initialize if container exists (disabled when manual init is used)
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const spaceContainer = document.getElementById('space-container') || document.body;
+    //     if (spaceContainer && !spaceContainer.querySelector('.enhanced-space-bg-canvas')) {
+    //         global.initEnhancedSpaceBackground(spaceContainer, {
+    //             enableControls: false,
+    //             mobileOptimizations: true
+    //         });
+    //     }
+    // });
 
 })(window);

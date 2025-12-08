@@ -45,21 +45,21 @@ body:has(#space-background-container) {
   body:has(#space-background-container) {
     background: transparent !important;
   }
-
+  
   body:has(#space-background-container) {
     color: #ffffff !important;
   }
-
+  
   .hero:has(~ #space-background-container),
   body:has(#space-background-container) .hero {
     background: transparent !important;
   }
-
+  
   /* Ensure all sections allow space background through */
   body:has(#space-background-container) main {
     background: transparent !important;
   }
-
+  
   /* Sections should be transparent to show space */
   body:has(#space-background-container) .section {
     background: transparent !important;
