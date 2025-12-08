@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cube Progress Indicator</title>
+    <script src="../../assets/js/enhanced-space-background.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas class="enhanced-space-bg-canvas"></canvas>
+    <div class="demo-container">
+        <h1>Cube Progress Indicator</h1>
+        <p>A 3x3 grid progress indicator arranged like a cube's face</p>
+
+        <div class="progress-demo">
+            <div class="cube-progress-indicator" id="progressIndicator">
+                <div class="dot" data-index="0"></div>
+                <div class="dot" data-index="1"></div>
+                <div class="dot" data-index="2"></div>
+                <div class="dot" data-index="3"></div>
+                <div class="dot" data-index="4"></div>
+                <div class="dot" data-index="5"></div>
+                <div class="dot" data-index="6"></div>
+                <div class="dot" data-index="7"></div>
+                <div class="dot" data-index="8"></div>
+            </div>
+
+            <div class="pattern-selector">
+                <label for="patternSelect">Animation Pattern:</label>
+                <select id="patternSelect" class="pattern-select">
+                    <option value="anticlockwise-inward">Anticlockwise Inward</option>
+                </select>
+            </div>
+
+            <div class="train-control">
+                <label class="train-toggle-switch">
+                    <input type="checkbox" id="trainToggleBtn">
+                    <span class="slider"></span>
+                    <span class="toggle-label">Train Effect</span>
+                </label>
+            </div>
+
+            <div class="controls">
+                <label for="progressInput">Progress: <span id="progressValue">0</span>%</label>
+                <input type="range" id="progressInput" min="0" max="100" value="0" step="1">
+            </div>
+
+            <div class="preset-buttons">
+                <button class="preset-btn" data-progress="25">25%</button>
+                <button class="preset-btn" data-progress="50">50%</button>
+                <button class="preset-btn" data-progress="75">75%</button>
+                <button class="preset-btn" data-progress="100">100%</button>
+            </div>
+        </div>
+
+        <div class="code-example">
+            <h2>Usage</h2>
+            <h3>Multiple Modes on Same Page</h3>
+            <pre><code>&lt;!-- Progress indicator --&gt;
+&lt;div id="progress-indicator"&gt;&lt;/div&gt;
+
+&lt;!-- Train animation --&gt;
+&lt;div id="train-indicator"&gt;&lt;/div&gt;
+
+&lt;!-- Another progress with different pattern --&gt;
+&lt;div id="progress-2"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Progress mode - manual control
+const progressIndicator = new CubeProgressIndicator('#progress-indicator', {
+    pattern: 'sequential',
+    mode: 'progress'
+});
+progressIndicator.setProgress(75);
+
+// Train mode - auto-starts animation
+const trainIndicator = new CubeProgressIndicator('#train-indicator', {
+    pattern: 'anticlockwise-inward',
+    mode: 'train',
+    autoStart: true
+});
+
+// Another progress indicator with different pattern
+const progress2 = new CubeProgressIndicator('#progress-2', {
+    pattern: 'diagonal-lr',
+    mode: 'progress'
+});
+progress2.setProgress(50);
+&lt;/script&gt;</code></pre>
+            <div style="display: flex; gap: 30px; justify-content: center; align-items: center; margin: 20px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div id="demo-progress-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Progress (75%)</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-train-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Train Mode</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-progress-2"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Diagonal (50%)</p>
+                </div>
+            </div>
+
+            <h3>Size Control</h3>
+            <pre><code>&lt;div id="small-indicator"&gt;&lt;/div&gt;
+&lt;div id="large-indicator"&gt;&lt;/div&gt;
+&lt;div id="custom-indicator"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Preset sizes: 'small', 'medium', 'large', 'xlarge'
+const small = new CubeProgressIndicator('#small-indicator', {
+    size: 'small'  // 15px container, 3px dots
+});
+
+const large = new CubeProgressIndicator('#large-indicator', {
+    size: 'large'  // 30px container, 6px dots
+});
+
+// Custom size in pixels
+const custom = new CubeProgressIndicator('#custom-indicator', {
+    size: 50,           // 50px container
+    dotSize: 8,         // 8px dots
+    gap: 6              // 6px gap between dots
+});
+
+// Change size dynamically
+custom.setSize('xlarge');              // Change to xlarge preset
+custom.setSize(60, 10, 8);            // Custom: 60px container, 10px dots, 8px gap
+&lt;/script&gt;</code></pre>
+            <div style="display: flex; gap: 30px; justify-content: center; align-items: center; margin: 20px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div id="demo-small-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Small</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-medium-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Medium</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-large-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Large</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-xlarge-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">XLarge</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="demo-custom-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Custom (50px)</p>
+                </div>
+            </div>
+
+            <h3>Simple - Single Instance</h3>
+            <pre><code>&lt;div class="cube-progress-indicator"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Progress mode (default)
+const indicator = new CubeProgressIndicator('.cube-progress-indicator', {
+    pattern: 'anticlockwise-inward',
+    mode: 'progress',
+    size: 'medium'  // Optional: 'small', 'medium', 'large', 'xlarge', or custom px
+});
+indicator.setProgress(75); // Set progress to 75%
+
+// Train mode - auto-starts train animation
+const trainIndicator = new CubeProgressIndicator('.train-indicator', {
+    pattern: 'anticlockwise-inward',
+    mode: 'train',
+    autoStart: true,
+    size: 'large'  // Larger size for train animation
+});
+&lt;/script&gt;</code></pre>
+
+            <h3>Legacy API (still supported)</h3>
+            <pre><code>&lt;div class="cube-progress-indicator"&gt;
+    &lt;div class="dot"&gt;&lt;/div&gt;
+    &lt;div class="dot"&gt;&lt;/div&gt;
+    &lt;!-- ... 9 dots total --&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+const indicator = new CubeProgressIndicator('.cube-progress-indicator', 'sequential');
+indicator.setProgress(75);
+indicator.setPattern('anticlockwise-inward');
+&lt;/script&gt;</code></pre>
+
+            <h3>Available Patterns</h3>
+            <ul class="pattern-list">
+                <li><strong>Sequential:</strong> Left-right, top-bottom (1→9)</li>
+                <li><strong>Vertical:</strong> Top-bottom, left-right</li>
+                <li><strong>Reverse:</strong> Right-left, bottom-top</li>
+                <li><strong>Anticlockwise Inward:</strong> Spiral inward counter-clockwise</li>
+                <li><strong>Clockwise Inward:</strong> Spiral inward clockwise</li>
+                <li><strong>Anticlockwise Outward:</strong> Spiral outward counter-clockwise</li>
+                <li><strong>Clockwise Outward:</strong> Spiral outward clockwise</li>
+                <li><strong>Diagonal LR:</strong> Top-left to bottom-right diagonal</li>
+                <li><strong>Diagonal RL:</strong> Top-right to bottom-left diagonal</li>
+                <li><strong>Zigzag Horizontal:</strong> Horizontal zigzag pattern</li>
+                <li><strong>Zigzag Vertical:</strong> Vertical zigzag pattern</li>
+                <li><strong>Center Outward:</strong> Center to corners</li>
+                <li><strong>Corners First:</strong> Corners then center</li>
+                <li><strong>Snake:</strong> Snake-like pattern</li>
+                <li><strong>Random:</strong> Random order</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize demo examples after DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Multiple modes demo
+            const demoProgressIndicator = new CubeProgressIndicator('#demo-progress-indicator', {
+                pattern: 'sequential',
+                mode: 'progress',
+                size: 'medium'
+            });
+            demoProgressIndicator.setProgress(75);
+
+            const demoTrainIndicator = new CubeProgressIndicator('#demo-train-indicator', {
+                pattern: 'anticlockwise-inward',
+                mode: 'train',
+                autoStart: true,
+                size: 'medium'
+            });
+
+            const demoProgress2 = new CubeProgressIndicator('#demo-progress-2', {
+                pattern: 'diagonal-lr',
+                mode: 'progress',
+                size: 'medium'
+            });
+            demoProgress2.setProgress(50);
+
+            // Size control demos
+            const demoSmall = new CubeProgressIndicator('#demo-small-indicator', {
+                size: 'small',
+                pattern: 'sequential'
+            });
+            demoSmall.setProgress(66);
+
+            const demoMedium = new CubeProgressIndicator('#demo-medium-indicator', {
+                size: 'medium',
+                pattern: 'sequential'
+            });
+            demoMedium.setProgress(66);
+
+            const demoLarge = new CubeProgressIndicator('#demo-large-indicator', {
+                size: 'large',
+                pattern: 'sequential'
+            });
+            demoLarge.setProgress(66);
+
+            const demoXLarge = new CubeProgressIndicator('#demo-xlarge-indicator', {
+                size: 'xlarge',
+                pattern: 'sequential'
+            });
+            demoXLarge.setProgress(66);
+
+            const demoCustom = new CubeProgressIndicator('#demo-custom-indicator', {
+                size: 50,
+                dotSize: 8,
+                gap: 6,
+                pattern: 'sequential'
+            });
+            demoCustom.setProgress(66);
+        });
+    </script>
+</body>
+</html>

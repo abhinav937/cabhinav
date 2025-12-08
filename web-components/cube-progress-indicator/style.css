@@ -1,0 +1,445 @@
+/* Cube Progress Indicator Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #161618;
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.enhanced-space-bg-canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.demo-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(22, 22, 24, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+h1 {
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff, #b8c5d6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+}
+
+.demo-container > p {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+.progress-demo {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* Cube Progress Indicator */
+.cube-progress-indicator {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: var(--gap-size, 4px);
+    width: var(--cube-size, 20px);
+    height: var(--cube-size, 20px);
+    margin: 40px auto;
+    position: relative;
+    justify-items: center;
+    align-items: center;
+}
+
+.dot {
+    width: var(--dot-size, 4px);
+    height: var(--dot-size, 4px);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+}
+
+.dot.completed {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.dot.active {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Train effect styles - all dots same brightness */
+.dot.train {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* Convergence animation - dots disappear into center */
+.dot.converging {
+    animation: convergeToCenter 0.3s ease-out forwards;
+    opacity: 0;
+    transform: scale(0.3);
+}
+
+@keyframes convergeToCenter {
+    to {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+/* Center dot flash when everything converges */
+.dot.center-flash {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+    animation: centerFlash 0.3s ease-out;
+}
+
+@keyframes centerFlash {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+}
+
+/* Ensure dots return to default state when train classes are removed */
+.dot:not(.train):not(.completed):not(.active):not(.converging):not(.center-flash) {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+    transform: scale(1);
+    animation: none;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Pattern Selector */
+.pattern-selector {
+    margin: 30px 0;
+    text-align: center;
+}
+
+/* Train Control */
+.train-control {
+    margin: 20px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.train-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.train-toggle-switch input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.slider {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.train-toggle-switch input[type="checkbox"]:checked + .slider {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+.train-toggle-switch input[type="checkbox"]:checked + .slider::before {
+    transform: translateX(26px);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.train-toggle-switch:hover .slider {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.train-toggle-switch input[type="checkbox"]:checked:hover + .slider {
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+}
+
+.pattern-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.pattern-select {
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    min-width: 200px;
+    outline: none;
+}
+
+.pattern-select:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pattern-select:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.pattern-select option {
+    background: #161618;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Controls */
+.controls {
+    margin: 30px 0;
+}
+
+.controls label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+#progressInput {
+    width: 100%;
+    max-width: 300px;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background 0.3s ease;
+}
+
+#progressInput:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+#progressInput::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #e0e7ff);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+#progressInput::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+#progressInput::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #e0e7ff);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Preset buttons */
+.preset-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.preset-btn {
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.preset-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Code example */
+.code-example {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+.code-example h2 {
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.code-example h3 {
+    color: rgba(255, 255, 255, 0.95);
+    margin: 25px 0 10px 0;
+    font-size: 1.2rem;
+}
+
+.code-example pre {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.code-example code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.pattern-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.pattern-list li {
+    padding: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pattern-list li:last-child {
+    border-bottom: none;
+}
+
+.pattern-list strong {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .demo-container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .cube-progress-indicator {
+        width: 20px;
+        height: 20px;
+        gap: 4px;
+    }
+
+    .dot {
+        width: 4px;
+        height: 4px;
+    }
+
+    .preset-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .preset-btn {
+        width: 100%;
+        max-width: 150px;
+    }
+}

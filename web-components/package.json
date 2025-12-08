@@ -1,0 +1,29 @@
+{
+  "name": "web-components-library",
+  "version": "1.0.0",
+  "description": "A collection of reusable web components",
+  "main": "index.js",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "web-components",
+    "ui-components",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "author": "Abhinav Chinnusamy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhinavchinnusamy/cabhinav/web-components"
+  },
+  "homepage": "https://abhinavchinnusamy.github.io/cabhinav/web-components/",
+  "files": [
+    "loading-indicator/",
+    "button/",
+    "README.md"
+  ]
+}
