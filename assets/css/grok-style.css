@@ -68,6 +68,10 @@ html {
   overflow-x: hidden;
   box-sizing: border-box;
   height: 100%;
+  background: var(--grok-bg-primary);
+  /* Prevent pull-to-refresh flash on iOS Safari */
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 *, *::before, *::after {
@@ -84,6 +88,11 @@ body {
   width: 100%;
   box-sizing: border-box;
   position: relative;
+  /* Prevent pull-to-refresh flash on iOS Safari */
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent rubber-band effect */
+  touch-action: pan-y;
 }
 
 /* Only apply flex layout to single-page design (index page) */
@@ -990,6 +999,10 @@ p {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Use black background - space canvas will overlay if present */
+    /* Prevent pull-to-refresh flash on iOS Safari */
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 
   /* Only apply no-scroll behavior to pages with the no-scroll-mobile class */
@@ -1001,6 +1014,9 @@ p {
   html {
     background: var(--grok-bg-primary);
     /* Use black background - space canvas will overlay if present */
+    /* Prevent pull-to-refresh flash on iOS Safari */
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
   }
 
   body.no-scroll-mobile html {

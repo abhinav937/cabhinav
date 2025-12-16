@@ -87,14 +87,19 @@ body {
   font-family: Arial, sans-serif;
   color: var(--white-2);
   scroll-behavior: smooth;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: none; /* Prevent pull-to-refresh flash on iOS Safari */
   -webkit-overflow-scrolling: touch; /* For iOS smooth scrolling */
+  touch-action: pan-y; /* Prevent rubber-band effect */
 }
 
 /* Enhanced smooth scrolling for all scrollable elements */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 0; /* Ensure scroll to top works properly */
+  /* Prevent pull-to-refresh flash on iOS Safari */
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  background: var(--jet);
 }
 
 /* Smooth scrolling for specific containers */
@@ -116,7 +121,8 @@ html {
   body, html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    overscroll-behavior-y: none; /* Prevent pull-to-refresh flash on iOS Safari */
+    touch-action: pan-y;
   }
 }
 
