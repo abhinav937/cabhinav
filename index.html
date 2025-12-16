@@ -82,7 +82,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="./assets/css/grok-style.css">
   <link rel="stylesheet" href="./assets/css/space-background.css">
-  <link rel="stylesheet" href="./assets/css/3d-text/floating-text.css">
+  <link rel="stylesheet" href="./assets/css/3d-material-homepage.css">
 
   <!-- Three.js Import Map -->
   <script type="importmap">
@@ -319,22 +319,8 @@
       });
     </script>
 
-    <!-- Three.js 3D Text - Clean Class Implementation -->
-    <script type="module">
-      import FloatingText3D from './assets/js/3d-text/floating-text.js';
-      
-      document.addEventListener('DOMContentLoaded', async function() {
-        try {
-          const floatingText = new FloatingText3D('threejs-text-container');
-          await floatingText.init();
-          
-          // Store reference for cleanup if needed
-          window.floatingText3D = floatingText;
-        } catch (error) {
-          console.error('Failed to initialize 3D text:', error);
-        }
-      });
-    </script>
+    <!-- Three.js 3D Text with Chrome Material -->
+    <script type="module" src="./assets/js/3d-material-homepage.js"></script>
 
   </body>
 </html>

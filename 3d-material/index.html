@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>3D Material Test - Shader Materials</title>
+    <link rel="stylesheet" href="../assets/css/3d-material.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="controls">
+        <h3>MATERIAL PRESETS</h3>
+        <div class="presets">
+            <button class="preset-btn" data-preset="chrome">Chrome</button>
+            <button class="preset-btn" data-preset="gold">Gold</button>
+            <button class="preset-btn" data-preset="copper">Copper</button>
+            <button class="preset-btn" data-preset="aluminum">Aluminum</button>
+            <button class="preset-btn" data-preset="titanium">Titanium</button>
+            <button class="preset-btn" data-preset="pearl">Pearl</button>
+            <button class="preset-btn" data-preset="diamond">Diamond</button>
+            <button class="preset-btn" data-preset="car-paint">Car Paint</button>
+            <button class="preset-btn" data-preset="custom">Custom</button>
+        </div>
+
+        <h3>MATERIAL PROPERTIES</h3>
+        <div class="control-group">
+            <label>Roughness <span class="value" id="roughness-val">0.05</span></label>
+            <input type="range" id="roughness" min="0" max="1" step="0.01" value="0.05">
+        </div>
+        <div class="control-group">
+            <label>Anisotropy <span class="value" id="anisotropy-val">0.0</span></label>
+            <input type="range" id="anisotropy" min="0" max="1" step="0.01" value="0.0">
+        </div>
+        <div class="control-group">
+            <label>IOR <span class="value" id="ior-val">2.4</span></label>
+            <input type="range" id="ior" min="1" max="3" step="0.01" value="2.4">
+        </div>
+        <div class="control-group">
+            <label>Clearcoat <span class="value" id="clearcoat-val">0.0</span></label>
+            <input type="range" id="clearcoat" min="0" max="1" step="0.01" value="0.0">
+        </div>
+        <div class="control-group">
+            <label>Dispersion <span class="value" id="dispersion-val">0.0</span></label>
+            <input type="range" id="dispersion" min="0" max="0.5" step="0.01" value="0.0">
+        </div>
+        <div class="light-temp">
+            <div class="control-group">
+                <label>Light Temperature <span class="value" id="temp-val">6500K</span></label>
+                <input type="range" id="temperature" min="2000" max="10000" step="100" value="6500">
+            </div>
+        </div>
+        <button class="export-btn" id="export">Copy Material Values</button>
+    </div>
+
+    <div class="info">drag to rotate • cmd/ctrl + drag for light</div>
+    <div class="copied" id="copied">Material values copied!</div>
+    <a href="https://calculatequick.com" target="_blank" rel="nofollow" class="attribution">calculatequick.com</a>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module" src="../assets/js/3d-material.js"></script>
+</body>
+</html>
