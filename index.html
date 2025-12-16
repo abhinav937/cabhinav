@@ -82,6 +82,17 @@
   <!-- Styles -->
   <link rel="stylesheet" href="./assets/css/grok-style.css">
   <link rel="stylesheet" href="./assets/css/space-background.css">
+  <link rel="stylesheet" href="./assets/css/3d-text/floating-text.css">
+
+  <!-- Three.js Import Map -->
+  <script type="importmap">
+  {
+      "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+  }
+  </script>
 
   <script type="application/ld+json">
       {
@@ -230,11 +241,14 @@
     <section class="hero" id="home">
       <div class="container">
         <div class="hero-content">
-          <h1 class="hero-title">Abhinav Chinnusamy</h1>
-          <p class="hero-subtitle">Power Electronics Engineer & Researcher</p>
+          <h1 class="hero-title" style="display: none;">Abhinav Chinnusamy</h1>
+          <p class="hero-subtitle" style="display: none;">Power Electronics Engineer & Researcher</p>
         </div>
       </div>
     </section>
+
+    <!-- 3D Text Canvas Container - Full Screen Overlay -->
+    <div id="threejs-text-container"></div>
 
 
 
@@ -301,6 +315,23 @@
             // ]
           };
           window.initEnhancedSpaceBackground(spaceContainer, config);
+        }
+      });
+    </script>
+
+    <!-- Three.js 3D Text - Clean Class Implementation -->
+    <script type="module">
+      import FloatingText3D from './assets/js/3d-text/floating-text.js';
+      
+      document.addEventListener('DOMContentLoaded', async function() {
+        try {
+          const floatingText = new FloatingText3D('threejs-text-container');
+          await floatingText.init();
+          
+          // Store reference for cleanup if needed
+          window.floatingText3D = floatingText;
+        } catch (error) {
+          console.error('Failed to initialize 3D text:', error);
         }
       });
     </script>
