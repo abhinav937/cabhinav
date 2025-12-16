@@ -77,7 +77,11 @@
                 ...layer,
                 count: Math.floor(layer.count * 0.3) // Reduced from 0.4 to 0.3 for denser mobile stars
             }));
-            this.config.nebulaCount = 2; // Reduced but still visible on mobile
+            // Only override nebulaCount if it wasn't explicitly set to 0
+            // Respect user's explicit nebulaCount: 0 setting to disable nebula on mobile
+            if (this.config.nebulaCount !== 0) {
+                this.config.nebulaCount = 2; // Reduced but still visible on mobile
+            }
             // Always target 60fps or higher
             this.config.targetFps = 60;
         }
