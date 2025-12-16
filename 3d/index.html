@@ -157,29 +157,96 @@
 
     <div class="info-panel">
         <h1>3D Text Test Page</h1>
-        <p>Test and experiment with the floating 3D text system. Same as homepage.</p>
+        <p>3D text with depth, bevel, and shadows. Features TextGeometry for proper 3D rendering.</p>
     </div>
 
-    <div class="instructions">
-        <h3>Controls</h3>
-        <ul>
-            <li>Move mouse to rotate camera</li>
-            <li>Click & drag to rotate view</li>
-            <li>Text sways naturally</li>
-        </ul>
-    </div>
-
-    <!-- Three.js 3D Text - Same as Homepage -->
+    <!-- Three.js 3D Text with Advanced Lighting -->
     <script type="module">
       import FloatingText3D from '../assets/js/3d-text/floating-text.js';
+      import * as THREE from 'three';
       
       document.addEventListener('DOMContentLoaded', async function() {
         try {
           const floatingText = new FloatingText3D('threejs-text-container');
           await floatingText.init();
           
-          // Store reference for testing/experimentation
+          // Enhance lighting with multiple directional lights (inspired by progressive lightmap example)
+          const THREE = floatingText.THREE;
+          const scene = floatingText.scene;
+          const renderer = floatingText.renderer;
+          
+          // Enable shadows
+          renderer.shadowMap.enabled = true;
+          renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+          
+          // Create 1 directional light that moves around the text
+          const lightCount = 1;
+          const dirLights = [];
+          const lightOrigin = new THREE.Group();
+          lightOrigin.position.set(0, 0, -150); // Center at text position
+          scene.add(lightOrigin);
+          
+          // Create single directional light - much stronger for visible effect
+          const dirLight = new THREE.DirectionalLight(0xffffff, 4.0); // Much brighter - increased from 1.5 to 4.0
+          dirLight.position.set(200, 300, -50); // Initial position
+          dirLight.castShadow = true;
+          dirLight.shadow.camera.near = 1;
+          dirLight.shadow.camera.far = 1000;
+          dirLight.shadow.camera.left = -200;
+          dirLight.shadow.camera.right = 200;
+          dirLight.shadow.camera.top = 200;
+          dirLight.shadow.camera.bottom = -200;
+          dirLight.shadow.mapSize.width = 2048; // Higher resolution for single light
+          dirLight.shadow.mapSize.height = 2048;
+          scene.add(dirLight);
+          dirLights.push(dirLight);
+          
+          // Reduce ambient light to make directional light more visible
+          const ambientLights = scene.children.filter(child => child.type === 'AmbientLight');
+          ambientLights.forEach(light => {
+            light.intensity = 0.15; // Reduce ambient to make directional light stand out
+          });
+          
+          // Configure shadows on text meshes - cast but don't receive to avoid dark artifacts
+          floatingText.textMeshes.forEach(mesh => {
+            mesh.castShadow = true;
+            mesh.receiveShadow = false; // Disable receiving shadows to prevent dark shadow in front
+          });
+          
+          // Animate light with visible movement around the text
+          const clock = new THREE.Clock();
+          
+          function animateLights() {
+            const elapsedTime = clock.getElapsedTime();
+            
+            // Single light orbiting around the text - faster and more visible movement
+            const orbitRadius = 300; // Larger orbit radius for more visible movement
+            const orbitHeight = 300 + Math.sin(elapsedTime * 0.5) * 80; // More height variation
+            const speed = 0.6; // Faster orbit speed (increased from 0.4)
+            const angle = elapsedTime * speed;
+            
+            // Circular orbit around text center
+            dirLights[0].position.x = Math.cos(angle) * orbitRadius;
+            dirLights[0].position.y = orbitHeight;
+            dirLights[0].position.z = -150 + Math.sin(angle) * orbitRadius; // Center around text z position
+            
+            // Make sure light is looking at the text for better lighting effect
+            dirLights[0].target.position.set(0, 0, -150);
+            dirLights[0].target.updateMatrixWorld();
+            
+            // Update shadow camera
+            dirLights[0].shadow.camera.updateMatrixWorld();
+            
+            requestAnimationFrame(animateLights);
+          }
+          animateLights();
+          
+          // Log to confirm light is moving (for debugging)
+          console.log('Light animation started - light should be moving around text');
+          
+          // Store references for testing
           window.floatingText3D = floatingText;
+          window.dirLights = dirLights;
         } catch (error) {
           console.error('Failed to initialize 3D text:', error);
         }

@@ -16,6 +16,7 @@ class FloatingText3D {
     this.clock = null;
     this.animationId = null;
     this.isDisposed = false;
+    this.canvasTexture = null; // Store texture reference for controls
     
     // Mouse tracking for camera movement
     this.mouseX = 0;
@@ -102,13 +103,24 @@ class FloatingText3D {
     this.camera = new THREE.PerspectiveCamera(cfg.fov, width / height, cfg.near, cfg.far);
     this.camera.position.set(cfg.position.x, cfg.position.y, cfg.position.z);
 
-    // Renderer
+    // Renderer with logarithmic depth buffer for better depth precision
     this.renderer = new THREE.WebGLRenderer({ 
       antialias: true,
-      alpha: true 
+      alpha: true,
+      logarithmicDepthBuffer: true // Enable logarithmic depth buffer
     });
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    
+    // Enable shadows on renderer
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadows
+    
+    // Configure default texture quality settings
+    THREE.Texture.DEFAULT_ANISOTROPY = 16; // Maximum anisotropy for better texture quality
+    THREE.Texture.DEFAULT_MAG_FILTER = THREE.LinearFilter; // Smooth magnification
+    THREE.Texture.DEFAULT_MIN_FILTER = THREE.LinearMipmapLinearFilter; // Smooth minification with mipmaps
+    
     this.container.appendChild(this.renderer.domElement);
 
     // Controls - limited rotation, no zoom, quick response
@@ -140,22 +152,41 @@ class FloatingText3D {
     this.controls.rotateSpeed = 1.0; // Normal/fast rotation speed
     this.controls.autoRotate = false;
 
-      // Enhanced lighting for better material rendering
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      // Reduced ambient light to make directional light more visible
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Reduced from 0.4 to 0.2
       this.scene.add(ambientLight);
 
-      // Main directional light
-      const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+      // Main directional light with shadows - much stronger
+      const directionalLight1 = new THREE.DirectionalLight(0xffffff, 2.5); // Increased from 1.0 to 2.5
       directionalLight1.position.set(5, 5, 5);
+      directionalLight1.castShadow = true;
+      // Configure shadow camera for better shadow quality
+      directionalLight1.shadow.camera.near = 1;
+      directionalLight1.shadow.camera.far = 1000;
+      directionalLight1.shadow.camera.left = -200;
+      directionalLight1.shadow.camera.right = 200;
+      directionalLight1.shadow.camera.top = 200;
+      directionalLight1.shadow.camera.bottom = -200;
+      directionalLight1.shadow.mapSize.width = 2048; // Higher resolution for better shadows
+      directionalLight1.shadow.mapSize.height = 2048;
       this.scene.add(directionalLight1);
 
-      // Secondary light for depth
-      const directionalLight2 = new THREE.DirectionalLight(0x4488ff, 0.5);
+      // Secondary light for depth with shadows - stronger
+      const directionalLight2 = new THREE.DirectionalLight(0x4488ff, 1.0); // Increased from 0.5 to 1.0
       directionalLight2.position.set(-5, -5, -5);
+      directionalLight2.castShadow = true;
+      directionalLight2.shadow.camera.near = 1;
+      directionalLight2.shadow.camera.far = 1000;
+      directionalLight2.shadow.camera.left = -200;
+      directionalLight2.shadow.camera.right = 200;
+      directionalLight2.shadow.camera.top = 200;
+      directionalLight2.shadow.camera.bottom = -200;
+      directionalLight2.shadow.mapSize.width = 1024;
+      directionalLight2.shadow.mapSize.height = 1024;
       this.scene.add(directionalLight2);
 
-      // Point light for glow effect - white to match text
-      this.pointLight = new THREE.PointLight(0xffffff, 1.5, 2000);
+      // Point light for glow effect - white to match text - stronger
+      this.pointLight = new THREE.PointLight(0xffffff, 3.0, 2000); // Increased from 1.5 to 3.0
       this.pointLight.position.set(0, 0, -150); // Closer to text (text is at z=-150)
       this.scene.add(this.pointLight);
 
@@ -170,11 +201,13 @@ class FloatingText3D {
     const THREE = await import('three');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
     const { FontLoader } = await import('three/addons/loaders/FontLoader.js');
+    const { TextGeometry } = await import('three/addons/geometries/TextGeometry.js');
     
     // Store THREE globally for use in other methods
     this.THREE = THREE;
     this.OrbitControls = OrbitControls;
     this.FontLoader = FontLoader;
+    this.TextGeometry = TextGeometry;
     
     return { THREE, OrbitControls, FontLoader };
   }
@@ -215,11 +248,50 @@ class FloatingText3D {
       const titleY = isMobile ? 100 : 100; // Title position (lowered)
       const subtitleY = isMobile ? -80 : -180; // Subtitle much lower for clear separation
 
-    // Create title with white color (grok style)
+    // Create title with white color (grok style) - pass TextGeometry
     this.createTextMesh(THREE, font, 'Abhinav\nChinnusamy', titleSize, titleY, 0xffffff);
     
-    // Create subtitle with white color (grok style)
+    // Create subtitle with white color (grok style) - pass TextGeometry
     this.createTextMesh(THREE, font, 'Power Electronics\nEngineer & Researcher', subtitleSize, subtitleY, 0xffffff);
+  }
+
+  /**
+   * Create a canvas texture for matte material quality
+   */
+  createCanvasTexture(THREE) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    
+    // Create a bright white texture with subtle variation
+    ctx.fillStyle = '#ffffff'; // Bright white base
+    ctx.fillRect(0, 0, 512, 512);
+    
+    // Add subtle texture variation for matte surface
+    const imageData = ctx.getImageData(0, 0, 512, 512);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      // Add subtle noise for matte texture feel - brighter base
+      const noise = (Math.random() - 0.5) * 10;
+      const baseValue = 255; // Bright white base
+      data[i] = Math.min(255, Math.max(240, baseValue + noise));     // R
+      data[i + 1] = Math.min(255, Math.max(240, baseValue + noise)); // G
+      data[i + 2] = Math.min(255, Math.max(240, baseValue + noise)); // B
+      data[i + 3] = 255; // Alpha
+    }
+    ctx.putImageData(imageData, 0, 0);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.flipY = false;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.anisotropy = 16; // Maximum anisotropy for crisp quality
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(1, 1); // Less tiling for smoother look
+    
+    return texture;
   }
 
   /**
@@ -233,34 +305,66 @@ class FloatingText3D {
       linewidth: 2
     });
 
-    // White filled material with metallic properties and subtle glow
-    const matLite = new THREE.MeshStandardMaterial({
-      color: 0xffffff, // White base
-      metalness: 0.8,
-      roughness: 0.2,
-      emissive: 0xffffff, // White glow
-      emissiveIntensity: 0.3, // Subtle glow
+    // Create canvas texture for enhanced material quality (reuse if exists)
+    if (!this.canvasTexture) {
+      this.canvasTexture = this.createCanvasTexture(THREE);
+    }
+
+    // Matte material with texture - less shiny, more matte finish
+    // Using MeshPhongMaterial like the example for better 3D text rendering
+    const matLite = new THREE.MeshPhongMaterial({
+      color: 0xffffff, // Bright white for better visibility
+      flatShading: true, // Flat shading for better 3D text appearance
       transparent: true,
-      opacity: 0.9,
-      side: THREE.DoubleSide
+      opacity: 0.98, // Slightly more opaque for brighter appearance
+      side: THREE.DoubleSide,
+      map: this.canvasTexture // Add texture for matte quality
     });
 
-    const shapes = font.generateShapes(message, size);
-    const geometry = new THREE.ShapeGeometry(shapes);
+    // Use TextGeometry with depth and bevel for 3D text (like the example)
+    const isMobile = window.innerWidth <= 768;
+    const depth = isMobile ? 8 : 15; // 3D depth
+    const bevelThickness = isMobile ? 1 : 2;
+    const bevelSize = isMobile ? 0.8 : 1.5;
+    
+    // Get TextGeometry from the loaded module
+    const TextGeometryClass = this.TextGeometry;
+    if (!TextGeometryClass) {
+      console.error('TextGeometry not loaded');
+      return;
+    }
+    
+    const geometry = new TextGeometryClass(message, {
+      font: font,
+      size: size,
+      depth: depth,
+      curveSegments: 4,
+      bevelThickness: bevelThickness,
+      bevelSize: bevelSize,
+      bevelEnabled: true
+    });
+
     geometry.computeBoundingBox();
+    geometry.computeVertexNormals(); // Important for proper lighting
 
     const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
     geometry.translate(xMid, 0, 0);
 
-    // Filled text (centered horizontally, positioned vertically)
+    // Filled text with 3D depth (centered horizontally, positioned vertically)
     const text = new THREE.Mesh(geometry, matLite);
     text.position.z = -150;
     text.position.y = yOffset;
     text.position.x = 0; // Centered
+    // Enable shadows on filled text - cast shadows but don't receive to avoid dark artifacts
+    text.castShadow = true;
+    text.receiveShadow = false; // Disable receiving shadows to prevent dark shadow artifacts
     this.scene.add(text);
     this.textMeshes.push(text);
     this.textInitialPositions.push({ x: 0, y: yOffset, z: -150 });
 
+    // Generate shapes for outline (separate from TextGeometry)
+    const shapes = font.generateShapes(message, size);
+    
     // Outline text (following reference pattern exactly)
     const holeShapes = [];
     for (let i = 0; i < shapes.length; i++) {
@@ -283,9 +387,17 @@ class FloatingText3D {
       const lineMesh = new THREE.Line(lineGeometry, matDark);
       lineText.add(lineMesh);
     }
-    lineText.position.z = -150;
+    // Position outline slightly in front to avoid z-fighting and dark shadow appearance
+    lineText.position.z = -149.5; // Slightly in front of filled text
     lineText.position.y = yOffset;
     lineText.position.x = 0; // Centered
+    // Disable shadows on outline to prevent dark artifacts
+    lineText.traverse((child) => {
+      if (child.isLine) {
+        child.castShadow = false;
+        child.receiveShadow = false;
+      }
+    });
     this.scene.add(lineText);
     this.textLineMeshes.push(lineText);
   }
