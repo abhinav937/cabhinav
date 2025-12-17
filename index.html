@@ -326,7 +326,14 @@
       let loadingIndicator = null;
       
       function checkAllLoaded() {
+        console.log('checkAllLoaded called. State:', {
+          spaceBackground: loadingState.spaceBackground,
+          threeJsText: loadingState.threeJsText,
+          fonts: loadingState.fonts
+        });
+        
         if (loadingState.spaceBackground && loadingState.threeJsText && loadingState.fonts) {
+          console.log('All components loaded - hiding overlay');
           // Small delay to ensure smooth transition
           setTimeout(() => {
             const overlay = document.getElementById('loading-overlay');
@@ -342,6 +349,8 @@
               }, 500);
             }
           }, 300);
+        } else {
+          console.log('Still waiting for components to load...');
         }
       }
       
@@ -351,6 +360,13 @@
         const overlay = document.getElementById('loading-overlay');
         if (overlay && !overlay.classList.contains('hidden')) {
           console.warn('Loading timeout reached - forcing completion');
+          console.warn('Final state before timeout:', {
+            spaceBackground: loadingState.spaceBackground,
+            threeJsText: loadingState.threeJsText,
+            fonts: loadingState.fonts,
+            markThreeJsTextLoadedExists: typeof window.markThreeJsTextLoaded === 'function',
+            initEnhancedSpaceBackgroundExists: typeof window.initEnhancedSpaceBackground === 'function'
+          });
           // Force all states to true
           loadingState.spaceBackground = true;
           loadingState.threeJsText = true;
@@ -429,16 +445,22 @@
       document.addEventListener('DOMContentLoaded', function() {
         
         // Check if fonts are loaded
+        console.log('Checking fonts...', {
+          fontsSupported: !!document.fonts,
+          fontsReady: !!(document.fonts && document.fonts.ready)
+        });
+        
         if (document.fonts && document.fonts.ready) {
           // Add timeout fallback in case fonts.ready never resolves
           const fontLoadingTimeout = setTimeout(() => {
             console.warn('Font loading timeout - marking as loaded');
             loadingState.fonts = true;
             checkAllLoaded();
-          }, 3000); // 3 second timeout
+          }, 2000); // 2 second timeout (reduced from 3s)
           
           document.fonts.ready.then(() => {
             clearTimeout(fontLoadingTimeout);
+            console.log('Fonts loaded');
             loadingState.fonts = true;
             checkAllLoaded();
           }).catch((error) => {
@@ -449,10 +471,12 @@
           });
         } else {
           // Fallback: assume fonts loaded after a delay
+          console.log('Fonts API not available, using timeout fallback');
           setTimeout(() => {
+            console.log('Fonts marked as loaded (fallback)');
             loadingState.fonts = true;
             checkAllLoaded();
-          }, 1000);
+          }, 500); // Reduced from 1000ms
         }
         
         // Initialize space background
@@ -489,9 +513,11 @@
           // Initialize space background and mark as loaded when ready
           if (window.initEnhancedSpaceBackground) {
             try {
+              console.log('Initializing space background...');
               window.initEnhancedSpaceBackground(spaceContainer, config);
               // Space background initializes synchronously, but give it a moment to render
               setTimeout(() => {
+                console.log('Space background loaded');
                 loadingState.spaceBackground = true;
                 checkAllLoaded();
               }, 500);
@@ -502,20 +528,55 @@
               checkAllLoaded();
             }
           } else {
-            // Fallback if function not available yet
-            setTimeout(() => {
-              loadingState.spaceBackground = true;
-              checkAllLoaded();
-            }, 1000);
+            console.warn('initEnhancedSpaceBackground not available yet, using fallback');
+            // Fallback if function not available yet - wait a bit and check again
+            let attempts = 0;
+            const maxAttempts = 15; // Check for up to 1.5 seconds (15 * 100ms)
+            const checkInterval = setInterval(() => {
+              attempts++;
+              if (window.initEnhancedSpaceBackground) {
+                clearInterval(checkInterval);
+                try {
+                  console.log('Space background function now available, initializing...');
+                  window.initEnhancedSpaceBackground(spaceContainer, config);
+                  setTimeout(() => {
+                    console.log('Space background loaded (delayed)');
+                    loadingState.spaceBackground = true;
+                    checkAllLoaded();
+                  }, 300);
+                } catch (error) {
+                  console.error('Error initializing space background (delayed):', error);
+                  loadingState.spaceBackground = true;
+                  checkAllLoaded();
+                }
+              } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                console.warn('Space background function not available after 1.5s, marking as loaded anyway');
+                loadingState.spaceBackground = true;
+                checkAllLoaded();
+              }
+            }, 100);
           }
         }
       });
       
       // Track 3D text loading - expose a global function for 3d-material-homepage.js to call
       window.markThreeJsTextLoaded = function() {
+        console.log('markThreeJsTextLoaded called');
         loadingState.threeJsText = true;
         checkAllLoaded();
       };
+      
+      // Also set up a fallback timeout for 3D text in case it never calls markThreeJsTextLoaded
+      // This is a safety net if the module script fails to load or execute
+      setTimeout(() => {
+        if (!loadingState.threeJsText) {
+          console.warn('3D text loading timeout (4s) - marking as loaded (fallback)');
+          console.warn('markThreeJsTextLoaded function exists:', typeof window.markThreeJsTextLoaded === 'function');
+          loadingState.threeJsText = true;
+          checkAllLoaded();
+        }
+      }, 4000); // 4 second timeout for 3D text (reduced from 5s)
     </script>
 
     <!-- Three.js 3D Text with Chrome Material -->
