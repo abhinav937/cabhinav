@@ -1,13 +1,15 @@
-// Mark that this module has started executing
-console.log('3D material homepage module: Module script executing');
-window.threeJsModuleExecuted = true;
+// Note: In ES modules, imports are hoisted and execute before this code
+// So if imports fail, this code never runs
 
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-console.log('3D material homepage module: Imports successful, THREE:', typeof THREE);
+// Mark that this module has successfully imported and started executing
+console.log('3D material homepage module: Module script executing, imports successful');
+window.threeJsModuleExecuted = true;
+console.log('3D material homepage module: THREE type:', typeof THREE);
 
 // Wait for DOM to be ready
 function initializeWhenReady() {

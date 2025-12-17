@@ -592,30 +592,33 @@
         }
       });
       
+      // Check if module executed (early check at 1 second)
+      setTimeout(() => {
+        const moduleExecuted = window.threeJsModuleExecuted === true;
+        if (!moduleExecuted && !loadingState.threeJsText) {
+          console.warn('3D text module has not executed after 1s - module may have failed to load');
+          console.warn('This could indicate import failures or the module script not loading');
+        }
+      }, 1000);
+      
       // Also set up a fallback timeout for 3D text in case it never calls markThreeJsTextLoaded
       // This is a safety net if the module script fails to load or execute
+      // Reduced to 3 seconds since fonts and space background load quickly
       setTimeout(() => {
         if (!loadingState.threeJsText) {
-          console.warn('3D text loading timeout (4s) - marking as loaded (fallback)');
+          const moduleExecuted = window.threeJsModuleExecuted === true;
+          console.warn('3D text loading timeout (3s) - marking as loaded (fallback)');
+          console.warn('Module executed flag:', moduleExecuted);
+          console.warn('This likely means the module failed to load or imports are blocking execution');
           console.warn('markThreeJsTextLoaded function exists:', typeof window.markThreeJsTextLoaded === 'function');
           loadingState.threeJsText = true;
           checkAllLoaded();
         }
-      }, 4000); // 4 second timeout for 3D text (reduced from 5s)
+      }, 3000); // 3 second timeout for 3D text - faster since other components load quickly
     </script>
 
     <!-- Three.js 3D Text with Chrome Material -->
-    <!-- Load module and catch any import/execution errors -->
-    <script type="module">
-      import('./assets/js/3d-material-homepage.js').catch(function(error) {
-        console.error('Failed to load or execute 3D text module:', error);
-        // Mark as loaded to prevent stuck loading screen
-        if (window.markThreeJsTextLoaded) {
-          console.warn('3D text module failed, marking as loaded anyway to prevent stuck loading');
-          window.markThreeJsTextLoaded();
-        }
-      });
-    </script>
+    <script type="module" src="./assets/js/3d-material-homepage.js"></script>
 
   </body>
 </html>
