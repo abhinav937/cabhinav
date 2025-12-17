@@ -152,6 +152,106 @@ custom.setSize(60, 10, 8);            // Custom: 60px container, 10px dots, 8px 
                 </div>
             </div>
 
+            <h3>Speed and Timing Control</h3>
+            <pre><code>&lt;div id="speed-indicator"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Create indicator with custom speeds
+const indicator = new CubeProgressIndicator('#speed-indicator', {
+    pattern: 'anticlockwise-inward',
+    mode: 'train',
+    autoStart: true,
+    trainSpeed: 100,        // Train animation speed in ms (lower = faster)
+    trainPauseDelay: 300,  // Pause between cycles in ms
+    animationSpeed: 200     // Progress animation speed in ms per dot
+});
+
+// Change speeds dynamically
+indicator.setTrainSpeed(50);        // Make train faster (50ms)
+indicator.setTrainPauseDelay(200); // Shorter pause (200ms)
+indicator.setAnimationSpeed(150);   // Faster progress animation
+
+// Get current speeds
+const currentSpeed = indicator.getTrainSpeed();        // Returns: 50
+const currentPause = indicator.getTrainPauseDelay();   // Returns: 200
+const currentAnimSpeed = indicator.getAnimationSpeed(); // Returns: 150
+&lt;/script&gt;</code></pre>
+            <div style="display: flex; flex-direction: column; gap: 20px; margin: 20px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div id="speed-indicator"></div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 10px;">Live Speed Control Demo</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label style="display: block; color: rgba(255,255,255,0.9); font-size: 0.9rem; margin-bottom: 8px;">
+                            Train Speed: <span id="speed-value">100</span>ms
+                        </label>
+                        <input type="range" id="speed-slider" min="30" max="300" value="100" step="10" style="width: 100%;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 4px;">
+                            <span>Fast (30ms)</span>
+                            <span>Slow (300ms)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; color: rgba(255,255,255,0.9); font-size: 0.9rem; margin-bottom: 8px;">
+                            Pause Delay: <span id="pause-value">300</span>ms
+                        </label>
+                        <input type="range" id="pause-slider" min="0" max="1000" value="300" step="50" style="width: 100%;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 4px;">
+                            <span>No Pause (0ms)</span>
+                            <span>Long Pause (1000ms)</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+                    <button id="speed-preset-slow" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;">Slow (200ms)</button>
+                    <button id="speed-preset-normal" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;">Normal (100ms)</button>
+                    <button id="speed-preset-fast" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;">Fast (50ms)</button>
+                    <button id="speed-preset-ultra" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;">Ultra Fast (30ms)</button>
+                </div>
+                <style>
+                    #speed-preset-slow:hover, #speed-preset-normal:hover, 
+                    #speed-preset-fast:hover, #speed-preset-ultra:hover {
+                        background: rgba(255,255,255,0.15) !important;
+                        border-color: rgba(255,255,255,0.3) !important;
+                        transform: translateY(-2px);
+                    }
+                    #speed-slider, #pause-slider {
+                        -webkit-appearance: none;
+                        appearance: none;
+                        height: 6px;
+                        border-radius: 3px;
+                        background: rgba(255,255,255,0.15);
+                        outline: none;
+                    }
+                    #speed-slider::-webkit-slider-thumb, #pause-slider::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        appearance: none;
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.9);
+                        cursor: pointer;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+                    #speed-slider::-moz-range-thumb, #pause-slider::-moz-range-thumb {
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.9);
+                        cursor: pointer;
+                        border: none;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+                </style>
+                <div style="text-align: center; margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px;">
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0;">
+                        Current: Speed=<span id="current-speed-display">100</span>ms, 
+                        Pause=<span id="current-pause-display">300</span>ms
+                    </p>
+                </div>
+            </div>
+
             <h3>Simple - Single Instance</h3>
             <pre><code>&lt;div class="cube-progress-indicator"&gt;&lt;/div&gt;
 
@@ -265,6 +365,101 @@ indicator.setPattern('anticlockwise-inward');
                 pattern: 'sequential'
             });
             demoCustom.setProgress(66);
+
+            // Speed control live demo
+            const speedIndicator = new CubeProgressIndicator('#speed-indicator', {
+                pattern: 'anticlockwise-inward',
+                mode: 'train',
+                autoStart: true,
+                trainSpeed: 100,
+                trainPauseDelay: 300,
+                size: 'large'
+            });
+
+            const speedSlider = document.getElementById('speed-slider');
+            const pauseSlider = document.getElementById('pause-slider');
+            const speedValue = document.getElementById('speed-value');
+            const pauseValue = document.getElementById('pause-value');
+            const currentSpeedDisplay = document.getElementById('current-speed-display');
+            const currentPauseDisplay = document.getElementById('current-pause-display');
+
+            // Update speed slider
+            if (speedSlider && speedValue) {
+                speedSlider.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    speedValue.textContent = value;
+                    currentSpeedDisplay.textContent = value;
+                    speedIndicator.setTrainSpeed(value);
+                });
+            }
+
+            // Update pause slider
+            if (pauseSlider && pauseValue) {
+                pauseSlider.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    pauseValue.textContent = value;
+                    currentPauseDisplay.textContent = value;
+                    speedIndicator.setTrainPauseDelay(value);
+                });
+            }
+
+            // Preset buttons
+            const presetSlow = document.getElementById('speed-preset-slow');
+            const presetNormal = document.getElementById('speed-preset-normal');
+            const presetFast = document.getElementById('speed-preset-fast');
+            const presetUltra = document.getElementById('speed-preset-ultra');
+
+            if (presetSlow) {
+                presetSlow.addEventListener('click', () => {
+                    speedIndicator.setTrainSpeed(200);
+                    speedIndicator.setTrainPauseDelay(500);
+                    if (speedSlider) speedSlider.value = 200;
+                    if (pauseSlider) pauseSlider.value = 500;
+                    if (speedValue) speedValue.textContent = '200';
+                    if (pauseValue) pauseValue.textContent = '500';
+                    if (currentSpeedDisplay) currentSpeedDisplay.textContent = '200';
+                    if (currentPauseDisplay) currentPauseDisplay.textContent = '500';
+                });
+            }
+
+            if (presetNormal) {
+                presetNormal.addEventListener('click', () => {
+                    speedIndicator.setTrainSpeed(100);
+                    speedIndicator.setTrainPauseDelay(300);
+                    if (speedSlider) speedSlider.value = 100;
+                    if (pauseSlider) pauseSlider.value = 300;
+                    if (speedValue) speedValue.textContent = '100';
+                    if (pauseValue) pauseValue.textContent = '300';
+                    if (currentSpeedDisplay) currentSpeedDisplay.textContent = '100';
+                    if (currentPauseDisplay) currentPauseDisplay.textContent = '300';
+                });
+            }
+
+            if (presetFast) {
+                presetFast.addEventListener('click', () => {
+                    speedIndicator.setTrainSpeed(50);
+                    speedIndicator.setTrainPauseDelay(200);
+                    if (speedSlider) speedSlider.value = 50;
+                    if (pauseSlider) pauseSlider.value = 200;
+                    if (speedValue) speedValue.textContent = '50';
+                    if (pauseValue) pauseValue.textContent = '200';
+                    if (currentSpeedDisplay) currentSpeedDisplay.textContent = '50';
+                    if (currentPauseDisplay) currentPauseDisplay.textContent = '200';
+                });
+            }
+
+            if (presetUltra) {
+                presetUltra.addEventListener('click', () => {
+                    speedIndicator.setTrainSpeed(30);
+                    speedIndicator.setTrainPauseDelay(100);
+                    if (speedSlider) speedSlider.value = 30;
+                    if (pauseSlider) pauseSlider.value = 100;
+                    if (speedValue) speedValue.textContent = '30';
+                    if (pauseValue) pauseValue.textContent = '100';
+                    if (currentSpeedDisplay) currentSpeedDisplay.textContent = '30';
+                    if (currentPauseDisplay) currentPauseDisplay.textContent = '100';
+                });
+            }
         });
     </script>
 </body>

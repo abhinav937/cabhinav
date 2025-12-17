@@ -79,6 +79,33 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <!-- Loading Indicator Styles - Minimal inline styles for immediate display -->
+  <style>
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #161618;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    #loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  </style>
+  
+  <!-- Load cube progress indicator styles and script early for immediate initialization -->
+  <link rel="stylesheet" href="./web-components/cube-progress-indicator/style.css">
+  <script src="./web-components/cube-progress-indicator/script.js" async></script>
+  
   <!-- Styles -->
   <link rel="stylesheet" href="./assets/css/grok-style.css">
   <link rel="stylesheet" href="./assets/css/space-background.css">
@@ -233,6 +260,11 @@
 </head>
 
 <body class="no-scroll-mobile">
+  <!-- Loading Overlay - Placed immediately for instant display -->
+  <div id="loading-overlay">
+    <div id="loading-indicator"></div>
+  </div>
+  
   <!-- Enhanced Space Background Container -->
   <div id="space-background-container"></div>
 
@@ -282,9 +314,114 @@
     <script src="./assets/js/grok-script.js"></script>
     <script src="./assets/js/enhanced-space-background.js"></script>
 
-    <!-- Initialize enhanced space background for homepage -->
+    <!-- Initialize loading indicator and track page load -->
     <script>
+      // Loading state tracking
+      const loadingState = {
+        spaceBackground: false,
+        threeJsText: false,
+        fonts: false
+      };
+      
+      let loadingIndicator = null;
+      
+      function checkAllLoaded() {
+        if (loadingState.spaceBackground && loadingState.threeJsText && loadingState.fonts) {
+          // Small delay to ensure smooth transition
+          setTimeout(() => {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+              // Stop any animations
+              if (loadingIndicator && loadingIndicator.stopTrainEffect) {
+                loadingIndicator.stopTrainEffect();
+              }
+              overlay.classList.add('hidden');
+              // Remove overlay from DOM after animation
+              setTimeout(() => {
+                overlay.remove();
+              }, 500);
+            }
+          }, 300);
+        }
+      }
+      
+      // Initialize loading indicator using the API
+      function initLoadingIndicator() {
+        const indicatorElement = document.getElementById('loading-indicator');
+        if (indicatorElement && typeof CubeProgressIndicator !== 'undefined' && !loadingIndicator) {
+          loadingIndicator = new CubeProgressIndicator('#loading-indicator', {
+            pattern: 'anticlockwise-inward',
+            mode: 'train',
+            autoStart: true,
+            size: 'large',
+            trainSpeed: 70,
+            trainPauseDelay: 300
+          });
+          return true; // Successfully initialized
+        }
+        return false; // Not ready yet
+      }
+      
+      // Poll for script availability with exponential backoff (max 500ms wait)
+      function tryInitWithPolling(attempt = 0, maxAttempts = 10) {
+        if (initLoadingIndicator()) {
+          return; // Successfully initialized
+        }
+        
+        if (attempt < maxAttempts) {
+          // Exponential backoff: 10ms, 20ms, 40ms, etc. (capped at 50ms)
+          const delay = Math.min(10 * Math.pow(2, attempt), 50);
+          setTimeout(() => tryInitWithPolling(attempt + 1, maxAttempts), delay);
+        }
+      }
+      
+      // Try to initialize immediately if script is already loaded
+      if (typeof CubeProgressIndicator !== 'undefined') {
+        initLoadingIndicator();
+      } else {
+        // Script is async, start polling for it
+        tryInitWithPolling();
+      }
+      
+      // Also try when DOM is ready (in case script loads after DOM)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          if (!loadingIndicator) {
+            initLoadingIndicator();
+          }
+        });
+      } else {
+        // DOM already loaded
+        if (!loadingIndicator) {
+          initLoadingIndicator();
+        }
+      }
+      
+      // Final fallback on window load
+      window.addEventListener('load', function() {
+        if (!loadingIndicator) {
+          initLoadingIndicator();
+        }
+      });
+      
+      // Initialize other components when DOM is ready
       document.addEventListener('DOMContentLoaded', function() {
+        
+        // Check if fonts are loaded
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => {
+            loadingState.fonts = true;
+            checkAllLoaded();
+          });
+        } else {
+          // Fallback: assume fonts loaded after a delay
+          setTimeout(() => {
+            loadingState.fonts = true;
+            checkAllLoaded();
+          }, 1000);
+        }
+        
+        // Initialize space background
         const spaceContainer = document.getElementById('space-background-container');
         if (spaceContainer) {
           const config = {
@@ -314,9 +451,30 @@
             //   { count: 200, speed: 0.001, size: [1.8, 3.0], color: 'rgba(255,240,180,0.5)', parallax: 0.8 }
             // ]
           };
-          window.initEnhancedSpaceBackground(spaceContainer, config);
+          
+          // Initialize space background and mark as loaded when ready
+          if (window.initEnhancedSpaceBackground) {
+            window.initEnhancedSpaceBackground(spaceContainer, config);
+            // Space background initializes synchronously, but give it a moment to render
+            setTimeout(() => {
+              loadingState.spaceBackground = true;
+              checkAllLoaded();
+            }, 500);
+          } else {
+            // Fallback if function not available yet
+            setTimeout(() => {
+              loadingState.spaceBackground = true;
+              checkAllLoaded();
+            }, 1000);
+          }
         }
       });
+      
+      // Track 3D text loading - expose a global function for 3d-material-homepage.js to call
+      window.markThreeJsTextLoaded = function() {
+        loadingState.threeJsText = true;
+        checkAllLoaded();
+      };
     </script>
 
     <!-- Three.js 3D Text with Chrome Material -->

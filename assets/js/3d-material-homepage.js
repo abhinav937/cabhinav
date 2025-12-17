@@ -368,6 +368,11 @@ function init3DText() {
         textMesh.position.x = 0;  // Centered horizontally
         textMesh.position.y = isMobile ? 0.5 : 0;  // Higher on mobile, centered on desktop
         scene.add(textMesh);
+        
+        // Notify that 3D text is loaded
+        if (window.markThreeJsTextLoaded) {
+            window.markThreeJsTextLoaded();
+        }
     });
 
     setTimeout(() => {
@@ -376,6 +381,11 @@ function init3DText() {
             textMesh = new THREE.Mesh(geometry, customMaterial);
             textMesh.position.x = -1.5;
             scene.add(textMesh);
+            
+            // Notify that 3D text is loaded (fallback case)
+            if (window.markThreeJsTextLoaded) {
+                window.markThreeJsTextLoaded();
+            }
         }
     }, 1000);
 

@@ -35,13 +35,14 @@ class CubeProgressIndicator {
             trainSpeed: options.trainSpeed || 150,
             trainLength: options.trainLength || 5,
             trainPauseDelay: options.trainPauseDelay || 500,
+            animationSpeed: options.animationSpeed || 300, // ms per dot for progress animations
             size: options.size || 'medium', // 'small', 'medium', 'large', or custom number (px)
             dotSize: options.dotSize || null, // Custom dot size in px (overrides size)
             gap: options.gap || null, // Custom gap in px (overrides size)
             ...options
         };
         this.currentProgress = 0;
-        this.animationSpeed = 300; // ms per dot
+        this.animationSpeed = this.options.animationSpeed;
         this.pattern = this.options.pattern;
         this.trainAnimationId = null;
         this.isTrainRunning = false;
@@ -191,6 +192,58 @@ class CubeProgressIndicator {
 
     getAvailablePatterns() {
         return Object.keys(this.patterns);
+    }
+
+    // Set train animation speed (in milliseconds)
+    setTrainSpeed(speed) {
+        if (typeof speed !== 'number' || speed <= 0) {
+            console.warn('Train speed must be a positive number');
+            return;
+        }
+        this.trainSpeed = speed;
+        this.options.trainSpeed = speed;
+        
+        // If train is running, restart it with new speed
+        if (this.isTrainRunning) {
+            const currentPattern = this.currentTrainPatternName;
+            this.stopTrainEffect();
+            this.startTrainEffect(currentPattern);
+        }
+    }
+
+    // Get current train speed
+    getTrainSpeed() {
+        return this.trainSpeed;
+    }
+
+    // Set train pause delay (in milliseconds)
+    setTrainPauseDelay(delay) {
+        if (typeof delay !== 'number' || delay < 0) {
+            console.warn('Train pause delay must be a non-negative number');
+            return;
+        }
+        this.trainPauseDelay = delay;
+        this.options.trainPauseDelay = delay;
+    }
+
+    // Get current train pause delay
+    getTrainPauseDelay() {
+        return this.trainPauseDelay;
+    }
+
+    // Set animation speed for progress mode (in milliseconds per dot)
+    setAnimationSpeed(speed) {
+        if (typeof speed !== 'number' || speed <= 0) {
+            console.warn('Animation speed must be a positive number');
+            return;
+        }
+        this.animationSpeed = speed;
+        this.options.animationSpeed = speed;
+    }
+
+    // Get current animation speed
+    getAnimationSpeed() {
+        return this.animationSpeed;
     }
 
     updateProgress(progress) {
@@ -368,6 +421,10 @@ class CubeProgressIndicator {
 
 // Demo functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if the element exists (for demo page)
+    const indicatorElement = document.querySelector('.cube-progress-indicator');
+    if (!indicatorElement) return;
+    
     const indicator = new CubeProgressIndicator('.cube-progress-indicator');
     const progressInput = document.getElementById('progressInput');
     const progressValue = document.getElementById('progressValue');
@@ -376,7 +433,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const trainToggleBtn = document.getElementById('trainToggleBtn');
 
     // Update progress when slider changes
-    progressInput.addEventListener('input', function() {
+    if (progressInput && progressValue) {
+        progressInput.addEventListener('input', function() {
         // Stop train effect when manually adjusting progress
         if (indicator.isTrainEffectRunning()) {
             indicator.stopTrainEffect();
@@ -384,27 +442,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 trainToggleBtn.checked = false;
             }
         }
-        const progress = parseInt(this.value);
-        progressValue.textContent = progress;
-        indicator.setProgress(progress);
-    });
-
-    // Preset buttons
-    presetButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Stop train effect when using preset buttons
-            if (indicator.isTrainEffectRunning()) {
-                indicator.stopTrainEffect();
-                if (trainToggleBtn) {
-                    trainToggleBtn.checked = false;
-                }
-            }
-            const progress = parseInt(this.dataset.progress);
-            progressInput.value = progress;
+            const progress = parseInt(this.value);
             progressValue.textContent = progress;
             indicator.setProgress(progress);
         });
-    });
+    }
+
+    // Preset buttons
+    if (presetButtons && presetButtons.length > 0) {
+        presetButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Stop train effect when using preset buttons
+                if (indicator.isTrainEffectRunning()) {
+                    indicator.stopTrainEffect();
+                    if (trainToggleBtn) {
+                        trainToggleBtn.checked = false;
+                    }
+                }
+                const progress = parseInt(this.dataset.progress);
+                if (progressInput) progressInput.value = progress;
+                if (progressValue) progressValue.textContent = progress;
+                indicator.setProgress(progress);
+            });
+        });
+    }
 
     // Pattern selector
     if (patternSelect) {
@@ -442,10 +503,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize with empty grey dots, ready for train effect
-    indicator.setPattern('anticlockwise-inward');
-    indicator.setProgress(0); // Show empty grey dots initially
+    // Initialize with empty grey dots, ready for train effect (only on demo page)
     if (trainToggleBtn) {
+        indicator.setPattern('anticlockwise-inward');
+        indicator.setProgress(0); // Show empty grey dots initially
         // Start train effect immediately
         indicator.startTrainEffect('anticlockwise-inward');
         trainToggleBtn.checked = true;
