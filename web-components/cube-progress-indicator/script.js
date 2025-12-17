@@ -419,22 +419,27 @@ class CubeProgressIndicator {
     }
 }
 
-// Demo functionality
+// Demo functionality - only runs on demo page with specific demo elements
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize if the element exists (for demo page)
+    // Only initialize demo functionality if demo page elements exist
+    // Check for demo-specific elements to avoid running on other pages
+    const progressInput = document.getElementById('progressInput');
+    const progressValue = document.getElementById('progressValue');
+    
+    // If demo elements don't exist, don't run demo code
+    if (!progressInput || !progressValue) return;
+    
+    // Only proceed if we're on the demo page
     const indicatorElement = document.querySelector('.cube-progress-indicator');
     if (!indicatorElement) return;
     
     const indicator = new CubeProgressIndicator('.cube-progress-indicator');
-    const progressInput = document.getElementById('progressInput');
-    const progressValue = document.getElementById('progressValue');
     const presetButtons = document.querySelectorAll('.preset-btn');
     const patternSelect = document.getElementById('patternSelect');
     const trainToggleBtn = document.getElementById('trainToggleBtn');
 
     // Update progress when slider changes
-    if (progressInput && progressValue) {
-        progressInput.addEventListener('input', function() {
+    progressInput.addEventListener('input', function() {
         // Stop train effect when manually adjusting progress
         if (indicator.isTrainEffectRunning()) {
             indicator.stopTrainEffect();
@@ -442,11 +447,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 trainToggleBtn.checked = false;
             }
         }
-            const progress = parseInt(this.value);
-            progressValue.textContent = progress;
-            indicator.setProgress(progress);
-        });
-    }
+        const progress = parseInt(this.value);
+        progressValue.textContent = progress;
+        indicator.setProgress(progress);
+    });
 
     // Preset buttons
     if (presetButtons && presetButtons.length > 0) {
@@ -460,8 +464,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 const progress = parseInt(this.dataset.progress);
-                if (progressInput) progressInput.value = progress;
-                if (progressValue) progressValue.textContent = progress;
+                progressInput.value = progress;
+                progressValue.textContent = progress;
                 indicator.setProgress(progress);
             });
         });
