@@ -329,65 +329,109 @@ function init3DText() {
         return Math.min(Math.max(scaleFactor, 0.1), 1.0); // Clamp between 0.1 and 1.0
     }
 
-    loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
-        // Responsive text size for mobile and desktop
-        const isMobile = isMobileDevice();
-        const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        // Start with a base size - will be scaled to fit viewport
-        let textSize = 1.5; // Use consistent base size, scaling will handle the rest
-        const textDepth = isMobile ? 0.1 : (isTablet ? 0.25 : 0.375);
-        const bevelThickness = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
-        const bevelSize = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
-        
-        const textGeometry = new TextGeometry('Abhinav\nChinnusamy', {
-            font: font,
-            size: textSize,
-            depth: textDepth,
-            curveSegments: isMobile ? 6 : (isTablet ? 16 : 32),
-            bevelEnabled: true,
-            bevelThickness: bevelThickness,
-            bevelSize: bevelSize,
-            bevelSegments: isMobile ? 3 : (isTablet ? 8 : 16)
-        });
-        textGeometry.center();
-        textGeometry.computeVertexNormals();
-        
-        // Create mesh first
-        textMesh = new THREE.Mesh(textGeometry, customMaterial);
-        
-        // Camera position is already set before loader, OrbitControls will manage it
-        // Calculate and apply scale based on viewport
-        const scaleFactor = calculateScaleForViewport(textGeometry, camera, viewportWidth, viewportHeight);
-        textMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-        
-        
-        // Position text - adjust Y position for mobile to appear higher/centered
-        textMesh.position.x = 0;  // Centered horizontally
-        textMesh.position.y = isMobile ? 0.5 : 0;  // Higher on mobile, centered on desktop
-        scene.add(textMesh);
-        
-        // Notify that 3D text is loaded
-        if (window.markThreeJsTextLoaded) {
-            window.markThreeJsTextLoaded();
-        }
-    });
-
-    setTimeout(() => {
-        if (!textMesh) {
-            const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
-            textMesh = new THREE.Mesh(geometry, customMaterial);
-            textMesh.position.x = -1.5;
-            scene.add(textMesh);
-            
-            // Notify that 3D text is loaded (fallback case)
+    // Track if loading has completed to prevent duplicate calls
+    let loadingComplete = false;
+    
+    function markLoadingComplete() {
+        if (!loadingComplete) {
+            loadingComplete = true;
             if (window.markThreeJsTextLoaded) {
                 window.markThreeJsTextLoaded();
             }
         }
-    }, 1000);
+    }
+    
+    loader.load(
+        'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        // onLoad callback
+        function(font) {
+            try {
+                // Responsive text size for mobile and desktop
+                const isMobile = isMobileDevice();
+                const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                // Start with a base size - will be scaled to fit viewport
+                let textSize = 1.5; // Use consistent base size, scaling will handle the rest
+                const textDepth = isMobile ? 0.1 : (isTablet ? 0.25 : 0.375);
+                const bevelThickness = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
+                const bevelSize = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
+                
+                const textGeometry = new TextGeometry('Abhinav\nChinnusamy', {
+                    font: font,
+                    size: textSize,
+                    depth: textDepth,
+                    curveSegments: isMobile ? 6 : (isTablet ? 16 : 32),
+                    bevelEnabled: true,
+                    bevelThickness: bevelThickness,
+                    bevelSize: bevelSize,
+                    bevelSegments: isMobile ? 3 : (isTablet ? 8 : 16)
+                });
+                textGeometry.center();
+                textGeometry.computeVertexNormals();
+                
+                // Create mesh first
+                textMesh = new THREE.Mesh(textGeometry, customMaterial);
+                
+                // Camera position is already set before loader, OrbitControls will manage it
+                // Calculate and apply scale based on viewport
+                const scaleFactor = calculateScaleForViewport(textGeometry, camera, viewportWidth, viewportHeight);
+                textMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                
+                
+                // Position text - adjust Y position for mobile to appear higher/centered
+                textMesh.position.x = 0;  // Centered horizontally
+                textMesh.position.y = isMobile ? 0.5 : 0;  // Higher on mobile, centered on desktop
+                scene.add(textMesh);
+                
+                // Notify that 3D text is loaded
+                markLoadingComplete();
+            } catch (error) {
+                console.error('Error creating 3D text:', error);
+                // Still mark as complete even if there's an error
+                markLoadingComplete();
+            }
+        },
+        // onProgress callback (optional)
+        undefined,
+        // onError callback - critical for handling failures
+        function(error) {
+            console.error('Error loading font:', error);
+            // Create fallback geometry if font fails to load
+            if (!textMesh) {
+                try {
+                    const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
+                    textMesh = new THREE.Mesh(geometry, customMaterial);
+                    textMesh.position.x = -1.5;
+                    scene.add(textMesh);
+                } catch (fallbackError) {
+                    console.error('Error creating fallback geometry:', fallbackError);
+                }
+            }
+            // Always mark as complete even on error
+            markLoadingComplete();
+        }
+    );
+
+    // Safety timeout to ensure loading always completes (increased from 1s to 3s)
+    setTimeout(() => {
+        if (!textMesh && !loadingComplete) {
+            try {
+                const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
+                textMesh = new THREE.Mesh(geometry, customMaterial);
+                textMesh.position.x = -1.5;
+                scene.add(textMesh);
+            } catch (error) {
+                console.error('Error creating timeout fallback geometry:', error);
+            }
+            // Always mark as complete
+            markLoadingComplete();
+        } else if (!loadingComplete) {
+            // If textMesh exists but loading wasn't marked complete, mark it now
+            markLoadingComplete();
+        }
+    }, 3000);
 
     // Set initial camera position based on device type
     // OrbitControls will manage the camera from here

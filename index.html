@@ -345,6 +345,27 @@
         }
       }
       
+      // Safety timeout: Force loading to complete after maximum 10 seconds
+      // This prevents the page from getting stuck in loading state forever
+      setTimeout(() => {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay && !overlay.classList.contains('hidden')) {
+          console.warn('Loading timeout reached - forcing completion');
+          // Force all states to true
+          loadingState.spaceBackground = true;
+          loadingState.threeJsText = true;
+          loadingState.fonts = true;
+          // Stop any animations
+          if (loadingIndicator && loadingIndicator.stopTrainEffect) {
+            loadingIndicator.stopTrainEffect();
+          }
+          overlay.classList.add('hidden');
+          setTimeout(() => {
+            overlay.remove();
+          }, 500);
+        }
+      }, 10000);
+      
       // Initialize loading indicator using the API
       function initLoadingIndicator() {
         const indicatorElement = document.getElementById('loading-indicator');
@@ -409,7 +430,20 @@
         
         // Check if fonts are loaded
         if (document.fonts && document.fonts.ready) {
+          // Add timeout fallback in case fonts.ready never resolves
+          const fontLoadingTimeout = setTimeout(() => {
+            console.warn('Font loading timeout - marking as loaded');
+            loadingState.fonts = true;
+            checkAllLoaded();
+          }, 3000); // 3 second timeout
+          
           document.fonts.ready.then(() => {
+            clearTimeout(fontLoadingTimeout);
+            loadingState.fonts = true;
+            checkAllLoaded();
+          }).catch((error) => {
+            console.error('Error loading fonts:', error);
+            clearTimeout(fontLoadingTimeout);
             loadingState.fonts = true;
             checkAllLoaded();
           });
@@ -454,12 +488,19 @@
           
           // Initialize space background and mark as loaded when ready
           if (window.initEnhancedSpaceBackground) {
-            window.initEnhancedSpaceBackground(spaceContainer, config);
-            // Space background initializes synchronously, but give it a moment to render
-            setTimeout(() => {
+            try {
+              window.initEnhancedSpaceBackground(spaceContainer, config);
+              // Space background initializes synchronously, but give it a moment to render
+              setTimeout(() => {
+                loadingState.spaceBackground = true;
+                checkAllLoaded();
+              }, 500);
+            } catch (error) {
+              console.error('Error initializing space background:', error);
+              // Still mark as loaded even if there's an error
               loadingState.spaceBackground = true;
               checkAllLoaded();
-            }, 500);
+            }
           } else {
             // Fallback if function not available yet
             setTimeout(() => {
