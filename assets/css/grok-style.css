@@ -78,22 +78,22 @@ html {
   box-sizing: inherit;
 }
 
-body {
-  font-family: var(--font-primary);
-  background: var(--grok-bg-primary);
-  color: var(--grok-text-primary);
-  line-height: 1.6;
-  font-size: 16px;
-  overflow-x: hidden;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  /* Prevent pull-to-refresh flash on iOS Safari */
-  overscroll-behavior-y: none;
-  -webkit-overflow-scrolling: touch;
-  /* Prevent rubber-band effect */
-  touch-action: pan-y;
-}
+  body {
+    font-family: var(--font-primary);
+    background: var(--grok-bg-primary);
+    color: var(--grok-text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    /* Prevent pull-to-refresh flash on iOS Safari */
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+    /* Prevent rubber-band effect - allow vertical panning on desktop, but no-scroll-mobile will override on mobile */
+    touch-action: pan-y;
+  }
 
 /* Only apply flex layout to single-page design (index page) */
 body.no-scroll-mobile {
@@ -1074,6 +1074,9 @@ p {
   body.no-scroll-mobile {
     height: 100vh;
     overflow: hidden;
+    touch-action: none; /* Prevent all touch gestures including scrolling */
+    width: 100%;
+    position: relative;
   }
 
   html {
@@ -1087,6 +1090,16 @@ p {
   body.no-scroll-mobile html {
     height: 100vh;
     overflow: hidden;
+    touch-action: none; /* Prevent all touch gestures including scrolling */
+  }
+
+  /* Ensure main element doesn't create scrollbars on mobile */
+  body.no-scroll-mobile main {
+    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    height: 100vh;
+    max-height: 100vh;
   }
 
   .container {

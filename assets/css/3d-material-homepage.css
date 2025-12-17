@@ -8,8 +8,7 @@
     z-index: 1;
     pointer-events: auto; /* Allow touch events on entire container */
     overflow: hidden;
-    -webkit-overflow-scrolling: touch;
-    touch-action: none; /* Allow custom touch handling for rotation */
+    touch-action: none; /* Prevent default touch behaviors, allow custom touch handling for rotation */
 }
 
 #threejs-text-container canvas {
@@ -31,15 +30,18 @@
         /* Ensure full viewport on mobile */
         width: 100vw;
         height: 100vh;
-        /* Allow touch events for rotation */
+        /* Prevent all default touch behaviors to allow rotation */
         touch-action: none;
+        /* Prevent scrolling */
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: none;
     }
     
     #threejs-text-container canvas {
         /* Optimize for mobile rendering */
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        /* Ensure canvas can receive touch events */
+        /* Ensure canvas can receive touch events and prevent scrolling */
         touch-action: none;
     }
 }
