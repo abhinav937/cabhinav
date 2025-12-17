@@ -168,16 +168,42 @@ function init3DText() {
                 vec3 bitangent = normalize(vBitangent);
                 vec3 viewDir = normalize(vViewPosition);
 
-                // One rotating light orbiting around the equator (horizontal plane)
-                float orbitRadius = 70.0;  // Closer radius for more intensity
-                float orbitSpeed = 1.0;     // Faster rotation
-                float orbitHeight = 0.0;    // Keep at equator (Y = 0)
+                // Cinematic rotating light with dramatic 3D elliptical orbit and dynamic movement
+                float orbitSpeed = 0.25;   // Rotation speed
                 
-                // Light 1: Rotating around equator
+                // Create a cinematic angle with smooth acceleration/deceleration
+                float cinematicAngle = time * orbitSpeed;
+                
+                // Elliptical orbit - wider horizontally, creates more dynamic movement
+                float horizontalRadius = 85.0;  // Wider horizontal axis
+                float depthRadius = 60.0;       // Narrower depth axis for elliptical shape
+                
+                // Dramatic vertical movement - follows a figure-8 pattern for cinematic effect
+                // Creates sweeping high and low positions
+                float verticalAmplitude = 55.0;  // Large vertical range
+                float verticalPhase = sin(cinematicAngle) * verticalAmplitude;
+                
+                // Dynamic radius variation - light gets closer and farther for dramatic intensity changes
+                float radiusVariation = 15.0;  // How much the radius varies
+                float dynamicRadius = horizontalRadius + cos(cinematicAngle * 1.5) * radiusVariation;
+                
+                // Tilt the orbit plane slightly for more interesting angles (not perfectly horizontal)
+                float orbitTilt = 0.3;  // Tilt angle in radians
+                
+                // Calculate base position in elliptical orbit
+                float baseX = cos(cinematicAngle) * dynamicRadius;
+                float baseZ = sin(cinematicAngle) * depthRadius;
+                
+                // Apply orbit tilt for more dramatic 3D movement
+                float tiltedX = baseX * cos(orbitTilt) - verticalPhase * sin(orbitTilt);
+                float tiltedY = baseX * sin(orbitTilt) + verticalPhase * cos(orbitTilt);
+                float tiltedZ = baseZ;
+                
+                // Light 1: Cinematic 3D elliptical orbit with dramatic vertical and radius variation
                 vec3 rotatingLight = vec3(
-                    cos(time * orbitSpeed) * orbitRadius,
-                    orbitHeight,
-                    sin(time * orbitSpeed) * orbitRadius
+                    tiltedX,
+                    tiltedY,
+                    tiltedZ
                 );
                 
                 // Four fixed corner lights - positioned closer with bigger radius, tilted in front of text
