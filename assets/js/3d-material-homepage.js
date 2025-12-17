@@ -1,20 +1,46 @@
+// Mark that this module has started executing
+console.log('3D material homepage module: Module script executing');
+window.threeJsModuleExecuted = true;
+
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+console.log('3D material homepage module: Imports successful, THREE:', typeof THREE);
+
 // Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        init3DText();
-    } catch (error) {
-        console.error('Error initializing 3D text:', error);
-        // Still mark as loaded even if there's an error
-        if (window.markThreeJsTextLoaded) {
-            window.markThreeJsTextLoaded();
+function initializeWhenReady() {
+    if (document.readyState === 'loading') {
+        console.log('3D material homepage module: Waiting for DOMContentLoaded');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('3D material homepage module: DOMContentLoaded fired');
+            try {
+                init3DText();
+            } catch (error) {
+                console.error('Error initializing 3D text:', error);
+                // Still mark as loaded even if there's an error
+                if (window.markThreeJsTextLoaded) {
+                    window.markThreeJsTextLoaded();
+                }
+            }
+        });
+    } else {
+        // DOM already loaded, run immediately
+        console.log('3D material homepage module: DOM already ready, running init3DText immediately');
+        try {
+            init3DText();
+        } catch (error) {
+            console.error('Error initializing 3D text:', error);
+            // Still mark as loaded even if there's an error
+            if (window.markThreeJsTextLoaded) {
+                window.markThreeJsTextLoaded();
+            }
         }
     }
-});
+}
+
+initializeWhenReady();
 
 // Also handle window load as a fallback
 window.addEventListener('load', function() {
@@ -25,7 +51,7 @@ window.addEventListener('load', function() {
 });
 
 function init3DText() {
-    console.log('init3DText called');
+    console.log('init3DText called - container check starting');
     
     // Get the container element
     const container = document.getElementById('threejs-text-container');

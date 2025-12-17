@@ -567,6 +567,31 @@
         checkAllLoaded();
       };
       
+      // Global error handler to catch any unhandled errors from the module
+      window.addEventListener('error', function(event) {
+        // Check if error is from our 3D text module
+        if (event.filename && event.filename.includes('3d-material-homepage.js')) {
+          console.error('Error detected in 3D text module:', event.error || event.message);
+          // Don't mark as loaded here - let the module's own error handling do it
+        }
+      }, true);
+      
+      // Handle unhandled promise rejections (module import failures)
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && (
+          event.reason.toString().includes('3d-material-homepage') ||
+          event.reason.toString().includes('three') ||
+          event.reason.message && event.reason.message.includes('3d-material-homepage')
+        )) {
+          console.error('Unhandled promise rejection in 3D text module:', event.reason);
+          // Mark as loaded to prevent stuck screen
+          if (!loadingState.threeJsText && window.markThreeJsTextLoaded) {
+            console.warn('Module import failed, marking 3D text as loaded');
+            window.markThreeJsTextLoaded();
+          }
+        }
+      });
+      
       // Also set up a fallback timeout for 3D text in case it never calls markThreeJsTextLoaded
       // This is a safety net if the module script fails to load or execute
       setTimeout(() => {
@@ -580,7 +605,17 @@
     </script>
 
     <!-- Three.js 3D Text with Chrome Material -->
-    <script type="module" src="./assets/js/3d-material-homepage.js"></script>
+    <!-- Load module and catch any import/execution errors -->
+    <script type="module">
+      import('./assets/js/3d-material-homepage.js').catch(function(error) {
+        console.error('Failed to load or execute 3D text module:', error);
+        // Mark as loaded to prevent stuck loading screen
+        if (window.markThreeJsTextLoaded) {
+          console.warn('3D text module failed, marking as loaded anyway to prevent stuck loading');
+          window.markThreeJsTextLoaded();
+        }
+      });
+    </script>
 
   </body>
 </html>
