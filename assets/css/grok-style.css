@@ -88,6 +88,9 @@ html {
     width: 100%;
     box-sizing: border-box;
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   /* Allow pull-to-refresh on mobile */
   -webkit-overflow-scrolling: touch;
   /* Allow vertical panning and pull-to-refresh */
@@ -857,8 +860,45 @@ p {
   position: relative;
   flex-shrink: 0;
   width: 100%;
+  margin: 0;
   /* macOS-like glass effect */
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Ensure footer covers full width on desktop by breaking out of container */
+@media (min-width: 769px) {
+  body {
+    overflow-x: hidden; /* Prevent horizontal scroll from full-width footer */
+    padding: 0;
+    margin: 0;
+  }
+  
+  main {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+  }
+  
+  .footer .container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
 }
 
 .footer::before {
