@@ -6,21 +6,22 @@
     width: 100%;
     height: 100%;
     z-index: 1;
-    pointer-events: none;
+    pointer-events: auto; /* Allow touch events on entire container */
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
+    touch-action: none; /* Allow custom touch handling for rotation */
 }
 
 #threejs-text-container canvas {
     display: block;
     width: 100%;
     height: 100%;
-    touch-action: pan-y pan-x;
+    touch-action: none; /* Allow custom touch handling for rotation */
 }
 
-/* Allow pointer events for interaction */
+/* Canvas inherits pointer events from container */
 #threejs-text-container canvas {
-    pointer-events: auto;
+    pointer-events: inherit; /* Inherit from container */
     cursor: move;
 }
 
@@ -30,14 +31,16 @@
         /* Ensure full viewport on mobile */
         width: 100vw;
         height: 100vh;
-        /* Prevent zoom on double tap */
-        touch-action: manipulation;
+        /* Allow touch events for rotation */
+        touch-action: none;
     }
     
     #threejs-text-container canvas {
         /* Optimize for mobile rendering */
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
+        /* Ensure canvas can receive touch events */
+        touch-action: none;
     }
 }
 

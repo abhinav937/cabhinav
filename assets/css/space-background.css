@@ -66,21 +66,36 @@ body:has(#space-background-container) {
   }
 }
 
-/* Footer styling - semi-transparent so space background (stars) shows through */
+/* Footer styling - macOS-style with space background visible */
 .footer {
-  background: rgba(22, 22, 24, 0.85) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   position: relative;
   z-index: 11 !important;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset !important;
+}
+
+/* Hover effects only on desktop (mouse devices) */
+@media (hover: hover) and (pointer: fine) {
+  .footer {
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  }
+
+  .footer:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-top-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.08) inset,
+                0 -2px 20px rgba(255, 255, 255, 0.05) !important;
+  }
 }
 
 @media (max-width: 768px) {
   .footer {
-    background: rgba(22, 22, 24, 0.85) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     z-index: 11 !important;
   }
 }

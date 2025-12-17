@@ -178,18 +178,19 @@ function init3DText() {
                     sin(time * orbitSpeed) * orbitRadius
                 );
                 
-                // Four fixed corner lights - dimmer to emphasize rotating light
-                float cornerDistance = 120.0;  // Further distance to reduce intensity
-                float cornerHeight = 60.0;     // Height offset for corners
+                // Four fixed corner lights - positioned closer with bigger radius, tilted in front of text
+                float cornerDistance = 50.0;   // Closer distance (bigger radius) for more intensity
+                float cornerHeight = 40.0;      // Height offset for corners
+                float frontOffset =100.0;      // Negative Z to position lights in front of text (towards camera)
                 
-                // Top-left corner
-                vec3 cornerTopLeft = vec3(-cornerDistance, cornerHeight, -cornerDistance);
-                // Top-right corner
-                vec3 cornerTopRight = vec3(cornerDistance, cornerHeight, -cornerDistance);
-                // Bottom-left corner
-                vec3 cornerBottomLeft = vec3(-cornerDistance, -cornerHeight, cornerDistance);
-                // Bottom-right corner
-                vec3 cornerBottomRight = vec3(cornerDistance, -cornerHeight, cornerDistance);
+                // Top-left corner - tilted in front
+                vec3 cornerTopLeft = vec3(-cornerDistance, cornerHeight, frontOffset);
+                // Top-right corner - tilted in front
+                vec3 cornerTopRight = vec3(cornerDistance, cornerHeight, frontOffset);
+                // Bottom-left corner - tilted in front
+                vec3 cornerBottomLeft = vec3(-cornerDistance, -cornerHeight, frontOffset);
+                // Bottom-right corner - tilted in front
+                vec3 cornerBottomRight = vec3(cornerDistance, -cornerHeight, frontOffset);
 
                 vec3 color = vec3(0.0);
 
@@ -200,12 +201,12 @@ function init3DText() {
                 lights[3] = cornerBottomLeft;
                 lights[4] = cornerBottomRight;
 
-                // Light intensities - rotating light is much more powerful
-                float rotatingLightIntensity = 3.5;  // Much brighter rotating light
-                float cornerLightIntensity = 0.4;    // Dimmer corner lights for contrast
+                // Light intensities - corner lights are now brighter since they're closer and in front
+                float rotatingLightIntensity = 3.5;  // Rotating light
+                float cornerLightIntensity = 2.5;    // Brighter corner lights since they're closer and in front
                 
                 vec3 lightColors[5];
-                lightColors[0] = lightTemperature * rotatingLightIntensity;  // Rotating light - much brighter
+                lightColors[0] = lightTemperature * rotatingLightIntensity;  // Rotating light
                 lightColors[1] = vec3(0.5, 0.5, 0.7) * lightTemperature * cornerLightIntensity;  // Top-left: blue tint
                 lightColors[2] = vec3(0.7, 0.5, 0.5) * lightTemperature * cornerLightIntensity;  // Top-right: red tint
                 lightColors[3] = vec3(0.5, 0.7, 0.5) * lightTemperature * cornerLightIntensity;  // Bottom-left: green tint
@@ -233,8 +234,8 @@ function init3DText() {
                     vec3 specular = numerator / denominator;
 
                     float NdotL = max(dot(normal, lightDir), 0.0);
-                    // Extra boost for rotating light (index 0)
-                    float lightMultiplier = (i == 0) ? 1.5 : 1.0;  // Additional multiplier for rotating light
+                    // Extra boost for rotating light (index 0) and corner lights (indices 1-4) since they're in front
+                    float lightMultiplier = (i == 0) ? 1.5 : 1.3;  // Additional multiplier for all lights
                     color += (kD * metalColor / 3.14159265359 + specular) * lightColors[i] * NdotL * lightMultiplier;
                 }
 
@@ -264,7 +265,8 @@ function init3DText() {
                 ) * dispersion;
 
                 color += dispersionColor * edgeFactor;
-                color += metalColor * 0.03 * lightTemperature;
+                // Increased base brightness so text doesn't look so dark
+                color += metalColor * 0.18 * lightTemperature;
                 color = color / (color + vec3(1.0));
                 color = pow(color, vec3(1.0/2.2));
 
@@ -402,40 +404,62 @@ function init3DText() {
     });
 
     // Touch events for mobile - improved responsiveness
+    // Attach to container so touches work everywhere on screen
     let touchStartX = 0;
     let touchStartY = 0;
     let isTouching = false;
-    let touchScale = isMobileDevice() ? 0.015 : 0.01; // More sensitive on mobile
+    let touchScale = isMobileDevice() ? 0.025 : 0.01; // Increased sensitivity on mobile
 
-    document.addEventListener('touchstart', (e) => {
-        if (e.target.closest('#threejs-text-container')) {
-            e.preventDefault(); // Prevent default touch behavior
-            isTouching = true;
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            previousMouseX = touch.clientX;
-            previousMouseY = touch.clientY;
+    // Attach touch events to the container so they work everywhere on screen
+    container.addEventListener('touchstart', (e) => {
+        // Only handle touches on the container or canvas itself
+        // If touching other elements (like footer), let them handle it
+        const target = e.target;
+        if (target === container || target === renderer.domElement || container.contains(target)) {
+            // Check if we're actually touching an interactive element inside
+            if (!target.closest('.footer-link') && !target.closest('a') && !target.closest('button')) {
+                e.preventDefault(); // Prevent default touch behavior
+                isTouching = true;
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                previousMouseX = touch.clientX;
+                previousMouseY = touch.clientY;
+            }
         }
     }, { passive: false });
 
-    document.addEventListener('touchend', (e) => {
+    container.addEventListener('touchend', (e) => {
+        if (isTouching) {
+            e.preventDefault();
+        }
         isTouching = false;
-    }, { passive: true });
+    }, { passive: false });
 
-    document.addEventListener('touchmove', (e) => {
-        if (isTouching && e.target.closest('#threejs-text-container')) {
-            e.preventDefault(); // Prevent scrolling while rotating
-            const touch = e.touches[0];
-            const deltaX = touch.clientX - previousMouseX;
-            const deltaY = touch.clientY - previousMouseY;
-            
-            // Use touch scale for smoother rotation on mobile
-            targetRotationY += deltaX * touchScale;
-            targetRotationX += deltaY * touchScale;
-            
-            previousMouseX = touch.clientX;
-            previousMouseY = touch.clientY;
+    container.addEventListener('touchcancel', (e) => {
+        if (isTouching) {
+            e.preventDefault();
+        }
+        isTouching = false;
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (e) => {
+        if (isTouching) {
+            // Only prevent default if not touching interactive elements
+            const target = e.target;
+            if (!target.closest('.footer-link') && !target.closest('a') && !target.closest('button')) {
+                e.preventDefault(); // Prevent scrolling while rotating
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - previousMouseX;
+                const deltaY = touch.clientY - previousMouseY;
+                
+                // Use touch scale for smoother rotation on mobile
+                targetRotationY += deltaX * touchScale;
+                targetRotationX += deltaY * touchScale;
+                
+                previousMouseX = touch.clientX;
+                previousMouseY = touch.clientY;
+            }
         }
     }, { passive: false });
 
