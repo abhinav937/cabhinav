@@ -1,68 +1,30 @@
-// Note: In ES modules, imports are hoisted and execute before this code
-// So if imports fail, this code never runs
-
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// Mark that this module has successfully imported and started executing
-console.log('3D material homepage module: Module script executing, imports successful');
-window.threeJsModuleExecuted = true;
-console.log('3D material homepage module: THREE type:', typeof THREE);
-
 // Wait for DOM to be ready
-function initializeWhenReady() {
-    if (document.readyState === 'loading') {
-        console.log('3D material homepage module: Waiting for DOMContentLoaded');
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('3D material homepage module: DOMContentLoaded fired');
-            try {
-                init3DText();
-            } catch (error) {
-                console.error('Error initializing 3D text:', error);
-                // Still mark as loaded even if there's an error
-                if (window.markThreeJsTextLoaded) {
-                    window.markThreeJsTextLoaded();
-                }
-            }
-        });
-    } else {
-        // DOM already loaded, run immediately
-        console.log('3D material homepage module: DOM already ready, running init3DText immediately');
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
         try {
             init3DText();
         } catch (error) {
-            console.error('Error initializing 3D text:', error);
-            // Still mark as loaded even if there's an error
-            if (window.markThreeJsTextLoaded) {
-                window.markThreeJsTextLoaded();
-            }
+            // Error handling - module will continue without 3D text
         }
+    });
+} else {
+    // DOM already loaded, run immediately
+    try {
+        init3DText();
+    } catch (error) {
+        // Error handling - module will continue without 3D text
     }
 }
 
-initializeWhenReady();
-
-// Also handle window load as a fallback
-window.addEventListener('load', function() {
-    // If init3DText hasn't run yet (shouldn't happen, but safety check)
-    if (window.markThreeJsTextLoaded && !document.getElementById('threejs-text-container')?.hasChildNodes()) {
-        console.warn('3D text container still empty after load event');
-    }
-});
-
 function init3DText() {
-    console.log('init3DText called - container check starting');
-    
     // Get the container element
     const container = document.getElementById('threejs-text-container');
     if (!container) {
-        console.error('Container #threejs-text-container not found');
-        // Still mark as loaded even if container is missing
-        if (window.markThreeJsTextLoaded) {
-            window.markThreeJsTextLoaded();
-        }
         return;
     }
 
@@ -381,24 +343,16 @@ function init3DText() {
 
     // Track if loading has completed to prevent duplicate calls
     let loadingComplete = false;
-    let fontLoaderStarted = false;
     
     function markLoadingComplete() {
         if (!loadingComplete) {
             loadingComplete = true;
-            console.log('3D text: markLoadingComplete called');
-            if (window.markThreeJsTextLoaded) {
-                window.markThreeJsTextLoaded();
-            } else {
-                console.error('window.markThreeJsTextLoaded is not defined!');
-            }
         }
     }
     
     // Start a timeout for the font loader itself (in case it hangs)
     const fontLoaderTimeout = setTimeout(() => {
         if (!loadingComplete) {
-            console.warn('Font loader timeout - taking too long, creating fallback geometry');
             if (!textMesh) {
                 try {
                     const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
@@ -406,22 +360,18 @@ function init3DText() {
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (error) {
-                    console.error('Error creating font loader timeout fallback:', error);
+                    // Error handled silently
                 }
             }
             markLoadingComplete();
         }
     }, 2500); // 2.5 second timeout for font loading specifically
     
-    console.log('Starting font loader...');
-    fontLoaderStarted = true;
-    
     loader.load(
         'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
         // onLoad callback
         function(font) {
             clearTimeout(fontLoaderTimeout); // Clear the timeout since we loaded successfully
-            console.log('Font loaded successfully');
             try {
                 // Responsive text size for mobile and desktop
                 const isMobile = isMobileDevice();
@@ -465,7 +415,6 @@ function init3DText() {
                 // Notify that 3D text is loaded
                 markLoadingComplete();
             } catch (error) {
-                console.error('Error creating 3D text:', error);
                 // Still mark as complete even if there's an error
                 markLoadingComplete();
             }
@@ -475,7 +424,6 @@ function init3DText() {
         // onError callback - critical for handling failures
         function(error) {
             clearTimeout(fontLoaderTimeout); // Clear the timeout since we got an error
-            console.error('Error loading font:', error);
             // Create fallback geometry if font fails to load
             if (!textMesh) {
                 try {
@@ -484,7 +432,7 @@ function init3DText() {
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (fallbackError) {
-                    console.error('Error creating fallback geometry:', fallbackError);
+                    // Error handled silently
                 }
             }
             // Always mark as complete even on error
@@ -495,7 +443,6 @@ function init3DText() {
     // Safety timeout to ensure loading always completes (reduced since we have font loader timeout)
     setTimeout(() => {
         if (!loadingComplete) {
-            console.warn('3D text: Safety timeout (3s) - ensuring loading is marked complete');
             if (!textMesh) {
                 try {
                     const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
@@ -503,7 +450,7 @@ function init3DText() {
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (error) {
-                    console.error('Error creating safety timeout fallback geometry:', error);
+                    // Error handled silently
                 }
             }
             // Always mark as complete
