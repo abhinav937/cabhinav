@@ -88,11 +88,10 @@ html {
     width: 100%;
     box-sizing: border-box;
     position: relative;
-    /* Prevent pull-to-refresh flash on iOS Safari */
-    overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: touch;
-    /* Prevent rubber-band effect - allow vertical panning on desktop, but no-scroll-mobile will override on mobile */
-    touch-action: pan-y;
+  /* Allow pull-to-refresh on mobile */
+  -webkit-overflow-scrolling: touch;
+  /* Allow vertical panning and pull-to-refresh */
+  touch-action: pan-y;
   }
 
 /* Only apply flex layout to single-page design (index page) */
@@ -902,6 +901,10 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: visible;
+  /* Smooth animations with hardware acceleration */
+  will-change: transform, background, border-color, box-shadow;
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 .footer-link::before {
@@ -941,7 +944,10 @@ p {
 /* macOS-style hover effects - DESKTOP ONLY (mouse devices) */
 @media (hover: hover) and (pointer: fine) {
   .footer {
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Smooth transitions for footer background */
+    transition: background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-top-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   /* Subtle glow effect when hovering over footer area */
@@ -953,7 +959,7 @@ p {
   }
 
   .footer::before {
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .footer:hover::before {
@@ -961,22 +967,26 @@ p {
   }
 
   .footer-link {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* macOS-like smooth scaling */
-    transform-origin: center bottom;
+    /* macOS-like smooth scaling with optimized transitions */
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+                color 0.3s ease;
   }
 
   .footer-link::before {
-    transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* macOS-like scale effect on hover */
+  /* macOS-like scale effect on hover - smoother and more refined */
   .footer-link:hover {
     color: var(--grok-bg-primary);
     transform: translateY(-8px) scale(1.3);
     border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 24px rgba(255, 255, 255, 0.25);
     background: rgba(255, 255, 255, 0.15);
   }
 
@@ -984,15 +994,17 @@ p {
     opacity: 1;
   }
 
-  /* Adjacent items also scale slightly (macOS dock effect) */
+  /* Adjacent items also scale slightly (macOS dock effect) - smoother */
   .footer-link:hover + .footer-link,
   .footer-link:has(+ .footer-link:hover) {
     transform: translateY(-4px) scale(1.15);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .footer-icon-svg {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.3s ease !important;
+    will-change: transform, filter;
   }
 
   .footer-link:hover .footer-icon-svg {
@@ -1001,7 +1013,8 @@ p {
   }
 
   .footer-link .material-symbols-outlined {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
   }
 
   .footer-link:hover .material-symbols-outlined {
@@ -1009,7 +1022,7 @@ p {
   }
 
   .footer-text {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .footer:hover .footer-text {
@@ -1064,42 +1077,43 @@ p {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Use black background - space canvas will overlay if present */
-    /* Prevent pull-to-refresh flash on iOS Safari */
-    overscroll-behavior-y: none;
+    /* Allow pull-to-refresh */
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
   }
 
   /* Only apply no-scroll behavior to pages with the no-scroll-mobile class */
+  /* But allow scrolling - just prevent pull-to-refresh */
   body.no-scroll-mobile {
-    height: 100vh;
-    overflow: hidden;
-    touch-action: none; /* Prevent all touch gestures including scrolling */
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto; /* Allow vertical scrolling */
+    touch-action: pan-y; /* Allow vertical panning (scrolling) */
     width: 100%;
     position: relative;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   html {
     background: var(--grok-bg-primary);
     /* Use black background - space canvas will overlay if present */
-    /* Prevent pull-to-refresh flash on iOS Safari */
-    overscroll-behavior-y: none;
+    /* Allow pull-to-refresh */
     -webkit-overflow-scrolling: touch;
   }
 
   body.no-scroll-mobile html {
-    height: 100vh;
-    overflow: hidden;
-    touch-action: none; /* Prevent all touch gestures including scrolling */
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto; /* Allow scrolling */
+    touch-action: pan-y; /* Allow vertical panning */
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Ensure main element doesn't create scrollbars on mobile */
+  /* Allow main element to scroll on mobile */
   body.no-scroll-mobile main {
-    overflow: hidden;
-    overflow-y: hidden;
     overflow-x: hidden;
-    height: 100vh;
-    max-height: 100vh;
+    overflow-y: visible; /* Allow content to scroll */
+    min-height: 100vh;
   }
 
   .container {
@@ -1629,6 +1643,11 @@ p {
     flex-shrink: 0;
     z-index: 11;
     box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset;
+    /* Smooth transitions for mobile */
+    transition: background 0.3s ease,
+                border-top-color 0.3s ease,
+                box-shadow 0.3s ease;
+    will-change: background, border-top-color, box-shadow;
   }
 
   .footer::before {
@@ -1671,7 +1690,13 @@ p {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: visible;
-    transition: transform 0.2s ease, background 0.2s ease;
+    /* Smooth mobile animations with hardware acceleration */
+    will-change: transform, background;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .footer-link::before {
@@ -1685,12 +1710,25 @@ p {
     opacity: 0;
     z-index: -1;
     border-radius: 50%;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: opacity;
   }
 
-  /* Simple active state for touch devices */
+  /* Smooth active state for touch devices - macOS-like */
   .footer-link:active {
-    transform: scale(0.95);
-    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.15s ease,
+                border-color 0.15s ease;
+  }
+  
+  /* Smooth release animation */
+  .footer-link:not(:active) {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .footer-text {

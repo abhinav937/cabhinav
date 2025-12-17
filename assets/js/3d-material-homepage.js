@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -22,11 +23,12 @@ function init3DText() {
         alpha: true
     });
     container.appendChild(renderer.domElement);
-    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.outputEncoding = THREE.sRGBEncoding;
+    
 
     const loader = new FontLoader();
     let textMesh;
@@ -330,17 +332,11 @@ function init3DText() {
         // Create mesh first
         textMesh = new THREE.Mesh(textGeometry, customMaterial);
         
-        // Ensure camera position is updated before calculating scale
-        updateCameraPosition();
-        
+        // Camera position is already set before loader, OrbitControls will manage it
         // Calculate and apply scale based on viewport
         const scaleFactor = calculateScaleForViewport(textGeometry, camera, viewportWidth, viewportHeight);
         textMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
         
-        // Debug logging (can be removed in production)
-        if (window.innerWidth <= 768) {
-            console.log('Mobile - Scale:', scaleFactor.toFixed(2), 'Viewport:', viewportWidth, 'x', viewportHeight);
-        }
         
         // Position text - adjust Y position for mobile to appear higher/centered
         textMesh.position.x = 0;  // Centered horizontally
@@ -357,41 +353,61 @@ function init3DText() {
         }
     }, 1000);
 
-    // Responsive camera position
-    function updateCameraPosition() {
-        const isMobile = isMobileDevice();
-        const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
-        
-        if (isMobile) {
-            camera.position.z = 3.5;  // Closer on mobile for better fit
-            camera.position.y = -0.2;  // Lower camera to look up at text (makes text appear higher)
-        } else if (isTablet) {
-            camera.position.z = 7;
-            camera.position.y = 0.1;
-        } else {
-            camera.position.z = 10;
-            camera.position.y = 0;
-        }
-        
-        // Make camera look at the text center
-        camera.lookAt(0, isMobile ? 0.5 : 0, 0);
+    // Set initial camera position based on device type
+    // OrbitControls will manage the camera from here
+    const isMobile = isMobileDevice();
+    const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+    
+    let initialCameraDistance;
+    let textCenterY;
+    
+    if (isMobile) {
+        initialCameraDistance = 3.5;
+        textCenterY = 0.5;
+        camera.position.set(0, -0.2, initialCameraDistance);
+    } else if (isTablet) {
+        initialCameraDistance = 7;
+        textCenterY = 0;
+        camera.position.set(0, 0.1, initialCameraDistance);
+    } else {
+        initialCameraDistance = 10;
+        textCenterY = 0;
+        camera.position.set(0, 0, initialCameraDistance);
     }
     
-    updateCameraPosition();
-
+    // Set up OrbitControls for MOUSE ONLY (desktop)
+    // Touch will be handled manually like 3d-material.js
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, textCenterY, 0);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    
+    // DISABLE OrbitControls touch handling - we'll handle it manually
+    controls.touches = {
+        ONE: THREE.TOUCH.NONE,
+        TWO: THREE.TOUCH.NONE
+    };
+    
+    // Manual rotation state (like 3d-material.js)
     let targetRotationX = 0;
     let targetRotationY = 0;
     let isDragging = false;
     let previousMouseX = 0;
     let previousMouseY = 0;
-
-    // Mouse events for rotation only
+    
+    // Mouse events for desktop (like 3d-material.js)
     document.addEventListener('mousedown', (e) => {
-        isDragging = true;
+        if (!e.target.closest('.footer-link') && !e.target.closest('a') && !e.target.closest('button')) {
+            isDragging = true;
+        }
     });
-
-    document.addEventListener('mouseup', () => isDragging = false);
-
+    
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+    
     document.addEventListener('mousemove', (event) => {
         if (isDragging) {
             const deltaX = event.clientX - previousMouseX;
@@ -402,88 +418,78 @@ function init3DText() {
         previousMouseX = event.clientX;
         previousMouseY = event.clientY;
     });
-
-    // Touch events for mobile - improved responsiveness
-    // Attach to container so touches work everywhere on screen
+    
+    // Touch events for mobile (EXACTLY like 3d-material.js - document level, passive)
     let touchStartX = 0;
     let touchStartY = 0;
     let isTouching = false;
-    let touchScale = isMobileDevice() ? 0.025 : 0.01; // Increased sensitivity on mobile
-
-    // Attach touch events to the container so they work everywhere on screen
-    container.addEventListener('touchstart', (e) => {
-        // Only handle touches on the container or canvas itself
-        // If touching other elements (like footer), let them handle it
-        const target = e.target;
-        if (target === container || target === renderer.domElement || container.contains(target)) {
-            // Check if we're actually touching an interactive element inside
-            if (!target.closest('.footer-link') && !target.closest('a') && !target.closest('button')) {
-                e.preventDefault(); // Prevent default touch behavior
-                isTouching = true;
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-                previousMouseX = touch.clientX;
-                previousMouseY = touch.clientY;
-            }
+    
+    document.addEventListener('touchstart', (e) => {
+        // Don't interfere with footer links or buttons
+        if (!e.target.closest('.footer-link') && !e.target.closest('a') && !e.target.closest('button')) {
+            isTouching = true;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            previousMouseX = touch.clientX;
+            previousMouseY = touch.clientY;
         }
-    }, { passive: false });
-
-    container.addEventListener('touchend', (e) => {
-        if (isTouching) {
-            e.preventDefault();
-        }
+    }, { passive: true }); // PASSIVE - allows scrolling!
+    
+    document.addEventListener('touchend', () => {
         isTouching = false;
-    }, { passive: false });
-
-    container.addEventListener('touchcancel', (e) => {
-        if (isTouching) {
-            e.preventDefault();
+    }, { passive: true }); // PASSIVE - allows scrolling!
+    
+    document.addEventListener('touchmove', (e) => {
+        if (isTouching && !e.target.closest('.footer-link') && !e.target.closest('a') && !e.target.closest('button')) {
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - previousMouseX;
+            const deltaY = touch.clientY - previousMouseY;
+            
+            // Rotate the mesh (like 3d-material.js)
+            targetRotationY += deltaX * 0.01;
+            targetRotationX += deltaY * 0.01;
+            
+            previousMouseX = touch.clientX;
+            previousMouseY = touch.clientY;
         }
-        isTouching = false;
-    }, { passive: false });
-
-    container.addEventListener('touchmove', (e) => {
-        if (isTouching) {
-            // Only prevent default if not touching interactive elements
-            const target = e.target;
-            if (!target.closest('.footer-link') && !target.closest('a') && !target.closest('button')) {
-                e.preventDefault(); // Prevent scrolling while rotating
-                const touch = e.touches[0];
-                const deltaX = touch.clientX - previousMouseX;
-                const deltaY = touch.clientY - previousMouseY;
-                
-                // Use touch scale for smoother rotation on mobile
-                targetRotationY += deltaX * touchScale;
-                targetRotationX += deltaY * touchScale;
-                
-                previousMouseX = touch.clientX;
-                previousMouseY = touch.clientY;
-            }
-        }
-    }, { passive: false });
+    }, { passive: true }); // PASSIVE - allows scrolling!
+    
+    
+    controls.update();
 
     function animate() {
-        requestAnimationFrame(animate);
         materialUniforms.time.value += 0.01;
+        
+        // Update controls for mouse (desktop)
+        controls.update();
+        
+        // Apply rotation to mesh (like 3d-material.js)
         if (textMesh) {
             textMesh.rotation.x += (targetRotationX - textMesh.rotation.x) * 0.1;
             textMesh.rotation.y += (targetRotationY - textMesh.rotation.y) * 0.1;
         }
+        
         renderer.render(scene, camera);
     }
+    
+    
+    // Use setAnimationLoop like the Three.js example for better performance
+    renderer.setAnimationLoop(animate);
 
     window.addEventListener('resize', () => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const isMobile = isMobileDevice();
+        const isTablet = viewportWidth > 768 && viewportWidth <= 1024;
         
         // Update camera aspect ratio
         camera.aspect = viewportWidth / viewportHeight;
         camera.updateProjectionMatrix();
         
-        // Update camera position
-        updateCameraPosition();
+        // Update controls target based on device type
+        const textCenterY = isMobile ? 0.5 : 0;
+        controls.target.set(0, textCenterY, 0);
         
         // Recalculate text scale based on new viewport
         if (textMesh) {
@@ -491,12 +497,10 @@ function init3DText() {
             textMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
             
             // Update text Y position for mobile
-            textMesh.position.y = isMobile ? 0.5 : 0;
+            textMesh.position.y = textCenterY;
         }
         
         // Update renderer size
         renderer.setSize(viewportWidth, viewportHeight);
     });
-
-    animate();
 }

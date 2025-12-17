@@ -75,12 +75,18 @@ body:has(#space-background-container) {
   position: relative;
   z-index: 11 !important;
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset !important;
+  /* Smooth transitions */
+  transition: background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-top-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
 
 /* Hover effects only on desktop (mouse devices) */
 @media (hover: hover) and (pointer: fine) {
   .footer {
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    transition: background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-top-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
   }
 
   .footer:hover {
@@ -102,6 +108,10 @@ body:has(#space-background-container) {
     right: 0 !important;
     width: 100% !important;
     z-index: 11 !important;
+    /* Smooth mobile transitions */
+    transition: background 0.3s ease,
+                border-top-color 0.3s ease,
+                box-shadow 0.3s ease !important;
   }
 }
 

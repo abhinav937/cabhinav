@@ -6,22 +6,22 @@
     width: 100%;
     height: 100%;
     z-index: 1;
-    pointer-events: auto; /* Allow touch events on entire container */
+    pointer-events: none; /* Don't block touches - let them pass through to content below */
     overflow: hidden;
-    touch-action: none; /* Prevent default touch behaviors, allow custom touch handling for rotation */
 }
 
 #threejs-text-container canvas {
     display: block;
     width: 100%;
     height: 100%;
-    touch-action: none; /* Allow custom touch handling for rotation */
+    pointer-events: none; /* Don't block touches - let them pass through for scrolling */
+    touch-action: pan-y pinch-zoom; /* Allow vertical scrolling */
+    cursor: move;
 }
 
-/* Canvas inherits pointer events from container */
-#threejs-text-container canvas {
-    pointer-events: inherit; /* Inherit from container */
-    cursor: move;
+/* Debug: Log when styles are applied */
+#threejs-text-container::before {
+    content: '';
 }
 
 /* Mobile optimizations */
@@ -30,19 +30,16 @@
         /* Ensure full viewport on mobile */
         width: 100vw;
         height: 100vh;
-        /* Prevent all default touch behaviors to allow rotation */
-        touch-action: none;
-        /* Prevent scrolling */
-        overscroll-behavior: none;
-        -webkit-overflow-scrolling: none;
+        pointer-events: none; /* Don't block scrolling */
     }
     
     #threejs-text-container canvas {
         /* Optimize for mobile rendering */
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        /* Ensure canvas can receive touch events and prevent scrolling */
-        touch-action: none;
+        /* Don't block touches - document-level handlers will catch them */
+        pointer-events: none;
+        touch-action: pan-y pinch-zoom; /* Allow vertical scrolling */
     }
 }
 

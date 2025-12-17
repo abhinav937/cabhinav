@@ -2,33 +2,7 @@
 // GROK-STYLE PORTFOLIO JAVASCRIPT
 // ========================================
 
-// Prevent pull-to-refresh flash on iOS Safari
-// This complements the CSS overscroll-behavior-y: none
-(function() {
-    // Only apply on iOS devices
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    
-    if (isIOS) {
-        let touchStartY = 0;
-        
-        document.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', function(e) {
-            // Only prevent pull-to-refresh when at the top of the page
-            if (window.scrollY === 0) {
-                const touchY = e.touches[0].clientY;
-                const touchYDelta = touchY - touchStartY;
-                
-                // Prevent pull-down gesture when at top
-                if (touchYDelta > 0) {
-                    e.preventDefault();
-                }
-            }
-        }, { passive: false });
-    }
-})();
+// Allow pull-to-refresh - no prevention needed
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
