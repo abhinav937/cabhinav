@@ -1678,7 +1678,7 @@ p {
   .footer {
     background: rgba(0, 0, 0, 0.4);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md) !important;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     position: fixed;
@@ -1694,6 +1694,22 @@ p {
                 border-top-color 0.3s ease,
                 box-shadow 0.3s ease;
     will-change: background, border-top-color, box-shadow;
+  }
+  
+  /* Add padding-bottom to main content to allow scrolling past fixed footer */
+  /* This ensures content is not hidden behind the fixed footer on mobile */
+  main {
+    padding-bottom: 100px;
+  }
+  
+  /* For pages without main wrapper, add padding to body */
+  body:not(.no-scroll-mobile) {
+    padding-bottom: 100px;
+  }
+  
+  /* Also ensure sections have enough bottom padding when they're the last element */
+  .section:last-child {
+    padding-bottom: calc(2rem + 100px);
   }
 
   .footer::before {
@@ -1719,7 +1735,7 @@ p {
     gap: var(--spacing-xs);
     margin-bottom: 4px;
     flex-wrap: wrap;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0;
   }
 
   .footer-link {
@@ -2258,10 +2274,8 @@ p {
     flex-wrap: wrap;
   }
 
-  /* Improve footer spacing */
-  .footer {
-    padding: 2rem 0;
-  }
+  /* Footer spacing - removed to allow mobile footer's compact padding to work */
+  /* Mobile footer has its own padding at line 1681, so we don't override it here */
 
   .footer-links {
     gap: 1rem;
