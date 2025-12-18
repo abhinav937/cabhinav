@@ -1,18 +1,18 @@
 /* Space Background Styles for Homepage */
-/* Default to black, transparent only when canvas is present */
+/* Default to dark background matching space background color */
 html {
-  background: var(--grok-bg-primary, #000000);
+  background: #161618 !important;
 }
 
 body {
-  background: var(--grok-bg-primary, #000000);
+  background: #161618 !important;
   position: relative;
 }
 
-/* Make transparent to show enhanced space background (only on homepage) */
-html:has(#space-background-container),
-body:has(#space-background-container) {
-  background: transparent;
+/* Make transparent to show enhanced space background only when canvas is actually rendered */
+html.space-bg-ready,
+body.space-bg-ready {
+  background: transparent !important;
 }
 
 /* Enhanced space background container styling */

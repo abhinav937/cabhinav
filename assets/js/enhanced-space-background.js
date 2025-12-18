@@ -123,6 +123,10 @@
             });
 
             this.container.appendChild(this.canvas);
+            
+            // Add class to body/html when canvas is ready to make background transparent
+            document.body.classList.add('space-bg-ready');
+            document.documentElement.classList.add('space-bg-ready');
         }
 
         setupOffscreenRendering() {
