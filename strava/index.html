@@ -62,6 +62,13 @@
 
     <!-- Page Specific Styles -->
     <link rel="stylesheet" href="../assets/css/strava.css">
+    
+    <!-- Stat Dashboard Styles -->
+    <link rel="stylesheet" href="../web-components/stat-dashboard/style.css">
+    
+    <!-- Space Background -->
+    <script src="../assets/js/enhanced-space-background.js"></script>
+    <link rel="stylesheet" href="../assets/css/space-background.css">
 
     <!-- Breadcrumb Structured Data -->
     <script type="application/ld+json">
@@ -87,11 +94,8 @@
 </head>
 
 <body class="strava-page">
-    <!-- Back Navigation -->
-    <a href="../" class="back-button" aria-label="Back to home">
-      <span class="material-symbols-outlined">arrow_back</span>
-      Back
-    </a>
+    <!-- Space Background Canvas -->
+    <div id="space-background-container"></div>
 
     <div class="strava-container">
         <!-- Header Section -->
@@ -100,52 +104,221 @@
             <p class="strava-subtitle">Track my running journey and performance metrics</p>
         </header>
 
-        <!-- Widgets Section -->
-        <section class="strava-widgets" aria-label="Strava Activity Widgets">
-            <!-- Latest Activities Widget -->
-            <article class="widget-card">
-                <header class="widget-header">
-                    <div class="widget-icon" aria-hidden="true">
-                        <i class="fas fa-route"></i>
+        <!-- Main Content Grid - All Three Sections -->
+        <div class="strava-main-grid">
+            <!-- Personal Bests Dashboard -->
+            <section class="strava-pb-section" aria-label="Personal Best Times">
+                <!-- Sortable Stat Dashboard -->
+                <div class="stat-dashboard sortable-dashboard dashboard-hidden">
+                        <div class="dashboard-header">
+                            <div class="stat-icon">
+                                <span class="material-symbols-outlined">emoji_events</span>
+                            </div>
+                            <h2>Personal Best Times</h2>
+                            <div class="sort-controls">
+                                <button class="sort-btn" data-sort="distance" data-order="asc" title="Sort by Distance">
+                                    <span class="sort-label">Distance</span>
+                                    <span class="material-symbols-outlined sort-icon">unfold_more</span>
+                                </button>
+                                <button class="sort-btn" data-sort="pace" data-order="asc" title="Sort by Pace">
+                                    <span class="sort-label">Pace</span>
+                                    <span class="material-symbols-outlined sort-icon">unfold_more</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-list" id="sortable-stats-list">
+                            <!-- 400m -->
+                            <div class="stat-card" data-type="pb" data-distance="400m">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">400m</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="97" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="243" data-distance="400" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- Half Mile -->
+                            <div class="stat-card" data-type="pb" data-distance="halfmi">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">Half Mile</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="180" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="225" data-distance="805" data-unit="mi">0:00</span>/mi</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 1K -->
+                            <div class="stat-card" data-type="pb" data-distance="1k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">1K</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="225" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="225" data-distance="1000" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 1 Mile -->
+                            <div class="stat-card" data-type="pb" data-distance="1mi">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">1 Mile</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="360" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="360" data-distance="1609" data-unit="mi">0:00</span>/mi</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 2 Mile -->
+                            <div class="stat-card" data-type="pb" data-distance="2mi">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">2 Mile</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="720" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="360" data-distance="3218" data-unit="mi">0:00</span>/mi</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 5K -->
+                            <div class="stat-card highlight" data-type="pb" data-distance="5k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">5K</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="1125" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="225" data-distance="5000" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 10K -->
+                            <div class="stat-card" data-type="pb" data-distance="10k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">10K</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="2400" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="240" data-distance="10000" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 15K -->
+                            <div class="stat-card" data-type="pb" data-distance="15k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">15K</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="3600" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="240" data-distance="15000" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 10 Mile -->
+                            <div class="stat-card" data-type="pb" data-distance="10mi">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">10 Mile</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="4200" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="420" data-distance="16090" data-unit="mi">0:00</span>/mi</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- 20K -->
+                            <div class="stat-card" data-type="pb" data-distance="20k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">20K</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="4800" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="240" data-distance="20000" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- Half Marathon -->
+                            <div class="stat-card highlight" data-type="pb" data-distance="21k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">Half Marathon</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="5400" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="257" data-distance="21097" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <!-- Marathon -->
+                            <div class="stat-card" data-type="pb" data-distance="42k">
+                                <div class="stat-row">
+                                    <div class="stat-icon"><span class="material-symbols-outlined">emoji_events</span></div>
+                                    <div class="stat-label">Marathon</div>
+                                    <div class="stat-main-info">
+                                        <div class="stat-value" data-target-seconds="11400" data-duration="2000" data-format="time">0:00</div>
+                                        <div class="stat-pace">Pace: <span data-pace-seconds="271" data-distance="42195" data-unit="km">0:00</span>/km</div>
+                                    </div>
+                                    <div class="stat-date">Achieved: <span>Loading...</span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="widget-title">Latest Activities</h2>
-                </header>
-                <div class="widget-content">
+            </section>
+
+            <!-- Widgets Section -->
+            <section class="strava-widgets" aria-label="Strava Activity Widgets">
+            <!-- Latest Activities -->
+            <div class="strava-widget">
+                <h2 class="strava-section-title">
+                    <span class="material-symbols-outlined">route</span>
+                    Latest Activities
+                </h2>
+                <div class="strava-widget-content">
                     <iframe
                         class="strava-iframe latest-rides"
-                        height="400"
+                        height="300"
                         width="300"
                         style="border: none;"
                         allow="fullscreen"
                         loading="lazy"
                         title="Latest Strava Activities"
                         src="https://www.strava.com/athletes/99464226/latest-rides/63bde6a12ff1a11fb4436df5e6a8aac6b8ebb32c"
-                        aria-label="Latest Strava running activities">
+                        aria-label="Latest Strava running activities"
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
                     </iframe>
                 </div>
-            </article>
+            </div>
 
-            <!-- My Half Marathon Widget -->
-            <article class="widget-card">
-                <header class="widget-header">
-                    <div class="widget-icon" aria-hidden="true">
-                        <i class="fas fa-medal"></i>
-                    </div>
-                    <h2 class="widget-title">My Half Marathon</h2>
-                </header>
-                <div class="widget-content">
+            <!-- My Half Marathon -->
+            <div class="strava-widget">
+                <h2 class="strava-section-title">
+                    <span class="material-symbols-outlined">emoji_events</span>
+                    My Half Marathon
+                </h2>
+                <div class="strava-widget-content">
                     <div 
                         class="strava-embed-placeholder" 
                         data-embed-type="activity" 
                         data-embed-id="16406693132" 
-                        data-style="standard" 
+                        data-style="compact" 
                         data-from-embed="false"
                         aria-label="Half Marathon Activity">
                     </div>
                 </div>
-            </article>
-
-        </section>
+            </div>
+            </section>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -172,18 +345,77 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script>
-        // Strava Embed Script - Load once
-        (function() {
-            if (!document.querySelector('script[src="https://strava-embeds.com/embed.js"]')) {
-                const script = document.createElement('script');
-                script.src = 'https://strava-embeds.com/embed.js';
-                script.async = true;
-                script.defer = true;
-                document.head.appendChild(script);
-            }
-        })();
-    </script>
+  <!-- Scripts -->
+  <script>
+    // Suppress Strava iframe errors (cross-origin security restrictions)
+    (function() {
+      // Suppress errors from Strava iframes
+      const originalError = window.onerror;
+      window.onerror = function(msg, url, line, col, error) {
+        if (msg && (
+          msg.includes('Strava') || 
+          msg.includes('pathname') || 
+          msg.includes('Location') ||
+          msg.includes('windowOnloadTriggered') ||
+          msg.includes('loadCDNiFrame') ||
+          msg.includes('CookieControl') ||
+          msg.includes('SecurityError') ||
+          msg.includes('Failed to read')
+        )) {
+          return true; // Suppress error
+        }
+        if (originalError) {
+          return originalError.call(this, msg, url, line, col, error);
+        }
+        return false;
+      };
+      
+      // Also catch unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && (
+          e.reason.message && (
+            e.reason.message.includes('Strava') ||
+            e.reason.message.includes('pathname') ||
+            e.reason.message.includes('Location')
+          )
+        )) {
+          e.preventDefault();
+        }
+      });
+    })();
+    
+    // Initialize Space Background - Same config as main page
+    document.addEventListener('DOMContentLoaded', function() {
+      const spaceContainer = document.getElementById('space-background-container');
+      if (spaceContainer && window.initEnhancedSpaceBackground) {
+        const config = {
+          enableControls: false,
+          mobileOptimizations: true,
+          targetFps: 60,
+          enableNebula: true,
+          enableStarlinkTrains: false,
+          starDensity: 0.5,
+          shootingStarFreq: 0.001,
+          nebulaCount: 0,
+          animationSpeed: 1.2
+        };
+        window.initEnhancedSpaceBackground(spaceContainer, config);
+      }
+    });
+    
+    // Strava Embed Script - Load once
+    (function() {
+      if (!document.querySelector('script[src="https://strava-embeds.com/embed.js"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://strava-embeds.com/embed.js';
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+    })();
+  </script>
+  
+  <!-- Stat Dashboard Script -->
+  <script src="../web-components/stat-dashboard/script.js" defer></script>
 </body>
 </html> 

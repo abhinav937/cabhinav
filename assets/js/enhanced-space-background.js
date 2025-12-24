@@ -87,6 +87,21 @@
         }
 
         init() {
+            // Define fixed world space dimensions (never changes, prevents clearing)
+            this.worldWidth = 1920;
+            this.worldHeight = 1080;
+            
+            // Ensure container has dark background to prevent white flash
+            if (this.container) {
+                this.container.style.backgroundColor = this.config.backgroundColor;
+                this.container.style.position = 'fixed';
+                this.container.style.top = '0';
+                this.container.style.left = '0';
+                this.container.style.width = '100vw';
+                this.container.style.height = '100vh';
+                this.container.style.overflow = 'hidden';
+            }
+            
             this.createCanvas();
             this.setupOffscreenRendering();
             this.createStars();
@@ -106,23 +121,35 @@
         }
 
         createCanvas() {
+            // Display canvas - same size as world canvas, scaled via CSS transform
+            // Never changes internal dimensions = no clearing!
             this.canvas = document.createElement('canvas');
             this.canvas.className = 'enhanced-space-bg-canvas';
+            this.canvas.width = this.worldWidth;
+            this.canvas.height = this.worldHeight;
             this.ctx = this.canvas.getContext('2d');
 
-            // Style canvas
+            // Style canvas - will be scaled via CSS transform in resize()
+            // Positioned to cover entire container (which covers viewport)
             Object.assign(this.canvas.style, {
                 display: 'block',
                 position: 'absolute',
                 top: '0',
                 left: '0',
-                width: '100%',
-                height: '100%',
+                width: `${this.worldWidth}px`,
+                height: `${this.worldHeight}px`,
                 pointerEvents: 'none',
-                zIndex: '0'
+                zIndex: '0',
+                transformOrigin: 'top left'
             });
 
             this.container.appendChild(this.canvas);
+            
+            // World canvas - fixed size, never resized (prevents clearing)
+            this.worldCanvas = document.createElement('canvas');
+            this.worldCanvas.width = this.worldWidth;
+            this.worldCanvas.height = this.worldHeight;
+            this.worldCtx = this.worldCanvas.getContext('2d');
             
             // Add class to body/html when canvas is ready to make background transparent
             document.body.classList.add('space-bg-ready');
@@ -132,8 +159,10 @@
         setupOffscreenRendering() {
             if (!this.config.enableOffscreenRendering) return;
 
-            // Create offscreen canvas for static elements (nebula)
+            // Create offscreen canvas for static elements (nebula) - fixed size
             this.offscreenCanvas = document.createElement('canvas');
+            this.offscreenCanvas.width = this.worldWidth;
+            this.offscreenCanvas.height = this.worldHeight;
             this.offscreenCtx = this.offscreenCanvas.getContext('2d');
         }
 
@@ -149,7 +178,8 @@
 
         createStar(layer, layerIndex) {
             const angle = this.rand(0, Math.PI * 2);
-            const radius = this.rand(0, Math.max(this.canvas.width || 1920, this.canvas.height || 1080) * 1.5);
+            // Use fixed world space dimensions
+            const radius = this.rand(0, Math.max(this.worldWidth, this.worldHeight) * 1.5);
 
             return {
                 baseSize: this.rand(layer.size[0], layer.size[1]),
@@ -177,8 +207,8 @@
                 // Create more complex nebula with multiple color layers
                 const nebulaColors = this.getRandomNebulaColors();
                 this.nebula.push({
-                    x: this.rand(0, this.canvas.width || 1920),
-                    y: this.rand(0, this.canvas.height || 1080),
+                    x: this.rand(0, this.worldWidth),
+                    y: this.rand(0, this.worldHeight),
                     radius: this.rand(300, 600), // Larger for better visibility
                     colors: nebulaColors,
                     baseOpacity: this.rand(0.08, 0.15), // More visible
@@ -241,24 +271,95 @@
         }
 
         resize() {
-            const rect = this.container.getBoundingClientRect();
-            this.canvas.width = rect.width || window.innerWidth;
-            this.canvas.height = rect.height || window.innerHeight;
-
-            if (this.config.enableOffscreenRendering) {
-                this.offscreenCanvas.width = this.canvas.width;
-                this.offscreenCanvas.height = this.canvas.height;
+            // Only update display canvas size - but use CSS transforms to avoid clearing!
+            // World canvas stays fixed - no clearing, no flash!
+            const displayWidth = window.innerWidth;
+            const displayHeight = window.innerHeight;
+            
+            // Ensure container covers full viewport FIRST (prevents white flash)
+            // Use multiple style updates to ensure coverage
+            this.container.style.cssText = `
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                background-color: ${this.config.backgroundColor} !important;
+                overflow: hidden !important;
+                z-index: 0 !important;
+                pointer-events: none !important;
+            `;
+            
+            // Calculate scale factors to cover entire viewport (use max to ensure full coverage)
+            this.scaleX = displayWidth / this.worldWidth;
+            this.scaleY = displayHeight / this.worldHeight;
+            // Use the larger scale to ensure full coverage (no gaps)
+            // Add larger buffer (0.02) to prevent edge flashing during rapid resize
+            const scale = Math.max(this.scaleX, this.scaleY) + 0.02;
+            
+            // Set display canvas internal size to match world canvas (prevents clearing)
+            // Then scale via CSS transform
+            if (this.canvas.width !== this.worldWidth || this.canvas.height !== this.worldHeight) {
+                this.canvas.width = this.worldWidth;
+                this.canvas.height = this.worldHeight;
+            }
+            
+            // Calculate scaled dimensions
+            const scaledWidth = this.worldWidth * scale;
+            const scaledHeight = this.worldHeight * scale;
+            
+            // Scale via CSS transform to cover entire viewport
+            // This prevents clearing while maintaining full window coverage
+            // Use will-change for better performance during rapid resize
+            this.canvas.style.cssText = `
+                display: block !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: ${this.worldWidth}px !important;
+                height: ${this.worldHeight}px !important;
+                transform: scale(${scale}) !important;
+                transform-origin: top left !important;
+                pointer-events: none !important;
+                z-index: 0 !important;
+                background-color: ${this.config.backgroundColor} !important;
+                will-change: transform !important;
+            `;
+            
+            // Position canvas to always cover entire viewport
+            // Calculate offset to ensure full coverage (center if larger than viewport)
+            let offsetX = 0;
+            let offsetY = 0;
+            
+            // If scaled canvas is wider than viewport, center horizontally
+            if (scaledWidth > displayWidth) {
+                offsetX = (displayWidth - scaledWidth) / 2;
+            }
+            // If scaled canvas is taller than viewport, center vertically  
+            if (scaledHeight > displayHeight) {
+                offsetY = (displayHeight - scaledHeight) / 2;
+            }
+            
+            // Apply position immediately to prevent flashing
+            if (offsetX !== 0) {
+                this.canvas.style.left = `${offsetX}px`;
+            }
+            if (offsetY !== 0) {
+                this.canvas.style.top = `${offsetY}px`;
+            }
+            
+            // No need to recreate stars or nebula - they're in fixed world space!
+            // Just update nebula rendering if needed
+            if (this.config.enableOffscreenRendering && this.nebula) {
                 this.renderNebulaToOffscreen();
             }
-
-            this.createStars();
-            this.createNebula();
         }
 
         renderNebulaToOffscreen() {
             if (!this.offscreenCtx || !this.nebula) return;
 
-            this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+            // Use fixed world dimensions
+            this.offscreenCtx.clearRect(0, 0, this.worldWidth, this.worldHeight);
 
             this.nebula.forEach(nebula => {
                 const time = Date.now();
@@ -324,20 +425,13 @@
             }
         }
 
-        drawBackground() {
-            this.ctx.fillStyle = this.config.backgroundColor;
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-            // Draw nebula from offscreen canvas if available
-            if (this.offscreenCanvas) {
-                this.ctx.drawImage(this.offscreenCanvas, 0, 0);
-            }
-        }
+        // drawBackground removed - now handled in animate() to avoid duplication
 
         drawStars(globalAngle) {
             const now = Date.now();
-            const cx = this.canvas.width * 1.5;
-            const cy = this.canvas.height * 1.5;
+            // Use fixed world space center
+            const cx = this.worldWidth * 1.5;
+            const cy = this.worldHeight * 1.5;
 
             this.stars.forEach(star => {
                 // Apply parallax and drift
@@ -348,9 +442,9 @@
                 const x = cx + Math.cos(angle) * star.radius;
                 const y = cy + Math.sin(angle) * star.radius;
 
-                // Only draw if star is visible on screen
-                if (x < -50 || x > this.canvas.width + 50 ||
-                    y < -50 || y > this.canvas.height + 50) return;
+                // Only draw if star is visible in world space
+                if (x < -50 || x > this.worldWidth + 50 ||
+                    y < -50 || y > this.worldHeight + 50) return;
 
                 const twinkle = 0.6 + 0.4 * Math.sin(now * star.twinkleSpeed + star.twinklePhase);
                 const size = star.baseSize * twinkle;
@@ -360,54 +454,58 @@
         }
 
         drawStar(star, x, y, size, twinkle) {
+            // Draw to world canvas (fixed size)
+            const ctx = this.worldCtx;
+            
             // Glow effect for larger stars
             if (star.baseSize > 1.5) {
-                this.ctx.save();
-                this.ctx.globalAlpha = 0.2 * twinkle;
-                this.ctx.shadowBlur = 20;
-                this.ctx.shadowColor = star.color;
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, size * 2, 0, Math.PI * 2);
-                this.ctx.fillStyle = star.color;
-                this.ctx.fill();
-                this.ctx.restore();
+                ctx.save();
+                ctx.globalAlpha = 0.2 * twinkle;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = star.color;
+                ctx.beginPath();
+                ctx.arc(x, y, size * 2, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.fill();
+                ctx.restore();
             }
 
             // Main star
-            this.ctx.save();
-            this.ctx.globalAlpha = 0.9 * twinkle;
-            this.ctx.shadowBlur = star.baseSize > 2 ? 10 : 3;
-            this.ctx.shadowColor = star.color;
+            ctx.save();
+            ctx.globalAlpha = 0.9 * twinkle;
+            ctx.shadowBlur = star.baseSize > 2 ? 10 : 3;
+            ctx.shadowColor = star.color;
 
             if (star.type === 'cross' && size > 1) {
                 // Draw cross-shaped star
                 const lineWidth = size * 0.3;
-                this.ctx.lineWidth = lineWidth;
-                this.ctx.lineCap = 'round';
-                this.ctx.strokeStyle = star.color;
-                this.ctx.beginPath();
-                this.ctx.moveTo(x - size, y);
-                this.ctx.lineTo(x + size, y);
-                this.ctx.moveTo(x, y - size);
-                this.ctx.lineTo(x, y + size);
-                this.ctx.stroke();
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = star.color;
+                ctx.beginPath();
+                ctx.moveTo(x - size, y);
+                ctx.lineTo(x + size, y);
+                ctx.moveTo(x, y - size);
+                ctx.lineTo(x, y + size);
+                ctx.stroke();
             } else {
                 // Draw circular star
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, size, 0, Math.PI * 2);
-                this.ctx.fillStyle = star.color;
-                this.ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.fill();
             }
-            this.ctx.restore();
+            ctx.restore();
         }
 
         spawnShootingStar(groupOffset = 0, sharedAngle = null) {
             const margin = 60;
 
             // Always spawn in 1st quadrant (top-right) - from center-right to top-right
-            const centerX = this.canvas.width / 2;
-            const centerY = this.canvas.height / 2;
-            let x = this.rand(centerX, this.canvas.width - margin) + groupOffset * 60; // Wider spacing for parallel meteors
+            // Use world space dimensions
+            const centerX = this.worldWidth / 2;
+            const centerY = this.worldHeight / 2;
+            let x = this.rand(centerX, this.worldWidth - margin) + groupOffset * 60; // Wider spacing for parallel meteors
             let y = this.rand(margin, centerY) + groupOffset * 30; // Consistent vertical offset for parallel meteors
 
             // Always travel diagonally to 3rd quadrant (bottom-left)
@@ -445,29 +543,30 @@
             const spawnSide = Math.floor(this.rand(0, 4)); // 0: top, 1: right, 2: bottom, 3: left
             let startX, startY, endX, endY;
 
+            // Use world space dimensions
             switch (spawnSide) {
                 case 0: // From top
-                    startX = this.rand(-margin, this.canvas.width + margin);
+                    startX = this.rand(-margin, this.worldWidth + margin);
                     startY = -margin;
                     endX = startX + this.rand(-200, 200);
-                    endY = this.canvas.height + margin;
+                    endY = this.worldHeight + margin;
                     break;
                 case 1: // From right
-                    startX = this.canvas.width + margin;
-                    startY = this.rand(-margin, this.canvas.height + margin);
+                    startX = this.worldWidth + margin;
+                    startY = this.rand(-margin, this.worldHeight + margin);
                     endX = -margin;
                     endY = startY + this.rand(-200, 200);
                     break;
                 case 2: // From bottom
-                    startX = this.rand(-margin, this.canvas.width + margin);
-                    startY = this.canvas.height + margin;
+                    startX = this.rand(-margin, this.worldWidth + margin);
+                    startY = this.worldHeight + margin;
                     endX = startX + this.rand(-200, 200);
                     endY = -margin;
                     break;
                 case 3: // From left
                     startX = -margin;
-                    startY = this.rand(-margin, this.canvas.height + margin);
-                    endX = this.canvas.width + margin;
+                    startY = this.rand(-margin, this.worldHeight + margin);
+                    endX = this.worldWidth + margin;
                     endY = startY + this.rand(-200, 200);
                     break;
             }
@@ -526,9 +625,9 @@
             const now = Date.now();
             this.shootingStars = this.shootingStars.filter(star => now - star.start < this.config.shootingStarLifetime);
 
-            // Get center of screen (where 3D text is positioned)
-            const centerX = this.canvas.width / 2;
-            const centerY = this.canvas.height / 2;
+            // Get center of world space (scaled to match display center)
+            const centerX = this.worldWidth / 2;
+            const centerY = this.worldHeight / 2;
             const collisionRadius = 150; // Distance threshold for triggering shake
 
             this.shootingStars.forEach(star => {
@@ -557,41 +656,41 @@
                     }
                 }
 
-                // Draw trail
+                // Draw trail (to world canvas)
                 const tailLen = star.len * fade;
                 const tailX = star.x - star.dx * tailLen;
                 const tailY = star.y - star.dy * tailLen;
 
                 // Gradient trail
-                const grad = this.ctx.createLinearGradient(star.x, star.y, tailX, tailY);
+                const grad = this.worldCtx.createLinearGradient(star.x, star.y, tailX, tailY);
                 const color = star.color;
                 grad.addColorStop(0, color.replace('0.9', (0.9 * fade).toString()));
                 grad.addColorStop(0.3, color.replace('0.9', (0.4 * fade).toString()));
                 grad.addColorStop(1, 'transparent');
 
-                this.ctx.save();
-                this.ctx.globalAlpha = 1;
-                this.ctx.strokeStyle = grad;
-                this.ctx.lineWidth = star.size * (0.6 + 0.8 * fade);
-                this.ctx.lineCap = 'round';
-                this.ctx.shadowBlur = 15;
-                this.ctx.shadowColor = 'white';
-                this.ctx.beginPath();
-                this.ctx.moveTo(star.x, star.y);
-                this.ctx.lineTo(tailX, tailY);
-                this.ctx.stroke();
-                this.ctx.restore();
+                this.worldCtx.save();
+                this.worldCtx.globalAlpha = 1;
+                this.worldCtx.strokeStyle = grad;
+                this.worldCtx.lineWidth = star.size * (0.6 + 0.8 * fade);
+                this.worldCtx.lineCap = 'round';
+                this.worldCtx.shadowBlur = 15;
+                this.worldCtx.shadowColor = 'white';
+                this.worldCtx.beginPath();
+                this.worldCtx.moveTo(star.x, star.y);
+                this.worldCtx.lineTo(tailX, tailY);
+                this.worldCtx.stroke();
+                this.worldCtx.restore();
 
                 // Bright head
-                this.ctx.save();
-                this.ctx.globalAlpha = 0.9 * fade;
-                this.ctx.shadowBlur = 25;
-                this.ctx.shadowColor = 'white';
-                this.ctx.beginPath();
-                this.ctx.arc(star.x, star.y, star.size * 1.5, 0, Math.PI * 2);
-                this.ctx.fillStyle = star.color;
-                this.ctx.fill();
-                this.ctx.restore();
+                this.worldCtx.save();
+                this.worldCtx.globalAlpha = 0.9 * fade;
+                this.worldCtx.shadowBlur = 25;
+                this.worldCtx.shadowColor = 'white';
+                this.worldCtx.beginPath();
+                this.worldCtx.arc(star.x, star.y, star.size * 1.5, 0, Math.PI * 2);
+                this.worldCtx.fillStyle = star.color;
+                this.worldCtx.fill();
+                this.worldCtx.restore();
             });
         }
 
@@ -613,36 +712,36 @@
                     satellite.x += train.dx;
                     satellite.y += train.dy;
 
-                    // Only draw satellites that are visible on screen
-                    if (satellite.x < -50 || satellite.x > this.canvas.width + 50 ||
-                        satellite.y < -50 || satellite.y > this.canvas.height + 50) {
+                    // Only draw satellites that are visible in world space
+                    if (satellite.x < -50 || satellite.x > this.worldWidth + 50 ||
+                        satellite.y < -50 || satellite.y > this.worldHeight + 50) {
                         return;
                     }
 
                     // Twinkle effect for each satellite
                     const twinkle = satellite.brightness * (0.7 + 0.3 * Math.sin(now * satellite.twinkleSpeed + satellite.twinklePhase));
 
-                    // Draw satellite glow
-                    this.ctx.save();
-                    this.ctx.globalAlpha = 0.3 * fade * twinkle;
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = 'white';
-                    this.ctx.beginPath();
-                    this.ctx.arc(satellite.x, satellite.y, satellite.baseSize * 2, 0, Math.PI * 2);
-                    this.ctx.fillStyle = 'white';
-                    this.ctx.fill();
-                    this.ctx.restore();
+                    // Draw satellite glow (to world canvas)
+                    this.worldCtx.save();
+                    this.worldCtx.globalAlpha = 0.3 * fade * twinkle;
+                    this.worldCtx.shadowBlur = 15;
+                    this.worldCtx.shadowColor = 'white';
+                    this.worldCtx.beginPath();
+                    this.worldCtx.arc(satellite.x, satellite.y, satellite.baseSize * 2, 0, Math.PI * 2);
+                    this.worldCtx.fillStyle = 'white';
+                    this.worldCtx.fill();
+                    this.worldCtx.restore();
 
                     // Draw main satellite
-                    this.ctx.save();
-                    this.ctx.globalAlpha = 0.9 * fade * twinkle;
-                    this.ctx.shadowBlur = 8;
-                    this.ctx.shadowColor = 'white';
-                    this.ctx.beginPath();
-                    this.ctx.arc(satellite.x, satellite.y, satellite.baseSize, 0, Math.PI * 2);
-                    this.ctx.fillStyle = 'white';
-                    this.ctx.fill();
-                    this.ctx.restore();
+                    this.worldCtx.save();
+                    this.worldCtx.globalAlpha = 0.9 * fade * twinkle;
+                    this.worldCtx.shadowBlur = 8;
+                    this.worldCtx.shadowColor = 'white';
+                    this.worldCtx.beginPath();
+                    this.worldCtx.arc(satellite.x, satellite.y, satellite.baseSize, 0, Math.PI * 2);
+                    this.worldCtx.fillStyle = 'white';
+                    this.worldCtx.fill();
+                    this.worldCtx.restore();
                 });
             });
         }
@@ -661,10 +760,24 @@
                 return;
             }
 
-            this.drawBackground();
+            // Clear world canvas for this frame (but dimensions never change!)
+            this.worldCtx.fillStyle = this.config.backgroundColor;
+            this.worldCtx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+            
+            // Draw nebula from offscreen canvas if available
+            if (this.offscreenCanvas) {
+                this.worldCtx.drawImage(this.offscreenCanvas, 0, 0);
+            }
+            
+            // Draw everything to world canvas (fixed size, never resized)
             this.drawStars(this.globalAngle);
             this.drawShootingStars();
             this.drawStarlinkTrains();
+            
+            // Copy world canvas to display canvas
+            // Display canvas has same dimensions as world canvas, scaled via CSS transform
+            // No clearing needed - just copy!
+            this.ctx.drawImage(this.worldCanvas, 0, 0);
 
             this.globalAngle += 0.0002 * this.config.animationSpeed;
 
@@ -710,7 +823,37 @@
         }
 
         bindEvents() {
-            this.resizeHandler = () => this.resize();
+            // Optimized resize handler for rapid resizing
+            // Use requestAnimationFrame for smooth updates
+            let resizeRafId = null;
+            let lastResizeTime = 0;
+            
+            this.resizeHandler = () => {
+                const now = performance.now();
+                
+                // Immediately ensure container covers viewport with dark background
+                // This prevents white bar flashing during rapid resize
+                this.container.style.width = '100vw';
+                this.container.style.height = '100vh';
+                this.container.style.backgroundColor = this.config.backgroundColor;
+                this.container.style.position = 'fixed';
+                this.container.style.top = '0';
+                this.container.style.left = '0';
+                this.container.style.overflow = 'hidden';
+                
+                // Cancel any pending resize animation frame
+                if (resizeRafId !== null) {
+                    cancelAnimationFrame(resizeRafId);
+                }
+                
+                // Use requestAnimationFrame for smooth, synchronized updates
+                resizeRafId = requestAnimationFrame(() => {
+                    this.resize();
+                    resizeRafId = null;
+                    lastResizeTime = now;
+                });
+            };
+            
             this.visibilityHandler = () => {
                 this.isVisible = !document.hidden;
                 if (this.isVisible) {
@@ -718,7 +861,7 @@
                 }
             };
 
-            window.addEventListener('resize', this.resizeHandler);
+            window.addEventListener('resize', this.resizeHandler, { passive: true });
             if (this.config.enableVisibilityCheck) {
                 document.addEventListener('visibilitychange', this.visibilityHandler);
             }

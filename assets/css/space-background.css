@@ -24,6 +24,11 @@ body.space-bg-ready {
   height: 100vh !important;
   z-index: 0 !important;
   pointer-events: none !important;
+  background-color: #161618 !important; /* Dark background to prevent white flash */
+  overflow: hidden !important; /* Prevent scrollbars */
+  will-change: transform !important; /* Optimize for rapid resize */
+  backface-visibility: hidden !important; /* Prevent flickering */
+  transform: translateZ(0) !important; /* Force hardware acceleration */
 }
 
 /* Enhanced space background canvas styling */
@@ -31,10 +36,11 @@ body.space-bg-ready {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+  /* Width/height set via JS to match world canvas dimensions */
   pointer-events: none !important;
   z-index: 0 !important;
+  background-color: #161618 !important; /* Prevent white flash during resize */
+  /* Transform scale applied via JS to cover viewport */
 }
 
 /* Override mobile CSS that might hide the space background */
@@ -124,6 +130,7 @@ body.space-bg-ready {
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  background-color: #161618 !important; /* Prevent white flash during resize */
 }
 
 .space-bg-container {

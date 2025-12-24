@@ -111,6 +111,16 @@ function initPublications() {
     const publicationsSection = document.getElementById('publications');
     if (!publicationsSection) return;
 
+    // If we're already on the publications page, fetch immediately
+    if (window.location.pathname.includes('/publications/')) {
+        if (!window.publicationsFetched) {
+            window.publicationsFetched = true;
+            fetchPublications(0);
+        }
+        return;
+    }
+
+    // Otherwise, use intersection observer for lazy loading
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !window.publicationsFetched) {

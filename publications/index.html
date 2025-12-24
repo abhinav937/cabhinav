@@ -61,6 +61,21 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="../assets/css/grok-style.css">
+  <style>
+    /* Ensure publications page can scroll to bottom */
+    main {
+      padding-bottom: 120px !important;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .section {
+      padding-bottom: 2rem;
+    }
+    
+    .publications-content {
+      padding-bottom: 2rem;
+    }
+  </style>
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
@@ -120,10 +135,6 @@
 
 <body>
   <!-- Back Navigation -->
-  <a href="../" class="back-button" aria-label="Back to home">
-    <span class="material-symbols-outlined">arrow_back</span>
-    Back
-  </a>
 
   <main>
     <!-- Publications Section -->

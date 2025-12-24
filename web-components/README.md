@@ -17,6 +17,21 @@ A 3x3 grid progress indicator arranged like a cube's face. Features smooth anima
 
 **Demo:** [View Demo](cube-progress-indicator/index.html)
 
+### Stat Dashboard
+Animated stat cards dashboard perfect for displaying running statistics, fitness data, or any metrics. Features smooth number counting animations, hover effects, and progress bars.
+
+**Features:**
+- Animated number counting on load
+- Multiple stat card types (distance, pace, time, elevation, heart rate, calories)
+- Hover effects with glow and scale animations
+- Progress bars for goal tracking
+- Change indicators (positive/negative trends)
+- Responsive grid layout
+- Programmatic updates via JavaScript API
+- Perfect for Strava running stats
+
+**Demo:** [View Demo](stat-dashboard/index.html)
+
 <!-- Components will be listed here -->
 
 ## Usage

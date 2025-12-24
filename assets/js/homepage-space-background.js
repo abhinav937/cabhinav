@@ -12,6 +12,9 @@
     const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     canvas.width = width;
     canvas.height = height;
+    // Immediately draw dark background to prevent white flash
+    ctx.fillStyle = '#161618';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
   
   setCanvasSize();
@@ -169,12 +172,30 @@
     createStars();
   }
   
-  window.addEventListener('resize', handleResize);
-  window.addEventListener('orientationchange', handleResize);
+  // Throttle resize handler to prevent excessive redraws and white flashes
+  let resizeTimeout;
+  function throttledResize() {
+    // Immediately draw dark background to prevent flash
+    if (canvas) {
+      ctx.fillStyle = '#161618';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    // Clear any pending resize
+    if (resizeTimeout) {
+      clearTimeout(resizeTimeout);
+    }
+    // Throttle the actual resize operation
+    resizeTimeout = setTimeout(() => {
+      handleResize();
+    }, 16); // ~60fps throttle
+  }
+  
+  window.addEventListener('resize', throttledResize);
+  window.addEventListener('orientationchange', throttledResize);
   
   // Handle mobile viewport changes
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', handleResize);
+    window.visualViewport.addEventListener('resize', throttledResize);
   }
 })();
 

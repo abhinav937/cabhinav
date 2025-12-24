@@ -56,9 +56,29 @@
                 canvas.width = container.clientWidth || window.innerWidth;
                 canvas.height = container.clientHeight || window.innerHeight;
             }
+            // Immediately draw dark background to prevent white flash
+            ctx.fillStyle = '#161618';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             createStars();
         }
-        window.addEventListener('resize', resize);
+        // Throttle resize handler to prevent excessive redraws
+        let resizeTimeout;
+        function throttledResize() {
+            // Immediately draw dark background to prevent flash
+            if (canvas) {
+                ctx.fillStyle = '#161618';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            // Clear any pending resize
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
+            // Throttle the actual resize operation
+            resizeTimeout = setTimeout(() => {
+                resize();
+            }, 16); // ~60fps throttle
+        }
+        window.addEventListener('resize', throttledResize);
 
         function drawBackground() {
             ctx.globalAlpha = 1;
