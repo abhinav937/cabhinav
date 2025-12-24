@@ -259,8 +259,10 @@
     <!-- 3D Text Canvas Container - Full Screen Overlay -->
     <div id="threejs-text-container"></div>
 
-
-
+    <!-- Temporary FPS Meter (only shown if ?fps=true in URL) -->
+    <div id="fps-meter" style="display: none; position: fixed; top: 20px; left: 20px; z-index: 10000; padding: 10px 15px; background: rgba(0, 0, 0, 0.7); color: #0f0; border: 1px solid #0f0; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold;">
+      FPS: <span id="fps-value">0</span>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -315,6 +317,7 @@
 
     <!-- Three.js 3D Text with Chrome Material -->
     <script type="module" src="./assets/js/3d-material-homepage.js"></script>
+
 
   </body>
 </html>

@@ -432,7 +432,8 @@
                 len: this.rand(300, 600),
                 size: this.rand(1.0, 2.0),
                 color: this.getRandomShootingStarColor(),
-                trailParticles: []
+                trailParticles: [],
+                hasTriggeredShake: false // Track if this meteor has already triggered shake
             });
         }
 
@@ -525,6 +526,11 @@
             const now = Date.now();
             this.shootingStars = this.shootingStars.filter(star => now - star.start < this.config.shootingStarLifetime);
 
+            // Get center of screen (where 3D text is positioned)
+            const centerX = this.canvas.width / 2;
+            const centerY = this.canvas.height / 2;
+            const collisionRadius = 150; // Distance threshold for triggering shake
+
             this.shootingStars.forEach(star => {
                 const age = now - star.start;
                 const progress = age / this.config.shootingStarLifetime;
@@ -532,8 +538,24 @@
 
                 // Move shooting star
                 const speed = star.len / this.config.shootingStarLifetime * 20;
+                const oldX = star.x;
+                const oldY = star.y;
                 star.x += star.dx * speed;
                 star.y += star.dy * speed;
+
+                // Check if meteor passes through or near the center (3D text position)
+                if (!star.hasTriggeredShake) {
+                    const distanceToCenter = Math.sqrt(
+                        Math.pow(star.x - centerX, 2) + Math.pow(star.y - centerY, 2)
+                    );
+                    
+                    // Check if meteor is close enough to trigger shake
+                    if (distanceToCenter < collisionRadius) {
+                        star.hasTriggeredShake = true;
+                        // Dispatch event to trigger 3D text shake
+                        document.dispatchEvent(new Event('meterPassed'));
+                    }
+                }
 
                 // Draw trail
                 const tailLen = star.len * fade;
@@ -648,8 +670,8 @@
 
             // Spawn shooting stars
             if (Math.random() < this.config.shootingStarFreq) {
-                // Moderately spawn multiple meteors in parallel
-                const meteorCount = this.rand(0, 1) < 0.15 ? (this.rand(0, 1) < 0.7 ? 2 : 3) : 1;
+                // Spawn meteors in parallel (max 2)
+                const meteorCount = this.rand(0, 1) < 0.35 ? 2 : 1;
 
                 // Generate ONE shared angle for ALL meteors (always use shared angle for consistency)
                 const sharedAngle = (() => {
@@ -751,8 +773,8 @@
         }
 
         spawnShootingStarManual() {
-            // Increased chance of multiple meteors in parallel
-            const meteorCount = this.rand(0, 1) < 0.4 ? (this.rand(0, 1) < 0.6 ? 2 : 3) : 1;
+            // Spawn meteors in parallel (max 2)
+            const meteorCount = this.rand(0, 1) < 0.4 ? 2 : 1;
 
             // Generate ONE shared angle for ALL meteors in the group (truly parallel)
             const sharedAngle = (() => {
@@ -773,7 +795,10 @@
 
     // Global initialization function
     global.initEnhancedSpaceBackground = function(target, config) {
-        return new EnhancedSpaceBackground(target, config);
+        const instance = new EnhancedSpaceBackground(target, config);
+        // Store instance globally for test button access
+        global.spaceBackgroundInstance = instance;
+        return instance;
     };
 
     // Auto-initialize if container exists (disabled when manual init is used)
