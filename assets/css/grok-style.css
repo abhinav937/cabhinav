@@ -1076,6 +1076,45 @@ p {
   }
 }
 
+/* Disable macOS animations on mobile devices */
+@media (max-width: 768px) {
+  /* Override all macOS hover effects */
+  .footer-link:hover {
+    transform: none !important;
+    translate: none !important;
+    scale: 1 !important;
+    box-shadow: none !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  /* Disable adjacent item scaling */
+  .footer-link:hover + .footer-link,
+  .footer-link:has(+ .footer-link:hover) {
+    transform: none !important;
+  }
+  
+  /* Disable icon animations */
+  .footer-link:hover .footer-icon-svg {
+    transform: none !important;
+    filter: brightness(0) invert(1) !important;
+  }
+  
+  .footer-link:hover .material-symbols-outlined {
+    transform: none !important;
+  }
+  
+  /* Disable footer hover effects */
+  .footer:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05) inset !important;
+  }
+  
+  .footer:hover .footer-text {
+    opacity: 0.7 !important;
+  }
+}
+
 /* ========================================
    ANIMATIONS & EFFECTS
    ======================================== */
@@ -1777,20 +1816,33 @@ p {
   }
 
   /* Smooth active state for touch devices - macOS-like */
+  /* Disable macOS animations on mobile - simple tap feedback only */
   .footer-link:active {
-    transform: scale(0.92);
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
-                background 0.15s ease,
-                border-color 0.15s ease;
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    transition: transform 0.1s ease,
+                background 0.1s ease,
+                border-color 0.1s ease;
   }
   
-  /* Smooth release animation */
+  /* No hover effects on mobile */
+  .footer-link:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Disable adjacent item scaling on mobile */
+  .footer-link:hover + .footer-link,
+  .footer-link:has(+ .footer-link:hover) {
+    transform: none !important;
+  }
+  
+  /* Simple release animation */
   .footer-link:not(:active) {
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-                border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: transform 0.2s ease,
+                background 0.2s ease,
+                border-color 0.2s ease;
   }
 
   .footer-text {
@@ -1951,13 +2003,30 @@ p {
     font-size: 1.2rem;
   }
 
+  /* Disable all hover effects on mobile - simple tap only */
   .footer-link:hover {
-    transform: scale(1.02);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: none !important;
+    box-shadow: none !important;
+    background: rgba(255, 255, 255, 0.05) !important;
   }
 
+  /* Simple tap feedback only */
   .footer-link:active {
-    transform: scale(0.94);
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Disable macOS dock effect on mobile */
+  .footer-link:hover + .footer-link,
+  .footer-link:has(+ .footer-link:hover) {
+    transform: none !important;
+  }
+  
+  /* Disable icon scaling on hover */
+  .footer-link:hover .footer-icon-svg,
+  .footer-link:hover .material-symbols-outlined {
+    transform: none !important;
+    filter: brightness(0) invert(1) !important;
   }
 
   .footer-text {

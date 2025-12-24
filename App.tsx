@@ -191,7 +191,47 @@ const App: React.FC = () => {
         {/* Basic Meta Tags */}
         <html lang="en" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        
+        {/* Prevent scrolling styles */}
+        <style>{`
+          html, body {
+            overflow: hidden !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            width: 100vw !important;
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+          }
+          #root {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            overflow: hidden !important;
+            position: fixed !important;
+            top: 0;
+            left: 0;
+          }
+          @media (max-width: 768px) {
+            html, body {
+              position: fixed !important;
+              overflow: hidden !important;
+              width: 100% !important;
+              height: 100% !important;
+              touch-action: none;
+              -webkit-overflow-scrolling: none;
+            }
+            #root {
+              position: fixed !important;
+              overflow: hidden !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
+        `}</style>
         
         {/* SEO Meta Tags */}
         <meta name="keywords" content="Abhinav Chinnusamy, Power Electronics, Pulsed Power, Marx Generators, SSMGs, WEMPEC, UW Madison, Wisconsin, Madison, IIT Dharwad, ECE, Electrical Engineering, EE, Resume, CV, website" />
@@ -271,7 +311,7 @@ const App: React.FC = () => {
         </script>
       </Helmet>
 
-      <div className="relative w-full h-screen bg-[#050505]">
+      <div className="relative w-full h-screen bg-[#050505] overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
         {/* 3D Scene */}
         <Canvas
           shadows
@@ -285,6 +325,7 @@ const App: React.FC = () => {
             toneMapping: 3 // ACESFilmicToneMapping
           }}
           dpr={[1, 2]} // Limit pixel ratio for better performance on mobile
+          style={{ width: '100%', height: '100%' }}
         >
           <Suspense fallback={null}>
             <Experience lightSettings={lightSettings} />
@@ -292,7 +333,7 @@ const App: React.FC = () => {
         </Canvas>
 
         {/* Footer */}
-        <footer className="footer absolute bottom-0 left-0 right-0 z-20">
+        <footer className="footer absolute bottom-0 left-0 right-0 z-20" style={{ position: 'fixed' }}>
           <div className="container">
             <div className="footer-content">
               <div className="footer-links">
