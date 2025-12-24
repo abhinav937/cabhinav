@@ -70,250 +70,63 @@ function init3DText() {
         }
     }
 
-    // Chrome preset (default)
-    const chromePreset = {
-        roughness: 0.05,
-        anisotropy: 0,
-        ior: 2.95,
-        clearcoat: 0,
-        dispersion: 0,
-        metalColor: [0.95, 0.95, 0.98]
-    };
-
-    const materialUniforms = {
-        time: { value: 0 },
-        roughness: { value: chromePreset.roughness },
-        anisotropy: { value: chromePreset.anisotropy },
-        ior: { value: chromePreset.ior },
-        clearcoat: { value: chromePreset.clearcoat },
-        dispersion: { value: chromePreset.dispersion },
-        metalColor: { value: new THREE.Vector3(...chromePreset.metalColor) },
-        lightTemperature: { value: new THREE.Vector3(1, 1, 1) }
-    };
-
-    const customMaterial = new THREE.ShaderMaterial({
-        uniforms: materialUniforms,
-        vertexShader: `
-            varying vec3 vNormal;
-            varying vec3 vViewPosition;
-            varying vec3 vWorldPosition;
-            varying vec2 vUv;
-            varying vec3 vTangent;
-            varying vec3 vBitangent;
-
-            void main() {
-                vUv = uv;
-                vNormal = normalize(normalMatrix * normal);
-                vec3 objectTangent = vec3(1.0, 0.0, 0.0);
-                vTangent = normalize(normalMatrix * objectTangent);
-                vBitangent = cross(vNormal, vTangent);
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                vViewPosition = -mvPosition.xyz;
-                vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `,
-        fragmentShader: `
-            uniform float time;
-            uniform float roughness;
-            uniform float anisotropy;
-            uniform float ior;
-            uniform float clearcoat;
-            uniform float dispersion;
-            uniform vec3 metalColor;
-            uniform vec3 lightTemperature;
-
-            varying vec3 vNormal;
-            varying vec3 vViewPosition;
-            varying vec3 vWorldPosition;
-            varying vec2 vUv;
-            varying vec3 vTangent;
-            varying vec3 vBitangent;
-
-            vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-                return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-            }
-
-            float distributionGGX(vec3 N, vec3 H, float roughness) {
-                float a = roughness * roughness;
-                float a2 = a * a;
-                float NdotH = max(dot(N, H), 0.0);
-                float NdotH2 = NdotH * NdotH;
-                float num = a2;
-                float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-                denom = 3.14159265359 * denom * denom;
-                return num / denom;
-            }
-
-            float distributionAnisotropicGGX(vec3 N, vec3 H, vec3 T, vec3 B, float roughness, float anisotropy) {
-                float roughnessT = roughness * (1.0 + anisotropy);
-                float roughnessB = roughness * (1.0 - anisotropy);
-                float dotTH = dot(T, H);
-                float dotBH = dot(B, H);
-                float dotNH = dot(N, H);
-                float a2 = roughnessT * roughnessB;
-                float d = dotTH * dotTH / (roughnessT * roughnessT) + 
-                         dotBH * dotBH / (roughnessB * roughnessB) + 
-                         dotNH * dotNH;
-                return 1.0 / (3.14159265359 * roughnessT * roughnessB * d * d);
-            }
-
-            float geometrySchlickGGX(float NdotV, float roughness) {
-                float r = (roughness + 1.0);
-                float k = (r * r) / 8.0;
-                float num = NdotV;
-                float denom = NdotV * (1.0 - k) + k;
-                return num / denom;
-            }
-
-            float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
-                float NdotV = max(dot(N, V), 0.0);
-                float NdotL = max(dot(N, L), 0.0);
-                float ggx2 = geometrySchlickGGX(NdotV, roughness);
-                float ggx1 = geometrySchlickGGX(NdotL, roughness);
-                return ggx1 * ggx2;
-            }
-
-            void main() {
-                vec3 normal = normalize(vNormal);
-                vec3 tangent = normalize(vTangent);
-                vec3 bitangent = normalize(vBitangent);
-                vec3 viewDir = normalize(vViewPosition);
-
-                // Cinematic rotating light with dramatic 3D elliptical orbit and dynamic movement
-                float orbitSpeed = 0.25;   // Rotation speed
-                
-                // Create a cinematic angle with smooth acceleration/deceleration
-                float cinematicAngle = time * orbitSpeed;
-                
-                // Elliptical orbit - wider horizontally, creates more dynamic movement
-                float horizontalRadius = 85.0;  // Wider horizontal axis
-                float depthRadius = 60.0;       // Narrower depth axis for elliptical shape
-                
-                // Dramatic vertical movement - follows a figure-8 pattern for cinematic effect
-                // Creates sweeping high and low positions
-                float verticalAmplitude = 55.0;  // Large vertical range
-                float verticalPhase = sin(cinematicAngle) * verticalAmplitude;
-                
-                // Dynamic radius variation - light gets closer and farther for dramatic intensity changes
-                float radiusVariation = 15.0;  // How much the radius varies
-                float dynamicRadius = horizontalRadius + cos(cinematicAngle * 1.5) * radiusVariation;
-                
-                // Tilt the orbit plane slightly for more interesting angles (not perfectly horizontal)
-                float orbitTilt = 0.3;  // Tilt angle in radians
-                
-                // Calculate base position in elliptical orbit
-                float baseX = cos(cinematicAngle) * dynamicRadius;
-                float baseZ = sin(cinematicAngle) * depthRadius;
-                
-                // Apply orbit tilt for more dramatic 3D movement
-                float tiltedX = baseX * cos(orbitTilt) - verticalPhase * sin(orbitTilt);
-                float tiltedY = baseX * sin(orbitTilt) + verticalPhase * cos(orbitTilt);
-                float tiltedZ = baseZ;
-                
-                // Light 1: Cinematic 3D elliptical orbit with dramatic vertical and radius variation
-                vec3 rotatingLight = vec3(
-                    tiltedX,
-                    tiltedY,
-                    tiltedZ
-                );
-                
-                // Four fixed corner lights - positioned closer with bigger radius, tilted in front of text
-                float cornerDistance = 50.0;   // Closer distance (bigger radius) for more intensity
-                float cornerHeight = 40.0;      // Height offset for corners
-                float frontOffset =100.0;      // Negative Z to position lights in front of text (towards camera)
-                
-                // Top-left corner - tilted in front
-                vec3 cornerTopLeft = vec3(-cornerDistance, cornerHeight, frontOffset);
-                // Top-right corner - tilted in front
-                vec3 cornerTopRight = vec3(cornerDistance, cornerHeight, frontOffset);
-                // Bottom-left corner - tilted in front
-                vec3 cornerBottomLeft = vec3(-cornerDistance, -cornerHeight, frontOffset);
-                // Bottom-right corner - tilted in front
-                vec3 cornerBottomRight = vec3(cornerDistance, -cornerHeight, frontOffset);
-
-                vec3 color = vec3(0.0);
-
-                vec3 lights[5];
-                lights[0] = rotatingLight;
-                lights[1] = cornerTopLeft;
-                lights[2] = cornerTopRight;
-                lights[3] = cornerBottomLeft;
-                lights[4] = cornerBottomRight;
-
-                // Light intensities - corner lights are now brighter since they're closer and in front
-                float rotatingLightIntensity = 3.5;  // Rotating light
-                float cornerLightIntensity = 2.5;    // Brighter corner lights since they're closer and in front
-                
-                vec3 lightColors[5];
-                lightColors[0] = lightTemperature * rotatingLightIntensity;  // Rotating light
-                lightColors[1] = vec3(0.5, 0.5, 0.7) * lightTemperature * cornerLightIntensity;  // Top-left: blue tint
-                lightColors[2] = vec3(0.7, 0.5, 0.5) * lightTemperature * cornerLightIntensity;  // Top-right: red tint
-                lightColors[3] = vec3(0.5, 0.7, 0.5) * lightTemperature * cornerLightIntensity;  // Bottom-left: green tint
-                lightColors[4] = vec3(0.7, 0.7, 0.5) * lightTemperature * cornerLightIntensity;  // Bottom-right: yellow tint
-
-                for(int i = 0; i < 5; i++) {
-                    vec3 lightDir = normalize(lights[i] - vWorldPosition);
-                    vec3 halfwayDir = normalize(lightDir + viewDir);
-
-                    float n1 = 1.0;
-                    float n2 = ior;
-                    float F0_scalar = pow((n1 - n2) / (n1 + n2), 2.0);
-                    vec3 F0 = mix(vec3(F0_scalar), metalColor, 0.95);
-
-                    float D = distributionAnisotropicGGX(normal, halfwayDir, tangent, bitangent, roughness, anisotropy);
-                    float G = geometrySmith(normal, viewDir, lightDir, roughness);
-                    vec3 F = fresnelSchlick(max(dot(halfwayDir, viewDir), 0.0), F0);
-
-                    vec3 kS = F;
-                    vec3 kD = vec3(1.0) - kS;
-                    kD *= 0.0;
-
-                    vec3 numerator = D * G * F;
-                    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
-                    vec3 specular = numerator / denominator;
-
-                    float NdotL = max(dot(normal, lightDir), 0.0);
-                    // Extra boost for rotating light (index 0) and corner lights (indices 1-4) since they're in front
-                    float lightMultiplier = (i == 0) ? 1.5 : 1.3;  // Additional multiplier for all lights
-                    color += (kD * metalColor / 3.14159265359 + specular) * lightColors[i] * NdotL * lightMultiplier;
-                }
-
-                if(clearcoat > 0.0) {
-                    vec3 clearcoatNormal = normal;
-                    float clearcoatRoughness = 0.04;
-
-                    // Use rotating light for clearcoat with higher intensity
-                    vec3 lightDir = normalize(lights[0] - vWorldPosition);
-                    vec3 halfwayDir = normalize(lightDir + viewDir);
-
-                    float D = distributionGGX(clearcoatNormal, halfwayDir, clearcoatRoughness);
-                    float G = geometrySmith(clearcoatNormal, viewDir, lightDir, clearcoatRoughness);
-                    vec3 F = fresnelSchlick(max(dot(halfwayDir, viewDir), 0.0), vec3(0.04));
-
-                    vec3 clearcoatSpecular = D * G * F / (4.0 * max(dot(clearcoatNormal, viewDir), 0.0) * max(dot(clearcoatNormal, lightDir), 0.0) + 0.0001);
-                    float NdotL = max(dot(clearcoatNormal, lightDir), 0.0);
-
-                    color += clearcoatSpecular * clearcoat * NdotL * lightTemperature * 3.5;
-                }
-
-                float edgeFactor = pow(1.0 - abs(dot(normal, viewDir)), 2.0);
-                vec3 dispersionColor = vec3(
-                    sin(edgeFactor * 3.14159 * 2.0),
-                    sin(edgeFactor * 3.14159 * 2.0 + 2.094),
-                    sin(edgeFactor * 3.14159 * 2.0 + 4.189)
-                ) * dispersion;
-
-                color += dispersionColor * edgeFactor;
-                // Increased base brightness so text doesn't look so dark
-                color += metalColor * 0.18 * lightTemperature;
-                color = color / (color + vec3(1.0));
-                color = pow(color, vec3(1.0/2.2));
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `
+    // Create professional metallic material using MeshStandardMaterial
+    const metalMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,  // Bright white/silver for better visibility
+        metalness: 0.8,   // High metalness for metallic look
+        roughness: 0.15,  // Low roughness = shiny chrome (0 = mirror, 1 = matte)
+        envMapIntensity: 1.8,
+        emissive: 0x222222, // Subtle emissive for base glow
+        emissiveIntensity: 0.25
     });
+
+    // Professional dynamic lighting setup - Slightly brighter
+    // Hemisphere Light - provides natural sky/ground lighting for better depth
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x777777, 1.0);
+    scene.add(hemisphereLight);
+
+    // Balanced ambient for good base visibility
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    // Key Light - Main warm directional light (rotating for subtle animation)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.0); // Bright white
+    keyLight.position.set(60, 50, 40);
+    keyLight.castShadow = false;
+    scene.add(keyLight);
+
+    // Fill Light - Cooler fill light from opposite side
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.8); // Bright white
+    fillLight.position.set(-60, 30, 30);
+    scene.add(fillLight);
+
+    // Rim Light - Strong point light behind for dramatic edge highlights
+    const rimLight = new THREE.PointLight(0xffffff, 2.8, 250);
+    rimLight.position.set(0, 0, -100);
+    scene.add(rimLight);
+
+    // Top accent light - Warm spotlight from above
+    const topLight = new THREE.PointLight(0xffffff, 2.5, 180);
+    topLight.position.set(0, 80, 0);
+    scene.add(topLight);
+
+    // Side accent lights
+    const accentLight1 = new THREE.PointLight(0xffffff, 1.8, 130);
+    accentLight1.position.set(50, 20, 50);
+    scene.add(accentLight1);
+
+    const accentLight2 = new THREE.PointLight(0xffffff, 1.8, 130);
+    accentLight2.position.set(-50, -10, 50);
+    scene.add(accentLight2);
+
+    // Additional side lights for more depth
+    const sideLight1 = new THREE.PointLight(0xffffff, 1.5, 110);
+    sideLight1.position.set(70, 0, 20);
+    scene.add(sideLight1);
+
+    const sideLight2 = new THREE.PointLight(0xffffff, 1.5, 110);
+    sideLight2.position.set(-70, 10, 20);
+    scene.add(sideLight2);
 
     // Helper function to calculate scale based on camera frustum
     function calculateScaleForViewport(geometry, camera, viewportWidth, viewportHeight) {
@@ -356,7 +169,7 @@ function init3DText() {
             if (!textMesh) {
                 try {
                     const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
-                    textMesh = new THREE.Mesh(geometry, customMaterial);
+                    textMesh = new THREE.Mesh(geometry, metalMaterial);
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (error) {
@@ -381,9 +194,9 @@ function init3DText() {
                 
                 // Start with a base size - will be scaled to fit viewport
                 let textSize = 1.5; // Use consistent base size, scaling will handle the rest
-                const textDepth = isMobile ? 0.1 : (isTablet ? 0.25 : 0.375);
-                const bevelThickness = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
-                const bevelSize = isMobile ? 0.01 : (isTablet ? 0.025 : 0.0375);
+                const textDepth = isMobile ? 0.375 : (isTablet ? 0.25 : 0.375);
+                const bevelThickness = isMobile ? 0.0375 : (isTablet ? 0.025 : 0.0375);
+                const bevelSize = isMobile ? 0.0375 : (isTablet ? 0.025 : 0.0375);
                 
                 const textGeometry = new TextGeometry('Abhinav\nChinnusamy', {
                     font: font,
@@ -399,7 +212,7 @@ function init3DText() {
                 textGeometry.computeVertexNormals();
                 
                 // Create mesh first
-                textMesh = new THREE.Mesh(textGeometry, customMaterial);
+                textMesh = new THREE.Mesh(textGeometry, metalMaterial);
                 
                 // Camera position is already set before loader, OrbitControls will manage it
                 // Calculate and apply scale based on viewport
@@ -428,7 +241,7 @@ function init3DText() {
             if (!textMesh) {
                 try {
                     const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
-                    textMesh = new THREE.Mesh(geometry, customMaterial);
+                    textMesh = new THREE.Mesh(geometry, metalMaterial);
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (fallbackError) {
@@ -446,7 +259,7 @@ function init3DText() {
             if (!textMesh) {
                 try {
                     const geometry = new THREE.BoxGeometry(8, 2, 0.5, 64, 64, 16);
-                    textMesh = new THREE.Mesh(geometry, customMaterial);
+                    textMesh = new THREE.Mesh(geometry, metalMaterial);
                     textMesh.position.x = -1.5;
                     scene.add(textMesh);
                 } catch (error) {
@@ -563,8 +376,40 @@ function init3DText() {
     
     controls.update();
 
+    // Track time for light animation
+    let time = 0;
+    
     function animate() {
-        materialUniforms.time.value += 0.01;
+        time += 0.01;
+        
+        // Animate key light rotation for subtle movement
+        const keyAngle = time * 0.15;
+        keyLight.position.set(
+            Math.cos(keyAngle) * 60,
+            50 + Math.sin(time * 0.1) * 10, // Subtle vertical movement
+            Math.sin(keyAngle) * 60 + 40
+        );
+        
+        // Animate accent lights for dynamic effect
+        const accent1Angle = time * 0.12;
+        accentLight1.position.set(
+            Math.cos(accent1Angle) * 50,
+            20 + Math.cos(time * 0.08) * 5,
+            Math.sin(accent1Angle) * 50 + 50
+        );
+        
+        const accent2Angle = time * 0.18;
+        accentLight2.position.set(
+            Math.cos(accent2Angle) * -50,
+            -10 + Math.sin(time * 0.1) * 5,
+            Math.sin(accent2Angle) * 50 + 50
+        );
+        
+        // Subtle intensity pulsing for rim light
+        rimLight.intensity = 2.8 + Math.sin(time * 0.3) * 0.25;
+        
+        // Animate top light intensity
+        topLight.intensity = 2.5 + Math.cos(time * 0.2) * 0.2;
         
         // Update controls for mouse (desktop)
         controls.update();
@@ -581,6 +426,9 @@ function init3DText() {
     
     // Use setAnimationLoop like the Three.js example for better performance
     renderer.setAnimationLoop(animate);
+    
+    // Initial render to ensure scene is visible immediately
+    renderer.render(scene, camera);
 
     window.addEventListener('resize', () => {
         const viewportWidth = window.innerWidth;
