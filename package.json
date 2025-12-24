@@ -13,14 +13,23 @@
     "random-words": "2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-scripts": "5.0.1",
     "three": "^0.159.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite",
+    "build": "vite build",
+    "build:gh-pages": "vite build && npm run deploy:copy",
+    "deploy:copy": "cp dist/index.html index.html.bak 2>/dev/null || true && cp -r dist/* . && cp dist/index.html index.html && echo '✅ Build files copied to root - React app is now the main page'",
+    "preview": "vite preview",
+    "start": "vite",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "update-resume": "./scripts/update-resume.sh"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "vite": "^7.3.0"
   }
 }
