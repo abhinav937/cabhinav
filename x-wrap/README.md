@@ -50,3 +50,4 @@ To deploy to GitHub Pages:
 
 **Note:** The `build/` folder is gitignored by default. If you want to commit build files, remove `/build` from `.gitignore`.
 
+
