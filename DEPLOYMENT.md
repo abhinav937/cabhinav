@@ -2,28 +2,17 @@
 
 ## Quick Deploy
 
-### Option 1: Manual Deployment (Recommended)
-
-1. Build the React app:
+1. Build the React app and copy to root:
    ```bash
-   npm run build
+   npm run build:gh-pages
    ```
 
-2. Copy build files to root (for GitHub Pages):
-   ```bash
-   npm run deploy:copy
-   ```
-
-3. Commit and push:
+2. Commit and push:
    ```bash
    git add .
    git commit -m "Deploy React app"
    git push
    ```
-
-### Option 2: Automatic Deployment with GitHub Actions
-
-The `.github/workflows/deploy.yml` file is already configured. Just push to the `main` branch and GitHub Actions will automatically build and deploy to GitHub Pages.
 
 Make sure GitHub Pages is configured to serve from the root directory (not `/docs`).
 
