@@ -1,4 +1,3 @@
-
 import React, { Suspense, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
@@ -24,7 +23,7 @@ interface LightSettings {
 
 const App: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [lightSettings, setLightSettings] = useState<LightSettings>({
+  const [lightSettings] = useState<LightSettings>({
     ambientIntensity: 0.6,
     keyIntensity: 5,
     fillIntensity: 2,
@@ -274,47 +273,47 @@ const App: React.FC = () => {
 
       <div className="relative w-full h-screen bg-[#050505]">
         {/* 3D Scene */}
-      <Canvas
-        shadows
-        camera={{ 
-          position: [0, 0, 15], 
-          fov: isMobile ? 50 : 35 
-        }}
-        gl={{ 
-          antialias: true, 
-          alpha: true,
-          toneMapping: 3 // ACESFilmicToneMapping
-        }}
-        dpr={[1, 2]} // Limit pixel ratio for better performance on mobile
-      >
-        <Suspense fallback={null}>
-          <Experience lightSettings={lightSettings} />
-        </Suspense>
-      </Canvas>
+        <Canvas
+          shadows
+          camera={{ 
+            position: [0, 0, 15], 
+            fov: isMobile ? 50 : 35 
+          }}
+          gl={{ 
+            antialias: true, 
+            alpha: true,
+            toneMapping: 3 // ACESFilmicToneMapping
+          }}
+          dpr={[1, 2]} // Limit pixel ratio for better performance on mobile
+        >
+          <Suspense fallback={null}>
+            <Experience lightSettings={lightSettings} />
+          </Suspense>
+        </Canvas>
 
-      {/* Footer */}
-      <footer className="footer" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100 }}>
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-links">
-              <a href="https://x.com/emotor" target="_blank" className="footer-link" rel="noopener noreferrer">
-                <img src="./assets/images/social/x-svg.svg" alt="X (Twitter)" className="footer-icon-svg" />
-              </a>
-              <a href="https://github.com/abhinav937" target="_blank" className="footer-link" rel="noopener noreferrer">
-                <span className="material-symbols-outlined">code</span>
-              </a>
-              <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" className="footer-link" rel="noopener noreferrer">
-                <span className="material-symbols-outlined">school</span>
-              </a>
-              <a href="https://www.strava.com/athletes/99464226" target="_blank" className="footer-link" rel="noopener noreferrer">
-                <span className="material-symbols-outlined">directions_run</span>
-              </a>
+        {/* Footer */}
+        <footer className="footer absolute bottom-0 left-0 right-0 z-20">
+          <div className="container">
+            <div className="footer-content">
+              <div className="footer-links">
+                <a href="https://x.com/emotor" target="_blank" className="footer-link" rel="noopener noreferrer">
+                  <img src="./assets/images/social/x-svg.svg" alt="X (Twitter)" className="footer-icon-svg" />
+                </a>
+                <a href="https://github.com/abhinav937" target="_blank" className="footer-link" rel="noopener noreferrer">
+                  <span className="material-symbols-outlined">code</span>
+                </a>
+                <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" className="footer-link" rel="noopener noreferrer">
+                  <span className="material-symbols-outlined">school</span>
+                </a>
+                <a href="https://www.strava.com/athletes/99464226" target="_blank" className="footer-link" rel="noopener noreferrer">
+                  <span className="material-symbols-outlined">directions_run</span>
+                </a>
+              </div>
+
+              <p className="footer-text">© 2025 Abhinav Chinnusamy. Power Electronics Engineer.</p>
             </div>
-
-            <p className="footer-text">© 2025 Abhinav Chinnusamy. Power Electronics Engineer.</p>
           </div>
-        </div>
-      </footer>
+        </footer>
       </div>
     </>
   );
