@@ -521,22 +521,22 @@ function init3DText() {
         isShaking = true;
         shakeStartTime = performance.now();
         
-        // Damped oscillator parameters - Heavy spacecraft response
-        const initialAmplitude = 0.15; // Initial displacement
-        const initialRotationAmplitude = 0.1; // Initial rotation in radians
-        const dampingRatio = 0.25; // Higher damping for heavy object (more resistance)
-        const naturalFrequency = 0.6; // Very slow oscillation frequency (Hz) - like heavy mass
-        const duration = 6000; // Total animation duration in ms (6 seconds)
+        // Damped oscillator parameters - Water wave response (slow, smooth, gentle)
+        const initialAmplitude = 0.12; // Initial displacement (slightly reduced for gentler motion)
+        const initialRotationAmplitude = 0.08; // Initial rotation in radians (reduced for smoother)
+        const dampingRatio = 0.45; // Higher damping for smooth water-like motion (less bouncy, more fluid)
+        const naturalFrequency = 0.25; // Very slow oscillation frequency (Hz) - like gentle water waves
+        const duration = 8000; // Total animation duration in ms (8 seconds - longer for smoother decay)
         
-        // Initial velocity (impulse from meteor impact) - slower response
-        const initialVelocityX = (Math.random() - 0.5) * 0.15;
-        const initialVelocityY = (Math.random() - 0.5) * 0.15;
-        const initialVelocityZ = (Math.random() - 0.5) * 0.08;
+        // Initial velocity (gentle impulse from meteor impact) - much slower, smoother response
+        const initialVelocityX = (Math.random() - 0.5) * 0.08; // Reduced for gentler motion
+        const initialVelocityY = (Math.random() - 0.5) * 0.08; // Reduced for gentler motion
+        const initialVelocityZ = (Math.random() - 0.5) * 0.05; // Reduced for gentler motion
         
-        // Initial rotation velocity (angular velocity) - slower angular response
-        const initialAngularVelocityX = (Math.random() - 0.5) * 0.2; // Pitch
-        const initialAngularVelocityY = (Math.random() - 0.5) * 0.2; // Yaw
-        const initialAngularVelocityZ = (Math.random() - 0.5) * 0.15; // Roll
+        // Initial rotation velocity (angular velocity) - much slower, smoother angular response
+        const initialAngularVelocityX = (Math.random() - 0.5) * 0.1; // Pitch - reduced for smoother
+        const initialAngularVelocityY = (Math.random() - 0.5) * 0.1; // Yaw - reduced for smoother
+        const initialAngularVelocityZ = (Math.random() - 0.5) * 0.08; // Roll - reduced for smoother
         
         // Initial displacement (small random offset)
         const initialDisplacementX = (Math.random() - 0.5) * initialAmplitude;
@@ -585,16 +585,18 @@ function init3DText() {
                 const sinTerm = Math.sin(omegaD * t);
                 
                 if (shakeMode === 'position' || shakeMode === 'both') {
-                    // Position oscillation
+                    // Position oscillation - water wave pattern with smooth phase offsets
                     const amplitudeX = initialDisplacementX * cosTerm + (initialVelocityX / omegaD) * sinTerm;
                     const shakeX = amplitudeX * decayFactor;
                     
-                    const phaseOffsetY = Math.PI * 0.3;
+                    // Y-axis phase offset for flowing water motion
+                    const phaseOffsetY = Math.PI * 0.4; // Slightly increased for smoother undulation
                     const amplitudeY = initialDisplacementY * Math.cos(omegaD * t + phaseOffsetY) + 
                                        (initialVelocityY / omegaD) * Math.sin(omegaD * t + phaseOffsetY);
                     const shakeY = amplitudeY * decayFactor;
                     
-                    const phaseOffsetZ = Math.PI * 0.6;
+                    // Z-axis phase offset for depth-like motion
+                    const phaseOffsetZ = Math.PI * 0.7; // Increased for more pronounced wave-like motion
                     const amplitudeZ = initialDisplacementZ * Math.cos(omegaD * t + phaseOffsetZ) + 
                                        (initialVelocityZ / omegaD) * Math.sin(omegaD * t + phaseOffsetZ);
                     const shakeZ = amplitudeZ * decayFactor;
@@ -607,19 +609,19 @@ function init3DText() {
                 if (shakeMode === 'rotation' || shakeMode === 'both') {
                     // Only apply rotation shake if user is NOT interacting
                     if (!isDragging && !isTouching) {
-                        // Rotation oscillation (Roll, Pitch, Yaw)
-                        // Pitch (rotation around X-axis)
+                        // Rotation oscillation (Roll, Pitch, Yaw) - water wave pattern
+                        // Pitch (rotation around X-axis) - gentle, smooth
                         const amplitudePitch = initialRotationX * cosTerm + (initialAngularVelocityX / omegaD) * sinTerm;
                         const shakePitch = amplitudePitch * decayFactor;
                         
-                        // Yaw (rotation around Y-axis) - slightly out of phase
-                        const phaseOffsetYaw = Math.PI * 0.4;
+                        // Yaw (rotation around Y-axis) - smooth phase offset for flowing motion
+                        const phaseOffsetYaw = Math.PI * 0.5; // Increased for smoother wave-like motion
                         const amplitudeYaw = initialRotationY * Math.cos(omegaD * t + phaseOffsetYaw) + 
                                             (initialAngularVelocityY / omegaD) * Math.sin(omegaD * t + phaseOffsetYaw);
                         const shakeYaw = amplitudeYaw * decayFactor;
                         
-                        // Roll (rotation around Z-axis) - more out of phase
-                        const phaseOffsetRoll = Math.PI * 0.7;
+                        // Roll (rotation around Z-axis) - more pronounced phase offset for undulation
+                        const phaseOffsetRoll = Math.PI * 0.8; // Increased for more water-like undulation
                         const amplitudeRoll = initialRotationZ * Math.cos(omegaD * t + phaseOffsetRoll) + 
                                              (initialAngularVelocityZ / omegaD) * Math.sin(omegaD * t + phaseOffsetRoll);
                         const shakeRoll = amplitudeRoll * decayFactor;
@@ -637,10 +639,10 @@ function init3DText() {
                 // Continue animation with proper timing
                 shakeAnimationId = requestAnimationFrame(performShake);
             } else {
-                // Smooth transition back to original (professional easing pattern)
+                // Smooth transition back to original (water wave easing - slow and gentle)
                 // Only return if user is NOT interacting
                 if (!isDragging && !isTouching) {
-                    const returnSmoothing = 0.15;
+                    const returnSmoothing = 0.08; // Slower, smoother return like water settling
                     textMesh.position.x = damp(textMesh.position.x, originalPosition.x, returnSmoothing * 60, deltaTime);
                     textMesh.position.y = damp(textMesh.position.y, originalPosition.y, returnSmoothing * 60, deltaTime);
                     textMesh.position.z = damp(textMesh.position.z, originalPosition.z, returnSmoothing * 60, deltaTime);
