@@ -3,7 +3,6 @@ import React, { Suspense, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
 import { Experience } from './components/Experience';
-import { Loader } from '@react-three/drei';
 
 interface LightSettings {
   ambientIntensity: number;
@@ -316,8 +315,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
-
-      <Loader />
       </div>
     </>
   );
