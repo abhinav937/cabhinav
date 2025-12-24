@@ -107,16 +107,11 @@
             const data = await response.json();
             
             if (data.success) {
-                // Remove overlay first
-                removeAuthOverlay();
-                // Load personal bests - this will show the dashboard when ready
+                // Remove auth dialog and load personal bests
+                removeAuthDialog();
                 await loadPersonalBests();
             } else {
                 showMessage(data.message || 'Authorization failed', 'error');
-                // Only show overlay if setup is required
-                if (data.setup_required) {
-                    showAuthOverlay();
-                }
             }
         } catch (error) {
             console.error('Error exchanging code:', error);
@@ -134,24 +129,28 @@
             const data = await response.json();
 
             if (!data.success) {
-                // Only show authorization overlay if API specifically says setup is required
+                // Hide dashboard completely and show auth dialog
+                hideDashboard();
                 if (data.setup_required) {
-                    showAuthOverlay();
+                    showAuthDialog();
                 } else {
-                    // Other errors - just show message, don't show overlay
                     showMessage(data.message || 'Failed to load personal bests', 'error');
                 }
                 return;
             }
 
-            // We have data! Ensure dashboard is ready before populating
-            // Remove any blur/hidden state first
+            // We have data! Remove auth dialog and show dashboard
+            removeAuthDialog();
+            
+            // Ensure dashboard is ready before populating
             const dashboards = document.querySelectorAll('.stat-dashboard');
             dashboards.forEach(dashboard => {
+                dashboard.style.display = '';
                 dashboard.classList.remove('dashboard-hidden');
+                dashboard.classList.add('dashboard-visible');
             });
             
-            // Small delay to ensure DOM is ready and blur is removed
+            // Small delay to ensure DOM is ready
             setTimeout(() => {
                 populateDashboard(data.data.personal_bests);
             }, 100);
@@ -520,10 +519,11 @@
         return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     }
 
-    // Hide dashboard (blur and hide) - hide all dashboards
+    // Hide dashboard completely - hide all dashboards
     function hideDashboard() {
         const dashboards = document.querySelectorAll('.stat-dashboard');
         dashboards.forEach(dashboard => {
+            dashboard.style.display = 'none';
             dashboard.classList.add('dashboard-hidden');
             dashboard.classList.remove('dashboard-visible');
         });
@@ -532,56 +532,63 @@
     // Show dashboard (unblur and show) - show specific dashboard or all
     function showDashboard(specificDashboard = null) {
         if (specificDashboard) {
+            specificDashboard.style.display = '';
             specificDashboard.classList.remove('dashboard-hidden');
             specificDashboard.classList.add('dashboard-visible');
         } else {
             const dashboards = document.querySelectorAll('.stat-dashboard');
             dashboards.forEach(dashboard => {
+                dashboard.style.display = '';
                 dashboard.classList.remove('dashboard-hidden');
                 dashboard.classList.add('dashboard-visible');
             });
         }
     }
 
-    // Show authorization overlay
-    function showAuthOverlay() {
-        // Remove existing overlay
-        const existing = document.querySelector('.auth-overlay');
+    // Show authentication dialog
+    function showAuthDialog() {
+        // Remove existing dialog
+        const existing = document.querySelector('.auth-dialog');
         if (existing) {
             existing.remove();
         }
 
+        // Find the section where dashboard is located
         const dashboard = document.querySelector('.stat-dashboard');
         if (!dashboard) return;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'auth-overlay';
-        overlay.innerHTML = `
-            <div class="auth-overlay-content">
-                <span class="material-symbols-outlined" style="font-size: 48px; margin-bottom: 1rem;">lock</span>
-                <h3>Strava Authorization Needed</h3>
-                <p>Please authorize Strava to view your personal best times.</p>
-                <a href="?auth=1" class="auth-button">
+        const section = dashboard.closest('section') || dashboard.parentElement;
+        if (!section) return;
+
+        // Create auth dialog
+        const dialog = document.createElement('div');
+        dialog.className = 'auth-dialog';
+        dialog.innerHTML = `
+            <div class="auth-dialog-header">
+                <span class="material-symbols-outlined auth-dialog-icon">lock</span>
+                <h2 class="auth-dialog-title">Authorization Required</h2>
+            </div>
+            <div class="auth-dialog-content">
+                <p class="auth-dialog-message">Please authorize Strava to view your personal best times.</p>
+                <a href="?auth=1" class="auth-dialog-button">
                     <span class="material-symbols-outlined">lock_open</span>
-                    Authorize with Strava
+                    <span>Authorize with Strava</span>
                 </a>
             </div>
         `;
 
-        // Insert overlay before dashboard
-        const parent = dashboard.parentElement;
-        if (parent) {
-            parent.insertBefore(overlay, dashboard);
+        // Insert dialog in place of dashboard
+        section.insertBefore(dialog, dashboard);
+    }
+
+    // Remove authentication dialog
+    function removeAuthDialog() {
+        const dialog = document.querySelector('.auth-dialog');
+        if (dialog) {
+            dialog.remove();
         }
     }
 
-    // Remove authorization overlay
-    function removeAuthOverlay() {
-        const overlay = document.querySelector('.auth-overlay');
-        if (overlay) {
-            overlay.remove();
-        }
-    }
 
     // Show message to user
     function showMessage(message, type = 'info') {
@@ -609,41 +616,6 @@
     }
 
 
-    // Show authorization instructions
-    function showAuthInstructions() {
-        const promptDiv = document.createElement('div');
-        promptDiv.className = 'auth-prompt';
-        promptDiv.innerHTML = `
-            <h3>Strava OAuth Configuration Required</h3>
-            <p>To enable automatic OAuth redirect, you need to configure your Strava Client ID:</p>
-            <ol>
-                <li>Get your Strava Client ID from <a href="https://www.strava.com/settings/api" target="_blank" style="color: rgba(0, 255, 0, 0.8);">Strava API Settings</a></li>
-                <li>Set <code>STRAVA_CLIENT_ID</code> in <code>script.js</code></li>
-                <li>Make sure your redirect URI matches: <code>${STRAVA_REDIRECT_URI}</code></li>
-            </ol>
-            <p><strong>Alternative:</strong> You can manually authorize by:</p>
-            <ol>
-                <li>Get your Strava authorization code from the Strava OAuth flow</li>
-                <li>Visit this page with <code>?code=YOUR_CODE</code> parameter, or</li>
-                <li>Use the API POST endpoint directly:
-                    <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; overflow-x: auto;"><code>curl -X POST ${API_BASE_URL} \\
-  -H "Content-Type: application/json" \\
-  -d '{"code": "YOUR_AUTHORIZATION_CODE"}'</code></pre>
-                </li>
-            </ol>
-            <p><a href="${window.location.pathname}" style="color: rgba(0, 255, 0, 0.8); text-decoration: underline;">← Back to dashboard</a></p>
-        `;
-        
-        const demoSection = document.querySelector('.demo-section');
-        if (demoSection) {
-            const dashboard = demoSection.querySelector('.stat-dashboard');
-            if (dashboard) {
-                demoSection.insertBefore(promptDiv, dashboard);
-            } else {
-                demoSection.appendChild(promptDiv);
-            }
-        }
-    }
 
     // Initialize stat dashboard
     function initStatDashboard() {

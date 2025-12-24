@@ -23,7 +23,7 @@
     overflow: visible;
     min-height: auto;
     font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6),
                 0 0 0 1px rgba(255, 255, 255, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transition: filter 0.3s ease, opacity 0.3s ease;
@@ -608,7 +608,7 @@
         font-size: 7px;
         text-align: left;
     }
-    
+
     .stat-main-info {
         text-align: left;
         justify-content: flex-start;
@@ -618,6 +618,229 @@
 /* Loading state */
 .stat-card.loading {
     pointer-events: none;
+}
+
+/* Authentication Dialog - Matches dashboard style */
+.auth-dialog {
+    background: #000000;
+    border: 1px solid #333333;
+    border-top: 1px solid rgba(0, 255, 0, 0.3);
+    border-radius: 8px;
+    padding: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.4s ease forwards;
+    position: relative;
+    overflow: visible;
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.auth-dialog:hover {
+    border-top-color: rgba(0, 255, 0, 0.5);
+    border-color: #444444;
+}
+
+.auth-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 12px 16px;
+    border-bottom: 1px solid #333333;
+    background: #000000;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.auth-dialog-icon {
+    font-size: 20px;
+    color: rgba(0, 255, 0, 0.6);
+    opacity: 0.8;
+}
+
+.auth-dialog-title {
+    font-size: 13px;
+    font-weight: normal;
+    color: #00ff00;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    margin: 0;
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+}
+
+.auth-dialog-content {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    background: #0a0a0a;
+}
+
+.auth-dialog-message {
+    font-size: 11px;
+    color: #888888;
+    margin: 0;
+    line-height: 1.5;
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+}
+
+.auth-dialog-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: normal;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+    letter-spacing: 0.5px;
+}
+
+.auth-dialog-button:hover {
+    background: rgba(0, 255, 0, 0.15);
+    border-color: rgba(0, 255, 0, 0.5);
+    color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.auth-dialog-button:active {
+    transform: translateY(1px);
+}
+
+.auth-dialog-button .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* Responsive auth dialog */
+@media (max-width: 768px) {
+    .auth-dialog {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .auth-dialog-header {
+        padding: 10px 12px;
+    }
+
+    .auth-dialog-title {
+        font-size: 12px;
+    }
+
+    .auth-dialog-content {
+        padding: 1.5rem 1rem;
+        gap: 1.25rem;
+    }
+
+    .auth-dialog-message {
+        font-size: 10px;
+    }
+
+    .auth-dialog-button {
+        padding: 0.65rem 1.25rem;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 640px) {
+    .auth-dialog-header {
+        padding: 10px 12px;
+    }
+
+    .auth-dialog-icon {
+        font-size: 18px;
+    }
+
+    .auth-dialog-title {
+        font-size: 11px;
+    }
+
+    .auth-dialog-content {
+        padding: 1.25rem 0.75rem;
+        gap: 1rem;
+    }
+
+    .auth-dialog-message {
+        font-size: 9px;
+    }
+
+    .auth-dialog-button {
+        padding: 0.6rem 1rem;
+        font-size: 9px;
+    }
+
+    .auth-dialog-button .material-symbols-outlined {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-dialog-content {
+        padding: 1rem 0.5rem;
+        gap: 0.75rem;
+    }
+
+    .auth-dialog-icon {
+        font-size: 16px;
+    }
+
+    .auth-dialog-title {
+        font-size: 10px;
+    }
+
+    .auth-dialog-message {
+        font-size: 8px;
+    }
+
+    .auth-dialog-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 8px;
+    }
+
+    .auth-dialog-button .material-symbols-outlined {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .auth-dialog-content {
+        padding: 0.75rem 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .auth-dialog-icon {
+        font-size: 14px;
+    }
+
+    .auth-dialog-title {
+        font-size: 9px;
+    }
+
+    .auth-dialog-message {
+        font-size: 7px;
+    }
+
+    .auth-dialog-button {
+        padding: 0.45rem 0.65rem;
+        font-size: 7px;
+    }
+
+    .auth-dialog-button .material-symbols-outlined {
+        font-size: 11px;
+    }
 }
 
 .stat-card.loading .stat-value {
@@ -701,144 +924,4 @@
     color: rgba(255, 59, 48, 0.9);
 }
 
-/* Auth Prompt Styles */
-.auth-prompt {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    animation: fadeInUp 0.4s ease;
-}
-
-.auth-prompt h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1rem;
-}
-
-.auth-prompt p {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.75rem;
-    line-height: 1.6;
-}
-
-.auth-prompt ol {
-    color: rgba(255, 255, 255, 0.7);
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-    line-height: 1.8;
-}
-
-.auth-prompt code {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9em;
-    color: rgba(0, 255, 0, 0.9);
-}
-
-.auth-prompt small {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.85rem;
-}
-
-.auth-prompt pre {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    overflow-x: auto;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.auth-prompt pre code {
-    background: transparent;
-    padding: 0;
-    color: rgba(0, 255, 0, 0.9);
-    font-size: 0.85rem;
-    line-height: 1.6;
-}
-
-.auth-prompt a {
-    color: rgba(0, 255, 0, 0.8);
-    text-decoration: underline;
-    transition: color 0.2s ease;
-}
-
-.auth-prompt a:hover {
-    color: rgba(0, 255, 0, 1);
-}
-
-/* Authorization Overlay */
-.auth-overlay {
-    position: relative;
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 4rem 2rem;
-    text-align: center;
-    z-index: 10;
-    animation: fadeInUp 0.4s ease;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-overlay-content {
-    width: 100%;
-}
-
-.auth-overlay-content h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-}
-
-.auth-overlay-content p {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-}
-
-.auth-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #FC4C02;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.3s ease, transform 0.2s ease;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.auth-button:hover {
-    background: #e04302;
-    transform: translateY(-2px);
-}
-
-.auth-button .material-symbols-outlined {
-    font-size: 20px;
-}
-
-.auth-overlay .material-symbols-outlined {
-    color: rgba(255, 255, 255, 0.5);
-    opacity: 0.8;
-}
 
