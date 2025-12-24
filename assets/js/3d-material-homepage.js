@@ -414,7 +414,18 @@ function init3DText() {
     });
     
     document.addEventListener('mouseup', () => {
-        isDragging = false;
+        if (isDragging) {
+            isDragging = false;
+            // Ensure target rotations are set to current rotations when mouse is released
+            // This ensures spring effect starts from the correct position
+            if (textMesh) {
+                targetRotationX = textMesh.rotation.x;
+                targetRotationY = textMesh.rotation.y;
+                // Clamp to limits
+                targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
+                targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
+            }
+        }
     });
     
     document.addEventListener('mousemove', (event) => {
@@ -464,7 +475,18 @@ function init3DText() {
     }, { passive: true }); // PASSIVE - allows scrolling!
     
     document.addEventListener('touchend', () => {
-        isTouching = false;
+        if (isTouching) {
+            isTouching = false;
+            // Ensure target rotations are set to current rotations when touch ends
+            // This ensures spring effect starts from the correct position
+            if (textMesh) {
+                targetRotationX = textMesh.rotation.x;
+                targetRotationY = textMesh.rotation.y;
+                // Clamp to limits
+                targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
+                targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
+            }
+        }
     }, { passive: true }); // PASSIVE - allows scrolling!
     
     document.addEventListener('touchmove', (e) => {
@@ -473,16 +495,19 @@ function init3DText() {
             const deltaX = touch.clientX - previousMouseX;
             const deltaY = touch.clientY - previousMouseY;
             
-            // Rotate the mesh (like 3d-material.js)
-            targetRotationY += deltaX * 0.003;
-            targetRotationX += deltaY * 0.003;
-            
-            // Clamp rotation to limits
-            targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
-            targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
-            
-            previousMouseX = touch.clientX;
-            previousMouseY = touch.clientY;
+            // Only rotate if there's significant movement (prevents accidental rotation during scroll)
+            if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
+                // Rotate the mesh (like 3d-material.js)
+                targetRotationY += deltaX * 0.003;
+                targetRotationX += deltaY * 0.003;
+                
+                // Clamp rotation to limits
+                targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
+                targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
+                
+                previousMouseX = touch.clientX;
+                previousMouseY = touch.clientY;
+            }
         }
     }, { passive: true }); // PASSIVE - allows scrolling!
     
@@ -783,14 +808,24 @@ function init3DText() {
             if (isDragging || isTouching) {
                 // User is actively rotating - smooth interpolation with easing
                 const smoothing = 10.0; // Higher = faster response
+                
+                // Ensure target rotations are clamped before interpolation
+                targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
+                targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
+                
                 textMesh.rotation.x = damp(textMesh.rotation.x, targetRotationX, smoothing, deltaTime);
                 textMesh.rotation.y = damp(textMesh.rotation.y, targetRotationY, smoothing, deltaTime);
                 
-                // Clamp rotation to limits
+                // Clamp rotation to limits (safety check)
                 textMesh.rotation.x = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, textMesh.rotation.x));
                 textMesh.rotation.y = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, textMesh.rotation.y));
             } else {
                 // Elastic spring effect with smooth easing (like lens flare opacity transitions)
+                // Ensure target rotations are initialized if they're NaN or undefined
+                if (isNaN(targetRotationX) || targetRotationX === undefined) targetRotationX = textMesh.rotation.x;
+                if (isNaN(targetRotationY) || targetRotationY === undefined) targetRotationY = textMesh.rotation.y;
+                
+                // Spring force pulls toward zero (center position)
                 const springForceX = -textMesh.rotation.x * springStiffness;
                 const springForceY = -textMesh.rotation.y * springStiffness;
                 
@@ -802,10 +837,18 @@ function init3DText() {
                 targetRotationX *= Math.pow(springDamping, deltaTime * 60);
                 targetRotationY *= Math.pow(springDamping, deltaTime * 60);
                 
+                // Clamp target rotation to limits (important for spring return)
+                targetRotationX = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, targetRotationX));
+                targetRotationY = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, targetRotationY));
+                
                 // Smooth interpolation with easing (professional pattern)
                 const returnSmoothing = 0.08 * 60; // Convert to per-second rate
                 textMesh.rotation.x = damp(textMesh.rotation.x, targetRotationX, returnSmoothing, deltaTime);
                 textMesh.rotation.y = damp(textMesh.rotation.y, targetRotationY, returnSmoothing, deltaTime);
+                
+                // Clamp actual rotation to limits (safety check)
+                textMesh.rotation.x = Math.max(-MAX_ROTATION_X, Math.min(MAX_ROTATION_X, textMesh.rotation.x));
+                textMesh.rotation.y = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, textMesh.rotation.y));
                 
                 // Snap to zero if very close (prevent infinite tiny oscillations)
                 const threshold = 0.001;
@@ -839,10 +882,23 @@ function init3DText() {
     
     // Use setAnimationLoop with proper timing (professional pattern)
     lastFrameTime = performance.now();
-    renderer.setAnimationLoop(animate);
+    
+    // Ensure animation loop starts - defensive check for production
+    if (renderer && typeof renderer.setAnimationLoop === 'function') {
+        renderer.setAnimationLoop(animate);
+    } else {
+        // Fallback to requestAnimationFrame if setAnimationLoop is not available
+        function fallbackAnimate() {
+            animate(performance.now());
+            requestAnimationFrame(fallbackAnimate);
+        }
+        requestAnimationFrame(fallbackAnimate);
+    }
     
     // Initial render to ensure scene is visible immediately
-    renderer.render(scene, camera);
+    if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+    }
 
     window.addEventListener('resize', () => {
         const viewportWidth = window.innerWidth;
