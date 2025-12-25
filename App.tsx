@@ -399,17 +399,7 @@ const App: React.FC = () => {
         </Canvas>
 
         {/* Footer Navigation */}
-        <footer 
-          className="footer" 
-          style={{ 
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 20,
-            width: '100%'
-          }}
-        >
+        <footer className="footer">
           <div className="container">
             <div className="footer-content">
               <div className="footer-links">
@@ -425,6 +415,8 @@ const App: React.FC = () => {
                     alt="X (Twitter)" 
                     className="footer-icon-svg"
                     loading="lazy"
+                    width="18"
+                    height="18"
                   />
                 </a>
                 <a 

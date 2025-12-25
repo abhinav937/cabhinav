@@ -87,6 +87,18 @@ body.space-bg-ready {
               box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
 
+/* Desktop footer positioning - ensure footer stays at bottom */
+@media (min-width: 769px) {
+  .footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+  }
+}
+
 /* Hover effects only on desktop (mouse devices) */
 @media (hover: hover) and (pointer: fine) {
   .footer {
