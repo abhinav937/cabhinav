@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start Dev Server",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true,
+        "showReuseMessage": true,
+        "close": false
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🌐 Start Dev Server & Open Browser",
+      "type": "shell",
+      "command": "npm run dev:open",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true,
+        "showReuseMessage": true,
+        "close": false
+      },
+      "isBackground": true,
+      "group": "build"
+    },
+    {
+      "label": "🏗️ Build for Production",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": "build"
+    },
+    {
+      "label": "👀 Preview Production Build",
+      "type": "npm",
+      "script": "preview",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": "build"
+    }
+  ]
+}
+

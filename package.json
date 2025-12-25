@@ -19,6 +19,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:open": "vite --open",
     "build": "vite build",
     "build:gh-pages": "vite build && npm run deploy:copy",
     "deploy:copy": "cp dist/index.html index.html.bak 2>/dev/null || true && cp -r dist/* . && cp dist/index.html index.html && echo '✅ Build files copied to root - React app is now the main page'",

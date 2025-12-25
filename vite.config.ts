@@ -10,7 +10,11 @@ export default defineConfig({
     // Allow serving files from project root
     fs: {
       allow: ['.']
-    }
+    },
+    // Automatically open browser when dev server starts
+    open: false, // Set to true if you want auto-open, or use --open flag
+    port: 5173,
+    host: true // Allow external connections
   },
   build: {
     outDir: 'dist',
