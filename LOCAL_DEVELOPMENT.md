@@ -12,7 +12,7 @@ npm run dev
 npm start
 ```
 
-Then open: **http://localhost:3000**
+Then open: **http://localhost:5173** (or the port shown in the terminal)
 
 ### Option 2: Preview Built Version
 
@@ -52,7 +52,7 @@ Then open: **http://localhost:8000**
 
 ## Quick Commands
 
-- **Development**: `npm run dev` → http://localhost:3000
+- **Development**: `npm run dev` → http://localhost:5173 (or port shown in terminal)
 - **Build**: `npm run build` → Creates `dist/` folder
 - **Preview Build**: `npm run preview` → http://localhost:4173
 

@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change to your default branch name if different
+      - main
 
 permissions:
   contents: read
@@ -32,13 +32,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Copy CNAME for custom domain
-        run: |
-          if [ -f CNAME ]; then
-            cp CNAME dist/
-            echo "✓ CNAME copied to dist"
-          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

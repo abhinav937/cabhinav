@@ -21,7 +21,7 @@ A modern, responsive personal portfolio website built with HTML, CSS, and JavaSc
 - **Design**: Material Design 3, Material Symbols
 - **Fonts**: Inter (Google Fonts)
 - **Build Tools**: Node.js, npm
-- **Deployment**: Vercel (with custom domain support)
+- **Deployment**: GitHub Pages (with custom domain support)
 - **Analytics**: Google Analytics
 
 ## Project Structure
@@ -50,7 +50,6 @@ cabhinav/
 │   ├── update-resume.sh
 │   └── sitemap-generator.js
 ├── config/              # Configuration files
-│   ├── vercel.json
 │   └── robots.txt
 ├── index.html           # Homepage
 ├── 404.html             # Custom 404 page
@@ -79,14 +78,16 @@ cd cabhinav
 npm install
 ```
 
-3. Open `index.html` in your browser or use a local server:
+3. Start the development server:
 ```bash
-# Using Python
-python -m http.server 8000
-
-# Using Node.js http-server
-npx http-server
+npm run dev
+# or
+npm start
 ```
+
+4. Open your browser to the URL shown (typically **http://localhost:5173**)
+
+The dev server will automatically reload when you make changes to your code.
 
 ## Available Pages
 
@@ -164,27 +165,34 @@ node scripts/update-resume.js --help
 
 ## Deployment
 
-The website is configured for deployment on Vercel with:
+The website is automatically deployed to GitHub Pages using GitHub Actions.
 
-- Custom domain support (`cabhinav.com`)
-- API routes for health checks and Gemini integration
-- Security headers (X-Frame-Options, CSP, etc.)
-- Cache control headers
-- CORS configuration for API endpoints
+### Automatic Deployment
 
-### Deploy to Vercel
+When you push to the `main` branch, GitHub Actions will:
+1. Build the React app using Vite
+2. Deploy to GitHub Pages automatically
 
-1. Install Vercel CLI:
+### GitHub Pages Configuration
+
+1. Go to your repository **Settings** → **Pages**
+2. Under **Source**, select **GitHub Actions**
+3. The workflow will automatically deploy from the `dist/` folder
+
+### Custom Domain
+
+The website supports custom domain (`cabhinav.com`) via the `CNAME` file.
+
+### Manual Deployment (if needed)
+
+If you need to deploy manually:
+
 ```bash
-npm i -g vercel
+npm run build:gh-pages
+git add .
+git commit -m "Deploy React app"
+git push
 ```
-
-2. Deploy:
-```bash
-vercel
-```
-
-Or connect your GitHub repository to Vercel for automatic deployments.
 
 ## SEO Features
 
@@ -199,8 +207,9 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 
 ## Scripts
 
-- `npm run start`: Start development server (if using React)
+- `npm run dev` or `npm start`: Start development server (runs on http://localhost:5173)
 - `npm run build`: Build for production
+- `npm run preview`: Preview the production build locally
 - `npm run update-resume`: Update resume PDF from GitHub
 
 ## License

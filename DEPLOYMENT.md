@@ -1,28 +1,6 @@
 # Deployment Guide for GitHub Pages
 
-## Automatic Deployment (Recommended)
-
-The `.github/workflows/deploy.yml` file is configured for automatic deployment. Just push to the `main` branch:
-
-```bash
-git add .
-git commit -m "Update site"
-git push
-```
-
-GitHub Actions will automatically:
-1. Build the React app
-2. Deploy to GitHub Pages
-3. Your site will be live at https://cabhinav.com
-
-**First-time setup:**
-1. Go to your GitHub repository → Settings → Pages
-2. Under "Source", select "GitHub Actions"
-3. The workflow will run automatically on the next push
-
-## Manual Deployment (Alternative)
-
-If you prefer manual deployment:
+## Quick Deploy
 
 1. Build the React app and copy to root:
    ```bash
