@@ -6,6 +6,12 @@ export default defineConfig({
   plugins: [react()],
   root: '.',
   publicDir: 'public',
+  server: {
+    // Allow serving files from project root
+    fs: {
+      allow: ['.']
+    }
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

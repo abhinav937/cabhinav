@@ -1,6 +1,7 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three';
 import { Experience } from './components/Experience';
 
 interface LightSettings {
@@ -21,96 +22,99 @@ interface LightSettings {
   accent2Color: string;
 }
 
-const App: React.FC = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [lightSettings] = useState<LightSettings>({
-    ambientIntensity: 0.6,
-    keyIntensity: 5,
-    fillIntensity: 2,
-    rimIntensity: 5,
-    accent1Intensity: 4,
-    accent2Intensity: 4,
-    topIntensity: 5.5,
-    mouseIntensity: 8,
-    envMapIntensity: 5,
-    platformReflectivity: 1.2,
-    keyColor: '#ffffff',
-    fillColor: '#b8d4ff',
-    rimColor: '#4a9eff',
-    accent1Color: '#ffb84d',
-    accent2Color: '#6b9fff',
-  });
+// Light configuration optimized for different devices
+const LIGHT_SETTINGS: LightSettings = {
+  ambientIntensity: 0.6,
+  keyIntensity: 5,
+  fillIntensity: 2,
+  rimIntensity: 5,
+  accent1Intensity: 4,
+  accent2Intensity: 4,
+  topIntensity: 5.5,
+  mouseIntensity: 8,
+  envMapIntensity: 5,
+  platformReflectivity: 1.2,
+  keyColor: '#ffffff',
+  fillColor: '#b8d4ff',
+  rimColor: '#4a9eff',
+  accent1Color: '#ffb84d',
+  accent2Color: '#6b9fff',
+};
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    "mainEntity": {
-      "@id": "#main-author",
-      "@type": "Person",
-      "name": "Abhinav Chinnusamy",
-      "alternateName": "Abhinav",
-      "image": "https://cabhinav.com/assets/images/profile/my_profile.jpg",
-      "url": "https://cabhinav.com",
-      "description": "Graduate student researcher in Power Electronics and Pulsed Power applications at UW-Madison. Specializing in GaN inverters, solid-state circuit breakers, Marx generators, and embedded systems. Former Hardware Engineering Intern at Annapurna Labs (Amazon).",
-      "jobTitle": "Graduate Student Researcher",
-      "worksFor": [
-        {
-          "@type": "Organization",
-          "name": "WEMPEC",
-          "url": "https://wempec.wisc.edu",
-          "description": "Wisconsin Electric Machines and Power Electronics Consortium"
-        },
-        {
-          "@type": "Organization",
-          "name": "University of Wisconsin-Madison",
-          "url": "https://www.wisc.edu"
-        }
-      ],
-      "alumniOf": {
+// Structured data for SEO
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@id": "#main-author",
+    "@type": "Person",
+    "name": "Abhinav Chinnusamy",
+    "alternateName": "Abhinav",
+    "image": "https://cabhinav.com/assets/images/profile/my_profile.jpg",
+    "url": "https://cabhinav.com",
+    "description": "Graduate student researcher in Power Electronics and Pulsed Power applications at UW-Madison. Specializing in GaN inverters, solid-state circuit breakers, Marx generators, and embedded systems. Former Hardware Engineering Intern at Annapurna Labs (Amazon).",
+    "jobTitle": "Graduate Student Researcher",
+    "worksFor": [
+      {
         "@type": "Organization",
-        "name": "Indian Institute of Technology Dharwad",
-        "url": "https://www.iitdh.ac.in"
+        "name": "WEMPEC",
+        "url": "https://wempec.wisc.edu",
+        "description": "Wisconsin Electric Machines and Power Electronics Consortium"
       },
-      "knowsAbout": [
-        "Power Electronics",
-        "Pulsed Power",
-        "Marx Generators",
-        "GaN Devices",
-        "SiC Devices",
-        "PCB Design",
-        "Control Systems",
-        "Hardware Design",
-        "Embedded Systems",
-        "Solid-State Circuit Breakers",
-        "Inverters",
-        "Power Systems"
-      ],
-      "knowsLanguage": [
-        {
-          "@type": "Language",
-          "name": "English",
-          "alternateName": "en"
-        }
-      ],
-      "sameAs": [
-        "https://github.com/abhinav937",
-        "https://x.com/emotor",
-        "https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en",
-        "https://www.strava.com/athletes/99464226"
-      ],
-      "homeLocation": {
+      {
+        "@type": "Organization",
+        "name": "University of Wisconsin-Madison",
+        "url": "https://www.wisc.edu"
+      }
+    ],
+    "alumniOf": {
+      "@type": "Organization",
+      "name": "Indian Institute of Technology Dharwad",
+      "url": "https://www.iitdh.ac.in"
+    },
+    "knowsAbout": [
+      "Power Electronics",
+      "Pulsed Power",
+      "Marx Generators",
+      "GaN Devices",
+      "SiC Devices",
+      "PCB Design",
+      "Control Systems",
+      "Hardware Design",
+      "Embedded Systems",
+      "Solid-State Circuit Breakers",
+      "Inverters",
+      "Power Systems"
+    ],
+    "knowsLanguage": [
+      {
+        "@type": "Language",
+        "name": "English",
+        "alternateName": "en"
+      }
+    ],
+    "sameAs": [
+      "https://github.com/abhinav937",
+      "https://x.com/emotor",
+      "https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en",
+      "https://www.strava.com/athletes/99464226"
+    ],
+    "homeLocation": {
+      "@type": "Place",
+      "name": "Madison, Wisconsin",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Madison",
+        "addressRegion": "WI",
+        "addressCountry": "US"
+      }
+    },
+    "hasOccupation": {
+      "@type": "Occupation",
+      "name": "Graduate Student Researcher",
+      "occupationLocation": {
         "@type": "Place",
-        "name": "Madison, Wisconsin",
+        "name": "University of Wisconsin-Madison",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Madison",
@@ -118,72 +122,106 @@ const App: React.FC = () => {
           "addressCountry": "US"
         }
       },
-      "hasOccupation": {
-        "@type": "Occupation",
-        "name": "Graduate Student Researcher",
-        "occupationLocation": {
-          "@type": "Place",
-          "name": "University of Wisconsin-Madison",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Madison",
-            "addressRegion": "WI",
-            "addressCountry": "US"
-          }
-        },
-        "skills": [
-          "Power Electronics",
-          "GaN Device Characterization",
-          "PCB Design",
-          "Control Systems",
-          "Hardware Design",
-          "Embedded Systems"
-        ]
-      },
-      "hasCredential": [
-        {
-          "@type": "EducationalOccupationalCredential",
-          "credentialCategory": "degree",
-          "educationalLevel": "Master's Degree",
-          "recognizedBy": {
-            "@type": "Organization",
-            "name": "University of Wisconsin-Madison"
-          },
-          "about": {
-            "@type": "Thing",
-            "name": "Electrical and Computer Engineering"
-          }
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          "credentialCategory": "degree",
-          "educationalLevel": "Bachelor's Degree",
-          "recognizedBy": {
-            "@type": "Organization",
-            "name": "Indian Institute of Technology Dharwad"
-          },
-          "about": {
-            "@type": "Thing",
-            "name": "Electrical Engineering"
-          }
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          "credentialCategory": "Resume",
-          "recognizedBy": {
-            "@type": "Organization",
-            "name": "University of Wisconsin-Madison"
-          },
-          "url": "https://cabhinav.com/assets/documents/abhinav-chinnusamy-resume.pdf"
-        }
-      ],
-      "additionalName": "Chinnusamy"
+      "skills": [
+        "Power Electronics",
+        "GaN Device Characterization",
+        "PCB Design",
+        "Control Systems",
+        "Hardware Design",
+        "Embedded Systems"
+      ]
     },
-    "url": "https://cabhinav.com",
-    "name": "Abhinav Chinnusamy - Power Electronics Researcher",
-    "description": "Personal website of Abhinav Chinnusamy, a graduate student researcher in power electronics at UW-Madison. Features projects and research in GaN devices, PCB design, and power systems. Completed internship at Annapurna Labs.",
-    "dateModified": "2025-12-24T20:00:00Z"
-  };
+    "hasCredential": [
+      {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "degree",
+        "educationalLevel": "Master's Degree",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "University of Wisconsin-Madison"
+        },
+        "about": {
+          "@type": "Thing",
+          "name": "Electrical and Computer Engineering"
+        }
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "degree",
+        "educationalLevel": "Bachelor's Degree",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Indian Institute of Technology Dharwad"
+        },
+        "about": {
+          "@type": "Thing",
+          "name": "Electrical Engineering"
+        }
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "Resume",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "University of Wisconsin-Madison"
+        },
+        "url": "https://cabhinav.com/assets/documents/abhinav-chinnusamy-resume.pdf"
+      }
+    ],
+    "additionalName": "Chinnusamy"
+  },
+  "url": "https://cabhinav.com",
+  "name": "Abhinav Chinnusamy - Power Electronics Researcher",
+  "description": "Personal website of Abhinav Chinnusamy, a graduate student researcher in power electronics at UW-Madison. Features projects and research in GaN devices, PCB design, and power systems. Completed internship at Annapurna Labs.",
+  "dateModified": "2025-12-24T20:00:00Z"
+};
+
+const App: React.FC = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  // Responsive detection with debouncing
+  const checkDeviceType = useCallback(() => {
+    const width = window.innerWidth;
+    setIsMobile(width < 768);
+    setIsTablet(width >= 768 && width <= 1024);
+  }, []);
+
+  useEffect(() => {
+    checkDeviceType();
+    
+    let resizeTimer: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkDeviceType, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [checkDeviceType]);
+
+  // Canvas initialization handler
+  const handleCanvasCreated = useCallback(({ gl, camera }: { gl: THREE.WebGLRenderer; camera: THREE.Camera }) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const devicePixelRatio = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
+
+    gl.setSize(width, height);
+    gl.setPixelRatio(devicePixelRatio);
+    gl.shadowMap.enabled = true;
+    gl.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+  }, [isMobile]);
 
   return (
     <>
@@ -193,42 +231,39 @@ const App: React.FC = () => {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         
-        {/* Prevent scrolling styles */}
+        {/* Critical CSS for preventing layout shift */}
         <style>{`
+          * {
+            box-sizing: border-box;
+          }
           html, body {
-            overflow: hidden !important;
-            height: 100vh !important;
-            max-height: 100vh !important;
-            width: 100vw !important;
-            position: fixed !important;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #050505;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          #root {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: fixed;
             top: 0;
             left: 0;
             margin: 0;
             padding: 0;
           }
-          #root {
-            width: 100vw !important;
-            height: 100vh !important;
-            max-height: 100vh !important;
-            overflow: hidden !important;
-            position: fixed !important;
-            top: 0;
-            left: 0;
-          }
           @media (max-width: 768px) {
             html, body {
-              position: fixed !important;
-              overflow: hidden !important;
-              width: 100% !important;
-              height: 100% !important;
               touch-action: none;
               -webkit-overflow-scrolling: none;
-            }
-            #root {
-              position: fixed !important;
-              overflow: hidden !important;
-              width: 100% !important;
-              height: 100% !important;
+              -webkit-tap-highlight-color: transparent;
             }
           }
         `}</style>
@@ -246,8 +281,8 @@ const App: React.FC = () => {
         <meta name="ICBM" content="43.0731, -89.4012" />
 
         {/* Language Targeting */}
-        <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/" />
-        <link rel="alternate" hreflang="x-default" href="https://cabhinav.com/" />
+        <link rel="alternate" hrefLang="en-US" href="https://cabhinav.com/" />
+        <link rel="alternate" hrefLang="x-default" href="https://cabhinav.com/" />
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
@@ -275,24 +310,22 @@ const App: React.FC = () => {
         {/* Theme Color */}
         <meta name="theme-color" content="#050505" />
 
-        {/* Apple Touch Icon */}
-        <link rel="apple-touch-icon" href="./assets/images/icons/favicon.ico" />
-
-        {/* Favicon */}
-        <link rel="shortcut icon" href="./assets/images/icons/favicon.ico" type="image/x-icon" />
-        <link rel="icon" type="image/x-icon" href="./assets/images/icons/favicon.ico" />
+        {/* Icons */}
+        <link rel="apple-touch-icon" href="/assets/images/icons/favicon.ico" />
+        <link rel="shortcut icon" href="/assets/images/icons/favicon.ico" type="image/x-icon" />
+        <link rel="icon" type="image/x-icon" href="/assets/images/icons/favicon.ico" />
 
         {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-        {/* Icons */}
+        {/* Material Icons */}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-        {/* Styles */}
-        <link rel="stylesheet" href="./assets/css/grok-style.css" />
-        <link rel="stylesheet" href="./assets/css/space-background.css" />
+        {/* External Stylesheets */}
+        <link rel="stylesheet" href="/assets/css/grok-style.css" />
+        <link rel="stylesheet" href="/assets/css/space-background.css" />
 
         {/* Google Analytics */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
@@ -307,51 +340,124 @@ const App: React.FC = () => {
 
         {/* Structured Data */}
         <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
+          {JSON.stringify(STRUCTURED_DATA)}
         </script>
       </Helmet>
 
-      <div className="relative w-full h-screen bg-[#050505] overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
-        {/* 3D Scene */}
+      <div 
+        className="app-container"
+        style={{ 
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          backgroundColor: '#050505'
+        }}
+      >
+        {/* 3D Canvas Scene */}
         <Canvas
           shadows
           camera={{ 
-            position: [0, 0, 15], 
-            fov: isMobile ? 50 : 35 
+            position: [0, 0, isMobile ? 12 : 15], 
+            fov: isMobile ? 50 : isTablet ? 40 : 35,
+            near: 0.1,
+            far: 100
           }}
           gl={{ 
-            antialias: true, 
+            antialias: !isMobile,
             alpha: true,
-            toneMapping: 3 // ACESFilmicToneMapping
+            toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1,
+            powerPreference: isMobile ? "low-power" : "high-performance",
+            preserveDrawingBuffer: false,
+            stencil: false,
+            depth: true
           }}
-          dpr={[1, 2]} // Limit pixel ratio for better performance on mobile
-          style={{ width: '100%', height: '100%' }}
+          dpr={isMobile ? [1, 1.5] : isTablet ? [1, 1.75] : [1, 2]}
+          frameloop="always"
+          performance={{ min: 0.5 }}
+          style={{ 
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            margin: 0,
+            padding: 0,
+            touchAction: 'none'
+          }}
+          onCreated={handleCanvasCreated}
         >
           <Suspense fallback={null}>
-            <Experience lightSettings={lightSettings} />
+            <Experience 
+              lightSettings={LIGHT_SETTINGS}
+              isMobile={isMobile}
+              isTablet={isTablet}
+            />
           </Suspense>
         </Canvas>
 
-        {/* Footer */}
-        <footer className="footer absolute bottom-0 left-0 right-0 z-20" style={{ position: 'fixed' }}>
+        {/* Footer Navigation */}
+        <footer 
+          className="footer" 
+          style={{ 
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 20,
+            width: '100%'
+          }}
+        >
           <div className="container">
             <div className="footer-content">
               <div className="footer-links">
-                <a href="https://x.com/emotor" target="_blank" className="footer-link" rel="noopener noreferrer">
-                  <img src="./assets/images/social/x-svg.svg" alt="X (Twitter)" className="footer-icon-svg" />
+                <a 
+                  href="https://x.com/emotor" 
+                  target="_blank" 
+                  className="footer-link" 
+                  rel="noopener noreferrer"
+                  aria-label="X (Twitter) Profile"
+                >
+                  <img 
+                    src="/assets/images/social/x-svg.svg" 
+                    alt="X (Twitter)" 
+                    className="footer-icon-svg"
+                    loading="lazy"
+                  />
                 </a>
-                <a href="https://github.com/abhinav937" target="_blank" className="footer-link" rel="noopener noreferrer">
-                  <span className="material-symbols-outlined">code</span>
+                <a 
+                  href="https://github.com/abhinav937" 
+                  target="_blank" 
+                  className="footer-link" 
+                  rel="noopener noreferrer"
+                  aria-label="GitHub Profile"
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">code</span>
                 </a>
-                <a href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" target="_blank" className="footer-link" rel="noopener noreferrer">
-                  <span className="material-symbols-outlined">school</span>
+                <a 
+                  href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en" 
+                  target="_blank" 
+                  className="footer-link" 
+                  rel="noopener noreferrer"
+                  aria-label="Google Scholar Profile"
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">school</span>
                 </a>
-                <a href="https://www.strava.com/athletes/99464226" target="_blank" className="footer-link" rel="noopener noreferrer">
-                  <span className="material-symbols-outlined">directions_run</span>
+                <a 
+                  href="https://www.strava.com/athletes/99464226" 
+                  target="_blank" 
+                  className="footer-link" 
+                  rel="noopener noreferrer"
+                  aria-label="Strava Profile"
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">directions_run</span>
                 </a>
               </div>
-
-              <p className="footer-text">© 2025 Abhinav Chinnusamy. Power Electronics Engineer.</p>
+              <p className="footer-text">
+                © 2025 Abhinav Chinnusamy. Power Electronics Engineer.
+              </p>
             </div>
           </div>
         </footer>
