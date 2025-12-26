@@ -286,23 +286,41 @@
 <body>
   <!-- Route Handler: Redirect to static HTML pages before React app loads -->
   <script>
+    // Debug logging for GitHub Pages
+    console.log('[GitHub Pages Debug] Page loaded at:', window.location.href);
+    console.log('[GitHub Pages Debug] Pathname:', window.location.pathname);
+    console.log('[GitHub Pages Debug] User Agent:', navigator.userAgent);
+
     // List of static HTML pages that exist in subdirectories
     const staticPages = ['ls', 'projects', 'publications', 'strava', 'chat', 'space', 'latex', 'cli', '3d', 'x', 'sydney'];
-    
+
     // Get the current pathname (e.g., "/ls" or "/ls/")
     const pathname = window.location.pathname;
     const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
     const firstSegment = pathSegments[0];
-    
+
+    console.log('[GitHub Pages Debug] Path segments:', pathSegments);
+    console.log('[GitHub Pages Debug] First segment:', firstSegment);
+    console.log('[GitHub Pages Debug] Available static pages:', staticPages);
+
     // Check if the first path segment matches a static page
     // Only redirect if we're not already on the root path
     if (firstSegment && staticPages.includes(firstSegment)) {
       // Check if we're already on the index.html page (avoid redirect loop)
       const isIndexHtml = pathname.endsWith('/index.html') || pathname.endsWith('/index.html/');
+      console.log('[GitHub Pages Debug] Is index.html page:', isIndexHtml);
+      console.log('[GitHub Pages Debug] Should redirect:', !isIndexHtml);
+
       if (!isIndexHtml) {
+        const redirectUrl = '/' + firstSegment + '/index.html';
+        console.log('[GitHub Pages Debug] Redirecting to:', redirectUrl);
         // Redirect to the static HTML file
-        window.location.replace('/' + firstSegment + '/index.html');
+        window.location.replace(redirectUrl);
+      } else {
+        console.log('[GitHub Pages Debug] Already on target page, no redirect needed');
       }
+    } else {
+      console.log('[GitHub Pages Debug] No matching static page found, loading React app');
     }
   </script>
   

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,12 +17,6 @@
   <meta name="geo.placename" content="Madison, Wisconsin" />
   <meta name="geo.position" content="43.0731;-89.4012" />
   <meta name="ICBM" content="43.0731, -89.4012" />
-
-  <!-- Search Console Verification (Replace with your actual verification codes) -->
-  <!-- Google Search Console: Add your verification code here -->
-  <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" /> -->
-  <!-- Bing Webmaster: Add your verification code here -->
-  <!-- <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" /> -->
 
   <!-- Language Targeting -->
   <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/" />
@@ -65,11 +58,11 @@
   <meta name="theme-color" content="#050505">
 
   <!-- Apple Touch Icon -->
-  <link rel="apple-touch-icon" href="/assets/favicon-Do60EJ30.ico">
+  <link rel="apple-touch-icon" href="/assets/images/icons/favicon.ico">
 
   <!-- Favicon -->
-  <link rel="shortcut icon" href="/assets/favicon-Do60EJ30.ico" type="image/x-icon">
-  <link rel="icon" type="image/x-icon" href="/assets/favicon-Do60EJ30.ico">
+  <link rel="shortcut icon" href="/assets/images/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="/assets/images/icons/favicon.ico">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +73,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
   <!-- Styles -->
+  <link rel="stylesheet" href="/assets/css/grok-style.css">
+  <link rel="stylesheet" href="/assets/css/space-background.css">
   
   <!-- Tailwind CSS for React components -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -90,10 +85,63 @@
       background: #050505 !important;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow: hidden !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      width: 100vw !important;
+      position: fixed !important;
+      top: 0;
+      left: 0;
+    }
+    #root {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+      position: fixed !important;
+      top: 0;
+      left: 0;
     }
     canvas {
-      display: block;
+      display: block !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      touch-action: none;
+    }
+    /* Prevent scrolling on mobile */
+    @media (max-width: 768px) {
+      html, body {
+        position: fixed !important;
+        overflow: hidden !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        touch-action: none;
+        -webkit-overflow-scrolling: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #root {
+        position: fixed !important;
+        overflow: hidden !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      canvas {
+        display: block !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
     }
   </style>
 
@@ -233,10 +281,49 @@
       "dateModified": "2025-12-24T20:00:00Z"
     }
   </script>
-  <script type="module" crossorigin src="/assets/index-D9LnstVJ.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-whKo1ee7.css">
+  <script type="module" crossorigin src="/assets/index-DAgaQZ_Q.js"></script>
 </head>
 <body>
+  <!-- Route Handler: Redirect to static HTML pages before React app loads -->
+  <script>
+    // Debug logging for GitHub Pages
+    console.log('[GitHub Pages Debug] Page loaded at:', window.location.href);
+    console.log('[GitHub Pages Debug] Pathname:', window.location.pathname);
+    console.log('[GitHub Pages Debug] User Agent:', navigator.userAgent);
+
+    // List of static HTML pages that exist in subdirectories
+    const staticPages = ['ls', 'projects', 'publications', 'strava', 'chat', 'space', 'latex', 'cli', '3d', 'x', 'sydney'];
+
+    // Get the current pathname (e.g., "/ls" or "/ls/")
+    const pathname = window.location.pathname;
+    const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
+    const firstSegment = pathSegments[0];
+
+    console.log('[GitHub Pages Debug] Path segments:', pathSegments);
+    console.log('[GitHub Pages Debug] First segment:', firstSegment);
+    console.log('[GitHub Pages Debug] Available static pages:', staticPages);
+
+    // Check if the first path segment matches a static page
+    // Only redirect if we're not already on the root path
+    if (firstSegment && staticPages.includes(firstSegment)) {
+      // Check if we're already on the index.html page (avoid redirect loop)
+      const isIndexHtml = pathname.endsWith('/index.html') || pathname.endsWith('/index.html/');
+      console.log('[GitHub Pages Debug] Is index.html page:', isIndexHtml);
+      console.log('[GitHub Pages Debug] Should redirect:', !isIndexHtml);
+
+      if (!isIndexHtml) {
+        const redirectUrl = '/' + firstSegment + '/index.html';
+        console.log('[GitHub Pages Debug] Redirecting to:', redirectUrl);
+        // Redirect to the static HTML file
+        window.location.replace(redirectUrl);
+      } else {
+        console.log('[GitHub Pages Debug] Already on target page, no redirect needed');
+      }
+    } else {
+      console.log('[GitHub Pages Debug] No matching static page found, loading React app');
+    }
+  </script>
+  
   <div id="root"></div>
 </body>
 </html>
