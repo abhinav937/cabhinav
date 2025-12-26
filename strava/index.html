@@ -356,15 +356,11 @@
       const authError = urlParams.get('error');
 
       if (authError) {
-        console.error('OAuth Error:', authError);
-        showMessage('❌ Authorization failed: ' + authError, 'error');
         window.history.replaceState({}, document.title, window.location.pathname);
       } else if (authCode) {
-        console.log('Authorization code received:', authCode);
         // Check if we already processed this code (prevent double processing)
         const processedCodes = JSON.parse(localStorage.getItem('processedAuthCodes') || '[]');
         if (processedCodes.includes(authCode)) {
-          console.log('Code already processed, skipping');
           window.history.replaceState({}, document.title, window.location.pathname);
           return;
         }
@@ -376,8 +372,7 @@
           localStorage.setItem('processedAuthCodes', JSON.stringify(processedCodes.slice(-5))); // Keep last 5
           window.history.replaceState({}, document.title, window.location.pathname);
         }).catch(error => {
-          console.error('Failed to exchange auth code:', error);
-          showMessage('❌ Failed to complete authorization', 'error');
+          // Authorization failed silently
         });
       }
     })();
@@ -398,44 +393,16 @@
         if (data.success) {
           localStorage.setItem('stravaAuthorized', 'true');
           localStorage.setItem('stravaAuthTime', Date.now().toString());
-          showMessage('✅ Successfully authorized with Strava!', 'success');
           // Reload personal bests data
           loadPersonalBests();
         } else {
           throw new Error(data.message || 'Authorization failed');
         }
       } catch (error) {
-        console.error('Auth exchange error:', error);
         throw error;
       }
     }
 
-    // Show notification messages
-    function showMessage(text, type = 'info') {
-      const colors = {
-        success: '#4CAF50',
-        error: '#f44336',
-        info: '#2196F3'
-      };
-
-      const message = document.createElement('div');
-      message.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${colors[type]};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        font-family: Inter, sans-serif;
-        max-width: 300px;
-        word-wrap: break-word;
-      `;
-      message.textContent = text;
-      document.body.appendChild(message);
-      setTimeout(() => message.remove(), 5000);
-    }
 
     // Load personal bests data from API
     async function loadPersonalBests() {
@@ -449,12 +416,9 @@
         } else if (data.setup_required) {
           showSetupMessage();
         } else {
-          console.error('API Error:', data.message);
-          showMessage('❌ Failed to load personal bests', 'error');
+          // API Error occurred
         }
       } catch (error) {
-        console.error('Failed to load personal bests:', error);
-        showMessage('❌ Failed to load personal bests', 'error');
         showSetupMessage();
       }
     }
@@ -566,7 +530,6 @@
       window.onerror = function(msg, url, line, col, error) {
         // Only suppress the specific cross-origin errors we know are harmless
         if (msg && msg.includes('Failed to read a named property \'pathname\' from \'Location\'')) {
-          console.log('Suppressing expected Strava cross-origin error');
           return true; // Suppress this specific error
         }
         if (originalError) {
@@ -579,10 +542,7 @@
       window.addEventListener('load', function() {
         setTimeout(function() {
           const iframes = document.querySelectorAll('.strava-iframe');
-          console.log('Strava iframes found:', iframes.length);
-          iframes.forEach(function(iframe, index) {
-            console.log('Iframe ' + index + ' loaded:', iframe.src);
-          });
+          // Iframe monitoring completed
         }, 2000);
       });
     })();
