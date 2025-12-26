@@ -283,6 +283,28 @@
   </script>
 </head>
 <body>
+  <!-- Route Handler: Redirect to static HTML pages before React app loads -->
+  <script>
+    // List of static HTML pages that exist in subdirectories
+    const staticPages = ['ls', 'projects', 'publications', 'strava', 'chat', 'space', 'latex', 'cli', '3d', 'x', 'sydney'];
+    
+    // Get the current pathname (e.g., "/ls" or "/ls/")
+    const pathname = window.location.pathname;
+    const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
+    const firstSegment = pathSegments[0];
+    
+    // Check if the first path segment matches a static page
+    // Only redirect if we're not already on the root path
+    if (firstSegment && staticPages.includes(firstSegment)) {
+      // Check if we're already on the index.html page (avoid redirect loop)
+      const isIndexHtml = pathname.endsWith('/index.html') || pathname.endsWith('/index.html/');
+      if (!isIndexHtml) {
+        // Redirect to the static HTML file
+        window.location.replace('/' + firstSegment + '/index.html');
+      }
+    }
+  </script>
+  
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

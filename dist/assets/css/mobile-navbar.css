@@ -1,0 +1,216 @@
+/*-----------------------------------*\
+  #MOBILE NAVIGATION BAR - SIMPLE & WORKING
+  Clean implementation that definitely works
+\*-----------------------------------*/
+
+
+
+/* CSS Variables from test2 */
+:root {
+  --font-family-roboto: 'Roboto', sans-serif;
+  --text-rgb-29-27-32: rgba(29, 27, 32, 1);
+  --text-rgb-73-69-79: rgba(73, 69, 79, 1);
+}
+
+/* Mobile Navigation Bar Container - Simple & Working */
+@media (max-width: 1249px) {
+  .mobile-nav-container {
+    /* Basic positioning */
+    position: fixed !important;
+    bottom: 4px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 9999 !important;
+    
+    /* Layout */
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    
+    /* Sizing */
+    width: calc(100% - 32px) !important;
+    max-width: 400px !important;
+    min-width: 280px !important;
+    
+    /* Styling */
+    background-color: rgba(34, 40, 49, 0.92) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
+    border-radius: 80px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    padding: 8px !important;
+    
+    /* Enhanced Animation */
+    transition: all 0.4s ease-out !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform-origin: center bottom !important;
+    will-change: transform, opacity, visibility !important;
+  }
+  
+  /* Hidden state with enhanced animation */
+  .mobile-nav-container.navbar-hidden {
+    transform: translateX(-50%) scale(0.5) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.4s ease-out !important;
+  }
+}
+
+/* Mobile Navigation Items */
+@media (max-width: 1249px) {
+  .mobile-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 12px 0px 16px 0px !important;
+    min-width: 80px !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: none !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease-out !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    will-change: transform, background-color !important;
+  }
+  
+  .mobile-nav-item:hover {
+    transform: translateY(-1px) !important;
+  }
+  
+  .mobile-nav-item:active {
+    transform: translateY(0px) scale(0.98) !important;
+  }
+}
+
+/* Mobile Icon Wrapper */
+@media (max-width: 1249px) {
+  .mobile-icon-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 999px !important;
+    padding: 8px 20px !important;
+    background: none !important;
+    transition: background 0.3s ease-out !important;
+    will-change: background-color !important;
+  }
+  
+  .mobile-nav-item.active .mobile-icon-wrapper {
+    background: rgba(60, 60, 80, 0.85) !important;
+    transition: background 0.3s ease-out !important;
+  }
+}
+
+/* Mobile Icon Inner */
+@media (max-width: 1249px) {
+  .mobile-icon-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Mobile Navigation Labels */
+@media (max-width: 1249px) {
+  .mobile-nav-label {
+    font-family: var(--font-family-roboto) !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.5px !important;
+    line-height: 16px !important;
+    color: rgba(200,200,210,0.85) !important;
+    transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
+    will-change: color, font-weight !important;
+  }
+  
+  .mobile-nav-item.active .mobile-nav-label {
+    color: var(--md-sys-color-primary, var(--primary-color, #cce8e7)) !important;
+    font-weight: 700 !important;
+    transition: color 0.3s ease-out, font-weight 0.3s ease-out !important;
+  }
+}
+
+/* Mobile Icon Styles */
+@media (max-width: 1249px) {
+  .mobile-nav-item .material-symbols-rounded {
+    color: rgba(200,200,210,0.85) !important;
+    font-variation-settings: "FILL" 0 !important;
+    font-size: 20px !important;
+    transition: color 0.3s ease-out, filter 0.3s ease-out !important;
+    filter: none !important;
+    will-change: color, filter !important;
+  }
+  
+  .mobile-nav-item.active .material-symbols-rounded {
+    color: var(--md-sys-color-primary, var(--primary-color, #cce8e7)) !important;
+    filter: none !important;
+    transition: color 0.3s ease-out, filter 0.3s ease-out !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .mobile-nav-container {
+    width: calc(100% - 16px) !important;
+    max-width: 360px !important;
+    min-width: 260px !important;
+    padding: 4px !important;
+  }
+  
+  .mobile-nav-item {
+    min-width: 70px !important;
+    padding: 8px 0px 12px 0px !important;
+  }
+  
+  .mobile-icon-wrapper {
+    padding: 6px 16px !important;
+  }
+  
+  .mobile-nav-label {
+    font-size: 11px !important;
+  }
+  
+  .mobile-nav-item .material-symbols-rounded {
+    font-size: 18px !important;
+  }
+}
+
+/* Ensure mobile navbar is hidden on desktop, but not desktop navbar */
+@media (min-width: 1250px) {
+  .mobile-nav-container:not(.desktop-nav-bar) {
+    display: none !important;
+  }
+}
+
+/* Remove focus indicators from mobile navigation elements only */
+@media (max-width: 1249px) {
+  .mobile-nav-item {
+    outline: none !important;
+    outline-color: transparent !important;
+    outline-style: none !important;
+    outline-width: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  .mobile-nav-item:focus,
+  .mobile-nav-item:focus-visible {
+    outline: none !important;
+    outline-color: transparent !important;
+    outline-style: none !important;
+    outline-width: 0 !important;
+  }
+  
+  .mobile-nav-item::-moz-focus-inner {
+    border: 0 !important;
+  }
+} 

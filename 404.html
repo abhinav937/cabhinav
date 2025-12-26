@@ -42,6 +42,35 @@
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
   <script src="/assets/js/404.js"></script>
+  
+  <!-- Route Handler for Static Pages -->
+  <script>
+    // List of static HTML pages that exist in subdirectories
+    const staticPages = [
+      'ls',
+      'projects',
+      'publications',
+      'strava',
+      'chat',
+      'space',
+      'latex',
+      'cli',
+      '3d',
+      'x',
+      'sydney'
+    ];
+    
+    // Get the current pathname (e.g., "/ls" or "/ls/")
+    const pathname = window.location.pathname;
+    const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
+    const firstSegment = pathSegments[0];
+    
+    // Check if the first path segment matches a static page
+    if (firstSegment && staticPages.includes(firstSegment)) {
+      // Redirect to the static HTML file
+      window.location.replace('/' + firstSegment + '/index.html');
+    }
+  </script>
 </head>
 
 <body>
