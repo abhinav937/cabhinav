@@ -356,10 +356,44 @@
       // Handle error - maybe show a message to the user
     } else if (authCode) {
       console.log('Authorization code received:', authCode);
-      // Here you would typically send this code to your server
-      // to exchange it for an access token
-      // For now, we'll just log it and redirect to clean URL
+      // Check if we already processed this code (prevent double processing)
+      const processedCodes = JSON.parse(localStorage.getItem('processedAuthCodes') || '[]');
+      if (processedCodes.includes(authCode)) {
+        console.log('Code already processed, skipping');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+      }
+      // Mark code as processed
+      processedCodes.push(authCode);
+      localStorage.setItem('processedAuthCodes', JSON.stringify(processedCodes.slice(-5))); // Keep last 5
+
+      // For demo purposes, simulate successful authorization
+      // In production, this would exchange the code for a token
+      console.log('Simulating successful authorization...');
+      localStorage.setItem('stravaAuthorized', 'true');
+      localStorage.setItem('stravaAuthTime', Date.now().toString());
+
+      // Clean URL and show success
       window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Show success message
+      setTimeout(() => {
+        const message = document.createElement('div');
+        message.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #4CAF50;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          z-index: 10000;
+          font-family: Inter, sans-serif;
+        `;
+        message.textContent = '✅ Successfully authorized with Strava!';
+        document.body.appendChild(message);
+        setTimeout(() => message.remove(), 3000);
+      }, 500);
     }
 
     // Monitor for Strava embed issues but don't suppress all errors

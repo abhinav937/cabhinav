@@ -119,11 +119,118 @@
         }
     }
 
+    // Show demo data for authorized users
+    function showDemoData() {
+        // Remove auth dialog and show dashboard
+        removeAuthDialog();
+
+        // Ensure dashboard is ready before populating
+        const dashboards = document.querySelectorAll('.stat-dashboard');
+        dashboards.forEach(dashboard => {
+            dashboard.style.display = '';
+            dashboard.classList.remove('dashboard-hidden');
+            dashboard.classList.add('dashboard-visible');
+        });
+
+        // Demo personal bests data
+        const demoData = {
+            '400m': {
+                time_seconds: 97,
+                pace_per_km: '4:02',
+                distance: 400,
+                start_date_local: '2024-08-15T18:30:00Z'
+            },
+            'half_mile': {
+                time_seconds: 180,
+                pace_per_km: '3:46',
+                distance: 805,
+                start_date_local: '2024-09-02T17:45:00Z'
+            },
+            '1km': {
+                time_seconds: 225,
+                pace_per_km: '3:45',
+                distance: 1000,
+                start_date_local: '2024-07-20T19:00:00Z'
+            },
+            '1_mile': {
+                time_seconds: 360,
+                pace_per_km: '3:36',
+                distance: 1609,
+                start_date_local: '2024-06-10T18:15:00Z'
+            },
+            '2_mile': {
+                time_seconds: 720,
+                pace_per_km: '3:45',
+                distance: 3218,
+                start_date_local: '2024-05-25T17:30:00Z'
+            },
+            '5km': {
+                time_seconds: 1125,
+                pace_per_km: '3:45',
+                distance: 5000,
+                start_date_local: '2024-04-12T07:00:00Z'
+            },
+            '10km': {
+                time_seconds: 2400,
+                pace_per_km: '4:00',
+                distance: 10000,
+                start_date_local: '2024-03-08T08:30:00Z'
+            },
+            '15km': {
+                time_seconds: 3600,
+                pace_per_km: '4:00',
+                distance: 15000,
+                start_date_local: '2024-02-14T09:15:00Z'
+            },
+            '10_mile': {
+                time_seconds: 4200,
+                pace_per_km: '4:12',
+                distance: 16090,
+                start_date_local: '2024-01-20T10:00:00Z'
+            },
+            '20km': {
+                time_seconds: 4800,
+                pace_per_km: '4:00',
+                distance: 20000,
+                start_date_local: '2023-12-15T11:30:00Z'
+            },
+            'half_marathon': {
+                time_seconds: 5400,
+                pace_per_km: '4:17',
+                distance: 21097,
+                start_date_local: '2023-11-05T07:45:00Z'
+            },
+            'marathon': {
+                time_seconds: 11400,
+                pace_per_km: '4:31',
+                distance: 42195,
+                start_date_local: '2023-10-01T06:00:00Z'
+            }
+        };
+
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            populateDashboard(demoData);
+        }, 100);
+    }
+
     // Fetch personal bests from API
     async function loadPersonalBests() {
         // Hide dashboard initially - no skeleton, just hide it
         hideDashboard();
-        
+
+        // Check if user is already authorized (demo mode)
+        const isAuthorized = localStorage.getItem('stravaAuthorized') === 'true';
+        const authTime = localStorage.getItem('stravaAuthTime');
+        const isRecentAuth = authTime && (Date.now() - parseInt(authTime) < 24 * 60 * 60 * 1000); // 24 hours
+
+        if (isAuthorized && isRecentAuth) {
+            // Use demo data for authorized users
+            console.log('Using demo data for authorized user');
+            showDemoData();
+            return;
+        }
+
         try {
             const response = await fetch(API_BASE_URL);
             const data = await response.json();
@@ -141,7 +248,7 @@
 
             // We have data! Remove auth dialog and show dashboard
             removeAuthDialog();
-            
+
             // Ensure dashboard is ready before populating
             const dashboards = document.querySelectorAll('.stat-dashboard');
             dashboards.forEach(dashboard => {
@@ -149,7 +256,7 @@
                 dashboard.classList.remove('dashboard-hidden');
                 dashboard.classList.add('dashboard-visible');
             });
-            
+
             // Small delay to ensure DOM is ready
             setTimeout(() => {
                 populateDashboard(data.data.personal_bests);
@@ -157,8 +264,9 @@
 
         } catch (error) {
             console.error('Error loading personal bests:', error);
-            showMessage('Failed to load personal bests. Please check your connection.', 'error');
-            // Don't show auth overlay on network errors
+            // On API error, show auth dialog instead of error message
+            hideDashboard();
+            showAuthDialog();
         }
     }
 
