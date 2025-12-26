@@ -347,6 +347,22 @@
 
   <!-- Scripts -->
   <script>
+    // Handle OAuth callback if redirected here
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get('code');
+    const authError = urlParams.get('error');
+
+    if (authError) {
+      console.error('OAuth Error:', authError);
+      // Handle error - maybe show a message to the user
+    } else if (authCode) {
+      console.log('Authorization code received:', authCode);
+      // Here you would typically send this code to your server
+      // to exchange it for an access token
+      // For now, we'll just log it and redirect to clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     // Suppress Strava iframe errors (cross-origin security restrictions)
     (function() {
       // Suppress errors from Strava iframes
