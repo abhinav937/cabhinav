@@ -362,40 +362,31 @@
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // Suppress Strava iframe errors (cross-origin security restrictions)
+    // Monitor for Strava embed issues but don't suppress all errors
     (function() {
-      // Suppress errors from Strava iframes
+      // Only suppress specific cross-origin errors that are expected
       const originalError = window.onerror;
       window.onerror = function(msg, url, line, col, error) {
-        if (msg && (
-          msg.includes('Strava') || 
-          msg.includes('pathname') || 
-          msg.includes('Location') ||
-          msg.includes('windowOnloadTriggered') ||
-          msg.includes('loadCDNiFrame') ||
-          msg.includes('CookieControl') ||
-          msg.includes('SecurityError') ||
-          msg.includes('Failed to read')
-        )) {
-          return true; // Suppress error
+        // Only suppress the specific cross-origin errors we know are harmless
+        if (msg && msg.includes('Failed to read a named property \'pathname\' from \'Location\'')) {
+          console.log('Suppressing expected Strava cross-origin error');
+          return true; // Suppress this specific error
         }
         if (originalError) {
           return originalError.call(this, msg, url, line, col, error);
         }
         return false;
       };
-      
-      // Also catch unhandled promise rejections
-      window.addEventListener('unhandledrejection', function(e) {
-        if (e.reason && (
-          e.reason.message && (
-            e.reason.message.includes('Strava') ||
-            e.reason.message.includes('pathname') ||
-            e.reason.message.includes('Location')
-          )
-        )) {
-          e.preventDefault();
-        }
+
+      // Monitor embed loading
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const iframes = document.querySelectorAll('.strava-iframe');
+          console.log('Strava iframes found:', iframes.length);
+          iframes.forEach(function(iframe, index) {
+            console.log('Iframe ' + index + ' loaded:', iframe.src);
+          });
+        }, 2000);
       });
     })();
     
