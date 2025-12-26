@@ -11,6 +11,17 @@
     z-index: 1;
 }
 
+/* Footer clearance for strava widgets - moderate spacing */
+.strava-widget:last-child {
+    margin-bottom: 4rem !important;
+}
+
+@media (min-width: 768px) {
+    .strava-widget:last-child {
+        margin-bottom: 6rem !important;
+    }
+}
+
 /* Space Background Container */
 #space-background-container {
     position: fixed !important;
@@ -322,7 +333,6 @@
         width: 100%;
         max-width: 100%;
     }
-}
 
     .strava-section-title {
         font-size: 1.1rem;

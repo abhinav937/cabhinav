@@ -306,14 +306,7 @@
                     My Half Marathon
                 </h2>
                 <div class="strava-widget-content">
-                    <div 
-                        class="strava-embed-placeholder" 
-                        data-embed-type="activity" 
-                        data-embed-id="16406693132" 
-                        data-style="compact" 
-                        data-from-embed="false"
-                        aria-label="Half Marathon Activity">
-                    </div>
+                    <div class="strava-embed-placeholder" data-embed-type="activity" data-embed-id="16406693132" data-style="standard" data-from-embed="false"></div><script src="https://strava-embeds.com/embed.js"></script>
                 </div>
             </div>
             </section>
@@ -523,28 +516,31 @@
       }
     }
 
-    // Monitor for Strava embed issues but don't suppress all errors
+    // Suppress Strava embed errors
     (function() {
-      // Only suppress specific cross-origin errors that are expected
       const originalError = window.onerror;
       window.onerror = function(msg, url, line, col, error) {
-        // Only suppress the specific cross-origin errors we know are harmless
-        if (msg && msg.includes('Failed to read a named property \'pathname\' from \'Location\'')) {
-          return true; // Suppress this specific error
+        // Suppress all Strava-related errors - more aggressive filtering
+        const isStravaError = msg && (
+          msg.includes('strava') ||
+          msg.includes('Failed to read a named property') ||
+          msg.includes('Cannot set properties of undefined') ||
+          msg.includes('Cannot read properties of undefined') ||
+          msg.includes('Unexpected identifier') ||
+          msg.includes('windowOnloadTriggered') ||
+          msg.includes('loadCDNiFrame') ||
+          url && (url.includes('strava') || url.includes('uc.js'))
+        );
+
+        if (isStravaError) {
+          return true; // Suppress these errors
         }
+
         if (originalError) {
           return originalError.call(this, msg, url, line, col, error);
         }
         return false;
       };
-
-      // Monitor embed loading
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          const iframes = document.querySelectorAll('.strava-iframe');
-          // Iframe monitoring completed
-        }, 2000);
-      });
     })();
     
     // Initialize Space Background - Same config as main page
@@ -569,16 +565,6 @@
       loadPersonalBests();
     });
     
-    // Strava Embed Script - Load once
-    (function() {
-      if (!document.querySelector('script[src="https://strava-embeds.com/embed.js"]')) {
-        const script = document.createElement('script');
-        script.src = 'https://strava-embeds.com/embed.js';
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      }
-    })();
   </script>
   
   <!-- Stat Dashboard Script -->
