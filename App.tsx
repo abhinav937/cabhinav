@@ -22,18 +22,18 @@ interface LightSettings {
   accent2Color: string;
 }
 
-// Light configuration optimized for different devices
+// Enhanced lighting configuration for maximum brightness
 const LIGHT_SETTINGS: LightSettings = {
-  ambientIntensity: 0.6,
-  keyIntensity: 5,
-  fillIntensity: 2,
-  rimIntensity: 5,
-  accent1Intensity: 4,
-  accent2Intensity: 4,
-  topIntensity: 5.5,
-  mouseIntensity: 8,
-  envMapIntensity: 5,
-  platformReflectivity: 1.2,
+  ambientIntensity: 2.0,
+  keyIntensity: 15,
+  fillIntensity: 8,
+  rimIntensity: 12,
+  accent1Intensity: 10,
+  accent2Intensity: 10,
+  topIntensity: 16,
+  mouseIntensity: 20,
+  envMapIntensity: 15,
+  platformReflectivity: 2.5,
   keyColor: '#ffffff',
   fillColor: '#b8d4ff',
   rimColor: '#4a9eff',
@@ -357,23 +357,23 @@ const App: React.FC = () => {
         {/* 3D Canvas Scene */}
         <Canvas
           shadows
-          camera={{ 
-            position: [0, 0, isMobile ? 12 : 15], 
-            fov: isMobile ? 50 : isTablet ? 40 : 35,
+          camera={{
+            position: [0, 0, 15],
+            fov: 35,
             near: 0.1,
             far: 100
           }}
-          gl={{ 
-            antialias: !isMobile,
+          gl={{
+            antialias: true,
             alpha: true,
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1,
-            powerPreference: isMobile ? "low-power" : "high-performance",
+            toneMappingExposure: 2.5,
+            powerPreference: "high-performance",
             preserveDrawingBuffer: false,
             stencil: false,
             depth: true
           }}
-          dpr={isMobile ? [1, 1.5] : isTablet ? [1, 1.75] : [1, 2]}
+          dpr={[1, 2]}
           frameloop="always"
           performance={{ min: 0.5 }}
           style={{ 

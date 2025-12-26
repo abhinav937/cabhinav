@@ -1,7 +1,9 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, Float, ContactShadows, Text3D } from '@react-three/drei';
 import * as THREE from 'three';
+import { SteelFinish } from './types';
+import { FINISH_CONFIGS } from './constants';
 
 interface LightSettings {
   ambientIntensity: number;
@@ -125,22 +127,25 @@ const ResponsiveCenter: React.FC<{
   return <group ref={groupRef}>{children}</group>;
 };
 
-export const Experience: React.FC<ExperienceProps> = ({ 
-  lightSettings, 
-  isMobile, 
-  isTablet 
+export const Experience: React.FC<ExperienceProps> = ({
+  lightSettings,
+  isMobile,
+  isTablet
 }) => {
   const { camera, gl, size } = useThree();
   const controlsRef = useRef<any>(null);
 
-  // Responsive text sizing
-  const textSize = isMobile ? 0.7 : isTablet ? 1.2 : 1.5;
-  const lineSpacing = isMobile ? 0.5 : isTablet ? 0.8 : 1.0;
-  const textHeight = isMobile ? 0.2 : isTablet ? 0.3 : 0.4;
-  const bevelSize = isMobile ? 0.02 : isTablet ? 0.04 : 0.06;
-  const bevelThickness = isMobile ? 0.02 : isTablet ? 0.04 : 0.06;
-  const curveSegments = isMobile ? 16 : isTablet ? 24 : 32;
-  const bevelSegments = isMobile ? 5 : isTablet ? 7 : 10;
+  // Polished steel material configuration
+  const polishedSteelConfig = useMemo(() => FINISH_CONFIGS[SteelFinish.POLISHED], []);
+
+  // Consistent high-quality text sizing
+  const textSize = 1.5;
+  const lineSpacing = 1.0;
+  const textHeight = 0.4;
+  const bevelSize = 0.06;
+  const bevelThickness = 0.06;
+  const curveSegments = 32;
+  const bevelSegments = 10;
 
   // Camera and viewport management
   useEffect(() => {
@@ -153,7 +158,7 @@ export const Experience: React.FC<ExperienceProps> = ({
 
       // Update renderer
       gl.setSize(width, height);
-      gl.setPixelRatio(Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 2));
+      gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       // Update camera
       if (camera instanceof THREE.PerspectiveCamera) {
@@ -162,7 +167,7 @@ export const Experience: React.FC<ExperienceProps> = ({
       }
 
       // Reset camera position
-      camera.position.set(0, 0, isMobileDevice ? 12 : 15);
+      camera.position.set(0, 0, 15);
       camera.lookAt(0, 0, 0);
 
       // Reset controls target
@@ -193,11 +198,11 @@ export const Experience: React.FC<ExperienceProps> = ({
   return (
     <>
       {/* Scene Background */}
-      <color attach="background" args={['#050505']} />
-      <fog attach="fog" args={['#050505', 5, 25]} />
+      <color attach="background" args={['#0a0a0a']} />
+      <fog attach="fog" args={['#0a0a0a', 8, 30]} />
 
       {/* Environment Map */}
-      <Environment preset="city" />
+      <Environment preset="city" backgroundIntensity={2} />
 
       {/* Lighting Setup */}
       {/* Ambient Light - Base illumination */}
@@ -209,8 +214,8 @@ export const Experience: React.FC<ExperienceProps> = ({
         intensity={lightSettings.keyIntensity}
         color={lightSettings.keyColor}
         castShadow
-        shadow-mapSize-width={isMobile ? 1024 : 2048}
-        shadow-mapSize-height={isMobile ? 1024 : 2048}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-far={50}
         shadow-camera-left={-10}
         shadow-camera-right={10}
@@ -271,8 +276,8 @@ export const Experience: React.FC<ExperienceProps> = ({
           floatIntensity={0.2}
           floatingRange={[-0.1, 0.1]}
         >
-          <ResponsiveCenter isMobile={isMobile}>
-            <group rotation={[0, 0.1, 0]} position={[0, isMobile ? 0.2 : 0, 0]}>
+          <ResponsiveCenter isMobile={false}>
+            <group rotation={[0, 0.1, 0]} position={[0, 0, 0]}>
               {/* First Line: Abhinav */}
               <Text3D
                 font={FONT_URL}
@@ -287,10 +292,12 @@ export const Experience: React.FC<ExperienceProps> = ({
                 position={[0, lineSpacing, 0]}
               >
                 Abhinav
-                <meshStandardMaterial
-                  color="#ffffff"
-                  metalness={1}
-                  roughness={0.05}
+                <meshPhysicalMaterial
+                  color={polishedSteelConfig.color}
+                  metalness={polishedSteelConfig.metalness}
+                  roughness={polishedSteelConfig.roughness}
+                  clearcoat={polishedSteelConfig.clearcoat}
+                  clearcoatRoughness={polishedSteelConfig.clearcoatRoughness}
                   envMapIntensity={lightSettings.envMapIntensity}
                 />
               </Text3D>
@@ -309,10 +316,12 @@ export const Experience: React.FC<ExperienceProps> = ({
                 position={[0, -lineSpacing, 0]}
               >
                 Chinnusamy
-                <meshStandardMaterial
-                  color="#ffffff"
-                  metalness={1}
-                  roughness={0.05}
+                <meshPhysicalMaterial
+                  color={polishedSteelConfig.color}
+                  metalness={polishedSteelConfig.metalness}
+                  roughness={polishedSteelConfig.roughness}
+                  clearcoat={polishedSteelConfig.clearcoat}
+                  clearcoatRoughness={polishedSteelConfig.clearcoatRoughness}
                   envMapIntensity={lightSettings.envMapIntensity}
                 />
               </Text3D>
@@ -327,11 +336,13 @@ export const Experience: React.FC<ExperienceProps> = ({
         position={[0, -2.5, 0]} 
         receiveShadow
       >
-        <planeGeometry args={[40, 40, isMobile ? 16 : 32, isMobile ? 16 : 32]} />
-        <meshStandardMaterial
-          color="#2a2a2a"
-          metalness={0.95}
-          roughness={0.05}
+        <planeGeometry args={[40, 40, 32, 32]} />
+        <meshPhysicalMaterial
+          color="#1a1a1a"
+          metalness={1.0}
+          roughness={0.02}
+          clearcoat={0.8}
+          clearcoatRoughness={0.01}
           envMapIntensity={lightSettings.envMapIntensity * lightSettings.platformReflectivity}
           side={THREE.DoubleSide}
         />
@@ -340,12 +351,14 @@ export const Experience: React.FC<ExperienceProps> = ({
       {/* Subtle Platform Layer for Depth */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.48, 0]}>
         <planeGeometry args={[42, 42]} />
-        <meshStandardMaterial
+        <meshPhysicalMaterial
           color="#0a0a0a"
-          metalness={0.3}
-          roughness={0.8}
+          metalness={0.8}
+          roughness={0.1}
+          clearcoat={0.2}
+          clearcoatRoughness={0.05}
           transparent
-          opacity={0.3}
+          opacity={0.4}
           side={THREE.DoubleSide}
         />
       </mesh>
