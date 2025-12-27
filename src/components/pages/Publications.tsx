@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Layout from './Layout';
+import Footer from '../ui/Footer';
 
 interface Publication {
   title: string;
@@ -81,41 +81,54 @@ const Publications: React.FC = () => {
   );
 
   return (
-    <Layout>
+    <>
       <Helmet>
         <title>Publications - Abhinav Chinnusamy</title>
         <meta name="description" content="Academic publications and research papers by Abhinav Chinnusamy - Graduate Researcher in Power Electronics at UW-Madison." />
         <meta name="keywords" content="Abhinav Chinnusamy, Publications, Research Papers, Power Electronics, IEEE, Academic Publications, GaN, Solid State Circuit Breakers" />
         <link rel="canonical" href="https://cabhinav.com/publications/" />
+        <link rel="stylesheet" href="/assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/grok-style.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
         <script src="/assets/js/data.js"></script>
       </Helmet>
 
-      <div className="min-h-screen bg-black text-gray-300 font-mono">
-        {/* Header */}
-        <header className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              Publications Archive
-            </h1>
-            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
-              Academic research and publications in power electronics, circuit design, and engineering.
-            </p>
-          </div>
-        </header>
+      <div
+        className="app-container"
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          backgroundColor: '#050505'
+        }}
+      >
+        {/* Main Content */}
+        <main className="px-4 sm:px-6 lg:px-8 pb-20" style={{ overflowY: 'auto', height: 'calc(100vh - 100px)' }}>
+          {/* Header */}
+          <header className="pt-20 pb-12">
+            <div className="max-w-6xl mx-auto text-center">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 bg-gradient-to-br from-white to-gray-200 bg-clip-text text-transparent tracking-tight">
+                Publications Archive
+              </h1>
+              <p className="text-lg sm:text-xl lg:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Academic research and publications in power electronics, circuit design, and engineering.
+              </p>
+            </div>
+          </header>
 
-        {/* Publications Content */}
-        <main className="px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="max-w-4xl mx-auto">
+          {/* Publications Content */}
+          <div className="max-w-6xl mx-auto">
             {loading && <SkeletonLoader />}
 
             {error && (
               <div className="text-center py-12">
                 <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-6 max-w-md mx-auto">
-                  <span className="material-symbols-outlined text-red-400 text-3xl mb-4 block">error</span>
+                  <span className="bi bi-exclamation-triangle text-red-400 text-3xl mb-4 block"></span>
                   <p className="text-red-400">{error}</p>
                   <button
                     onClick={fetchPublications}
-                    className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                    className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors hover:shadow-lg hover:shadow-red-500/20"
                   >
                     Try Again
                   </button>
@@ -128,12 +141,15 @@ const Publications: React.FC = () => {
                 {publications.map((publication, index) => (
                   <article
                     key={index}
-                    className="bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-all duration-300"
+                    className="bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:bg-gray-800/50 hover:border-gray-600 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl hover:shadow-gray-900/20 transition-all duration-300 group"
                   >
                     {/* Title */}
-                    <h3 className="text-lg font-semibold mb-2 text-white leading-tight">
-                      {publication.title || "Untitled"}
-                    </h3>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="bi bi-file-earmark-text text-2xl text-blue-400 transition-transform duration-200 group-hover:scale-110"></span>
+                      <h3 className="text-lg font-semibold text-gray-100 transition-colors duration-200 group-hover:text-white leading-tight">
+                        {publication.title || "Untitled"}
+                      </h3>
+                    </div>
 
                     {/* Authors */}
                     <p
@@ -169,9 +185,9 @@ const Publications: React.FC = () => {
                           href={publication.doi}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium rounded transition-colors duration-200 hover:shadow-lg hover:shadow-gray-900/20"
                         >
-                          <span className="material-symbols-outlined text-sm">link</span>
+                          <span className="bi bi-link text-sm"></span>
                           DOI
                         </a>
                       )}
@@ -180,9 +196,9 @@ const Publications: React.FC = () => {
                           href={publication.pdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200 hover:shadow-lg hover:shadow-gray-900/20"
                         >
-                          <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                          <span className="bi bi-file-earmark-pdf text-sm"></span>
                           PDF
                         </a>
                       )}
@@ -191,13 +207,23 @@ const Publications: React.FC = () => {
                           href={publication.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200 hover:shadow-lg hover:shadow-gray-900/20"
                         >
-                          <span className="material-symbols-outlined text-sm">open_in_new</span>
+                          <span className="bi bi-box-arrow-up-right text-sm"></span>
                           Link
                         </a>
                       )}
                     </div>
+
+                    {/* Hover effect line */}
+                    <div style={{
+                      height: '2px',
+                      backgroundColor: '#60a5fa',
+                      transform: 'scaleX(0)',
+                      transformOrigin: 'left',
+                      transition: 'transform 0.3s ease',
+                      marginTop: '1rem'
+                    }}></div>
                   </article>
                 ))}
               </div>
@@ -205,7 +231,12 @@ const Publications: React.FC = () => {
           </div>
         </main>
       </div>
-    </Layout>
+
+      {/* Footer Overlay */}
+      <div className="homepage-footer-overlay">
+        <Footer />
+      </div>
+    </>
   );
 };
 

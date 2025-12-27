@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Layout from './Layout';
+import Layout from '../ui/Layout';
 
 const Strava: React.FC = () => {
   useEffect(() => {
@@ -361,14 +361,14 @@ const Strava: React.FC = () => {
                     <span className="material-symbols-outlined">emoji_events</span>
                   </div>
                   <h2>Personal Best Times</h2>
-                  <div className="sort-controls">
-                    <button className="sort-btn" data-sort="distance" data-order="asc" title="Sort by Distance">
-                      <span className="sort-label">Distance</span>
-                      <span className="material-symbols-outlined sort-icon">unfold_more</span>
+                  <div className="flex gap-2">
+                    <button className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm font-medium" data-sort="distance" data-order="asc" title="Sort by Distance">
+                      <span>Distance</span>
+                      <span className="material-symbols-outlined text-base">unfold_more</span>
                     </button>
-                    <button className="sort-btn" data-sort="pace" data-order="asc" title="Sort by Pace">
-                      <span className="sort-label">Pace</span>
-                      <span className="material-symbols-outlined sort-icon">unfold_more</span>
+                    <button className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm font-medium" data-sort="pace" data-order="asc" title="Sort by Pace">
+                      <span>Pace</span>
+                      <span className="material-symbols-outlined text-base">unfold_more</span>
                     </button>
                   </div>
                 </div>

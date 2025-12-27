@@ -120,18 +120,6 @@ html, body {
   padding: 1rem 0;
 }
 
-/* Page Footer Overlay (for scrollable pages) */
-.page-footer-overlay {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(5, 5, 5, 0.95);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid #333333;
-  z-index: 1000;
-  padding: 1rem 0;
-}
 
 .footer-content {
   display: flex;

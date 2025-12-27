@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Layout from './Layout';
+import Layout from '../ui/Layout';
 
 interface Star {
   x: number;

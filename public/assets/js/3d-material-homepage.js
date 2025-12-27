@@ -1,9 +1,10 @@
-import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
+// Using CDN versions of Three.js and addons
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js';
+import { FontLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/geometries/TextGeometry.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/controls/OrbitControls.js';
+import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/RGBELoader.js';
+import { EXRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/EXRLoader.js';
 
 // Wait for DOM to be ready
 if (document.readyState === 'loading') {

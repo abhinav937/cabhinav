@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Layout from './Layout';
+import Footer from '../ui/Footer';
 
 interface Message {
   id: number;
@@ -40,6 +40,7 @@ const CLI: React.FC = () => {
   const connectBtnRef = useRef<HTMLButtonElement>(null);
   const disconnectBtnRef = useRef<HTMLButtonElement>(null);
   const sendBtnRef = useRef<HTMLButtonElement>(null);
+  const messageIdCounter = useRef(0);
 
   // Web Serial API variables
   const readerRef = useRef<ReadableStreamDefaultReader | null>(null);
@@ -510,7 +511,7 @@ const CLI: React.FC = () => {
 
   const writeSentMessage = (message: string) => {
     const newMessage: Message = {
-      id: Date.now(),
+      id: Date.now() + messageIdCounter.current++,
       text: message,
       type: 'sent',
       timestamp: showTimestamps ? new Date().toLocaleTimeString() : undefined
@@ -527,13 +528,13 @@ const CLI: React.FC = () => {
       // Check last 3 messages for duplicates within 2 seconds
       for (let i = Math.max(0, prev.length - 3); i < prev.length; i++) {
         const recentMessage = prev[i];
-        if (recentMessage && recentMessage.text === message && (now - recentMessage.id) < 2000) {
+        if (recentMessage && recentMessage.text === message && (now - (recentMessage.id - messageIdCounter.current)) < 2000) {
           return prev; // Skip duplicate message
         }
       }
 
       const newMessage: Message = {
-        id: now,
+        id: now + messageIdCounter.current++,
         text: message,
         type: 'received',
         timestamp: showTimestamps ? new Date().toLocaleTimeString() : undefined
@@ -877,7 +878,7 @@ const CLI: React.FC = () => {
           </div>
           <button
             onClick={() => setShowSettings(true)}
-            className="text-gray-400 hover:text-white px-2 py-1 text-sm"
+            className="px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg text-sm font-medium transition-all duration-200"
           >
             ⚙️ Settings
           </button>
@@ -972,7 +973,7 @@ const CLI: React.FC = () => {
               ref={connectBtnRef}
               onClick={connect}
               disabled={isConnected}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25"
             >
               {isConnected ? 'Connected' : 'Connect'}
             </button>
@@ -980,7 +981,7 @@ const CLI: React.FC = () => {
               ref={disconnectBtnRef}
               onClick={disconnect}
               disabled={!isConnected}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
+              className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-red-500/25"
             >
               Disconnect
             </button>
@@ -991,7 +992,7 @@ const CLI: React.FC = () => {
             )}
             <button
               onClick={() => setMessages([])}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-gray-500/25"
             >
               Clear
             </button>
@@ -1015,7 +1016,7 @@ const CLI: React.FC = () => {
               ref={sendBtnRef}
               onClick={handleSend}
               disabled={!inputValue.trim() || (!isConnected && inputValue.toLowerCase().trim() !== 'abhinav')}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-green-500/25 disabled:hover:shadow-none"
             >
               Send
             </button>
@@ -1110,7 +1111,7 @@ const CLI: React.FC = () => {
                 <div className="flex gap-2 mt-6">
                   <button
                     onClick={() => setShowSettings(false)}
-                    className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+                    className="flex-1 px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-gray-500/25"
                   >
                     Close
                   </button>
@@ -1118,6 +1119,11 @@ const CLI: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Footer Overlay */}
+        <div className="homepage-footer-overlay">
+          <Footer />
         </div>
       </>
     );

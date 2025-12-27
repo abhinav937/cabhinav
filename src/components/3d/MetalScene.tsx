@@ -11,7 +11,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { SteelFinish } from './types';
-import { FINISH_CONFIGS } from './constants';
+import { FINISH_CONFIGS } from '../shared/constants';
 
 // A high-quality typeface JSON URL for 3D text
 const FONT_URL = 'https://cdn.jsdelivr.net/npm/three@0.154.0/examples/fonts/helvetiker_bold.typeface.json';

@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Html } from '@react-three/drei';
-import Layout from './Layout';
+import Layout from '../ui/Layout';
 
 const ThreeD: React.FC = () => {
   return (

@@ -6,8 +6,8 @@ import { existsSync, readFileSync } from 'fs';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  root: '.',
-  publicDir: 'public',
+  root: 'src',
+  publicDir: '../public',
   server: {
     // Allow serving files from project root
     fs: {

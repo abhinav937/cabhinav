@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, Float, ContactShadows, Text3D } from '@react-three/drei';
 import * as THREE from 'three';
-import { SteelFinish } from './types';
-import { FINISH_CONFIGS } from './constants';
+import { SteelFinish } from '../shared/types';
+import { FINISH_CONFIGS } from '../shared/constants';
 
 interface LightSettings {
   ambientIntensity: number;

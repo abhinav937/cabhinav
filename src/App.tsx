@@ -3,20 +3,20 @@ import { Helmet } from 'react-helmet-async';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Experience } from './src/components/3d/Experience';
-import Footer from './src/components/ui/Footer';
+import { Experience } from './components/3d/Experience';
 
 // Page Components
-import Projects from './src/components/pages/Projects';
-import Publications from './src/components/pages/Publications';
-import Strava from './src/components/pages/Strava';
-import CLI from './src/components/pages/CLI';
-import Latex from './src/components/pages/Latex';
-import Space from './src/components/pages/Space';
-import Chat from './src/components/pages/Chat';
-import ThreeD from './src/components/pages/ThreeD';
-import XPage from './src/components/pages/XPage';
-import LS from './src/components/pages/LS';
+import Projects from './components/pages/Projects';
+import Publications from './components/pages/Publications';
+import Strava from './components/pages/Strava';
+import CLI from './components/pages/CLI';
+import Latex from './components/pages/Latex';
+import Space from './components/pages/Space';
+import Chat from './components/pages/Chat';
+import ThreeD from './components/pages/ThreeD';
+import XPage from './components/pages/XPage';
+import LS from './components/pages/LS';
+import Footer from './components/ui/Footer';
 
 interface LightSettings {
   ambientIntensity: number;
@@ -360,7 +360,7 @@ const App = () => {
               <script src="/assets/js/optimizations.js"></script>
 
               {/* Homepage Scripts */}
-              <script src="/assets/js/3d-material-homepage.js"></script>
+              <script type="module" src="/assets/js/3d-material-homepage.js"></script>
               <script src="/assets/js/homepage-space-background.js"></script>
 
               {/* Additional Utility Scripts */}
