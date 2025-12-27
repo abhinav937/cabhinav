@@ -22,6 +22,12 @@ const Strava: React.FC = () => {
     faCss.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
     document.head.appendChild(faCss);
 
+    // Load Strava styles
+    const stravaCss = document.createElement('link');
+    stravaCss.rel = 'stylesheet';
+    stravaCss.href = '/assets/css/strava.css';
+    document.head.appendChild(stravaCss);
+
     // Load Strava embed script
     const stravaEmbedScript = document.createElement('script');
     stravaEmbedScript.src = 'https://strava-embeds.com/embed.js';
