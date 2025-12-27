@@ -59,7 +59,7 @@ const Publications: React.FC = () => {
   const highlightAuthor = (authors: string) => {
     return authors.replace(
       /Abhinav Chinnusamy/g,
-      '<strong class="text-green-400">Abhinav Chinnusamy</strong>'
+      '<strong class="text-white">Abhinav Chinnusamy</strong>'
     );
   };
 
@@ -89,11 +89,11 @@ const Publications: React.FC = () => {
         <link rel="canonical" href="https://cabhinav.com/publications/" />
       </Helmet>
 
-      <div className="min-h-screen bg-black text-green-400 font-mono">
+      <div className="min-h-screen bg-black text-gray-300 font-mono">
         {/* Header */}
         <header className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-green-400">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Publications Archive
             </h1>
             <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
@@ -130,7 +130,7 @@ const Publications: React.FC = () => {
                     className="bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-all duration-300"
                   >
                     {/* Title */}
-                    <h3 className="text-lg font-semibold mb-2 text-green-300 leading-tight">
+                    <h3 className="text-lg font-semibold mb-2 text-white leading-tight">
                       {publication.title || "Untitled"}
                     </h3>
 
@@ -168,7 +168,7 @@ const Publications: React.FC = () => {
                           href={publication.doi}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-black text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium rounded transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">link</span>
                           DOI
@@ -179,7 +179,7 @@ const Publications: React.FC = () => {
                           href={publication.pdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-green-400 text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
                           PDF
@@ -190,7 +190,7 @@ const Publications: React.FC = () => {
                           href={publication.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-green-400 text-sm font-medium rounded transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">open_in_new</span>
                           Link
