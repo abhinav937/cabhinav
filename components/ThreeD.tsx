@@ -10,6 +10,8 @@ const ThreeD: React.FC = () => {
       <Helmet>
         <title>3D Demo - Abhinav Chinnusamy</title>
         <meta name="description" content="Interactive 3D graphics and animations demo." />
+        <link rel="stylesheet" href="/assets/css/3d-material.css" />
+        <script src="/assets/js/haptics.js"></script>
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">

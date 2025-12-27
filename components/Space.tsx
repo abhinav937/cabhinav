@@ -138,6 +138,9 @@ const Space: React.FC = () => {
         <title>Space - Interactive Starfield | Abhinav Chinnusamy</title>
         <meta name="description" content="Interactive space background with animated starfield and shooting stars. A visual experience by Abhinav Chinnusamy." />
         <link rel="canonical" href="https://cabhinav.com/space/" />
+        <link rel="stylesheet" href="/assets/css/space-background.css" />
+        <script src="/assets/js/space-background.js"></script>
+        <script src="/assets/js/fallingLogos.js"></script>
       </Helmet>
 
       <div className="fixed inset-0 bg-black">

@@ -860,6 +860,7 @@ const CLI: React.FC = () => {
       <Helmet>
         <title>CLI Terminal - Abhinav Chinnusamy</title>
         <meta name="description" content="Web Serial Terminal for hardware communication and debugging." />
+        <link rel="stylesheet" href="/assets/css/cli.css" />
       </Helmet>
 
       <div className="h-screen w-screen bg-black font-mono text-green-400 relative">

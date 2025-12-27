@@ -87,6 +87,7 @@ const Publications: React.FC = () => {
         <meta name="description" content="Academic publications and research papers by Abhinav Chinnusamy - Graduate Researcher in Power Electronics at UW-Madison." />
         <meta name="keywords" content="Abhinav Chinnusamy, Publications, Research Papers, Power Electronics, IEEE, Academic Publications, GaN, Solid State Circuit Breakers" />
         <link rel="canonical" href="https://cabhinav.com/publications/" />
+        <script src="/assets/js/data.js"></script>
       </Helmet>
 
       <div className="min-h-screen bg-black text-gray-300 font-mono">

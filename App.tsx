@@ -344,6 +344,12 @@ const App = () => {
               <link rel="stylesheet" href="/assets/css/style.css" />
               <link rel="stylesheet" href="/assets/css/grok-style.css" />
               <link rel="stylesheet" href="/assets/css/space-background.css" />
+              <link rel="stylesheet" href="/assets/css/lazy-loading.css" />
+
+              {/* Utility Scripts */}
+              <script src="/assets/js/bootstrap.js"></script>
+              <script src="/assets/js/script.js"></script>
+              <script src="/assets/js/optimizations.js"></script>
 
               {/* Google Analytics */}
               <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>
