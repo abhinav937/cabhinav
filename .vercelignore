@@ -1,0 +1,36 @@
+# Ignore local build artifacts
+dist/
+src/dist/
+node_modules/
+
+# Ignore development files
+.env.local
+.env.development
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+npm-debug.log*
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore git
+.git/
+.gitignore
+
+# Keep source files for build
+!src/
+!public/
+!package.json
+!package-lock.json
+!vite.config.ts
+!tailwind.config.js
+!tsconfig.json
+!postcss.config.js
