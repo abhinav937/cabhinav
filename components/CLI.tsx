@@ -993,12 +993,6 @@ const CLI: React.FC = () => {
             >
               Clear
             </button>
-            <button
-              onClick={() => window.history.back()}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
-            >
-              Back
-            </button>
           </div>
 
           {/* Input Row */}
