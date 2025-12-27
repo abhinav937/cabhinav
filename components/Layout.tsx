@@ -14,7 +14,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000', color: '#ffffff' }}>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#000000',
+      color: '#ffffff',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
 
       {/* Main Content */}
       <main style={isHomePage ? {} : { flex: '1' }}>
