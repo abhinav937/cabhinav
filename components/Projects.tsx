@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
   },
 ];
 
-const Projects: React.FC = () => {
+const Projects = () => {
 
   return (
     <Layout>

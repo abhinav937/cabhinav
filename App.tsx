@@ -187,9 +187,9 @@ const STRUCTURED_DATA = {
   "name": "Abhinav Chinnusamy - Power Electronics Researcher",
   "description": "Personal website of Abhinav Chinnusamy, a graduate student researcher in power electronics at UW-Madison. Features projects and research in GaN devices, PCB design, and power systems. Completed internship at Annapurna Labs.",
   "dateModified": "2025-12-24T20:00:00Z"
-};
+} as const;
 
-const App: React.FC = () => {
+const App = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 

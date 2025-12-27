@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!assets/|web-components/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "cleanUrls": true,
+  "framework": "vite"
+}

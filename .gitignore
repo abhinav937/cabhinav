@@ -1,14 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel
 .vercel
 
-# Development HTML files (copied from subdirectories for dev server)
-ls.html
-projects.html
-publications.html
-strava.html
-space.html
-cli.html
-latex.html
-chat.html
-3d.html
-x.html
-sydney.html
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build artifacts in root (legacy)
+index.html.bak
+assets/
+build/

@@ -19,17 +19,7 @@ export default defineConfig({
     port: 5173,
     host: true, // Allow external connections
     configureServer(server) {
-      // Copy subpage files with correct script references on server start
-      const { exec } = require('child_process');
-      exec('npm run copy-subpages-dev', (error, stdout, stderr) => {
-        if (error) {
-          console.error('Error copying subpages:', error);
-        } else {
-          console.log('Subpages copied for development');
-        }
-      });
-
-      // Redirect subdirectory requests to .html files
+      // Redirect subdirectory requests to root for SPA
       server.middlewares.use((req, res, next) => {
         const url = req.url || '';
 
@@ -38,24 +28,7 @@ export default defineConfig({
           return next();
         }
 
-        // Check for subdirectory requests and redirect to .html files
-        const cleanUrl = url.replace(/\/$/, ''); // Remove trailing slash
-        const pathParts = cleanUrl.split('/').filter(Boolean);
-
-        if (pathParts.length === 1) {
-          const subdir = pathParts[0];
-          const htmlFile = `${subdir}.html`;
-
-          // Check if the .html file exists
-          const fullPath = resolve(process.cwd(), htmlFile);
-          if (existsSync(fullPath)) {
-            // Redirect to the .html file
-            res.writeHead(302, { 'Location': `/${htmlFile}` });
-            res.end();
-            return;
-          }
-        }
-
+        // For all other routes, let Vite serve index.html
         next();
       });
     }
