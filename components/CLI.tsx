@@ -32,6 +32,7 @@ const CLI: React.FC = () => {
   const [useDeviceFiltering, setUseDeviceFiltering] = useState(false);
   const [dtrSignal, setDtrSignal] = useState(false);
   const [rtsSignal, setRtsSignal] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -62,13 +63,16 @@ const CLI: React.FC = () => {
 
   // Initialize component
   useEffect(() => {
-    initializeCLI();
+    if (!initialized) {
+      initializeCLI();
+      setInitialized(true);
 
-    // Check URL parameters for test mode
-    const urlParams = new URLSearchParams(window.location.search);
-    const testParam = urlParams.get('test');
-    if (testParam === 'true') {
-      setIsTestMode(true);
+      // Check URL parameters for test mode
+      const urlParams = new URLSearchParams(window.location.search);
+      const testParam = urlParams.get('test');
+      if (testParam === 'true') {
+        setIsTestMode(true);
+      }
     }
 
     // Listen for connect/disconnect events
@@ -138,9 +142,8 @@ const CLI: React.FC = () => {
 
       // Show welcome message with instructions
       writeReceivedMessage("=== Web Serial Terminal v2.0 ===");
-      writeReceivedMessage("Type 'help' for available commands");
-      writeReceivedMessage("Use 'browser' to check compatibility");
-      writeReceivedMessage("Use 'test' URL parameter or toggle Test Mode for demo");
+      writeReceivedMessage("Type 'help' for commands, 'browser' for compatibility check");
+      writeReceivedMessage("Toggle Test Mode or add ?test=true to URL for demo");
     }
 
     // Focus input on mount
@@ -513,13 +516,29 @@ const CLI: React.FC = () => {
   };
 
   const writeReceivedMessage = (message: string) => {
-    const newMessage: Message = {
-      id: Date.now(),
-      text: message,
-      type: 'received',
-      timestamp: showTimestamps ? new Date().toLocaleTimeString() : undefined
-    };
-    setMessages(prev => [...prev, newMessage]);
+    // Prevent duplicate messages within a short time window
+    setMessages(prev => {
+      const now = Date.now();
+      const recentMessage = prev[prev.length - 1];
+      if (recentMessage && recentMessage.text === message && (now - recentMessage.id) < 1000) {
+        return prev; // Skip duplicate message
+      }
+
+      const newMessage: Message = {
+        id: now,
+        text: message,
+        type: 'received',
+        timestamp: showTimestamps ? new Date().toLocaleTimeString() : undefined
+      };
+
+      // Limit message history to prevent memory issues
+      const updatedMessages = [...prev, newMessage];
+      if (updatedMessages.length > 1000) {
+        updatedMessages.splice(0, updatedMessages.length - 500); // Keep last 500 messages
+      }
+
+      return updatedMessages;
+    });
     scrollToBottom();
   };
 
@@ -602,7 +621,11 @@ const CLI: React.FC = () => {
 
       switch(commandName) {
         case "help":
-          response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio, dtr, rts, signals, forget\nSerial: device info and signal control\nSystem: browser, ports`;
+          response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime, clear\nHardware: led, sensors, read, gpio, dtr, rts, signals, forget\nSerial: device info and signal control\nSystem: browser, ports`;
+          break;
+        case "clear":
+          setMessages([]);
+          response = "Terminal cleared";
           break;
         case "browser":
           const userAgent = navigator.userAgent.toLowerCase();
@@ -976,6 +999,12 @@ const CLI: React.FC = () => {
                 {availablePorts.length} device{availablePorts.length !== 1 ? 's' : ''} available
               </span>
             )}
+            <button
+              onClick={() => setMessages([])}
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+            >
+              Clear
+            </button>
             <button
               onClick={() => window.history.back()}
               className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
