@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,6 +22,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
       display: 'flex',
       flexDirection: 'column'
     }}>
+      <Helmet>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+      </Helmet>
 
       {/* Main Content */}
       <main style={isHomePage ? {} : { flex: '1' }}>
