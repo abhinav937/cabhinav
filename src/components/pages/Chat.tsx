@@ -138,22 +138,17 @@ const Chat: React.FC = () => {
         {/* Chat Header */}
         <header className="flex-shrink-0 bg-gray-900 border-b border-gray-700">
           <div className="flex items-center justify-between py-3 px-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                <span className="bi bi-robot text-white text-sm"></span>
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-white">AI Assistant</h1>
-                <div
-                  className="text-xs text-gray-400 font-mono cursor-pointer hover:text-gray-300 transition-colors"
-                  title={`Click to copy full session ID: ${sessionId}`}
-                  onClick={() => {
-                    navigator.clipboard.writeText(sessionId);
-                    // Could add a toast notification here if desired
-                  }}
-                >
-                  Session: {sessionId.slice(-8)}
-                </div>
+            <div>
+              <h1 className="text-lg font-semibold text-white">AI Assistant</h1>
+              <div
+                className="text-xs text-gray-400 font-mono cursor-pointer hover:text-gray-300 transition-colors"
+                title={`Click to copy full session ID: ${sessionId}`}
+                onClick={() => {
+                  navigator.clipboard.writeText(sessionId);
+                  // Could add a toast notification here if desired
+                }}
+              >
+                Session: {sessionId.slice(-8)}
               </div>
             </div>
             <button

@@ -35,3 +35,4 @@ dist-ssr
 # Build artifacts in root (legacy)
 index.html.bak
 build/
+.env*.local
