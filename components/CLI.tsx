@@ -862,7 +862,7 @@ const CLI: React.FC = () => {
         <meta name="description" content="Web Serial Terminal for hardware communication and debugging." />
       </Helmet>
 
-      <div className="h-screen w-screen bg-black flex flex-col font-mono text-green-400">
+      <div className="h-screen w-screen bg-black font-mono text-green-400 relative">
         {/* Terminal Header */}
         <div className="bg-gray-800 px-4 py-2 flex items-center justify-between flex-shrink-0 border-b border-gray-700">
           <div className="flex items-center gap-2">
@@ -881,8 +881,8 @@ const CLI: React.FC = () => {
           </button>
         </div>
 
-        {/* Terminal Body */}
-        <div className="flex-1 flex flex-col bg-black">
+        {/* Terminal Body - Messages Area */}
+        <div className="flex-1 bg-black" style={{ paddingBottom: '120px' }}>
           {/* Status Bar */}
           <div className="flex items-center justify-between px-6 py-2 border-b border-gray-800 flex-shrink-0">
             <div className="flex items-center gap-2">
@@ -960,33 +960,12 @@ const CLI: React.FC = () => {
               ))
             )}
           </div>
+        </div>
 
-          {/* Input Area */}
-          <div className="flex gap-2 p-4 bg-gray-900 flex-shrink-0">
-            <textarea
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter command..."
-              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-500 resize-none overflow-hidden"
-              rows={1}
-              style={{ minHeight: '36px' }}
-              disabled={!isConnected && inputValue.toLowerCase().trim() !== 'abhinav'}
-              onInput={autoResizeTextarea}
-            />
-            <button
-              ref={sendBtnRef}
-              onClick={handleSend}
-              disabled={!inputValue.trim() || (!isConnected && inputValue.toLowerCase().trim() !== 'abhinav')}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
-            >
-              Send
-            </button>
-          </div>
-
-          {/* Control Buttons */}
-          <div className="flex gap-4 p-4 bg-gray-900 border-t border-gray-800 flex-shrink-0">
+        {/* Fixed Input Area - Like Chat Box */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 z-10">
+          {/* Control Buttons Row */}
+          <div className="flex gap-4 mb-3 justify-center">
             <button
               ref={connectBtnRef}
               onClick={connect}
@@ -1019,6 +998,30 @@ const CLI: React.FC = () => {
               className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
             >
               Back
+            </button>
+          </div>
+
+          {/* Input Row */}
+          <div className="flex gap-2">
+            <textarea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter command..."
+              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-500 resize-none overflow-hidden"
+              rows={1}
+              style={{ minHeight: '36px' }}
+              disabled={!isConnected && inputValue.toLowerCase().trim() !== 'abhinav'}
+              onInput={autoResizeTextarea}
+            />
+            <button
+              ref={sendBtnRef}
+              onClick={handleSend}
+              disabled={!inputValue.trim() || (!isConnected && inputValue.toLowerCase().trim() !== 'abhinav')}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
+            >
+              Send
             </button>
           </div>
         </div>
