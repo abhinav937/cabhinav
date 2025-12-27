@@ -32,7 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
       </main>
 
       {/* Footer Overlay */}
-      <div className="homepage-footer-overlay">
+      <div className="homepage-footer-overlay" style={{ zIndex: 20 }}>
         <Footer />
       </div>
     </div>

@@ -10,7 +10,6 @@ import CLI from './components/pages/CLI';
 import Latex from './components/pages/Latex';
 import Space from './components/pages/Space';
 import Chat from './components/pages/Chat';
-import ThreeD from './components/pages/ThreeD';
 import XPage from './components/pages/XPage';
 import LS from './components/pages/LS';
 
@@ -218,7 +217,7 @@ const App = () => {
 
             <div className="min-h-screen bg-background text-primary selection:bg-white/20 flex flex-col">
               <main className="flex-1 flex items-center justify-center px-4 sm:px-6">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-center">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-4 bg-gradient-to-br from-white via-gray-100 to-gray-300 bg-clip-text text-transparent text-center">
                   Abhinav Chinnusamy
                 </h1>
               </main>
@@ -236,7 +235,6 @@ const App = () => {
         <Route path="/latex" element={<Latex />} />
         <Route path="/space" element={<Space />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/3d" element={<ThreeD />} />
         <Route path="/x" element={<XPage />} />
         <Route path="/ls" element={<LS />} />
       </Routes>

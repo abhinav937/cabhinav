@@ -63,12 +63,6 @@ const LS: React.FC = () => {
       icon: 'bi-list'
     },
     {
-      path: '/3d',
-      title: '3D Demo',
-      description: 'Interactive 3D graphics and animations',
-      icon: 'bi-box'
-    },
-    {
       path: '/x',
       title: 'X (Twitter)',
       description: 'Social media and updates',
