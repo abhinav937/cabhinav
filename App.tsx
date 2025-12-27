@@ -14,7 +14,6 @@ import Latex from './components/Latex';
 import Space from './components/Space';
 import Chat from './components/Chat';
 import ThreeD from './components/ThreeD';
-import Sydney from './components/Sydney';
 import XPage from './components/XPage';
 import LS from './components/LS';
 
@@ -484,7 +483,6 @@ const App: React.FC = () => {
         <Route path="/space" element={<Space />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/3d" element={<ThreeD />} />
-        <Route path="/sydney" element={<Sydney />} />
         <Route path="/x" element={<XPage />} />
         <Route path="/ls" element={<LS />} />
       </Routes>

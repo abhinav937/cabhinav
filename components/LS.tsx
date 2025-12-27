@@ -69,12 +69,6 @@ const LS: React.FC = () => {
       icon: 'view_in_ar'
     },
     {
-      path: '/sydney',
-      title: 'Sydney',
-      description: 'Sydney-related content and information',
-      icon: 'location_city'
-    },
-    {
       path: '/x',
       title: 'X (Twitter)',
       description: 'Social media and updates',

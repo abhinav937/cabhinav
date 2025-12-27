@@ -294,7 +294,7 @@
     console.log('[GitHub Pages Debug] User Agent:', navigator.userAgent);
 
     // List of static HTML pages that exist in subdirectories
-    const staticPages = ['ls', 'projects', 'publications', 'strava', 'chat', 'space', 'latex', 'cli', '3d', 'x', 'sydney'];
+    const staticPages = ['ls', 'projects', 'publications', 'strava', 'chat', 'space', 'latex', 'cli', '3d', 'x'];
 
     // Get the current pathname (e.g., "/ls" or "/ls/")
     const pathname = window.location.pathname;
