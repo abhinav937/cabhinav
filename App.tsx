@@ -345,11 +345,22 @@ const App = () => {
               <link rel="stylesheet" href="/assets/css/grok-style.css" />
               <link rel="stylesheet" href="/assets/css/space-background.css" />
               <link rel="stylesheet" href="/assets/css/lazy-loading.css" />
+              <link rel="stylesheet" href="/assets/css/desktop-navbar.css" />
+              <link rel="stylesheet" href="/assets/css/mobile-navbar.css" />
+              <link rel="stylesheet" href="/assets/css/simple-skeleton.css" />
+              <link rel="stylesheet" href="/assets/css/xblog.css" />
 
               {/* Utility Scripts */}
               <script src="/assets/js/bootstrap.js"></script>
               <script src="/assets/js/script.js"></script>
               <script src="/assets/js/optimizations.js"></script>
+
+              {/* Homepage Scripts */}
+              <script src="/assets/js/3d-material-homepage.js"></script>
+              <script src="/assets/js/homepage-space-background.js"></script>
+
+              {/* Additional Utility Scripts */}
+              <script src="/assets/js/fallingLogos.js"></script>
 
               {/* Google Analytics */}
               <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>

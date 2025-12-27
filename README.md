@@ -28,25 +28,17 @@ A modern, responsive personal portfolio website built with HTML, CSS, and JavaSc
 
 ```
 cabhinav/
-├── public/
-│   ├── assets/
-│   │   ├── css/              # Stylesheets
-│   │   │   ├── style.css
-│   │   │   ├── grok-style.css
-│   │   │   ├── space-background.css
-│   │   │   ├── cli.css
-│   │   │   ├── 3d-material.css
-│   │   │   ├── strava.css
-│   │   │   └── lazy-loading.css
-│   │   ├── js/               # JavaScript modules
-│   │   │   ├── script.js
-│   │   │   ├── bootstrap.js
-│   │   │   ├── optimizations.js
-│   │   │   ├── grok-script.js
-│   │   │   ├── enhanced-space-background.js
-│   │   │   └── data.js
-│   │   ├── images/           # Images and assets
-│   │   └── documents/        # Resume PDF
+├── assets/
+│   ├── css/              # Stylesheets
+│   │   ├── grok-style.css
+│   │   ├── space-background.css
+│   │   └── ...
+│   ├── js/               # JavaScript modules
+│   │   ├── grok-script.js
+│   │   ├── homepage-space-background.js
+│   │   └── ...
+│   ├── images/           # Images and assets
+│   └── documents/        # Resume PDF
 ├── projects/             # Project showcase pages
 ├── publications/         # Academic publications
 ├── strava/              # Strava activities dashboard

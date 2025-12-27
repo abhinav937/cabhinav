@@ -14,6 +14,7 @@ const Latex: React.FC = () => {
         <title>Resume - Abhinav Chinnusamy</title>
         <meta name="description" content="Professional resume and CV of Abhinav Chinnusamy, Power Electronics Engineer." />
         <link rel="canonical" href="https://latex.cabhinav.com/" />
+        <script src="/assets/js/resumeViewer.js"></script>
       </Helmet>
 
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
