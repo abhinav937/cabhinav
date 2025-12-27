@@ -862,7 +862,7 @@ const CLI: React.FC = () => {
         <meta name="description" content="Web Serial Terminal for hardware communication and debugging." />
       </Helmet>
 
-      <div className="h-screen w-screen bg-black overflow-hidden flex flex-col font-mono text-green-400">
+      <div className="h-screen w-screen bg-black flex flex-col font-mono text-green-400">
         {/* Terminal Header */}
         <div className="bg-gray-800 px-4 py-2 flex items-center justify-between flex-shrink-0 border-b border-gray-700">
           <div className="flex items-center gap-2">
@@ -933,7 +933,8 @@ const CLI: React.FC = () => {
           {/* Messages Container */}
           <div
             ref={logRef}
-            className="flex-1 overflow-y-auto bg-gray-900 p-4 border-b border-gray-800"
+            className="flex-1 overflow-y-auto bg-gray-900 p-4 border-b border-gray-800 scroll-smooth"
+            style={{ maxHeight: 'calc(100vh - 200px)' }}
           >
             {messages.length === 0 ? (
               <div className="text-gray-500 italic">
