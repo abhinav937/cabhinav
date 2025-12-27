@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -76,48 +76,16 @@
   <!-- Tailwind CSS for React components -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Immediate dark background to prevent white flash -->
+  <!-- Dark background -->
   <style>
     html, body {
-      background: #050505 !important;
+      background: #050505;
       margin: 0;
       padding: 0;
-      overflow: hidden !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
-      width: 100vw !important;
-      position: fixed !important;
-      top: 0;
-      left: 0;
+      min-height: 100vh;
     }
     #root {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
-      overflow: hidden !important;
-      position: fixed !important;
-      top: 0;
-      left: 0;
-    }
-    canvas {
-      display: block;
-    }
-    /* Prevent scrolling on mobile */
-    @media (max-width: 768px) {
-      html, body {
-        position: fixed !important;
-        overflow: hidden !important;
-        width: 100% !important;
-        height: 100% !important;
-        touch-action: none;
-        -webkit-overflow-scrolling: none;
-      }
-      #root {
-        position: fixed !important;
-        overflow: hidden !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
+      min-height: 100vh;
     }
   </style>
 
@@ -260,6 +228,6 @@
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+  <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>

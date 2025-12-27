@@ -106,6 +106,8 @@ html, body {
   border-top: 1px solid #333333;
   padding: 2rem 0 1rem;
   margin-top: auto;
+  width: 100%;
+  position: relative;
 }
 
 /* Homepage Footer Overlay */
@@ -184,6 +186,11 @@ html, body {
 
   .footer-link .bi {
     font-size: 16px;
+  }
+
+  .footer-text {
+    font-size: 0.75rem;
+    padding: 0 1rem;
   }
 }
 

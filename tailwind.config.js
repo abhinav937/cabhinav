@@ -7,4 +7,12 @@ export default {
     "./App.tsx",
     "./index.tsx",
   ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
+      },
+    },
+  },
 }
