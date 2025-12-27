@@ -107,12 +107,40 @@ const CLI: React.FC = () => {
   }, []);
 
   const initializeCLI = () => {
-    // Check Web Serial API support
+    // Check Web Serial API support with better detection
     if (!("serial" in navigator)) {
-      setStatus("Unsupported");
+      setStatus("Web Serial API not supported");
+
+      // Provide helpful information about browser support
+      const userAgent = navigator.userAgent.toLowerCase();
+      let browserInfo = "Unknown browser";
+
+      if (userAgent.includes('chrome') && !userAgent.includes('edg')) {
+        browserInfo = "Chrome (Desktop)";
+      } else if (userAgent.includes('edg')) {
+        browserInfo = "Edge (Desktop)";
+      } else if (userAgent.includes('firefox')) {
+        browserInfo = "Firefox (Not supported)";
+      } else if (userAgent.includes('safari')) {
+        browserInfo = "Safari (Not supported)";
+      }
+
+      const isHttps = window.location.protocol === 'https:';
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+      writeReceivedMessage(`Browser: ${browserInfo}`);
+      writeReceivedMessage(`HTTPS/Localhost: ${isHttps || isLocalhost ? 'Yes' : 'No (must be HTTPS or localhost)'}`);
+      writeReceivedMessage(`Web Serial API: Not available`);
+      writeReceivedMessage(`Try Chrome/Edge on desktop with HTTPS or localhost`);
     } else {
-      setStatus("Disconnected");
+      setStatus("Ready - Click Connect to select device");
       updateAvailablePorts();
+
+      // Show welcome message with instructions
+      writeReceivedMessage("=== Web Serial Terminal v2.0 ===");
+      writeReceivedMessage("Type 'help' for available commands");
+      writeReceivedMessage("Use 'browser' to check compatibility");
+      writeReceivedMessage("Use 'test' URL parameter or toggle Test Mode for demo");
     }
 
     // Focus input on mount
@@ -161,6 +189,13 @@ const CLI: React.FC = () => {
     if (isTestMode) {
       await connectTestMode();
     } else {
+      // Double-check Web Serial API support before attempting connection
+      if (!("serial" in navigator)) {
+        writeReceivedMessage("ERROR: Web Serial API not supported in this browser");
+        writeReceivedMessage("Please use Chrome or Edge on desktop");
+        writeReceivedMessage("Must be served over HTTPS or localhost");
+        return;
+      }
       await connectRealSerial();
     }
   };
@@ -193,7 +228,7 @@ const CLI: React.FC = () => {
 
   const connectRealSerial = async () => {
     try {
-      setStatus("Connecting...");
+      setStatus("Requesting device access...");
 
       // Prepare filters for device selection
       const filters = useDeviceFiltering ? [
@@ -208,15 +243,21 @@ const CLI: React.FC = () => {
         { usbVendorId: 0x0403, usbProductId: 0x6001 }, // FT232
       ] : undefined;
 
+      writeReceivedMessage(`Requesting serial port access${filters ? ' (filtered)' : ''}...`);
       const serialPort = await navigator.serial.requestPort({ filters });
       setPort(serialPort);
+
+      setStatus("Opening port...");
 
       // Get device info
       const info = serialPort.getInfo();
       if (info) {
-        writeReceivedMessage(`Connected to device: Vendor ID: 0x${info.usbVendorId?.toString(16)}, Product ID: 0x${info.usbProductId?.toString(16)}`);
+        writeReceivedMessage(`Device selected: Vendor 0x${info.usbVendorId?.toString(16)}, Product 0x${info.usbProductId?.toString(16)}`);
+      } else {
+        writeReceivedMessage("Device selected (no info available)");
       }
 
+      writeReceivedMessage(`Opening port at ${baudRate} baud...`);
       await serialPort.open({
         baudRate: parseInt(baudRate),
         dataBits: parseInt(dataBits) as any,
@@ -225,6 +266,7 @@ const CLI: React.FC = () => {
         bufferSize: 256 * 1024 // 256KB buffer for better performance
       });
 
+      writeReceivedMessage("Port opened successfully");
       setIsConnected(true);
 
       // Setup streams with better error handling
@@ -245,10 +287,21 @@ const CLI: React.FC = () => {
       // Set initial DTR/RTS signals
       await setSignals();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Connection failed:", error);
-      setStatus("Failed to connect");
-      writeReceivedMessage(`Connection failed: ${error.message}`);
+      setStatus("Connection failed");
+
+      // Provide more specific error messages
+      if (error.name === 'NotAllowedError') {
+        writeReceivedMessage("ERROR: User cancelled device selection or permission denied");
+      } else if (error.name === 'NotFoundError') {
+        writeReceivedMessage("ERROR: No compatible serial devices found");
+      } else if (error.name === 'InvalidStateError') {
+        writeReceivedMessage("ERROR: Port is already open or invalid state");
+      } else {
+        writeReceivedMessage(`Connection failed: ${error.message || 'Unknown error'}`);
+      }
+
       setPort(null);
     }
   };
@@ -292,6 +345,11 @@ const CLI: React.FC = () => {
   };
 
   const disconnect = async () => {
+    if (!isConnected) {
+      writeReceivedMessage("Not connected");
+      return;
+    }
+
     setStatus("Disconnecting...");
 
     if (isTestMode && port === "test") {
@@ -303,24 +361,38 @@ const CLI: React.FC = () => {
       setIsConnected(false);
       setDeviceState({ uptime: 0, ledState: false, gpioPins: {} });
       setStatus("Disconnected");
+      writeReceivedMessage("Disconnected from test mode");
       updateUIDisconnected();
       return;
     }
 
     // Real serial disconnect with improved cleanup
+    writeReceivedMessage("Closing serial connection...");
+
     if (readerRef.current) {
-      await readerRef.current.cancel();
+      try {
+        await readerRef.current.cancel();
+        writeReceivedMessage("Reader cancelled");
+      } catch (error) {
+        console.warn("Error cancelling reader:", error);
+      }
       readerRef.current = null;
     }
 
     if (inputDoneRef.current) {
-      await inputDoneRef.current.catch(() => {});
+      try {
+        await inputDoneRef.current;
+        writeReceivedMessage("Input stream closed");
+      } catch (error) {
+        console.warn("Error closing input stream:", error);
+      }
       inputDoneRef.current = null;
     }
 
     if (outputStreamRef.current) {
       try {
         await outputStreamRef.current.getWriter().close();
+        writeReceivedMessage("Output stream closed");
       } catch (error) {
         console.warn("Error closing output stream:", error);
       }
@@ -328,20 +400,28 @@ const CLI: React.FC = () => {
     }
 
     if (outputDoneRef.current) {
-      await outputDoneRef.current;
+      try {
+        await outputDoneRef.current;
+        writeReceivedMessage("Output pipe closed");
+      } catch (error) {
+        console.warn("Error closing output pipe:", error);
+      }
       outputDoneRef.current = null;
     }
 
     if (port && port !== "test") {
       try {
         await port.close();
+        writeReceivedMessage("Serial port closed");
       } catch (error) {
         console.warn("Error closing port:", error);
+        writeReceivedMessage(`Warning: ${error.message}`);
       }
       setPort(null);
     }
 
     setIsConnected(false);
+    setStatus("Disconnected");
     updateUIDisconnected();
   };
 
@@ -522,7 +602,31 @@ const CLI: React.FC = () => {
 
       switch(commandName) {
         case "help":
-          response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio, dtr, rts, signals, forget\nSerial: device info and signal control`;
+          response = `Available commands:\nBasic: help, info, status, ping, time, date, version, echo, uptime\nHardware: led, sensors, read, gpio, dtr, rts, signals, forget\nSerial: device info and signal control\nSystem: browser, ports`;
+          break;
+        case "browser":
+          const userAgent = navigator.userAgent.toLowerCase();
+          let browser = "Unknown";
+          if (userAgent.includes('chrome') && !userAgent.includes('edg')) {
+            browser = "Chrome";
+          } else if (userAgent.includes('edg')) {
+            browser = "Edge";
+          } else if (userAgent.includes('firefox')) {
+            browser = "Firefox (Web Serial not supported)";
+          } else if (userAgent.includes('safari')) {
+            browser = "Safari (Web Serial not supported)";
+          }
+          const isHttps = window.location.protocol === 'https:';
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          response = `Browser: ${browser}\nHTTPS/Localhost: ${isHttps || isLocalhost ? 'Yes' : 'No'}\nWeb Serial API: ${"serial" in navigator ? 'Supported' : 'Not supported'}`;
+          break;
+        case "ports":
+          if ("serial" in navigator) {
+            updateAvailablePorts();
+            response = `Checking available ports...`;
+          } else {
+            response = `Web Serial API not supported`;
+          }
           break;
         case "info":
           response = `Web Serial Terminal Test Mode\nDevice: Virtual Serial Emulator v2.0\nBaud Rate: ${baudRate}\nTest Mode: Enabled`;
@@ -854,7 +958,7 @@ const CLI: React.FC = () => {
             <button
               ref={connectBtnRef}
               onClick={connect}
-              disabled={isConnected || (!("serial" in navigator) && !isTestMode)}
+              disabled={isConnected}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
             >
               {isConnected ? 'Connected' : 'Connect'}
