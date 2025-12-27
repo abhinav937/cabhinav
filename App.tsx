@@ -340,9 +340,6 @@ const App = () => {
               {/* Material Icons */}
               <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-              {/* External Stylesheets */}
-              <link rel="stylesheet" href="/assets/css/grok-style.css" />
-              <link rel="stylesheet" href="/assets/css/space-background.css" />
 
               {/* Google Analytics */}
               <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDSLDZ5EWW"></script>

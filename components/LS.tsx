@@ -109,7 +109,6 @@ const LS: React.FC = () => {
         <title>Site Directory - Abhinav Chinnusamy</title>
         <meta name="description" content="Directory of all pages and domains on cabhinav.com" />
         <link rel="canonical" href="https://cabhinav.com/ls/" />
-        <link rel="stylesheet" href="/assets/css/grok-style.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />

@@ -4,57 +4,29 @@ import Layout from './Layout';
 
 const Strava: React.FC = () => {
   useEffect(() => {
-    // Load required scripts and styles
-    const loadAssets = () => {
-      // Load enhanced space background script
-      const spaceScript = document.createElement('script');
-      spaceScript.src = '/assets/js/enhanced-space-background.js';
-      document.head.appendChild(spaceScript);
+    // Load stat dashboard styles
+    const statCss = document.createElement('link');
+    statCss.rel = 'stylesheet';
+    statCss.href = '/web-components/stat-dashboard/style.css';
+    document.head.appendChild(statCss);
 
-      // Load space background CSS
-      const spaceCss = document.createElement('link');
-      spaceCss.rel = 'stylesheet';
-      spaceCss.href = '/assets/css/space-background.css';
-      document.head.appendChild(spaceCss);
+    // Load stat dashboard script
+    const statScript = document.createElement('script');
+    statScript.src = '/web-components/stat-dashboard/script.js';
+    statScript.defer = true;
+    document.body.appendChild(statScript);
 
-      // Load grok styles
-      const grokCss = document.createElement('link');
-      grokCss.rel = 'stylesheet';
-      grokCss.href = '/assets/css/grok-style.css';
-      document.head.appendChild(grokCss);
+    // Load Font Awesome
+    const faCss = document.createElement('link');
+    faCss.rel = 'stylesheet';
+    faCss.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+    document.head.appendChild(faCss);
 
-      // Load strava specific styles
-      const stravaCss = document.createElement('link');
-      stravaCss.rel = 'stylesheet';
-      stravaCss.href = '/assets/css/strava.css';
-      document.head.appendChild(stravaCss);
-
-      // Load stat dashboard styles
-      const statCss = document.createElement('link');
-      statCss.rel = 'stylesheet';
-      statCss.href = '/web-components/stat-dashboard/style.css';
-      document.head.appendChild(statCss);
-
-      // Load stat dashboard script
-      const statScript = document.createElement('script');
-      statScript.src = '/web-components/stat-dashboard/script.js';
-      statScript.defer = true;
-      document.body.appendChild(statScript);
-
-      // Load Font Awesome
-      const faCss = document.createElement('link');
-      faCss.rel = 'stylesheet';
-      faCss.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-      document.head.appendChild(faCss);
-
-      // Load Strava embed script
-      const stravaEmbedScript = document.createElement('script');
-      stravaEmbedScript.src = 'https://strava-embeds.com/embed.js';
-      stravaEmbedScript.defer = true;
-      document.body.appendChild(stravaEmbedScript);
-    };
-
-    loadAssets();
+    // Load Strava embed script
+    const stravaEmbedScript = document.createElement('script');
+    stravaEmbedScript.src = 'https://strava-embeds.com/embed.js';
+    stravaEmbedScript.defer = true;
+    document.body.appendChild(stravaEmbedScript);
 
     // Initialize on DOMContentLoaded
     const handleDOMContentLoaded = () => {
