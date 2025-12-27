@@ -21,7 +21,7 @@ A modern, responsive personal portfolio website built with HTML, CSS, and JavaSc
 - **Design**: Material Design 3, Material Symbols
 - **Fonts**: Inter (Google Fonts)
 - **Build Tools**: Node.js, npm
-- **Deployment**: GitHub Pages (with custom domain support)
+- **Deployment**: Vercel (with custom domain support)
 - **Analytics**: Google Analytics
 
 ## Project Structure
@@ -165,34 +165,38 @@ node scripts/update-resume.js --help
 
 ## Deployment
 
-The website is automatically deployed to GitHub Pages using GitHub Actions.
+The website is automatically deployed to Vercel.
 
 ### Automatic Deployment
 
-When you push to the `main` branch, GitHub Actions will:
-1. Build the React app using Vite
-2. Deploy to GitHub Pages automatically
+When you push to the `main` branch, Vercel will:
+1. Detect the Vite framework
+2. Build the React app using `npm run build`
+3. Deploy from the `dist/` folder automatically
 
-### GitHub Pages Configuration
+### Vercel Configuration
 
-1. Go to your repository **Settings** → **Pages**
-2. Under **Source**, select **GitHub Actions**
-3. The workflow will automatically deploy from the `dist/` folder
+The deployment is configured through:
+- `vercel.json` - Contains routing and framework configuration
+- `package.json` - Contains the build script
+- Automatic framework detection for Vite
 
 ### Custom Domain
 
-The website supports custom domain (`cabhinav.com`) via the `CNAME` file.
+The website supports custom domain (`cabhinav.com`) configured in Vercel dashboard.
 
 ### Manual Deployment (if needed)
 
 If you need to deploy manually:
 
 ```bash
-npm run build:gh-pages
+npm run build
 git add .
 git commit -m "Deploy React app"
 git push
 ```
+
+Vercel will automatically trigger a new deployment.
 
 ## SEO Features
 

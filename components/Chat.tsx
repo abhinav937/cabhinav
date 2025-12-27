@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Layout from './Layout';
 
-// Import chat scripts
-import '../assets/js/grok-script.js';
-
 interface Message {
   id: number;
   text: string;
@@ -161,7 +158,6 @@ const Chat: React.FC = () => {
         <title>AI Chat - Abhinav Chinnusamy</title>
         <meta name="description" content="Interactive AI chat interface for conversations and assistance." />
         <meta name="robots" content="noindex, nofollow" />
-        <link rel="stylesheet" href="/assets/css/grok-style.css" />
       </Helmet>
 
       {/* AI Chat Interface */}
