@@ -21,7 +21,7 @@ const Chat: React.FC = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -122,6 +122,10 @@ const Chat: React.FC = () => {
     }
   };
 
+  const generateNewSessionId = () => {
+    return `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
+
   return (
     <>
       <Helmet>
@@ -153,6 +157,8 @@ const Chat: React.FC = () => {
             </div>
             <button
               onClick={() => {
+                const newSessionId = generateNewSessionId();
+                setSessionId(newSessionId);
                 setMessages([{
                   id: Date.now(),
                   text: "Hello! I'm an AI assistant. How can I help you today?",
