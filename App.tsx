@@ -16,6 +16,7 @@ import Chat from './components/Chat';
 import ThreeD from './components/ThreeD';
 import XPage from './components/XPage';
 import LS from './components/LS';
+import Footer from './components/Footer';
 
 interface LightSettings {
   ambientIntensity: number;
@@ -340,6 +341,9 @@ const App = () => {
               {/* Material Icons */}
               <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+              {/* Bootstrap Icons */}
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
               {/* External Stylesheets */}
               <link rel="stylesheet" href="/assets/css/style.css" />
               <link rel="stylesheet" href="/assets/css/grok-style.css" />
@@ -433,61 +437,10 @@ const App = () => {
                 </Suspense>
               </Canvas>
 
-              {/* Footer Navigation */}
-              <footer className="footer">
-                <div className="container">
-                  <div className="footer-content">
-                    <div className="footer-links">
-                      <a
-                        href="https://x.com/emotor"
-                        target="_blank"
-                        className="footer-link"
-                        rel="noopener noreferrer"
-                        aria-label="X (Twitter) Profile"
-                      >
-                        <img
-                          src="/assets/images/social/x-svg.svg"
-                          alt="X (Twitter)"
-                          className="footer-icon-svg"
-                          loading="lazy"
-                          width="18"
-                          height="18"
-                        />
-                      </a>
-                      <a
-                        href="https://github.com/abhinav937"
-                        target="_blank"
-                        className="footer-link"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub Profile"
-                      >
-                        <span className="material-symbols-outlined" aria-hidden="true">code</span>
-                      </a>
-                      <a
-                        href="https://scholar.google.com/citations?user=40h4Uo8AAAAJ&hl=en"
-                        target="_blank"
-                        className="footer-link"
-                        rel="noopener noreferrer"
-                        aria-label="Google Scholar Profile"
-                      >
-                        <span className="material-symbols-outlined" aria-hidden="true">school</span>
-                      </a>
-                      <a
-                        href="https://www.strava.com/athletes/99464226"
-                        target="_blank"
-                        className="footer-link"
-                        rel="noopener noreferrer"
-                        aria-label="Strava Profile"
-                      >
-                        <span className="material-symbols-outlined" aria-hidden="true">directions_run</span>
-                      </a>
-                    </div>
-                    <p className="footer-text">
-                      © 2025 Abhinav Chinnusamy. Power Electronics Engineer.
-                    </p>
-                  </div>
-                </div>
-              </footer>
+              {/* Footer Overlay */}
+              <div className="homepage-footer-overlay">
+                <Footer />
+              </div>
             </div>
           </>
         } />
