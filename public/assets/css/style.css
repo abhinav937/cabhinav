@@ -1,20 +1,4 @@
-/* Footer Styles */
-.footer {
-  padding-top: 30px;
-  background-color: #0a0a0a;
-  border-top: 1px solid #333333;
-  margin-top: auto;
-}
-
-.footer .copyright {
-  line-height: 1.6;
-  color: rgb(105, 180, 218);
-  font-size: 13px;
-}
-
-.text-center {
-  text-align: center;
-}
+/* Footer and utility styles */
 
 /* Main Website Styles */
 * {
