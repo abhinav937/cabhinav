@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Layout from './Layout';
 
@@ -41,22 +41,33 @@ const PROJECTS: Project[] = [
     alt: 'SiC Solid State Circuit Breaker',
     techStack: ['SiC', 'SSCB', 'Modular'],
   },
-  // Add more projects as needed
+  {
+    id: 'opa-v2',
+    title: 'OPA v2',
+    description: 'Operational Amplifier Design and Analysis',
+    image: '/assets/images/projects/opav2.webp',
+    alt: 'Operational Amplifier v2',
+    techStack: ['Analog', 'OpAmp', 'Design'],
+  },
+  {
+    id: 'rp2-embedded',
+    title: 'RP2040 Embedded System',
+    description: 'Raspberry Pi Pico based embedded project',
+    image: '/assets/images/projects/rp2.webp',
+    alt: 'RP2040 Embedded System',
+    techStack: ['RP2040', 'Embedded', 'Microcontroller'],
+  },
+  {
+    id: 'sos-system',
+    title: 'SOS Communication System',
+    description: 'Emergency communication and signaling system',
+    image: '/assets/images/projects/sos_1.webp',
+    alt: 'SOS Communication System',
+    techStack: ['Communication', 'Embedded', 'RF'],
+  },
 ];
 
 const Projects: React.FC = () => {
-  const [filter, setFilter] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // React hooks for filtering and searching
-  const filteredProjects = useMemo(() => {
-    return PROJECTS.filter(project => {
-      const matchesFilter = filter === 'all' || project.techStack.includes(filter);
-      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          project.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesFilter && matchesSearch;
-    });
-  }, [filter, searchTerm]);
 
   return (
     <Layout>
@@ -76,28 +87,6 @@ const Projects: React.FC = () => {
             <p className="text-lg sm:text-xl text-text-secondary max-w-3xl mx-auto mb-8">
               Explore my work in power electronics, embedded systems, and hardware design
             </p>
-
-            {/* Search and filter controls */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900/50 transition-colors"
-              />
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full sm:w-auto px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900/50 transition-colors"
-              >
-                <option value="all">All Technologies</option>
-                <option value="GaN">GaN</option>
-                <option value="SiC">SiC</option>
-                <option value="RP2040">RP2040</option>
-                <option value="FPGA">FPGA</option>
-              </select>
-            </div>
           </div>
         </header>
 
@@ -105,7 +94,7 @@ const Projects: React.FC = () => {
         <main className="px-4 sm:px-6 lg:px-8 pb-20">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {filteredProjects.map(project => (
+              {PROJECTS.map(project => (
                 <article key={project.id} className="card group hover:scale-105 transition-transform duration-300">
                   {/* Project image */}
                   <div className="relative overflow-hidden rounded-t-lg bg-bg-secondary">
@@ -167,15 +156,6 @@ const Projects: React.FC = () => {
                 </article>
               ))}
             </div>
-
-            {/* No results message */}
-            {filteredProjects.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-text-muted text-lg">
-                  No projects found matching your criteria.
-                </p>
-              </div>
-            )}
           </div>
         </main>
       </div>
