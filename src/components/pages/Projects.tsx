@@ -72,12 +72,157 @@ const Projects = () => {
   return (
     <>
       <Helmet>
-        <title>Projects - Abhinav Chinnusamy</title>
-        <meta name="description" content="Explore my projects in power electronics, embedded systems, and hardware design." />
+        <title>Projects - Abhinav Chinnusamy | Power Electronics & Hardware Design</title>
+        
+        {/* SEO Meta Tags */}
+        <meta name="description" content="Explore Abhinav Chinnusamy's projects in power electronics, GaN inverters, solid-state circuit breakers, embedded systems, and hardware design. Featuring YesWeGaN, SiC SSCB, RP2040, and more." />
+        <meta name="keywords" content="Abhinav Chinnusamy, Projects, Power Electronics, GaN Inverter, SiC Circuit Breaker, Embedded Systems, Hardware Design, FPGA, RP2040, YesWeGaN, SSCB, PCB Design" />
+        <meta name="author" content="Abhinav Chinnusamy" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        
+        {/* Geo-location Tags */}
+        <meta name="geo.region" content="US-WI" />
+        <meta name="geo.placename" content="Madison, Wisconsin" />
+        <meta name="geo.position" content="43.0731;-89.4012" />
+        <meta name="ICBM" content="43.0731, -89.4012" />
+        
+        {/* Language Targeting */}
+        <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/projects/" />
+        <link rel="alternate" hreflang="x-default" href="https://cabhinav.com/projects/" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Projects - Abhinav Chinnusamy | Power Electronics & Hardware Design" />
+        <meta property="og:description" content="Explore my projects in power electronics, GaN inverters, solid-state circuit breakers, embedded systems, and hardware design." />
+        <meta property="og:url" content="https://cabhinav.com/projects/" />
+        <meta property="og:image" content="https://cabhinav.com/assets/images/projects/yeswegan1.JPEG" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="YesWeGaN 3-Phase GaN Inverter Project" />
+        <meta property="og:site_name" content="cabhinav.com" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@emotor" />
+        <meta name="twitter:creator" content="@emotor" />
+        <meta name="twitter:title" content="Projects - Abhinav Chinnusamy" />
+        <meta name="twitter:description" content="Power electronics, GaN inverters, embedded systems, and hardware design projects" />
+        <meta name="twitter:image" content="https://cabhinav.com/assets/images/projects/yeswegan1.JPEG" />
+        <meta name="twitter:image:alt" content="Power Electronics Projects" />
+        
+        {/* Canonical URL */}
         <link rel="canonical" href="https://cabhinav.com/projects/" />
+        
+        {/* Theme Color */}
+        <meta name="theme-color" content="#050505" />
+        
+        {/* Favicon */}
+        <link rel="icon" type="image/x-icon" href="/assets/images/icons/favicon.ico" />
+        
+        {/* Stylesheets */}
         <link rel="stylesheet" href="/assets/css/style.css" />
         <link rel="stylesheet" href="/assets/css/grok-style.css" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Projects - Abhinav Chinnusamy",
+            "description": "Collection of power electronics, embedded systems, and hardware design projects",
+            "url": "https://cabhinav.com/projects/",
+            "mainEntity": {
+              "@type": "ItemList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "YesWeGaN",
+                    "description": "3-Phase GaN Inverter",
+                    "image": "https://cabhinav.com/assets/images/projects/yeswegan1.JPEG",
+                    "keywords": "GaN, FPGA, Power"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "GaN Half-Bridge Inverter",
+                    "description": "High-frequency GaN half-bridge inverter",
+                    "image": "https://cabhinav.com/assets/images/projects/gan.webp",
+                    "keywords": "GaN, Half-Bridge, High-Freq"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "SiC Solid State Circuit Breaker",
+                    "description": "Modular SiC-based solid state circuit breaker",
+                    "image": "https://cabhinav.com/assets/images/projects/modular-sscb.webp",
+                    "keywords": "SiC, SSCB, Modular"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 4,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "OPA v2",
+                    "description": "Operational Amplifier Design and Analysis",
+                    "image": "https://cabhinav.com/assets/images/projects/opav2.webp",
+                    "keywords": "Analog, OpAmp, Design"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 5,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "RP2040 Embedded System",
+                    "description": "Raspberry Pi Pico based embedded project",
+                    "image": "https://cabhinav.com/assets/images/projects/rp2.webp",
+                    "keywords": "RP2040, Embedded, Microcontroller"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 6,
+                  "item": {
+                    "@type": "CreativeWork",
+                    "name": "SOS Communication System",
+                    "description": "Emergency communication and signaling system",
+                    "image": "https://cabhinav.com/assets/images/projects/sos_1.webp",
+                    "keywords": "Communication, Embedded, RF"
+                  }
+                }
+              ]
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://cabhinav.com/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Projects",
+                  "item": "https://cabhinav.com/projects/"
+                }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
 
       <div

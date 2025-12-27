@@ -211,15 +211,85 @@ const App = () => {
 
               {/* Structured Data */}
               <script type="application/ld+json">
-                {JSON.stringify(STRUCTURED_DATA)}
+                {JSON.stringify({
+                  ...STRUCTURED_DATA,
+                  "mainEntity": {
+                    ...STRUCTURED_DATA.mainEntity,
+                    "hasOccupation": {
+                      ...STRUCTURED_DATA.mainEntity.hasOccupation,
+                      "occupationLocation": {
+                        "@type": "Place",
+                        "name": "University of Wisconsin-Madison"
+                      }
+                    }
+                  },
+                  "hasPart": [
+                    {
+                      "@type": "WebPage",
+                      "name": "Projects",
+                      "url": "https://cabhinav.com/projects/",
+                      "description": "Power electronics, GaN inverters, and hardware design projects"
+                    },
+                    {
+                      "@type": "WebPage",
+                      "name": "Strava Activities",
+                      "url": "https://cabhinav.com/strava/",
+                      "description": "Running activities and performance metrics"
+                    },
+                    {
+                      "@type": "WebPage",
+                      "name": "CLI Terminal",
+                      "url": "https://cabhinav.com/cli/",
+                      "description": "Web Serial Terminal for hardware communication"
+                    },
+                    {
+                      "@type": "WebPage",
+                      "name": "LaTeX to SVG Converter",
+                      "url": "https://cabhinav.com/latex/",
+                      "description": "LaTeX to SVG converter tool for rendering mathematical equations and formulas"
+                    }
+                  ]
+                })}
               </script>
             </Helmet>
 
             <div className="min-h-screen bg-background text-primary selection:bg-white/20 flex flex-col">
-              <main className="flex-1 flex items-center justify-center px-4 sm:px-6">
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-4 bg-gradient-to-br from-white via-gray-100 to-gray-300 bg-clip-text text-transparent text-center">
+              <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-8 bg-gradient-to-br from-white via-gray-100 to-gray-300 bg-clip-text text-transparent text-center">
                   Abhinav Chinnusamy
                 </h1>
+                
+                {/* Navigation Links for SEO */}
+                <nav className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-8" aria-label="Main navigation">
+                  <a 
+                    href="/projects" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm sm:text-base"
+                    aria-label="View my projects in power electronics and hardware design"
+                  >
+                    Projects
+                  </a>
+                  <a 
+                    href="/strava" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm sm:text-base"
+                    aria-label="View my Strava running activities and performance metrics"
+                  >
+                    Strava
+                  </a>
+                  <a 
+                    href="/cli" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm sm:text-base"
+                    aria-label="Web Serial Terminal for hardware communication and debugging"
+                  >
+                    CLI Terminal
+                  </a>
+                  <a 
+                    href="/latex" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm sm:text-base"
+                    aria-label="LaTeX to SVG converter tool for mathematical equations"
+                  >
+                    LaTeX Converter
+                  </a>
+                </nav>
               </main>
 
               <Footer />

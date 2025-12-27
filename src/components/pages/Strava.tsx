@@ -427,13 +427,21 @@ const Strava: React.FC = () => {
         <meta property="og:title" content="Strava Activities - Abhinav Chinnusamy" />
         <meta property="og:description" content="Explore my running journey with activity summaries, latest rides, and upcoming races" />
         <meta property="og:image" content="https://cabhinav.com/assets/images/social/strava-twitter-card.jpg" />
-        <meta property="og:url" content="https://cabhinav.com/strava" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Strava Running Activities Dashboard" />
+        <meta property="og:url" content="https://cabhinav.com/strava/" />
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="cabhinav.com" />
+        <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@emotor" />
+        <meta name="twitter:creator" content="@emotor" />
         <meta name="twitter:title" content="Strava Activities - Abhinav Chinnusamy" />
         <meta name="twitter:description" content="Running activities, performance metrics, and race tracking" />
         <meta name="twitter:image" content="https://cabhinav.com/assets/images/social/strava-twitter-card.jpg" />
-        <meta name="twitter:creator" content="@emotor" />
+        <meta name="twitter:image:alt" content="Strava Running Activities" />
+        <meta name="twitter:url" content="https://cabhinav.com/strava/" />
         <link rel="canonical" href="https://cabhinav.com/strava/" />
         <meta name="theme-color" content="#161618" />
         <link rel="apple-touch-icon" href="/assets/images/icons/favicon.ico" />
@@ -448,21 +456,39 @@ const Strava: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://cabhinav.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Strava Activities",
-                "item": "https://cabhinav.com/strava/"
+            "@type": "ProfilePage",
+            "name": "Strava Activities - Abhinav Chinnusamy",
+            "description": "Running activities, performance metrics, and race tracking",
+            "url": "https://cabhinav.com/strava/",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "Abhinav Chinnusamy",
+              "athlete": {
+                "@type": "SportsActivity",
+                "sport": "Running",
+                "activityLocation": {
+                  "@type": "Place",
+                  "name": "Madison, Wisconsin"
+                }
               }
-            ]
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://cabhinav.com/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Strava Activities",
+                  "item": "https://cabhinav.com/strava/"
+                }
+              ]
+            }
           })}
         </script>
       </Helmet>

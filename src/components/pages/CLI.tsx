@@ -859,10 +859,100 @@ const CLI: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>CLI Terminal - Abhinav Chinnusamy</title>
-        <meta name="description" content="Web Serial Terminal for hardware communication and debugging." />
+        <title>Web Serial Terminal - Abhinav Chinnusamy | Hardware Communication & Debugging</title>
+        
+        {/* SEO Meta Tags */}
+        <meta name="description" content="Web Serial Terminal for hardware communication, debugging, and embedded systems development. Connect to Arduino, ESP32, RP2040, and other serial devices directly from your browser." />
+        <meta name="keywords" content="Abhinav Chinnusamy, Web Serial Terminal, CLI, Serial Communication, Hardware Debugging, Embedded Systems, Arduino, ESP32, RP2040, Serial Port, Terminal" />
+        <meta name="author" content="Abhinav Chinnusamy" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        
+        {/* Geo-location Tags */}
+        <meta name="geo.region" content="US-WI" />
+        <meta name="geo.placename" content="Madison, Wisconsin" />
+        <meta name="geo.position" content="43.0731;-89.4012" />
+        <meta name="ICBM" content="43.0731, -89.4012" />
+        
+        {/* Language Targeting */}
+        <link rel="alternate" hreflang="en-US" href="https://cabhinav.com/cli/" />
+        <link rel="alternate" hreflang="x-default" href="https://cabhinav.com/cli/" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+        <meta property="og:description" content="Web Serial Terminal for hardware communication and debugging. Connect to serial devices directly from your browser." />
+        <meta property="og:url" content="https://cabhinav.com/cli/" />
+        <meta property="og:image" content="https://cabhinav.com/assets/images/profile/my_profile.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Web Serial Terminal Interface" />
+        <meta property="og:site_name" content="cabhinav.com" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@emotor" />
+        <meta name="twitter:creator" content="@emotor" />
+        <meta name="twitter:title" content="Web Serial Terminal - Abhinav Chinnusamy" />
+        <meta name="twitter:description" content="Hardware communication and debugging terminal for embedded systems" />
+        <meta name="twitter:image" content="https://cabhinav.com/assets/images/profile/my_profile.jpg" />
+        <meta name="twitter:image:alt" content="Web Serial Terminal" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://cabhinav.com/cli/" />
+        
+        {/* Theme Color */}
+        <meta name="theme-color" content="#000000" />
+        
+        {/* Favicon */}
+        <link rel="icon" type="image/x-icon" href="/assets/images/icons/favicon.ico" />
+        
+        {/* Stylesheets */}
         <link rel="stylesheet" href="/assets/css/cli.css" />
         <script src="/assets/js/cli.js"></script>
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Web Serial Terminal",
+            "description": "Web Serial Terminal for hardware communication, debugging, and embedded systems development",
+            "url": "https://cabhinav.com/cli/",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Web Browser",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Web Serial API Support",
+              "Hardware Device Communication",
+              "Real-time Serial Monitoring",
+              "Test Mode for Development",
+              "Multiple Baud Rate Support",
+              "DTR/RTS Signal Control"
+            ],
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://cabhinav.com/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "CLI Terminal",
+                  "item": "https://cabhinav.com/cli/"
+                }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="h-screen w-screen bg-black font-mono text-green-400 relative">
