@@ -95,24 +95,24 @@ const Projects: React.FC = () => {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {PROJECTS.map(project => (
-                <article key={project.id} className="card group hover:scale-105 transition-transform duration-300">
+                <article key={project.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-gray-700">
                   {/* Project image */}
-                  <div className="relative overflow-hidden rounded-t-lg bg-bg-secondary">
+                  <div className="relative overflow-hidden bg-gray-900">
                     <img
                       src={project.image}
                       alt={project.alt}
                       loading="lazy"
                       className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
 
                   {/* Project content */}
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 text-gray-100 group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-xl font-semibold mb-2 text-gray-100 group-hover:text-gray-300 transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-text-secondary mb-4 leading-relaxed">
+                    <p className="text-gray-400 mb-4 leading-relaxed">
                       {project.description}
                     </p>
 
@@ -123,7 +123,7 @@ const Projects: React.FC = () => {
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-bg-elevated hover:bg-accent-muted text-text-primary rounded-lg transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">code</span>
                           Code
@@ -134,7 +134,7 @@ const Projects: React.FC = () => {
                           href={project.demo}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-bg-elevated hover:bg-accent-muted text-text-primary rounded-lg transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">launch</span>
                           Demo
@@ -145,7 +145,7 @@ const Projects: React.FC = () => {
                           href={project.paper}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-bg-elevated hover:bg-accent-muted text-text-primary rounded-lg transition-colors duration-200"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors duration-200"
                         >
                           <span className="material-symbols-outlined text-sm">article</span>
                           Paper
