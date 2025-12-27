@@ -2481,3 +2481,38 @@ a:focus-visible {
     padding: 1.5rem 0;
   }
 }
+
+/* ========================================
+   LS PAGE GRID LAYOUT
+   ======================================== */
+
+.ls-grid {
+  display: grid;
+}
+
+.ls-grid-main {
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
+}
+
+.ls-grid-external {
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
+}
+
+/* Tablet responsive */
+@media (max-width: 1024px) {
+  .ls-grid-main {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .ls-grid-external {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .ls-grid-main,
+  .ls-grid-external {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}

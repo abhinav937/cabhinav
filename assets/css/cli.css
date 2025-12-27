@@ -294,17 +294,20 @@
   display: none !important;
 }
 
-/* Mobile optimizations are handled in the responsive section below */
+/* Full-screen CLI terminal layout */
 .cli-container {
-  width: 100%;
-  margin: 0;
-  padding: var(--spacing-xl);
-  position: relative;
-  z-index: 10;
+  width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: #000000;
 }
 
 /* Header Controls */
@@ -437,10 +440,10 @@ button.secondary:hover:not(:disabled) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex: 1; /* Fill available space */
-  min-height: 400px; /* Minimum height */
+  flex: 1;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   position: relative;
+  width: 100%;
   height: 100vh;
 }
 
@@ -481,14 +484,8 @@ button.secondary:hover:not(:disabled) {
   align-items: center;
   justify-content: space-between;
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  height: 50px;
-  box-sizing: border-box;
   border-bottom: 1px solid #333333;
+  flex-shrink: 0;
 }
 
 .terminal-header button,
@@ -550,11 +547,9 @@ button.secondary:hover:not(:disabled) {
   overflow-x: auto;
   scroll-behavior: smooth;
   position: relative;
-  min-height: 300px;
   padding: 12px 20px;
-  padding-top: 80px; /* Account for fixed header (50px) + spacing - increased for better visibility */
-  padding-bottom: 120px; /* Account for fixed input area (~80px) + extra spacing */
   box-sizing: border-box;
+  background: #000000;
 }
 
 
@@ -652,20 +647,11 @@ button.secondary:hover:not(:disabled) {
 
 .input-area {
   padding: 20px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #111111;
+  border-top: 1px solid #333333;
   flex-shrink: 0;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
   width: 100%;
-  margin: 0 auto;
   box-sizing: border-box;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .input-container {
@@ -1031,13 +1017,6 @@ button.secondary:hover:not(:disabled) {
 
   .terminal-content {
     min-height: 200px;
-    padding-top: 180px !important; /* Increased padding to ensure messages appear below expanded header */
-  }
-
-  /* When header is collapsed, reduce padding */
-  .terminal-header.collapsed ~ .terminal-content,
-  .terminal-header.collapsed + .terminal-content {
-    padding-top: 80px !important;
   }
 
   .input-area {

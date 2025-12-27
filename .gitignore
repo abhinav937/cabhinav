@@ -1,1 +1,14 @@
 .vercel
+
+# Development HTML files (copied from subdirectories for dev server)
+ls.html
+projects.html
+publications.html
+strava.html
+space.html
+cli.html
+latex.html
+chat.html
+3d.html
+x.html
+sydney.html
