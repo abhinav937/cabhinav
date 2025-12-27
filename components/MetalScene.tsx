@@ -72,8 +72,8 @@ export const MetalScene: React.FC<MetalSceneProps> = ({ finish }) => {
         <color attach="background" args={['#0a0a0a']} />
         <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
 
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
+        <ambientLight intensity={0.15} />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={0.7} castShadow />
 
         <MetalObject finish={finish} />
 

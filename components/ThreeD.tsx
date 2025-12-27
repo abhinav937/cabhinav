@@ -39,10 +39,10 @@ const ThreeD: React.FC = () => {
                   </Html>
                 }>
                   {/* Ambient Light */}
-                  <ambientLight intensity={0.4} />
+                  <ambientLight intensity={0.1} />
 
                   {/* Directional Light */}
-                  <directionalLight position={[10, 10, 5]} intensity={1} />
+                  <directionalLight position={[10, 10, 5]} intensity={0.4} />
 
                   {/* Simple Cube */}
                   <mesh position={[-2, 0, 0]}>
