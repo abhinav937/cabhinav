@@ -1,10 +1,9 @@
 {
   "rewrites": [
     {
-      "source": "/((?!assets/|web-components/|.*\\..*).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
-  "cleanUrls": true,
   "framework": "vite"
 }
