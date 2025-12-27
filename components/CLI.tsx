@@ -32,9 +32,10 @@ const CLI: React.FC = () => {
   const [useDeviceFiltering, setUseDeviceFiltering] = useState(false);
   const [dtrSignal, setDtrSignal] = useState(false);
   const [rtsSignal, setRtsSignal] = useState(false);
-  const [initialized, setInitialized] = useState(false);
 
   const logRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+  const welcomeShownRef = useRef(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const connectBtnRef = useRef<HTMLButtonElement>(null);
   const disconnectBtnRef = useRef<HTMLButtonElement>(null);
@@ -63,9 +64,9 @@ const CLI: React.FC = () => {
 
   // Initialize component
   useEffect(() => {
-    if (!initialized) {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
       initializeCLI();
-      setInitialized(true);
 
       // Check URL parameters for test mode
       const urlParams = new URLSearchParams(window.location.search);
@@ -140,10 +141,13 @@ const CLI: React.FC = () => {
       setStatus("Ready - Click Connect to select device");
       updateAvailablePorts();
 
-      // Show welcome message with instructions
-      writeReceivedMessage("=== Web Serial Terminal v2.0 ===");
-      writeReceivedMessage("Type 'help' for commands, 'browser' for compatibility check");
-      writeReceivedMessage("Toggle Test Mode or add ?test=true to URL for demo");
+      // Show welcome message with instructions (only once)
+      if (!welcomeShownRef.current) {
+        welcomeShownRef.current = true;
+        writeReceivedMessage("=== Web Serial Terminal v2.0 ===");
+        writeReceivedMessage("Type 'help' for commands, 'browser' for compatibility check");
+        writeReceivedMessage("Toggle Test Mode or add ?test=true to URL for demo");
+      }
     }
 
     // Focus input on mount
@@ -516,12 +520,16 @@ const CLI: React.FC = () => {
   };
 
   const writeReceivedMessage = (message: string) => {
-    // Prevent duplicate messages within a short time window
+    // Prevent duplicate messages by checking recent messages
     setMessages(prev => {
       const now = Date.now();
-      const recentMessage = prev[prev.length - 1];
-      if (recentMessage && recentMessage.text === message && (now - recentMessage.id) < 1000) {
-        return prev; // Skip duplicate message
+
+      // Check last 3 messages for duplicates within 2 seconds
+      for (let i = Math.max(0, prev.length - 3); i < prev.length; i++) {
+        const recentMessage = prev[i];
+        if (recentMessage && recentMessage.text === message && (now - recentMessage.id) < 2000) {
+          return prev; // Skip duplicate message
+        }
       }
 
       const newMessage: Message = {
@@ -531,10 +539,10 @@ const CLI: React.FC = () => {
         timestamp: showTimestamps ? new Date().toLocaleTimeString() : undefined
       };
 
-      // Limit message history to prevent memory issues
+      // Limit message history to prevent memory issues (keep last 200 messages for better performance)
       const updatedMessages = [...prev, newMessage];
-      if (updatedMessages.length > 1000) {
-        updatedMessages.splice(0, updatedMessages.length - 500); // Keep last 500 messages
+      if (updatedMessages.length > 200) {
+        updatedMessages.splice(0, updatedMessages.length - 200);
       }
 
       return updatedMessages;
