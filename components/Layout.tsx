@@ -27,24 +27,28 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
       </Helmet>
 
       {/* Main Content */}
-      <main style={isHomePage ? {} : { flex: '1' }}>
+      <main style={isHomePage ? {} : { flex: '1', paddingBottom: '6rem' }}>
         {children}
       </main>
 
-      {/* Footer */}
+      {/* Footer - Fixed at bottom */}
       {!isHomePage && (
         <footer style={{
+          position: 'fixed',
+          bottom: '0',
+          left: '0',
+          right: '0',
           backgroundColor: '#0a0a0a',
           borderTop: '1px solid #333333',
-          marginTop: 'auto'
+          zIndex: '1000',
+          padding: '1rem'
         }}>
-          <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '2rem 1rem' }}>
+          <div style={{ maxWidth: '80rem', margin: '0 auto' }}>
             <div style={{
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem'
+              justifyContent: 'center',
+              gap: '2rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                 <a
@@ -53,11 +57,21 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
                   rel="noopener noreferrer"
                   style={{
                     color: '#a8a8a8',
-                    transition: 'color 0.2s ease',
-                    textDecoration: 'none'
+                    transition: 'all 0.3s ease',
+                    textDecoration: 'none',
+                    padding: '0.5rem',
+                    borderRadius: '0.5rem'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#60a5fa'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = '#a8a8a8'; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#60a5fa';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#a8a8a8';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                   aria-label="X (Twitter) Profile"
                 >
                   <img
@@ -72,11 +86,21 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
                   rel="noopener noreferrer"
                   style={{
                     color: '#a8a8a8',
-                    transition: 'color 0.2s ease',
-                    textDecoration: 'none'
+                    transition: 'all 0.3s ease',
+                    textDecoration: 'none',
+                    padding: '0.5rem',
+                    borderRadius: '0.5rem'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#60a5fa'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = '#a8a8a8'; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#60a5fa';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#a8a8a8';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                   aria-label="GitHub Profile"
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>code</span>
@@ -87,11 +111,21 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
                   rel="noopener noreferrer"
                   style={{
                     color: '#a8a8a8',
-                    transition: 'color 0.2s ease',
-                    textDecoration: 'none'
+                    transition: 'all 0.3s ease',
+                    textDecoration: 'none',
+                    padding: '0.5rem',
+                    borderRadius: '0.5rem'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#60a5fa'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = '#a8a8a8'; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#60a5fa';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#a8a8a8';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                   aria-label="Google Scholar Profile"
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>school</span>
@@ -102,19 +136,26 @@ const Layout: React.FC<LayoutProps> = ({ children, title, description }) => {
                   rel="noopener noreferrer"
                   style={{
                     color: '#a8a8a8',
-                    transition: 'color 0.2s ease',
-                    textDecoration: 'none'
+                    transition: 'all 0.3s ease',
+                    textDecoration: 'none',
+                    padding: '0.5rem',
+                    borderRadius: '0.5rem'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#60a5fa'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = '#a8a8a8'; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#60a5fa';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#a8a8a8';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                   aria-label="Strava Profile"
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>directions_run</span>
                 </a>
               </div>
-              <p style={{ color: '#a8a8a8', fontSize: '0.875rem' }}>
-                © 2025 Abhinav Chinnusamy. Power Electronics Engineer.
-              </p>
             </div>
           </div>
         </footer>
